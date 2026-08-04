@@ -1,0 +1,77 @@
+{
+  "README.md": {
+    "mtime": 1785817937.038428,
+    "ast_hash": "782f3ff472805c11abdf5c3198fd8f4c",
+    "semantic_hash": ""
+  },
+  "docs/Project Planning.md": {
+    "mtime": 1784223762.0,
+    "ast_hash": "05bc9b1ddb8218c808c931874ff234b2",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/TECHNICAL_DOCUMENTATION.md": {
+    "mtime": 1784218150.0,
+    "ast_hash": "d5de119c93e2106b050d59dc2837a613",
+    "semantic_hash": ""
+  },
+  "docs/Tutor_AI_SRS_v2.md": {
+    "mtime": 1784223782.0,
+    "ast_hash": "2607750bcce2357e726115dc5bf19383",
+    "semantic_hash": ""
+  },
+  "docs/AXIOM AI - Minimum Viable Product (MVP) Definition (Revised).pdf": {
+    "mtime": 1785481354.0,
+    "ast_hash": "8926d2402b8a95357dac62719c6d6da4",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/ER.pdf": {
+    "mtime": 1784156842.0,
+    "ast_hash": "82673956361456f05275e5b64ae5f1cc",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/SetupGuide.pdf": {
+    "mtime": 1784221628.0,
+    "ast_hash": "dbdab0a6ee18592a68f12f94a43ca93a",
+    "semantic_hash": ""
+  },
+  "docs/Screen Shot 2026-07-18 at 18.59.02 PM.png": {
+    "mtime": 1784336348.0,
+    "ast_hash": "46a62abc992d09ab92c8bd70f168a773",
+    "semantic_hash": ""
+  },
+  "docs/Screen Shot 2026-07-18 at 18.59.11 PM.png": {
+    "mtime": 1784336354.0,
+    "ast_hash": "029b7bae4899770eb98dc7def3ea9cba",
+    "semantic_hash": ""
+  },
+  "docs/Screen Shot 2026-07-18 at 18.59.28 PM.png": {
+    "mtime": 1784336372.0,
+    "ast_hash": "d626331dda1fd011acab69996efcdfa7",
+    "semantic_hash": ""
+  },
+  "docs/Screen Shot 2026-07-18 at 18.59.38 PM.png": {
+    "mtime": 1784336380.0,
+    "ast_hash": "198d6757b16a64190d285eb9899b2898",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/System Architecture.png": {
+    "mtime": 1784182376.0,
+    "ast_hash": "aac59f110fe7eee12675f577b8a11d2c",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/Tutor AI ER.png": {
+    "mtime": 1784166072.0,
+    "ast_hash": "168e6f8e7d693451104bb8044c248f2a",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/UserFlow.png": {
+    "mtime": 1784180646.0,
+    "ast_hash": "415380ac00e5245585fe18e9addcbdb3",
+    "semantic_hash": ""
+  },
+  "docs/Technical Docs/AI backend - Roadmap.md": {
+    "mtime": 1785821088.1176584,
+    "ast_hash": "e8426a165af1b81ca253109c0f8044bb",
+    "semantic_hash": ""
+  }
+}
