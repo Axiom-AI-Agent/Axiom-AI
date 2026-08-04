@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 
+from api.tenant_scope import DashboardTenant
 from domain.escalation_reasons import PAYMENT_RECEIPT, TALK_TO_TUTOR
 from infrastructure.db.supabase_client import get_supabase_client
 
@@ -22,10 +23,9 @@ def _count_rows(table: str, *, tenant_id: str, filters: dict[str, str] | None = 
 
 
 @router.get("")
-async def dashboard_overview(
-    tenant_id: str = Query(..., description="Tenant ID"),
-) -> dict[str, Any]:
+async def dashboard_overview(tenant: DashboardTenant) -> dict[str, Any]:
     """Aggregate counts for dashboard landing page."""
+    tenant_id = tenant.tenant_id
     client = get_supabase_client()
 
     open_escalations = _count_rows("escalations", tenant_id=tenant_id, filters={"status": "open"})

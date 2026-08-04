@@ -1,41 +1,26 @@
-"""Dashboard chat history for staff."""
+"""Dashboard chat history — legacy alias under /chat-logs."""
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
-from api.schemas import ChatTurnRecord, ChatTurnsResponse
-from services.identity.resolver import build_session_id, normalize_phone
-from services.messaging.persistence import MessagePersistence
+from api.routers.dashboard.chat import get_chat_turns
+from api.schemas import ChatTurnsResponse
+from api.tenant_scope import DashboardTenant
 
 router = APIRouter(prefix="/chat-logs", tags=["dashboard-chat-logs"])
 
 
 @router.get("", response_model=ChatTurnsResponse)
 async def get_chat_logs(
-    tenant_id: str = Query(..., description="Tenant ID"),
+    tenant: DashboardTenant,
     phone: str = Query(..., description="Student phone, e.g. 94771234567"),
     limit: int = Query(default=50, ge=1, le=200),
 ) -> ChatTurnsResponse:
-    """Fetch conversation turns for a student (same data as GET /chat/turns)."""
-    session_id = build_session_id(tenant_id, normalize_phone(phone))
-    persistence = MessagePersistence()
-    try:
-        rows = persistence.get_turns(
-            tenant_id=tenant_id,
-            session_id=session_id,
-            limit=limit,
-        )
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    """
+    Legacy path for conversation history.
 
-    turns = [
-        ChatTurnRecord(
-            id=str(row["id"]),
-            role=row["role"],
-            content=str(row["content"]),
-            created_at=str(row["created_at"]),
-        )
-        for row in rows
-    ]
-    return ChatTurnsResponse(tenant_id=tenant_id, session_id=session_id, turns=turns)
+    Prefer `GET /dashboard/chat/conversations/{phone}` for the full thread
+    (includes student info, open escalations, and sender labels).
+    """
+    return await get_chat_turns(tenant=tenant, phone=phone, limit=limit)

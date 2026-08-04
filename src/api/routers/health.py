@@ -35,7 +35,7 @@ router = APIRouter(tags=["System"])
 @router.get("/health", response_model=HealthResponse)
 async def health(request: Request) -> HealthResponse:
     started = getattr(request.app.state, "startup_complete", False)
-    return HealthResponse(status="ok" if started else "starting", phase=4)
+    return HealthResponse(status="ok" if started else "starting", phase=5)
 
 
 @router.get("/ready", response_model=ReadinessResponse)

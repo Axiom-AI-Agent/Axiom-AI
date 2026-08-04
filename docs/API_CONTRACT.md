@@ -10,6 +10,49 @@ REST endpoints for the Next.js staff dashboard. All routes require `tenant_id` a
 
 ---
 
+## Tenant scope (required for all dashboard routes)
+
+Every `/dashboard/*` and legacy `/escalations` endpoint validates the tenant **before** running any query. All database reads and writes use the resolved tenant id only — cross-tenant access returns **403**.
+
+### How to pass tenant
+
+Provide **one** of:
+
+| Source | Example |
+|--------|---------|
+| Query param | `?tenant_id=tenant-demo-physics` |
+| Header | `X-Tenant-ID: tenant-demo-physics` |
+
+If both are sent, they **must match** or the API returns **400**.
+
+For `POST` bodies that include `tenant_id` (e.g. chat send), the body value **must match** the resolved tenant or the API returns **403**.
+
+### Validation errors
+
+| Status | Meaning |
+|--------|---------|
+| **400** | No tenant provided, or query/header mismatch |
+| **404** | Unknown `tenant_id` |
+| **403** | Tenant exists but is not `active`, or body tenant mismatch |
+
+### Recommended dashboard integration
+
+After Supabase Auth login, resolve the staff user's `tenant_id` from `staff_users` and attach it to every API call:
+
+```http
+GET /dashboard/chat/conversations
+X-Tenant-ID: tenant-demo-physics
+Authorization: Bearer <supabase-jwt>
+```
+
+Local curl (query param is enough):
+
+```bash
+curl -s "http://localhost:8000/dashboard/overview?tenant_id=tenant-demo-physics"
+```
+
+---
+
 ## Escalation inbox (unified HITL queue)
 
 Payment receipts and talk-to-tutor requests both appear as **escalations** with different `reason_code` values.
@@ -105,40 +148,190 @@ GET /dashboard/overview?tenant_id=tenant-demo-physics
 
 ---
 
-## Chat logs & staff send
+## Staff chat interface
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/dashboard/chat-logs?tenant_id=&phone=` | Conversation history (`st_turns`) |
-| POST | `/dashboard/chat/send` | Staff → student WhatsApp |
+Endpoints for the dashboard **conversation sidebar + thread panel + compose box** (same UX pattern as BookMe AI’s session list + message thread, adapted for WhatsApp student sessions).
 
-### Chat logs
+### Endpoint map
 
-Same shape as `GET /chat/turns`:
+| Method | Path | UI use |
+|--------|------|--------|
+| GET | `/dashboard/chat/conversations?tenant_id=` | **Sidebar** — list of student threads |
+| GET | `/dashboard/chat/conversations/{phone}?tenant_id=` | **Thread panel** — full history + context |
+| POST | `/dashboard/chat/send` | **Compose box** — staff → student WhatsApp |
+| GET | `/dashboard/chat-logs?tenant_id=&phone=` | Legacy alias (turns only, no student/escalation context) |
+
+### Integration flow (recommended)
+
+```mermaid
+sequenceDiagram
+    participant UI as Dashboard UI
+    participant API as Axiom API
+    participant WA as WhatsApp
+
+    UI->>API: GET /dashboard/chat/conversations
+    API-->>UI: conversations[] (sidebar)
+    UI->>API: GET /dashboard/chat/conversations/{phone}
+    API-->>UI: turns[] + open_escalations[]
+    UI->>API: POST /dashboard/chat/send
+    API->>WA: Twilio outbound
+    API-->>UI: turn (staff message persisted)
+    UI->>API: GET /dashboard/chat/conversations/{phone}
+    API-->>UI: refreshed thread
+```
+
+1. **On load:** `GET /dashboard/chat/conversations?tenant_id=…&limit=50`
+2. **On row click:** `GET /dashboard/chat/conversations/{phone}?tenant_id=…`
+3. **On send:** `POST /dashboard/chat/send` then refresh thread (or append returned `turn`)
+4. **Optional filter:** `open_escalation_only=true` on conversations list for an “needs attention” view
+5. **From escalation inbox:** use `student_phone` from escalation row as `{phone}` for the thread
+
+### Message sender labels
+
+Each turn includes a `sender` field for bubble styling:
+
+| `role` (DB) | `sender` (UI) | Meaning |
+|-------------|---------------|---------|
+| `user` | `student` | Incoming WhatsApp / dev chat |
+| `assistant` | `bot` | AI agent reply |
+| `system` | `staff` | Staff message via dashboard send |
+
+### List conversations (sidebar)
+
+```http
+GET /dashboard/chat/conversations?tenant_id=tenant-demo-physics&limit=50&open_escalation_only=false
+```
+
+```json
+{
+  "tenant_id": "tenant-demo-physics",
+  "conversations": [
+    {
+      "session_id": "tenant-demo-physics:94771234567",
+      "student_id": "stu-physics-001",
+      "student_name": "Amaya Perera",
+      "phone": "94771234567",
+      "last_message": "Here is my payment slip",
+      "last_message_at": "2026-08-04T12:00:00Z",
+      "last_sender": "student",
+      "has_open_escalation": true,
+      "open_escalation_reason": "payment_receipt"
+    }
+  ]
+}
+```
+
+| Query param | Default | Description |
+|-------------|---------|-------------|
+| `limit` | `50` | Max conversations (1–200) |
+| `open_escalation_only` | `false` | When `true`, only students with an open escalation |
+
+### Get thread (message panel)
+
+```http
+GET /dashboard/chat/conversations/94771234567?tenant_id=tenant-demo-physics&limit=100
+```
 
 ```json
 {
   "tenant_id": "tenant-demo-physics",
   "session_id": "tenant-demo-physics:94771234567",
+  "student_id": "stu-physics-001",
+  "student_name": "Amaya Perera",
+  "phone": "94771234567",
   "turns": [
-    {"id": "...", "role": "user", "content": "Hello", "created_at": "..."},
-    {"id": "...", "role": "assistant", "content": "Hi!", "created_at": "..."}
+    {
+      "id": "turn-1",
+      "role": "user",
+      "sender": "student",
+      "content": "Can I speak to sir?",
+      "created_at": "2026-08-04T11:55:00Z"
+    },
+    {
+      "id": "turn-2",
+      "role": "assistant",
+      "sender": "bot",
+      "content": "We've notified your tutor…",
+      "created_at": "2026-08-04T11:55:02Z"
+    },
+    {
+      "id": "turn-3",
+      "role": "system",
+      "sender": "staff",
+      "content": "Hi Amaya, I'll call you shortly.",
+      "created_at": "2026-08-04T12:05:00Z"
+    }
+  ],
+  "open_escalations": [
+    {
+      "id": "esc-uuid",
+      "reason_code": "talk_to_tutor",
+      "status": "open",
+      "student_message": "Can I speak to sir?",
+      "created_at": "2026-08-04T11:55:00Z"
+    }
   ]
 }
 ```
 
+**404** if the phone is not registered as a student for the tenant.
+
+Alias: `GET /dashboard/chat/threads/{phone}` (same response).
+
 ### Staff send
 
 ```http
-POST /dashboard/chat/send
+POST /dashboard/chat/send?tenant_id=tenant-demo-physics
 Content-Type: application/json
+X-Tenant-ID: tenant-demo-physics
 
 {
   "tenant_id": "tenant-demo-physics",
   "phone": "94771234567",
-  "message": "Your payment was approved — welcome to class!"
+  "message": "Your payment was approved — welcome to class!",
+  "staff_id": "staff@demo.com"
 }
 ```
+
+`tenant_id` in the query/header and in the body **must match**.
+
+```json
+{
+  "ok": true,
+  "tenant_id": "tenant-demo-physics",
+  "phone": "94771234567",
+  "delivered": true,
+  "turn": {
+    "id": "turn-uuid",
+    "role": "system",
+    "sender": "staff",
+    "content": "Your payment was approved — welcome to class!",
+    "created_at": "2026-08-04T12:10:00Z"
+  }
+}
+```
+
+- Message is **persisted before** Twilio send so the thread stays consistent.
+- `staff_id` is optional (for future audit); not stored in MVP.
+- In dev (`MESSAGING_DRY_RUN=true`), delivery is logged without Twilio.
+
+### Legacy chat logs
+
+```http
+GET /dashboard/chat-logs?tenant_id=tenant-demo-physics&phone=94771234567
+```
+
+Same turn shape as thread, but **without** student metadata or `open_escalations`. Prefer `/dashboard/chat/conversations/{phone}` for new integrations.
+
+---
+
+## Student profile (thread header)
+
+```http
+GET /students/{phone}?tenant_id=tenant-demo-physics
+```
+
+Use alongside the thread endpoint to show enrollment status in the chat header.
 
 ---
 

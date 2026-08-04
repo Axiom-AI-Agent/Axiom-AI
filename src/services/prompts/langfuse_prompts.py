@@ -56,18 +56,22 @@ class PromptService:
             raise KeyError(f"No Langfuse or local prompt registered for {name!r}")
 
         if isinstance(template, str):
-            result = template
-            for key, value in variables.items():
-                result = result.replace(f"{{{{{key}}}}}", str(value))
-            return result
+            return self._substitute_variables(template, **variables)
 
         messages: list[dict[str, str]] = []
         for message in template:
-            content = message["content"]
-            for key, value in variables.items():
-                content = content.replace(f"{{{{{key}}}}}", str(value))
+            content = self._substitute_variables(message["content"], **variables)
             messages.append({"role": message["role"], "content": content})
         return messages
+
+    @staticmethod
+    def _substitute_variables(template: str, **variables: Any) -> str:
+        """Support Langfuse `{{var}}` and local `{var}` placeholders."""
+        result = template
+        for key, value in variables.items():
+            result = result.replace(f"{{{{{key}}}}}", str(value))
+            result = result.replace(f"{{{key}}}", str(value))
+        return result
 
 
 prompt_service = PromptService()

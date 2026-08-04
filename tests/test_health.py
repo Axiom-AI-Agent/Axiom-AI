@@ -25,7 +25,7 @@ def test_health(client):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
-    assert body["phase"] == 4
+    assert body["phase"] == 5
 
 
 def test_config(client):

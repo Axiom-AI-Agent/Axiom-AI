@@ -83,6 +83,9 @@ class ChatResponse(BaseModel):
 class ChatTurnRecord(BaseModel):
     id: str
     role: MessageRole
+    sender: Literal["student", "bot", "staff"] = Field(
+        description="UI label: user→student, assistant→bot, system→staff",
+    )
     content: str
     created_at: str
 
@@ -93,10 +96,41 @@ class ChatTurnsResponse(BaseModel):
     turns: list[ChatTurnRecord]
 
 
+class ChatConversationSummary(BaseModel):
+    session_id: str
+    student_id: str
+    student_name: Optional[str] = None
+    phone: str
+    last_message: str
+    last_message_at: str
+    last_sender: Literal["student", "bot", "staff"]
+    has_open_escalation: bool = False
+    open_escalation_reason: Optional[str] = None
+
+
+class ChatConversationsResponse(BaseModel):
+    tenant_id: str
+    conversations: list[ChatConversationSummary]
+
+
+class ChatThreadResponse(BaseModel):
+    tenant_id: str
+    session_id: str
+    student_id: str
+    student_name: Optional[str] = None
+    phone: str
+    turns: list[ChatTurnRecord]
+    open_escalations: list[dict] = Field(default_factory=list)
+
+
 class DashboardChatSendRequest(BaseModel):
     tenant_id: str
     phone: str = Field(description="Student phone, e.g. 94771234567")
     message: str = Field(min_length=1)
+    staff_id: Optional[str] = Field(
+        default=None,
+        description="Staff user id or email for audit (optional)",
+    )
 
 
 class DashboardChatSendResponse(BaseModel):
@@ -104,6 +138,7 @@ class DashboardChatSendResponse(BaseModel):
     tenant_id: str
     phone: str
     delivered: bool
+    turn: Optional[ChatTurnRecord] = None
 
 
 class RAGSearchRequest(BaseModel):

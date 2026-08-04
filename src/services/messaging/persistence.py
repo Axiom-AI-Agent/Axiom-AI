@@ -39,6 +39,17 @@ class MessagePersistence:
         self._insert_message_log(ctx, intent=intent, channel=channel)
         self._insert_turn(ctx, role=MessageRole.ASSISTANT, content=body)
 
+    def log_staff_reply(
+        self,
+        ctx: IdentityContext,
+        *,
+        body: str,
+        channel: ChatChannel = ChatChannel.HTTP_DEV,
+    ) -> None:
+        """Persist a staff-authored message (role=system → sender=staff in dashboard UI)."""
+        self._insert_message_log(ctx, intent="staff_reply", channel=channel)
+        self._insert_turn(ctx, role=MessageRole.SYSTEM, content=body)
+
     def _insert_message_log(
         self,
         ctx: IdentityContext,
@@ -92,3 +103,52 @@ class MessagePersistence:
             .execute()
         )
         return response.data or []
+
+    def list_recent_sessions(
+        self,
+        *,
+        tenant_id: str,
+        limit: int = 50,
+    ) -> list[dict[str, object]]:
+        """Return the latest turn per session_id, ordered by most recent activity."""
+        client = get_supabase_client()
+        over_fetch = min(max(limit * 10, limit), 500)
+        response = (
+            client.table("st_turns")
+            .select("id, session_id, user_id, role, content, created_at")
+            .eq("tenant_id", tenant_id)
+            .order("created_at", desc=True)
+            .limit(over_fetch)
+            .execute()
+        )
+        rows = response.data or []
+        seen: set[str] = set()
+        sessions: list[dict[str, object]] = []
+        for row in rows:
+            session_id = str(row["session_id"])
+            if session_id in seen:
+                continue
+            seen.add(session_id)
+            sessions.append(row)
+            if len(sessions) >= limit:
+                break
+        return sessions
+
+    def get_latest_turn(
+        self,
+        *,
+        tenant_id: str,
+        session_id: str,
+    ) -> dict[str, object] | None:
+        client = get_supabase_client()
+        response = (
+            client.table("st_turns")
+            .select("id, role, content, created_at")
+            .eq("tenant_id", tenant_id)
+            .eq("session_id", session_id)
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+        rows = response.data or []
+        return rows[0] if rows else None

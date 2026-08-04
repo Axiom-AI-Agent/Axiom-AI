@@ -149,7 +149,26 @@ Set `AGENT_USE_MCP=true` in `.env` to route memory recall through the Week 13-st
 
 ---
 
-## Phase 5 — Escalations (payment + talk-to-tutor)
+## Phase 5 — Escalations + staff chat
+
+> **Design rationale:** [PHASE5_DECISIONS.md](PHASE5_DECISIONS.md) · **API shapes:** [API_CONTRACT.md](API_CONTRACT.md)
+
+### Staff chat (dashboard integration)
+
+```bash
+# Sidebar — list conversations
+curl -s "http://localhost:8000/dashboard/chat/conversations?tenant_id=tenant-demo-physics"
+
+# Thread for one student
+curl -s "http://localhost:8000/dashboard/chat/conversations/94771234567?tenant_id=tenant-demo-physics"
+
+# Staff reply
+curl -s -X POST http://localhost:8000/dashboard/chat/send \
+  -H "Content-Type: application/json" \
+  -d '{"tenant_id":"tenant-demo-physics","phone":"94771234567","message":"We received your payment — welcome!"}'
+```
+
+### Escalations (payment + talk-to-tutor)
 
 > **Design rationale:** [PHASE5_DECISIONS.md](PHASE5_DECISIONS.md) — why we use one escalation inbox instead of payments + human_mode.
 

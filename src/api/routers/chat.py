@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query
 
-from api.schemas import ChatRequest, ChatResponse, ChatTurnRecord, ChatTurnsResponse
+from api.schemas import ChatRequest, ChatResponse, ChatTurnsResponse
+from api.routers.dashboard.chat_helpers import turn_to_record
 from domain.enums import ChatChannel
 from services.identity.resolver import build_session_id, normalize_phone
 from services.messaging.persistence import MessagePersistence
@@ -69,13 +70,5 @@ async def get_chat_turns(
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
-    turns = [
-        ChatTurnRecord(
-            id=str(row["id"]),
-            role=row["role"],
-            content=str(row["content"]),
-            created_at=str(row["created_at"]),
-        )
-        for row in rows
-    ]
+    turns = [turn_to_record(row) for row in rows]
     return ChatTurnsResponse(tenant_id=tenant_id, session_id=session_id, turns=turns)

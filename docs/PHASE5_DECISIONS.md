@@ -117,8 +117,10 @@ All writes go through **`CrmTool`** → MCP `crm_server.py` (no duplicate DB log
 | `PATCH /dashboard/escalations/{id}/resolve` | ✅ |
 | `PATCH /dashboard/escalations/{id}/reject` | ✅ |
 | `GET /dashboard/overview` | ✅ |
-| `GET /dashboard/chat-logs` | ✅ |
-| `POST /dashboard/chat/send` | ✅ |
+| `GET /dashboard/chat/conversations` | ✅ Sidebar list |
+| `GET /dashboard/chat/conversations/{phone}` | ✅ Thread + open escalations |
+| `GET /dashboard/chat-logs` | ✅ Legacy alias |
+| `POST /dashboard/chat/send` | ✅ Staff → student (persisted as `sender=staff`) |
 | `GET/PATCH /dashboard/payments` | ❌ Skipped (use escalations) |
 | `POST/PATCH /dashboard/classes` | ❌ Skipped (`GET /classes` exists) |
 

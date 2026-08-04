@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from agents.tools.crm_tool import CrmTool
+from api.tenant_scope import DashboardTenant
 from domain.enums import ChatChannel
 from domain.escalation_reasons import is_payment_reason
 from infrastructure.db.supabase_client import get_supabase_client
@@ -17,7 +18,10 @@ from services.identity.resolver import IdentityResolver
 from services.messaging.persistence import MessagePersistence
 from services.messaging.twilio_client import TwilioMessagingClient
 
-router = APIRouter(prefix="/escalations", tags=["dashboard-escalations"])
+router = APIRouter(
+    prefix="/escalations",
+    tags=["dashboard-escalations"],
+)
 
 
 class EscalationActionResponse(BaseModel):
@@ -45,12 +49,19 @@ async def notify_student(
     except Exception:
         return False
 
-    persistence.log_outbound(
-        ctx,
-        body=message,
-        intent=intent,
-        channel=ChatChannel.HTTP_DEV,
-    )
+    if intent == "staff_reply":
+        persistence.log_staff_reply(
+            ctx,
+            body=message,
+            channel=ChatChannel.HTTP_DEV,
+        )
+    else:
+        persistence.log_outbound(
+            ctx,
+            body=message,
+            intent=intent,
+            channel=ChatChannel.HTTP_DEV,
+        )
     result = messaging.send_whatsapp(
         to_number=phone,
         body=message,
@@ -87,27 +98,15 @@ def _enrich_escalations(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return enriched
 
 
-def _tenant_name(client: Any, tenant_id: str) -> str:
-    tenant_resp = (
-        client.table("tenants")
-        .select("id, name")
-        .eq("id", tenant_id)
-        .limit(1)
-        .execute()
-    )
-    tenant_rows = tenant_resp.data or []
-    if tenant_rows and tenant_rows[0].get("name"):
-        return tenant_rows[0]["name"]
-    return tenant_id
-
 
 @router.get("")
 async def list_escalations(
-    tenant_id: str = Query(..., description="Tenant ID"),
+    tenant: DashboardTenant,
     status: Optional[str] = Query(None, description="open | assigned | resolved"),
     reason_code: Optional[str] = Query(None, description="payment_receipt | talk_to_tutor"),
 ) -> dict[str, Any]:
     """List escalations for dashboard inbox."""
+    tenant_id = tenant.tenant_id
     client = get_supabase_client()
     query = (
         client.table("escalations")
@@ -130,11 +129,12 @@ async def list_escalations(
 @router.patch("/{escalation_id}/resolve", response_model=EscalationActionResponse)
 async def resolve_escalation(
     escalation_id: str,
-    tenant_id: str = Query(..., description="Tenant ID"),
+    tenant: DashboardTenant,
     notify: bool = Query(True, description="Send WhatsApp message to student when applicable"),
     reviewed_by: Optional[str] = Query(None, description="Staff user id or email for audit"),
 ) -> EscalationActionResponse:
     """Approve payment (activates enrollment) or close talk-to-tutor ticket."""
+    tenant_id = tenant.tenant_id
     client = get_supabase_client()
     esc = (
         client.table("escalations")
@@ -149,7 +149,7 @@ async def resolve_escalation(
         raise HTTPException(status_code=404, detail="Escalation not found")
     reason_code = esc_rows[0].get("reason_code", "")
 
-    tenant_name = _tenant_name(client, tenant_id)
+    tenant_name = tenant.name or tenant.tenant_id
     tool = CrmTool()
     raw = tool.resolve_escalation(
         tenant_id=tenant_id,
@@ -195,13 +195,13 @@ async def resolve_escalation(
 @router.patch("/{escalation_id}/reject", response_model=EscalationActionResponse)
 async def reject_payment_escalation(
     escalation_id: str,
-    tenant_id: str = Query(..., description="Tenant ID"),
+    tenant: DashboardTenant,
     notify: bool = Query(True, description="Send rejection message to student"),
     reviewed_by: Optional[str] = Query(None, description="Staff user id or email for audit"),
 ) -> EscalationActionResponse:
     """Reject a payment receipt — does not activate enrollment."""
-    client = get_supabase_client()
-    tenant_name = _tenant_name(client, tenant_id)
+    tenant_id = tenant.tenant_id
+    tenant_name = tenant.name or tenant.tenant_id
 
     tool = CrmTool()
     raw = tool.reject_payment_escalation(
