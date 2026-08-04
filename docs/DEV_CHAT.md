@@ -125,11 +125,27 @@ POST /chat  ──────────────┐
                           ├──► ChatPipeline.process_message()
 POST /webhooks/twilio ────┘           │
                                       ├── IdentityResolver
+                                      ├── run_chat_turn()  ← Phase 2
+                                      │     ├── decision_graph (guardrail ∥ router → decide)
+                                      │     └── orchestrator (direct + specialist stubs)
                                       ├── MessagePersistence → message_logs, st_turns
                                       └── (Twilio only) TwilioMessagingClient
 ```
 
-Phase 2 will replace the fixed reply inside `ChatPipeline` with `run_chat_turn()` (decision graph + agents).
+### Reference implementations
+
+Phase 2 modules are **ported from reference projects**, then adapted for the Axiom MVP SRS:
+
+| Axiom module | Source project | Original file |
+|---|---|---|
+| `decision_graph.py`, `guardrail.py`, `router.py`, `decision_state.py`, `decision_bridge.py` | **BookMe AI** | `src/agents/decision_*.py`, `guardrail.py`, `router.py` |
+| `chat_pipeline.py`, `orchestrator.py` | **BookMe AI** | `src/agents/chat_pipeline.py`, `orchestrator.py` |
+| `memory_server.py`, `mcp_config.py`, `st_store.py` | **Week 13** | `src/mcp_servers/memory_server.py`, `memory/st_store.py` |
+| `agent_prompts.py` | **BookMe AI** | `src/agents/prompts/agent_prompts.py` (tuition domain) |
+
+When extending Phases 3–5, copy the corresponding CRM/Drive/RAG modules from Week 13 and specialist agent nodes from BookMe AI orchestrator patterns.
+
+Set `AGENT_USE_MCP=true` in `.env` to route memory recall through the Week 13-style MCP subprocess.
 
 ---
 

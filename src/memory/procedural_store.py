@@ -1,4 +1,7 @@
-"""Procedural memory — tenant onboarding workflows from mem_procedures."""
+"""Procedural memory store — tenant-scoped ``mem_procedures`` lookup.
+
+Adapted from Week 13 ``memory/procedural_store.py`` (MVP: name lookup only).
+"""
 
 from __future__ import annotations
 
@@ -8,9 +11,7 @@ from infrastructure.db.supabase_client import get_supabase_client
 from memory.schemas import Procedure
 
 
-class ProceduralStore:
-    """Lookup procedural workflows scoped by tenant."""
-
+class ProceduralMemoryStore:
     def get_procedure(
         self,
         *,
@@ -21,31 +22,27 @@ class ProceduralStore:
             client = get_supabase_client()
             response = (
                 client.table("mem_procedures")
-                .select("id, tenant_id, name, description, steps, active")
+                .select("id, tenant_id, name, description, steps")
                 .eq("tenant_id", tenant_id)
                 .eq("name", name)
                 .eq("active", True)
                 .limit(1)
                 .execute()
             )
+            rows = response.data or []
         except Exception as exc:
-            logger.warning("Procedural lookup failed for {}/{}: {}", tenant_id, name, exc)
+            logger.warning("Procedural lookup failed: {}", exc)
             return None
 
-        rows = response.data or []
         if not rows:
             return None
         row = rows[0]
-        steps = row.get("steps") or []
-        if not isinstance(steps, list):
-            steps = []
         return Procedure(
             id=str(row["id"]),
             tenant_id=str(row["tenant_id"]),
             name=str(row["name"]),
-            description=row.get("description"),
-            steps=steps,
-            active=bool(row.get("active", True)),
+            description=str(row.get("description") or ""),
+            steps=row.get("steps") or [],
         )
 
     def list_procedures(self, *, tenant_id: str) -> list[Procedure]:
@@ -53,28 +50,24 @@ class ProceduralStore:
             client = get_supabase_client()
             response = (
                 client.table("mem_procedures")
-                .select("id, tenant_id, name, description, steps, active")
+                .select("id, tenant_id, name, description, steps")
                 .eq("tenant_id", tenant_id)
                 .eq("active", True)
+                .order("name")
                 .execute()
             )
+            rows = response.data or []
         except Exception as exc:
-            logger.warning("Procedural list failed for {}: {}", tenant_id, exc)
+            logger.warning("Procedural list failed: {}", exc)
             return []
 
-        procedures: list[Procedure] = []
-        for row in response.data or []:
-            steps = row.get("steps") or []
-            if not isinstance(steps, list):
-                steps = []
-            procedures.append(
-                Procedure(
-                    id=str(row["id"]),
-                    tenant_id=str(row["tenant_id"]),
-                    name=str(row["name"]),
-                    description=row.get("description"),
-                    steps=steps,
-                    active=bool(row.get("active", True)),
-                )
+        return [
+            Procedure(
+                id=str(row["id"]),
+                tenant_id=str(row["tenant_id"]),
+                name=str(row["name"]),
+                description=str(row.get("description") or ""),
+                steps=row.get("steps") or [],
             )
-        return procedures
+            for row in rows
+        ]

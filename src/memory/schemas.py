@@ -1,26 +1,42 @@
-"""Memory dataclasses for short-term turns and procedural workflows."""
+"""Memory schemas — ported from Week 13 ``memory/schemas.py`` (MVP subset)."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
 
-@dataclass(frozen=True)
+@dataclass
 class ConversationTurn:
-    role: str
+    tenant_id: str
+    user_id: str
+    session_id: str
+    role: Literal["user", "assistant"]
     content: str
-    created_at: datetime | None = None
 
-    def to_message(self) -> dict[str, str]:
-        return {"role": self.role, "content": self.content}
+    def to_dict(self) -> dict[str, str]:
+        return {
+            "tenant_id": self.tenant_id,
+            "user_id": self.user_id,
+            "session_id": self.session_id,
+            "role": self.role,
+            "content": self.content,
+        }
 
 
-@dataclass(frozen=True)
+@dataclass
 class Procedure:
     id: str
     tenant_id: str
     name: str
-    description: str | None
-    steps: list[dict[str, object]]
-    active: bool = True
+    description: str
+    steps: list[dict[str, Any]] = field(default_factory=list)
+
+    def format_steps(self) -> str:
+        if not self.steps:
+            return "No steps defined."
+        lines = [f"**{self.name}**: {self.description}", "", "**Steps**:"]
+        for i, step in enumerate(self.steps, 1):
+            prompt = step.get("prompt") or step.get("description") or str(step)
+            lines.append(f"{i}. {prompt}")
+        return "\n".join(lines)

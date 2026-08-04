@@ -2,7 +2,7 @@
 
 > **Scope:** Hackathon MVP (6 days) · AI backend only · Multi-tenant SaaS for Sri Lankan private tuition  
 > **Owner:** AI backend team · **Consumers:** Twilio (students), Next.js staff dashboard (frontend team)  
-> **Last updated:** 2026-08-04 (GPT-4o-mini + Gemini merge; status enums; Langfuse tracing + prompt management; **MCP for all agent tools**)
+> **Last updated:** 2026-08-04 (GPT-4o-mini for chat/router/guardrail/extractor + Gemini merge; **copy-from-reference policy**; Langfuse + MCP)
 
 This document replaces the generic agentic-AI template (`Roadmap.md`). It is the single source of truth for **what we build, in what order, and why**.
 
@@ -55,6 +55,7 @@ These decisions are **final for the MVP**. Do not reintroduce removed components
 | **Status fields** | **PostgreSQL ENUM types + Python `StrEnum`** | Typed statuses in DB and API — no raw string literals in application code |
 | **Observability** | **Langfuse — tracing + prompt management (MVP)** | Per-tenant/session/user traces; prompts fetched from Langfuse, not hardcoded in repo |
 | **Implementation docs** | **Context7 MCP** | Fetch current Langfuse, OpenAI, Gemini SDK docs during each phase — do not rely on stale patterns |
+| **Reference code policy** | **Copy from BookMe AI + Week 13 — do not invent** | Every phase ports existing modules from reference repos; adapt domain (tuition vs travel/hospital) only |
 
 ---
 
@@ -66,9 +67,9 @@ These decisions are **final for the MVP**. Do not reintroduce removed components
 |------|-------|----------|---------|
 | **Chat / specialist agents** | `gpt-4o-mini` | OpenAI (direct) or OpenRouter (`openai/gpt-4o-mini`) | Admissions, Resource Q&A, Direct, Payment/Escalation copy |
 | **Merge / synthesis** | `gemini-2.5-flash` | Google (`GOOGLE_API_KEY`) or OpenRouter (`google/gemini-2.5-flash`) | `merge_responses`, RAG final synthesis, multi-step reply consolidation |
-| **Router** | `llama-3.3-70b-versatile` | Groq | Fast intent JSON classification |
-| **Guardrail** | `llama-3.3-70b-versatile` | Groq | Fast in-scope / out-of-scope binary check |
-| **Extractor** | `llama-3.1-8b-instant` | Groq | Structured field extraction (onboarding slots) |
+| **Router** | `gpt-4o-mini` | OpenAI (direct) or OpenRouter | Fast intent JSON classification |
+| **Guardrail** | `gpt-4o-mini` | OpenAI (direct) or OpenRouter | Fast in-scope / out-of-scope binary check |
+| **Extractor** | `gpt-4o-mini` | OpenAI (direct) or OpenRouter | Structured field extraction (onboarding slots) |
 | **Embeddings** | `text-embedding-3-small` | OpenAI / OpenRouter | Qdrant ingest (Phase 4) |
 
 ### Why Two Models?
@@ -101,9 +102,12 @@ google:
 # src/infrastructure/llm/llm_provider.py
 get_chat_llm()        # → gpt-4o-mini
 get_merge_llm()       # → gemini-2.5-flash  (NEW factory)
-get_router_llm()      # → groq fast
-get_guardrail_llm()   # → groq fast
+get_router_llm()      # → gpt-4o-mini
+get_guardrail_llm()   # → gpt-4o-mini
+get_extractor_llm()   # → gpt-4o-mini
 ```
+
+**Note:** Groq provider support remains in `llm_provider.py` for optional future use; MVP routes guardrail, router, and extractor through OpenAI GPT-4o-mini.
 
 **Implementation note:** Use **Context7 MCP** (`resolve-library-id` → `query-docs`) for OpenAI Python SDK, Google Gemini / LangChain integration, and Langfuse `@observe` + `propagate_attributes` when wiring these factories.
 
@@ -404,6 +408,22 @@ Aligned with `docs/Tutor_AI_SRS_v2.md` §11 and ER diagram (`docs/Technical Docs
 
 ## 8. Reference Patterns to Reuse
 
+> **MANDATORY implementation policy (all phases):** Do **not** invent new agent, MCP, memory, or pipeline patterns from scratch. **Copy the corresponding files from the reference repos**, then adapt names, prompts, routes, and `tenant_id` scoping for the Axiom MVP SRS. If a module exists in BookMe AI or Week 13, start there — do not rewrite equivalent logic.
+
+**Reference repo paths (local):**
+
+| Repo | Path |
+|------|------|
+| **BookMe AI** | `/Users/mircofernando/Documents/projects/Bookme AI` |
+| **Week 13** | `/Users/mircofernando/Documents/projects/Week 13` |
+
+**Workflow per phase:**
+
+1. Identify the matching file(s) in BookMe AI and/or Week 13 (see phase `Reference Implementation` tables below).
+2. Copy into `Axiom-AI/src/…` preserving structure and function signatures.
+3. Adapt: tuition domain prompts, router intents, MCP tool names, Supabase `tenant_id` filters, Langfuse prompt names (`axiom/*`).
+4. Run phase acceptance tests before moving on.
+
 | Source | Reuse | Skip |
 |--------|-------|------|
 | **Week 13** | Folder layout, `main.py` lifespan, `deps.py`, router, **`build_agent_mcp()`**, **`mcp_config.py`**, MCP tool servers, **plain RAG service** (no CAG/CRAG), config YAML | Hospital CRM domain, **CAG cache, CRAG, CAG decision node**, 4-tier memory |
@@ -544,7 +564,7 @@ START
 3. If `verdict == out_of_scope` → return `final_answer`, save turn, **done**
 4. Else `map_decision_to_agent_state()` → invoke orchestrator
 
-Port `Guardrail` class with tutoring few-shot examples (replace BookMe travel examples). Use `get_guardrail_llm()` from infrastructure (Groq fast model). Prompt text fetched from Langfuse `axiom/guardrail` (§4).
+Port `Guardrail` class with tutoring few-shot examples (replace BookMe travel examples). Use `get_guardrail_llm()` from infrastructure (**GPT-4o-mini**). Prompt text fetched from Langfuse `axiom/guardrail` (§4).
 
 Specialist agents use **`get_chat_llm()` → GPT-4o-mini**. Response synthesis and RAG grounding use **`get_merge_llm()` → Gemini** (§2).
 
@@ -553,6 +573,8 @@ Specialist agents use **`get_chat_llm()` → GPT-4o-mini**. Response synthesis a
 ## 10. Phased Implementation Plan
 
 Work **one phase at a time**. Complete acceptance criteria before proceeding.
+
+> **Copy — do not invent:** Every phase below includes a **Reference Implementation** table. Implement by copying from **BookMe AI** and **Week 13**, then adapting for tuition domain and multi-tenant Supabase. See §8 and [docs/DEV_CHAT.md](../DEV_CHAT.md).
 
 ---
 
@@ -568,7 +590,7 @@ Project scaffold, shared Supabase schema with tenant isolation, LLM/config infra
 
 - Week 13 folder structure under `src/`
 - `config/param.yaml`, `config/models.yaml`, `.env.example`
-- LLM factories: router/guardrail (Groq), **chat (GPT-4o-mini)**, **merge (Gemini)**, extractor
+- LLM factories: **chat / router / guardrail / extractor (GPT-4o-mini)**, **merge (Gemini)**
 - Loguru + LangFuse client (`observe`, `propagate_attributes`, `flush`)
 - Supabase client + SQL migrations with **PostgreSQL ENUM types** (§3)
 - **`fastmcp` dependency** + `src/mcp_servers/mcp_config.py` scaffold (server launch config, no tools yet)
@@ -597,8 +619,17 @@ pyproject.toml
 #### Dependencies
 
 - Shared Supabase project credentials from team
-- OpenAI / OpenRouter + Google (`GOOGLE_API_KEY`) + Groq keys
+- OpenAI / OpenRouter + Google (`GOOGLE_API_KEY`) keys
 - Langfuse project keys (tracing + prompt management)
+
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **Week 13** | `src/infrastructure/`, `src/api/main.py`, `config/*.yaml`, `Makefile` | Multi-tenant schema, Langfuse hooks, health routers |
+| **Week 13** | `src/mcp_servers/mcp_config.py` | Stub server launch config only (tools wired in later phases) |
+| **BookMe AI** | `src/infrastructure/llm/`, `src/infrastructure/observability.py` | GPT + Gemini role split; Langfuse `@observe` pattern |
+| **Axiom reference** | Existing identity/schema docs | ENUM types, `tenant_id` on all tables |
 
 #### Deliverables
 
@@ -667,6 +698,14 @@ scripts/smoke_twilio.py
 - Supabase for persistence
 - Twilio account *(optional — only for real WhatsApp demo)*
 
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **BookMe AI** | `src/agents/chat_pipeline.py` (pipeline shell pattern) | Channel-agnostic `ChatPipeline`; HTTP `/chat` primary, Twilio optional |
+| **BookMe AI** | `src/infrastructure/session_store.py` | Replace with Supabase `st_turns` via `MessagePersistence` |
+| **Week 13** | `src/api/routers/`, webhook + BackgroundTasks pattern | Twilio signature validation, deferred reply |
+
 #### Deliverables
 
 - `curl POST /chat` → reply logged in Supabase
@@ -733,8 +772,19 @@ scripts/test_routing_smoke.py              # mirror BookMe scripts/test_decision
 #### Dependencies
 
 - Phase 1
-- BookMe-AI reference: `decision_graph.py`, `guardrail.py`, `decision_state.py`
-- Week 13 reference: `agent_mcp.py`, `mcp_config.py`, `memory_server.py`
+- **BookMe AI** reference: `decision_graph.py`, `guardrail.py`, `decision_state.py`, `decision_bridge.py`, `chat_pipeline.py`, `orchestrator.py`, `agents/prompts/agent_prompts.py`
+- **Week 13** reference: `agent_mcp` / `build_agent_mcp()` pattern, `mcp_config.py`, `memory_server.py`, `memory/st_store.py`
+
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **BookMe AI** | `src/agents/decision_graph.py`, `guardrail.py`, `router.py`, `decision_state.py`, `decision_bridge.py` | Tuition routes; no CAG/CRAG nodes |
+| **BookMe AI** | `src/agents/orchestrator.py`, `chat_pipeline.py`, `agents/prompts/agent_prompts.py` | Direct agent live; specialist stubs for Phases 3–5 |
+| **Week 13** | `src/mcp_servers/memory_server.py`, `memory/st_store.py`, `mcp_config.py` | Tenant-scoped ST memory + procedural lookup |
+| **BookMe AI** | `scripts/test_decision_graph.py` | → `scripts/test_routing_smoke.py` |
+
+> **Implementation note:** Phase 2 code is copied from BookMe AI + Week 13 reference repos and adapted for tuition routes (`admissions`, `resource`, `payment_check`, `escalation`, `direct`) and tenant-scoped Supabase memory. See [docs/DEV_CHAT.md](../DEV_CHAT.md) for the file mapping table.
 
 #### Acceptance Criteria
 
@@ -784,6 +834,15 @@ tests/test_crm_mcp_server.py
 scripts/sample_requests/admissions_onboarding.json
 ```
 
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **Week 13** | `src/mcp_servers/crm_server.py`, `src/agents/tools/crm_tool.py` | `register_student`, `list_classes`, `create_enrollment` + `tenant_id` |
+| **Week 13** | `src/memory/procedural_store.py`, onboarding flow patterns | Admissions procedural memory from `mem_procedures` |
+| **BookMe AI** | `src/agents/orchestrator.py` (`hotel_agent_node` / tool dispatch pattern) | → `admissions_agent_node` calling MCP CRM tools only |
+| **BookMe AI** | Structured slot extraction + multi-turn prompt pattern | Onboarding slots: name, school, district, class |
+
 #### Acceptance Criteria
 
 - [ ] Full onboarding via WhatsApp sandbox
@@ -828,6 +887,16 @@ tests/test_drive_mcp_server.py
 tests/test_rag_mcp_server.py
 tests/test_resource_routing.py
 ```
+
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **Week 13** | `src/mcp_servers/rag_server.py`, `src/agents/tools/rag_tool.py` | Qdrant `kb_{tenant_id}`; tutor notes only |
+| **Week 13** | `src/services/rag_service/`, `src/services/ingest_service/` | Ingest pipeline + chunkers; Gemini synthesis |
+| **Week 13** | Plain RAG service (no CAG/CRAG) | Grounded answers with citations via `get_merge_llm()` |
+| **BookMe AI** | `src/agents/orchestrator.py` (`web_search_agent_node` / multi-tool pattern) | → `resource_agent_node` with Drive vs RAG sub-router |
+| **New (minimal)** | `drive_server.py` / `drive_tool.py` | Model on Week 13 MCP server pattern; papers/textbooks/syllabus paths only |
 
 #### Google Drive MVP Approach
 
@@ -887,6 +956,15 @@ tests/test_dashboard_api.py
 scripts/sample_requests/dashboard_*.json
 ```
 
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **Week 13** | Extend `src/mcp_servers/crm_server.py`, `src/agents/tools/crm_tool.py` | Add `create_payment`, `create_escalation`, `set_human_mode` |
+| **BookMe AI** | `src/agents/orchestrator.py` agent node + MCP adapter pattern | → `payment_check_agent_node`, `escalation_agent_node` |
+| **Week 13** | Dashboard REST router patterns under `src/api/routers/` | Payment queue, escalation inbox, staff chat send |
+| **BookMe AI** | Twilio outbound messaging pattern | Staff → student reply via REST API |
+
 #### Acceptance Criteria
 
 - [ ] Payment image creates pending row visible via API
@@ -916,6 +994,15 @@ Full orchestrator wired, E2E tests, observability, documentation.
 - Error handling audit (router fallback, guardrail fail-open)
 - `docs/SETUP.md` — Twilio sandbox join, Supabase, Qdrant, Drive service account
 - Performance smoke: 10 concurrent webhook calls
+
+#### Reference Implementation (copy — do not invent)
+
+| Copy from | BookMe AI / Week 13 source file(s) | Adapt for Axiom |
+|-----------|-----------------------------------|-----------------|
+| **BookMe AI** | Full `orchestrator.py` wiring, E2E smoke scripts | All specialist nodes connected; MCP-only tool path |
+| **Week 13** | MCP lifespan preload, server health checks | All four MCP servers start under app lifespan |
+| **BookMe AI** | Langfuse trace verification patterns | Session/user/tenant replay for sample flows |
+| **Week 13** | Test suite structure under `tests/` | E2E: onboarding, drive, rag, payment, escalation, OOS |
 
 #### Acceptance Criteria
 
@@ -964,11 +1051,11 @@ SUPABASE_URL=
 SUPABASE_SERVICE_KEY=
 SUPABASE_DB_URL=
 
-# LLM — primary chat (GPT-4o-mini) + merge (Gemini) + fast router/guardrail (Groq)
+# LLM — chat + router + guardrail + extractor (GPT-4o-mini) + merge (Gemini)
 OPENAI_API_KEY=                             # direct OpenAI for gpt-4o-mini
 OPENROUTER_API_KEY=                         # optional: openai/gpt-4o-mini + google/gemini-2.5-flash
 GOOGLE_API_KEY=                             # Gemini merge / synthesis
-GROQ_API_KEY=                               # router + guardrail + extractor
+GROQ_API_KEY=                               # optional — provider kept in llm_provider.py; not used in MVP defaults
 
 # Qdrant (tutor notes RAG)
 QDRANT_URL=
@@ -1015,11 +1102,13 @@ Everything below is **deferred to V2**. See [§16 Future Implementations (V2)](#
 
 For **every phase**, follow this sequence:
 
-1. **Explain** — What we build, why it exists, architecture, design decisions
-2. **Implement** — Clean architecture, production-quality, minimal scope
-3. **Test** — Test scripts, sample payloads, edge cases; block until green
-4. **Review** — Architecture, errors, logging, maintainability
-5. **Gate** — Acceptance criteria met → next phase
+1. **Locate reference** — Find the matching file(s) in **BookMe AI** and/or **Week 13** (see phase `Reference Implementation` table in §10)
+2. **Copy** — Port source files into `Axiom-AI/src/…`; **do not invent equivalent logic from scratch**
+3. **Adapt** — Tuition domain prompts, router intents, `tenant_id` scoping, Langfuse prompt names (`axiom/*`)
+4. **Explain** — What we built, why it exists, what changed from reference
+5. **Test** — Test scripts, sample payloads, edge cases; block until green
+6. **Review** — Architecture, errors, logging, maintainability
+7. **Gate** — Acceptance criteria met → next phase
 
 ---
 

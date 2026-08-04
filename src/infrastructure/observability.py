@@ -1,17 +1,20 @@
-"""Langfuse observability — tracing per tenant/session/user and prompt hooks."""
+"""Langfuse observability — tracing per tenant/session/user and prompt hooks.
+
+Prompt fetch pattern ported from BookMe AI ``infrastructure/observability.py``.
+"""
 
 from __future__ import annotations
 
 import functools
 import inspect
 import os
-from contextlib import contextmanager
+from contextlib import asynccontextmanager, contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Callable, Generator, TypeVar
+from typing import Any, AsyncIterator, Callable, Generator, Iterable, TypeVar
 
 from loguru import logger
 
-from infrastructure.config import LANGFUSE_HOST, OBSERVABILITY_ENABLED
+from infrastructure.config import LANGFUSE_HOST, LANGFUSE_PROMPT_LABEL, OBSERVABILITY_ENABLED
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -138,3 +141,139 @@ def flush() -> None:
     client = get_langfuse_client()
     if client is not None:
         client.flush()
+
+
+def fetch_prompt(
+    name: str,
+    *,
+    fallback: str,
+    **compile_vars: str,
+) -> str:
+    """Resolve a prompt by Langfuse name with local fallback (BookMe pattern)."""
+    client = get_langfuse_client()
+    if client is not None:
+        try:
+            prompt_obj = client.get_prompt(name, label=LANGFUSE_PROMPT_LABEL)
+            if compile_vars:
+                return prompt_obj.compile(**compile_vars)
+            return prompt_obj.compile()
+        except Exception as exc:
+            logger.debug("Langfuse prompt {} unavailable: {}", name, exc)
+
+    if compile_vars:
+        return fallback.format(**compile_vars)
+    return fallback
+
+
+def prefetch_prompts(names: Iterable[str]) -> int:
+    """Warm Langfuse prompt cache at startup."""
+    client = get_langfuse_client()
+    if client is None:
+        return 0
+    warmed = 0
+    for name in names:
+        try:
+            client.get_prompt(name, label=LANGFUSE_PROMPT_LABEL)
+            warmed += 1
+        except Exception as exc:
+            logger.debug("prefetch: {} not in Langfuse ({})", name, exc)
+    return warmed
+
+
+@asynccontextmanager
+async def langfuse_turn_attributes(
+    *,
+    user_id: str | None = None,
+    session_id: str | None = None,
+    metadata: dict[str, Any] | None = None,
+    tags: list[str] | None = None,
+) -> AsyncIterator[None]:
+    """Propagate user/session/tags to nested spans for one chat turn."""
+    if not is_langfuse_enabled() or not _import_langfuse_symbols():
+        yield
+        return
+
+    prop_kwargs: dict[str, Any] = {}
+    if user_id:
+        prop_kwargs["user_id"] = user_id
+    if session_id:
+        prop_kwargs["session_id"] = session_id
+    if metadata:
+        prop_kwargs["metadata"] = metadata
+    if tags:
+        prop_kwargs["tags"] = tags
+
+    if not prop_kwargs:
+        yield
+        return
+
+    assert _propagate_attributes is not None
+    with _propagate_attributes(**prop_kwargs):
+        yield
+
+
+def update_current_trace(
+    *,
+    metadata: dict[str, Any] | None = None,
+    tags: list[str] | None = None,
+) -> None:
+    if not is_langfuse_enabled():
+        return
+    try:
+        from langfuse import get_client
+
+        client = get_client()
+        span_meta: dict[str, Any] = {}
+        if metadata:
+            span_meta.update(metadata)
+        if tags:
+            span_meta["tags"] = tags
+        if span_meta:
+            client.update_current_span(metadata=span_meta)
+    except Exception as exc:
+        logger.debug("update_current_trace failed: {}", exc)
+
+
+def update_current_observation(
+    *,
+    input: str | None = None,
+    output: str | None = None,
+    metadata: dict[str, Any] | None = None,
+    usage: dict[str, Any] | None = None,
+    model: str | None = None,
+) -> None:
+    """Attach I/O + usage to the current span/generation."""
+    if not is_langfuse_enabled():
+        return
+    try:
+        from langfuse import get_client
+
+        client = get_client()
+        if usage is not None or model is not None:
+            gen: dict[str, Any] = {}
+            if input is not None:
+                gen["input"] = input
+            if output is not None:
+                gen["output"] = output
+            if metadata is not None:
+                gen["metadata"] = metadata
+            if model is not None:
+                gen["model"] = model
+            if usage is not None:
+                gen["usage_details"] = usage
+            try:
+                client.update_current_generation(**gen)
+                return
+            except Exception:
+                pass
+        span: dict[str, Any] = {}
+        if input is not None:
+            span["input"] = input
+        if output is not None:
+            span["output"] = output
+        if metadata is not None:
+            span["metadata"] = metadata
+        if span:
+            client.update_current_span(**span)
+    except Exception as exc:
+        logger.debug("update_current_observation failed: {}", exc)

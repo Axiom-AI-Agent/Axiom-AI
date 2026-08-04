@@ -1,96 +1,227 @@
-"""LLM intent router — admissions, resource, payment, escalation, direct."""
+"""
+Query Router — LLM intent classification for tuition agents.
+
+Ported from BookMe AI ``agents/router.py``; routes adapted for Axiom MVP SRS.
+"""
 
 from __future__ import annotations
 
 import json
-import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
+from typing import Any
 
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from loguru import logger
 
-from domain.routing import RouterIntent
-from infrastructure.llm.llm_provider import get_router_llm
-from infrastructure.observability import observe
-from services.prompts.langfuse_prompts import PromptService, prompt_service
+from agents.prompts import build_router_prompt
+from agents.state import AgentState
+from infrastructure.llm import get_router_llm
+from infrastructure.observability import observe, update_current_observation
+
+VALID_ROUTES = frozenset({"admissions", "resource", "payment_check", "escalation", "direct"})
+VALID_ACTIONS = frozenset({"general", "search", "check", "escalate"})
+MAX_ROUTES = 3
+
+_default_router: QueryRouter | None = None
+
+SPECIALIST_ROUTES = frozenset({"admissions", "resource", "payment_check", "escalation"})
 
 
-@dataclass(frozen=True)
+@dataclass
 class RouteDecision:
-    intent: RouterIntent
-    confidence: float
-    reason: str
+    route: str = "direct"
+    confidence: float = 0.0
+    reasoning: str = ""
+    action: str | None = "general"
+    params: dict[str, Any] = field(default_factory=dict)
 
 
-class Router:
-    """Classify student messages into specialist intents."""
+@dataclass
+class MultiRouteDecision:
+    decisions: list[RouteDecision] = field(default_factory=list)
 
-    def __init__(self, *, prompts: PromptService | None = None) -> None:
-        self.prompts = prompts or prompt_service
-        self.llm = get_router_llm()
+    @property
+    def is_multi_route(self) -> bool:
+        return len(self.decisions) > 1
+
+    @property
+    def primary(self) -> RouteDecision:
+        return self.decisions[0] if self.decisions else RouteDecision()
+
+
+def _normalize_action(route: str, action: str | None) -> str:
+    if route == "direct":
+        return "general"
+    if action in VALID_ACTIONS:
+        return action
+    defaults = {
+        "admissions": "general",
+        "resource": "search",
+        "payment_check": "check",
+        "escalation": "escalate",
+    }
+    return defaults.get(route, "general")
+
+
+def _fallback_multi(reasoning: str) -> MultiRouteDecision:
+    return MultiRouteDecision(
+        decisions=[
+            RouteDecision(
+                route="direct",
+                action="general",
+                confidence=0.0,
+                reasoning=reasoning,
+            )
+        ]
+    )
+
+
+def get_query_router() -> QueryRouter:
+    global _default_router
+    if _default_router is None:
+        _default_router = QueryRouter(get_router_llm())
+    return _default_router
+
+
+def router_node(state: AgentState) -> dict:
+    user_message = _last_user_text(state)
+    memory_context = state.get("memory_context") or ""
+    result = get_query_router().route(user_message, memory_context=memory_context)
+    return {"route_decisions": [asdict(d) for d in result.decisions]}
+
+
+def _last_user_text(state: AgentState) -> str:
+    messages = state.get("messages") or []
+    for msg in reversed(messages):
+        if isinstance(msg, HumanMessage):
+            content = msg.content
+            return content if isinstance(content, str) else str(content)
+        if isinstance(msg, dict) and msg.get("role") == "user":
+            return str(msg.get("content") or "")
+    return ""
+
+
+class QueryRouter:
+    def __init__(self, llm: Any) -> None:
+        self.llm = llm
 
     @observe(name="router")
-    def route(self, message: str, *, chat_history: str = "") -> RouteDecision:
-        try:
-            return self._route(message, chat_history=chat_history)
-        except Exception as exc:
-            logger.warning("Router fallback to direct: {}", exc)
-            return RouteDecision(
-                intent=RouterIntent.DIRECT,
-                confidence=0.0,
-                reason="router_parse_error",
-            )
+    def route(self, user_message: str, memory_context: str = "") -> MultiRouteDecision:
+        return self._call(user_message, memory_context)
 
-    def _route(self, message: str, *, chat_history: str = "") -> RouteDecision:
-        messages = self.prompts.get_messages(
-            "axiom/router",
-            message=message,
-            router_context=chat_history or "(no prior turns)",
+    @observe(name="router")
+    async def aroute(self, user_message: str, memory_context: str = "") -> MultiRouteDecision:
+        return await self._acall(user_message, memory_context)
+
+    def _build_messages(self, user_message: str, memory_context: str):
+        system_prompt, user_prompt = build_router_prompt(user_message, memory_context)
+        update_current_observation(
+            input=user_prompt[:1000],
+            model=self._model_name(),
         )
-        lc_messages = []
-        for item in messages:
-            role = item["role"]
-            content = item["content"]
-            if role == "system":
-                lc_messages.append(SystemMessage(content=content))
-            else:
-                lc_messages.append(HumanMessage(content=content))
+        return [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt),
+        ]
 
-        response = self.llm.invoke(lc_messages)
-        return self._parse_response(str(response.content))
-
-    @staticmethod
-    def _parse_response(raw: str) -> RouteDecision:
-        payload = Router._extract_json(raw)
-        intent_raw = str(payload.get("intent", RouterIntent.DIRECT.value)).lower()
-        try:
-            intent = RouterIntent(intent_raw)
-        except ValueError:
-            intent = RouterIntent.DIRECT
-
-        confidence_raw = payload.get("confidence", 0.5)
-        try:
-            confidence = float(confidence_raw)
-        except (TypeError, ValueError):
-            confidence = 0.5
-
-        reason = str(payload.get("reason", "")).strip() or "router_classification"
-        return RouteDecision(intent=intent, confidence=confidence, reason=reason)
+    def _record_usage(self, content: str, response) -> None:
+        usage = {}
+        if hasattr(response, "response_metadata"):
+            meta = response.response_metadata or {}
+            token_usage = meta.get("token_usage") or meta.get("usage", {})
+            if token_usage:
+                usage = {
+                    "input": token_usage.get("prompt_tokens", 0),
+                    "output": token_usage.get("completion_tokens", 0),
+                    "total": token_usage.get("total_tokens", 0),
+                }
+        update_current_observation(output=content[:500], usage=usage if usage else None)
 
     @staticmethod
-    def _extract_json(raw: str) -> dict[str, object]:
+    def _content(response) -> str:
+        return response.content if hasattr(response, "content") else str(response)
+
+    def _call(self, user_message: str, memory_context: str) -> MultiRouteDecision:
+        try:
+            response = self.llm.invoke(self._build_messages(user_message, memory_context))
+            content = self._content(response)
+            self._record_usage(content, response)
+        except Exception as exc:
+            logger.error("Router LLM call failed: {}", exc)
+            return _fallback_multi(f"Router LLM error: {exc}")
+        return self._parse_response(content)
+
+    async def _acall(self, user_message: str, memory_context: str) -> MultiRouteDecision:
+        try:
+            response = await self.llm.ainvoke(
+                self._build_messages(user_message, memory_context)
+            )
+            content = self._content(response)
+            self._record_usage(content, response)
+        except Exception as exc:
+            logger.error("Router LLM async call failed: {}", exc)
+            return _fallback_multi(f"Router LLM error: {exc}")
+        return self._parse_response(content)
+
+    def _model_name(self) -> str:
+        if hasattr(self.llm, "model_name"):
+            return self.llm.model_name
+        if hasattr(self.llm, "model"):
+            return self.llm.model
+        return "unknown"
+
+    def _parse_response(self, raw: str) -> MultiRouteDecision:
         text = raw.strip()
         if text.startswith("```"):
-            text = re.sub(r"^```(?:json)?\s*", "", text)
-            text = re.sub(r"\s*```$", "", text)
+            text = text.split("\n", 1)[-1]
+        if text.endswith("```"):
+            text = text.rsplit("```", 1)[0]
+        text = text.strip()
+
         start = text.find("{")
         end = text.rfind("}")
-        if start >= 0 and end > start:
-            text = text[start : end + 1]
+        if start == -1 or end == -1:
+            logger.warning("Router output is not JSON; falling back to direct.")
+            return _fallback_multi("Failed to parse router output as JSON.")
+
         try:
-            parsed = json.loads(text)
-            if isinstance(parsed, dict):
-                return parsed
-        except json.JSONDecodeError:
-            pass
-        return {"intent": RouterIntent.DIRECT.value, "confidence": 0.0, "reason": "invalid_json"}
+            data = json.loads(text[start : end + 1])
+        except json.JSONDecodeError as exc:
+            logger.warning("Router JSON parse error: {}", exc)
+            return _fallback_multi(f"JSON parse error: {exc}")
+
+        if "routes" in data and isinstance(data["routes"], list):
+            route_dicts = data["routes"][:MAX_ROUTES]
+        elif "intent" in data:
+            route_dicts = [{"route": data["intent"], **data}]
+        else:
+            route_dicts = [data]
+
+        decisions: list[RouteDecision] = []
+        seen_routes: set[str] = set()
+
+        for rd in route_dicts:
+            if not isinstance(rd, dict):
+                continue
+            route = rd.get("route") or rd.get("intent") or "direct"
+            if route not in VALID_ROUTES:
+                logger.warning("Invalid route '{}'; skipping.", route)
+                continue
+            if route in seen_routes:
+                continue
+            seen_routes.add(route)
+
+            decisions.append(
+                RouteDecision(
+                    route=route,
+                    confidence=float(rd.get("confidence", 0.5)),
+                    reasoning=rd.get("reasoning", "") or rd.get("reason", "") or "",
+                    action=_normalize_action(route, rd.get("action")),
+                    params=rd.get("params") or {},
+                )
+            )
+
+        if not decisions:
+            return _fallback_multi("No valid routes parsed.")
+
+        return MultiRouteDecision(decisions=decisions)

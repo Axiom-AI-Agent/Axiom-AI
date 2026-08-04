@@ -1,44 +1,38 @@
-"""Memory business logic — invoked by memory_server MCP wrapper only."""
+"""Memory business logic — called by MCP server only (Week 13 pattern)."""
 
 from __future__ import annotations
 
-import json
-
-from domain.enums import MessageRole
-from memory.procedural_store import ProceduralStore
-from memory.schemas import ConversationTurn, Procedure
-from memory.st_store import STStore
+from memory.procedural_store import ProceduralMemoryStore
+from memory.schemas import ConversationTurn
+from memory.st_store import ShortTermMemoryStore
 
 
 class MemoryTool:
-    """Short-term recall and procedural lookup for agent nodes."""
-
     def __init__(
         self,
         *,
-        st_store: STStore | None = None,
-        procedural_store: ProceduralStore | None = None,
+        st_store: ShortTermMemoryStore | None = None,
+        procedural_store: ProceduralMemoryStore | None = None,
     ) -> None:
-        self.st_store = st_store or STStore()
-        self.procedural_store = procedural_store or ProceduralStore()
+        self.st_store = st_store or ShortTermMemoryStore()
+        self.procedural_store = procedural_store or ProceduralMemoryStore()
 
     def recall_turns(
         self,
         *,
         tenant_id: str,
         session_id: str,
+        user_id: str,
         limit: int = 10,
     ) -> str:
         turns = self.st_store.recall_turns(
             tenant_id=tenant_id,
             session_id=session_id,
+            user_id=user_id,
             limit=limit,
         )
-        payload = [
-            {"role": turn.role, "content": turn.content}
-            for turn in turns
-        ]
-        return json.dumps({"turns": payload, "count": len(payload)})
+        formatted = self.st_store.format_turns(turns)
+        return formatted or "(no prior turns)"
 
     def add_turn(
         self,
@@ -49,51 +43,26 @@ class MemoryTool:
         role: str,
         content: str,
     ) -> str:
+        if role not in ("user", "assistant"):
+            return f"Invalid role: {role}"
         self.st_store.add_turn(
-            tenant_id=tenant_id,
-            session_id=session_id,
-            user_id=user_id,
-            role=MessageRole(role),
-            content=content,
+            ConversationTurn(
+                tenant_id=tenant_id,
+                user_id=user_id,
+                session_id=session_id,
+                role=role,
+                content=content,
+            )
         )
-        return json.dumps({"status": "ok"})
+        return f"Stored {role} turn"
 
-    def get_procedural(
-        self,
-        *,
-        tenant_id: str,
-        name: str | None = None,
-    ) -> str:
+    def get_procedural(self, *, tenant_id: str, name: str | None = None) -> str:
         if name:
-            procedure = self.procedural_store.get_procedure(tenant_id=tenant_id, name=name)
-            if procedure is None:
-                return json.dumps({"procedure": None})
-            return json.dumps({"procedure": self._procedure_dict(procedure)})
-
+            proc = self.procedural_store.get_procedure(tenant_id=tenant_id, name=name)
+            if proc is None:
+                return f"(no procedure named {name})"
+            return proc.format_steps()
         procedures = self.procedural_store.list_procedures(tenant_id=tenant_id)
-        return json.dumps(
-            {"procedures": [self._procedure_dict(item) for item in procedures]}
-        )
-
-    def turns_as_messages(
-        self,
-        *,
-        tenant_id: str,
-        session_id: str,
-        limit: int = 10,
-    ) -> list[ConversationTurn]:
-        return self.st_store.recall_turns(
-            tenant_id=tenant_id,
-            session_id=session_id,
-            limit=limit,
-        )
-
-    @staticmethod
-    def _procedure_dict(procedure: Procedure) -> dict[str, object]:
-        return {
-            "id": procedure.id,
-            "name": procedure.name,
-            "description": procedure.description,
-            "steps": procedure.steps,
-            "active": procedure.active,
-        }
+        if not procedures:
+            return "(no procedures for tenant)"
+        return "\n\n".join(p.format_steps() for p in procedures)

@@ -17,13 +17,13 @@ llm:
       provider: google
       tier: general
     router:
-      provider: groq
-      tier: strong
+      provider: openai
+      tier: general
     guardrail:
-      provider: groq
-      tier: strong
+      provider: openai
+      tier: general
     extractor:
-      provider: groq
+      provider: openai
       tier: general
 
 embedding:

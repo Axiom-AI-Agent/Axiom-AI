@@ -1,4 +1,4 @@
-"""LLM factories — router/guardrail (Groq), chat (GPT-4o-mini), merge (Gemini)."""
+"""LLM factories — guardrail/router/chat/extractor (GPT-4o-mini), merge (Gemini). Groq provider retained for optional use."""
 
 from __future__ import annotations
 

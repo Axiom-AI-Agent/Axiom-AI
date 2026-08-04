@@ -1,87 +1,80 @@
-"""Short-term memory — ring buffer over Supabase st_turns."""
+"""Short-term memory store — Supabase ``st_turns`` ring buffer.
+
+Adapted from Week 13 ``memory/st_store.py`` for tenant-scoped Supabase REST client.
+"""
 
 from __future__ import annotations
-
-from datetime import UTC, datetime, timedelta
 
 from loguru import logger
 
 from domain.enums import MessageRole
-from infrastructure.config import ST_MAX_TURNS, ST_TTL_SECONDS
+from infrastructure.config import ST_MAX_TURNS
 from infrastructure.db.supabase_client import get_supabase_client
 from memory.schemas import ConversationTurn
 
 
-class STStore:
-    """Session-scoped turn buffer backed by st_turns."""
+class ShortTermMemoryStore:
+    """Recent conversation turns per tenant/session."""
 
     def recall_turns(
         self,
         *,
         tenant_id: str,
         session_id: str,
-        limit: int | None = None,
+        user_id: str | None = None,
+        limit: int = 10,
     ) -> list[ConversationTurn]:
-        max_rows = limit or ST_MAX_TURNS
         try:
             client = get_supabase_client()
-            response = (
+            query = (
                 client.table("st_turns")
                 .select("role, content, created_at")
                 .eq("tenant_id", tenant_id)
                 .eq("session_id", session_id)
-                .order("created_at", desc=True)
-                .limit(max_rows)
-                .execute()
+                .order("created_at", desc=False)
+                .limit(limit)
             )
+            if user_id:
+                query = query.eq("user_id", user_id)
+            response = query.execute()
+            rows = response.data or []
         except Exception as exc:
-            logger.warning("ST recall failed for {}: {}", session_id, exc)
+            logger.warning("ST recall failed: {}", exc)
             return []
 
-        cutoff = datetime.now(tz=UTC) - timedelta(seconds=ST_TTL_SECONDS)
         turns: list[ConversationTurn] = []
-        for row in reversed(response.data or []):
-            created_raw = row.get("created_at")
-            created_at: datetime | None = None
-            if created_raw:
-                created_at = datetime.fromisoformat(str(created_raw).replace("Z", "+00:00"))
-                if created_at < cutoff:
-                    continue
+        for row in rows:
+            role = row.get("role", "user")
+            if role not in ("user", "assistant"):
+                role = "user" if role == MessageRole.USER.value else "assistant"
             turns.append(
                 ConversationTurn(
-                    role=str(row["role"]),
-                    content=str(row["content"]),
-                    created_at=created_at,
+                    tenant_id=tenant_id,
+                    user_id=user_id or "",
+                    session_id=session_id,
+                    role=role,
+                    content=str(row.get("content") or ""),
                 )
             )
         return turns
 
-    def add_turn(
-        self,
-        *,
-        tenant_id: str,
-        session_id: str,
-        user_id: str,
-        role: MessageRole | str,
-        content: str,
-    ) -> None:
-        role_value = role.value if isinstance(role, MessageRole) else role
+    def add_turn(self, turn: ConversationTurn) -> None:
         try:
             client = get_supabase_client()
             client.table("st_turns").insert(
                 {
-                    "tenant_id": tenant_id,
-                    "user_id": user_id,
-                    "session_id": session_id,
-                    "role": role_value,
-                    "content": content,
+                    "tenant_id": turn.tenant_id,
+                    "user_id": turn.user_id,
+                    "session_id": turn.session_id,
+                    "role": turn.role,
+                    "content": turn.content,
                 }
             ).execute()
-            self._trim_session(tenant_id=tenant_id, session_id=session_id)
+            self._trim(turn.tenant_id, turn.session_id)
         except Exception as exc:
-            logger.warning("ST add_turn failed for {}: {}", session_id, exc)
+            logger.warning("ST add_turn failed: {}", exc)
 
-    def _trim_session(self, *, tenant_id: str, session_id: str) -> None:
+    def _trim(self, tenant_id: str, session_id: str) -> None:
         try:
             client = get_supabase_client()
             response = (
@@ -95,14 +88,42 @@ class STStore:
             rows = response.data or []
             if len(rows) <= ST_MAX_TURNS:
                 return
-            stale_ids = [row["id"] for row in rows[ST_MAX_TURNS:]]
-            client.table("st_turns").delete().in_("id", stale_ids).execute()
+            for row in rows[ST_MAX_TURNS:]:
+                client.table("st_turns").delete().eq("id", row["id"]).execute()
         except Exception as exc:
-            logger.debug("ST trim skipped for {}: {}", session_id, exc)
+            logger.debug("ST trim skipped: {}", exc)
 
     @staticmethod
-    def format_history(turns: list[ConversationTurn]) -> str:
+    def format_turns(turns: list[ConversationTurn]) -> str:
         if not turns:
             return ""
-        lines = [f"{turn.role}: {turn.content}" for turn in turns]
+        lines: list[str] = []
+        for turn in turns:
+            label = "User" if turn.role == "user" else "Assistant"
+            lines.append(f"{label}: {turn.content}")
         return "\n".join(lines)
+
+    def recent_pairs(
+        self,
+        *,
+        tenant_id: str,
+        user_id: str,
+        session_id: str,
+        k: int = 10,
+    ) -> list[tuple[str, str]]:
+        """Return up to k (user, assistant) pairs — BookMe SessionStore interface."""
+        turns = self.recall_turns(
+            tenant_id=tenant_id,
+            session_id=session_id,
+            user_id=user_id,
+            limit=k * 2,
+        )
+        pairs: list[tuple[str, str]] = []
+        i = 0
+        while i < len(turns) - 1:
+            if turns[i].role == "user" and turns[i + 1].role == "assistant":
+                pairs.append((turns[i].content, turns[i + 1].content))
+                i += 2
+            else:
+                i += 1
+        return pairs[-k:]

@@ -1,42 +1,50 @@
-"""Bridge decision graph output into orchestrator input."""
+"""
+Bridge decision subgraph output → orchestrator AgentState.
+
+Ported from BookMe AI ``agents/decision_bridge.py``.
+"""
 
 from __future__ import annotations
 
+from dataclasses import asdict
+from typing import Any
+
+from langchain_core.messages import AnyMessage
+
 from agents.decision_state import DecisionState
-from domain.routing import DecisionVerdict, GuardrailVerdict, RouterIntent, SPECIALIST_INTENTS
-from services.prompts.langfuse_prompts import prompt_service
+from agents.prompts import get_out_of_scope_reply
+from agents.state import AgentState
 
 
-def decide(state: DecisionState) -> DecisionState:
-    """Rule-based gate — OOS short-circuit with router override for specialists."""
-    guardrail = state.get("guardrail_verdict", GuardrailVerdict.IN_SCOPE.value)
-    intent = state.get("router_intent", RouterIntent.DIRECT.value)
-
-    if guardrail == GuardrailVerdict.OUT_OF_SCOPE.value:
-        try:
-            intent_enum = RouterIntent(intent)
-        except ValueError:
-            intent_enum = RouterIntent.DIRECT
-
-        if intent_enum in SPECIALIST_INTENTS:
-            return {
-                "verdict": DecisionVerdict.PROCEED.value,
-                "router_intent": intent_enum.value,
-            }
-
-        reply = prompt_service.get_text("axiom/out_of_scope_reply")
-        return {
-            "verdict": DecisionVerdict.OUT_OF_SCOPE.value,
-            "reply": reply,
-        }
-
-    return {"verdict": DecisionVerdict.PROCEED.value}
-
-
-def decision_to_orchestrator(state: DecisionState) -> dict[str, object]:
-    """Map decision state into orchestrator kwargs."""
-    return {
-        "intent": state.get("router_intent", RouterIntent.DIRECT.value),
-        "message": state.get("message", ""),
-        "chat_history": state.get("chat_history", ""),
+def map_decision_to_agent_state(
+    decision_out: DecisionState,
+    *,
+    messages: list[AnyMessage],
+    memory_context: str = "",
+    tenant_id: str = "",
+    user_id: str = "",
+    session_id: str = "",
+    tenant_name: str = "",
+) -> AgentState:
+    patch: dict[str, Any] = {
+        "messages": messages,
+        "memory_context": memory_context or decision_out.get("router_context") or "",
+        "tenant_id": tenant_id,
+        "user_id": user_id,
+        "session_id": session_id,
+        "tenant_name": tenant_name,
+        "guardrail": decision_out.get("guardrail", "in_scope"),
+        "verdict": decision_out.get("verdict", "proceed"),
     }
+
+    if patch["verdict"] == "out_of_scope":
+        patch["final_answer"] = decision_out.get("final_answer") or get_out_of_scope_reply()
+        return patch  # type: ignore[return-value]
+
+    decision = decision_out.get("decision")
+    if decision and decision.decisions:
+        patch["route_decisions"] = [asdict(d) for d in decision.decisions]
+    else:
+        patch["route_decisions"] = []
+
+    return patch  # type: ignore[return-value]

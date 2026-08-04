@@ -3,11 +3,18 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
+import sys
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock, patch
+
+ROOT = Path(__file__).resolve().parent.parent
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv(ROOT / ".env", override=True)
 
 from domain.enums import ChatChannel
 from services.identity.context import IdentityContext
@@ -29,17 +36,19 @@ def main() -> None:
     resolver.resolve_direct.return_value = ctx
     persistence = MagicMock()
 
-    pipeline = ChatPipeline(resolver=resolver, persistence=persistence)
-    result = pipeline.process_message(
-        InboundMessage(
-            channel=ChatChannel.TWILIO_WHATSAPP,
-            tenant_id="tenant-demo-physics",
-            phone="94771234567",
-            body="Hello, I want to join A/L Physics",
+    with patch.object(ChatPipeline, "_run_agent_turn", new_callable=AsyncMock) as mock_turn:
+        mock_turn.return_value = "Hi! Welcome to Demo Physics Academy. How can I help you today?"
+        pipeline = ChatPipeline(resolver=resolver, persistence=persistence)
+        result = pipeline.process_message(
+            InboundMessage(
+                channel=ChatChannel.TWILIO_WHATSAPP,
+                tenant_id="tenant-demo-physics",
+                phone="94771234567",
+                body="Hello, I want to join A/L Physics",
+            )
         )
-    )
 
-    print("=== Phase 1 smoke-chat ===")
+    print("=== Phase 2 smoke-chat ===")
     print("Reply:", result.reply)
     print("Session:", result.session_id)
     print("Persistence calls:", persistence.log_inbound.called, persistence.log_outbound.called)

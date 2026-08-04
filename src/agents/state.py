@@ -1,22 +1,34 @@
-"""LangGraph orchestrator state."""
+"""
+AgentState — shared LangGraph state for the Axiom orchestrator.
+
+Ported from BookMe AI ``agents/state.py``; travel slots replaced with tuition routing.
+"""
 
 from __future__ import annotations
 
-from typing import Annotated, TypedDict
+import operator
+from typing import Annotated, Optional
 
+from langchain_core.messages import AnyMessage
 from langgraph.graph.message import add_messages
+from typing_extensions import TypedDict
 
 
 class AgentState(TypedDict, total=False):
-    """State carried through the orchestrator graph."""
+    messages: Annotated[list[AnyMessage], add_messages]
 
-    message: str
     tenant_id: str
+    user_id: str
     session_id: str
-    student_id: str
-    tenant_name: str | None
-    intent: str
-    chat_history: str
-    fragments: list[str]
-    reply: str
-    messages: Annotated[list, add_messages]
+    tenant_name: str
+
+    memory_context: Optional[str]
+
+    guardrail: Optional[str]
+    verdict: Optional[str]
+
+    route_decisions: Optional[list[dict]]
+    agent_outputs: Annotated[list[dict], operator.add]
+
+    final_answer: Optional[str]
+    tool_output: str
