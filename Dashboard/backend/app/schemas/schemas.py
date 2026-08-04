@@ -79,3 +79,10 @@ class EscalationResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# ---------- Invoices ----------
+class InvoiceCreate(BaseModel):
+    tenant_id: str = DEMO_TENANT_ID
+    student_id: str
+    period: str
+    amount_due: Decimal
