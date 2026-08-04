@@ -1,7 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import classes, payments, students, escalations, invoices, dashboard
+from app.routes import (
+    classes,
+    payments,
+    students,
+    message_logs,
+    escalations,
+    invoices,
+    dashboard,
+)
 from app.database.session import engine, Base
 
 import app.models  
@@ -21,6 +29,7 @@ app.add_middleware(
 app.include_router(classes.router)
 app.include_router(payments.router)
 app.include_router(students.router)
+app.include_router(message_logs.router)
 app.include_router(escalations.router)
 app.include_router(invoices.router)
 app.include_router(dashboard.router)

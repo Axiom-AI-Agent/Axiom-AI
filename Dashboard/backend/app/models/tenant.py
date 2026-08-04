@@ -23,7 +23,7 @@ class Tenant(Base):
 
     # Status
     status = Column(
-        Enum(TenantStatus, name="tenant_status"),
+        Enum(TenantStatus, name="tenant_status", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="active",
     )

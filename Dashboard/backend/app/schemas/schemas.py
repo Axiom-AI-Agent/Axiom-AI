@@ -5,6 +5,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.models.enums import ChatChannel, EscalationStatus
+
 # Hardcoded for hackathon demo — matches sql/02_seed_demo.sql
 DEMO_TENANT_ID = "tenant-demo-physics"
 
@@ -69,13 +71,21 @@ class StudentResponse(StudentBase):
 
 
 # ---------- Escalations ----------
+
+class EscalationCreate(BaseModel):
+    tenant_id: str = DEMO_TENANT_ID
+    student_id: str
+    reason_code: str
+
+
 class EscalationResponse(BaseModel):
     id: str
     tenant_id: str
     student_id: str
     reason_code: str
-    status: str
+    status: EscalationStatus
     created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
@@ -86,3 +96,22 @@ class InvoiceCreate(BaseModel):
     student_id: str
     period: str
     amount_due: Decimal
+
+# ---------- Message Logs ----------
+class MessageLogCreate(BaseModel):
+    tenant_id: str = DEMO_TENANT_ID
+    student_id: str
+    channel: ChatChannel = ChatChannel.TWILIO_WHATSAPP
+    intent: Optional[str] = None
+
+
+class MessageLogResponse(BaseModel):
+    id: str
+    tenant_id: str
+    student_id: str
+    channel: ChatChannel
+    intent: Optional[str] = None
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True

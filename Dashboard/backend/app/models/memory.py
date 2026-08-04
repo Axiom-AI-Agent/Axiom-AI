@@ -236,7 +236,7 @@ class STTurn(Base):
     # Turn Details
     session_id = Column(String, nullable=False)
     role = Column(
-        Enum(MessageRole, name="message_role"),
+        Enum(MessageRole, name="message_role", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
     )
     content = Column(String, nullable=False)
