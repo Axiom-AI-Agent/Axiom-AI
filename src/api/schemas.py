@@ -93,6 +93,19 @@ class ChatTurnsResponse(BaseModel):
     turns: list[ChatTurnRecord]
 
 
+class DashboardChatSendRequest(BaseModel):
+    tenant_id: str
+    phone: str = Field(description="Student phone, e.g. 94771234567")
+    message: str = Field(min_length=1)
+
+
+class DashboardChatSendResponse(BaseModel):
+    ok: bool
+    tenant_id: str
+    phone: str
+    delivered: bool
+
+
 class RAGSearchRequest(BaseModel):
     tenant_id: str
     query: str = Field(min_length=1)

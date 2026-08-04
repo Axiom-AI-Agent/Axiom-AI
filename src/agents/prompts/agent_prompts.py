@@ -26,7 +26,10 @@ LANGFUSE_PROMPT_NAMES = {
     "resource_rag": "axiom/resource_rag",
     "resource_drive": "axiom/resource_drive",
     "payment_stub": "axiom/payment-stub",
+    "payment_ack": "axiom/payment_ack",
+    "payment_missing_media": "axiom/payment_missing_media",
     "escalation_stub": "axiom/escalation-stub",
+    "escalation_ack": "axiom/escalation_ack",
 }
 
 ALL_LANGFUSE_PROMPT_NAMES = list(LANGFUSE_PROMPT_NAMES.values())
@@ -148,9 +151,21 @@ _PAYMENT_STUB_FALLBACK = """\
 I received your payment-related message. Payment review is coming in Phase 5.
 """
 
+_PAYMENT_ACK_FALLBACK = """\
+Thanks! We received your payment receipt for {tenant_name}. Our team will verify it shortly and confirm your enrollment.
+"""
+
+_PAYMENT_MISSING_MEDIA_FALLBACK = """\
+Please send a photo of your bank slip or payment receipt so our team at {tenant_name} can verify your payment.
+"""
+
 _ESCALATION_STUB_FALLBACK = """\
 I've noted that you'd like to speak with a tutor. Our team will follow up shortly.
 (Full escalation inbox arrives in Phase 5.)
+"""
+
+_ESCALATION_ACK_FALLBACK = """\
+We've notified your tutor at {tenant_name}. They'll get back to you soon. You can keep chatting here in the meantime.
 """
 
 
@@ -290,8 +305,32 @@ def get_payment_stub_reply() -> str:
     )
 
 
+def build_payment_ack_reply(*, tenant_name: str = "our tuition centre") -> str:
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["payment_ack"],
+        fallback=_PAYMENT_ACK_FALLBACK,
+        tenant_name=tenant_name,
+    )
+
+
+def build_payment_missing_media_reply(*, tenant_name: str = "our tuition centre") -> str:
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["payment_missing_media"],
+        fallback=_PAYMENT_MISSING_MEDIA_FALLBACK,
+        tenant_name=tenant_name,
+    )
+
+
 def get_escalation_stub_reply() -> str:
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["escalation_stub"],
         fallback=_ESCALATION_STUB_FALLBACK,
+    )
+
+
+def build_escalation_ack_reply(*, tenant_name: str = "our tuition centre") -> str:
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["escalation_ack"],
+        fallback=_ESCALATION_ACK_FALLBACK,
+        tenant_name=tenant_name,
     )

@@ -7,9 +7,8 @@ from typing import Any
 
 from loguru import logger
 
+from domain.escalation_reasons import ENROLLMENT_PAYMENT_REASON, PAYMENT_RECEIPT
 from infrastructure.db.supabase_client import get_supabase_client
-
-ENROLLMENT_PAYMENT_REASON = "enrollment_payment_review"
 
 
 class AdmissionsDbClient:
@@ -239,35 +238,100 @@ class AdmissionsDbClient:
         response = client.table("bank_slip_uploads").insert(payload).execute()
         return (response.data or [payload])[0]
 
+    def get_escalation(
+        self, *, tenant_id: str, escalation_id: str
+    ) -> dict[str, Any] | None:
+        client = get_supabase_client()
+        response = (
+            client.table("escalations")
+            .select(
+                "id, tenant_id, student_id, enrollment_id, reason_code, status, "
+                "media_url, student_message, created_at, updated_at"
+            )
+            .eq("tenant_id", tenant_id)
+            .eq("id", escalation_id)
+            .limit(1)
+            .execute()
+        )
+        rows = response.data or []
+        return rows[0] if rows else None
+
+    def get_open_escalation(
+        self,
+        *,
+        tenant_id: str,
+        student_id: str,
+        reason_code: str,
+        enrollment_id: str | None = None,
+    ) -> dict[str, Any] | None:
+        client = get_supabase_client()
+        query = (
+            client.table("escalations")
+            .select(
+                "id, tenant_id, student_id, enrollment_id, reason_code, status, "
+                "media_url, student_message, created_at, updated_at"
+            )
+            .eq("tenant_id", tenant_id)
+            .eq("student_id", student_id)
+            .eq("reason_code", reason_code)
+            .in_("status", ["open", "assigned"])
+        )
+        if enrollment_id:
+            query = query.eq("enrollment_id", enrollment_id)
+        response = query.order("created_at", desc=True).limit(1).execute()
+        rows = response.data or []
+        return rows[0] if rows else None
+
     def create_escalation(
         self,
         *,
         tenant_id: str,
         student_id: str,
-        enrollment_id: str,
-        reason_code: str = ENROLLMENT_PAYMENT_REASON,
+        reason_code: str,
+        enrollment_id: str | None = None,
+        media_url: str | None = None,
+        student_message: str | None = None,
     ) -> dict[str, Any]:
-        client = get_supabase_client()
-        existing = (
-            client.table("escalations")
-            .select("id, tenant_id, student_id, enrollment_id, status, reason_code")
-            .eq("tenant_id", tenant_id)
-            .eq("enrollment_id", enrollment_id)
-            .in_("status", ["open", "assigned"])
-            .limit(1)
-            .execute()
+        existing = self.get_open_escalation(
+            tenant_id=tenant_id,
+            student_id=student_id,
+            reason_code=reason_code,
+            enrollment_id=enrollment_id,
         )
-        rows = existing.data or []
-        if rows:
-            return rows[0]
+        if existing:
+            if media_url and not existing.get("media_url"):
+                client = get_supabase_client()
+                response = (
+                    client.table("escalations")
+                    .update(
+                        {
+                            "media_url": media_url,
+                            "student_message": student_message or existing.get("student_message"),
+                            "updated_at": datetime.now(timezone.utc).isoformat(),
+                        }
+                    )
+                    .eq("tenant_id", tenant_id)
+                    .eq("id", existing["id"])
+                    .execute()
+                )
+                rows = response.data or []
+                return rows[0] if rows else existing
+            return existing
 
-        payload = {
+        payload: dict[str, Any] = {
             "tenant_id": tenant_id,
             "student_id": student_id,
-            "enrollment_id": enrollment_id,
             "reason_code": reason_code,
             "status": "open",
         }
+        if enrollment_id:
+            payload["enrollment_id"] = enrollment_id
+        if media_url:
+            payload["media_url"] = media_url
+        if student_message:
+            payload["student_message"] = student_message
+
+        client = get_supabase_client()
         response = client.table("escalations").insert(payload).execute()
         return (response.data or [payload])[0]
 
@@ -277,28 +341,41 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         response = (
             client.table("escalations")
-            .select("id, tenant_id, student_id, enrollment_id, status, reason_code")
+            .select(
+                "id, tenant_id, student_id, enrollment_id, reason_code, status, "
+                "media_url, student_message, created_at, updated_at"
+            )
             .eq("tenant_id", tenant_id)
             .eq("enrollment_id", enrollment_id)
             .in_("status", ["open", "assigned"])
+            .in_("reason_code", list({PAYMENT_RECEIPT, ENROLLMENT_PAYMENT_REASON}))
             .limit(1)
             .execute()
         )
         rows = response.data or []
         return rows[0] if rows else None
 
-    def resolve_escalation(
-        self, *, tenant_id: str, escalation_id: str
+    def close_escalation(
+        self,
+        *,
+        tenant_id: str,
+        escalation_id: str,
+        resolution: str | None = None,
+        reviewed_by: str | None = None,
     ) -> dict[str, Any]:
         client = get_supabase_client()
+        payload: dict[str, Any] = {
+            "status": "resolved",
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "reviewed_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if resolution:
+            payload["resolution"] = resolution
+        if reviewed_by:
+            payload["reviewed_by"] = reviewed_by
         response = (
             client.table("escalations")
-            .update(
-                {
-                    "status": "resolved",
-                    "updated_at": datetime.now(timezone.utc).isoformat(),
-                }
-            )
+            .update(payload)
             .eq("tenant_id", tenant_id)
             .eq("id", escalation_id)
             .execute()
@@ -307,6 +384,21 @@ class AdmissionsDbClient:
         if not rows:
             raise RuntimeError(f"Escalation not found: {escalation_id}")
         return rows[0]
+
+    def resolve_escalation(
+        self,
+        *,
+        tenant_id: str,
+        escalation_id: str,
+        resolution: str = "approved",
+        reviewed_by: str | None = None,
+    ) -> dict[str, Any]:
+        return self.close_escalation(
+            tenant_id=tenant_id,
+            escalation_id=escalation_id,
+            resolution=resolution,
+            reviewed_by=reviewed_by,
+        )
 
     def mark_invoice_paid(self, *, tenant_id: str, invoice_id: str) -> dict[str, Any]:
         client = get_supabase_client()

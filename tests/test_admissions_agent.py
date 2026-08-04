@@ -65,13 +65,9 @@ class FakeCrmClient:
             "status": "pending",
         }
 
-    async def submit_payment_receipt(self, **kwargs) -> dict:
-        self.open_escalation = {"id": "esc-1", "status": "open"}
-        return {
-            "ok": True,
-            "escalation": self.open_escalation,
-            "enrollment": self.pending_enrollment,
-        }
+    async def create_escalation(self, **kwargs) -> dict:
+        self.open_escalation = {"id": "esc-1", "status": "open", "reason_code": kwargs.get("reason_code")}
+        return {"ok": True, "escalation": self.open_escalation}
 
 
 @pytest.mark.asyncio
@@ -133,33 +129,3 @@ async def test_admissions_agent_requests_payment_after_consent():
     result = await agent.run(state)
     assert "payment" in result.answer.lower() or "receipt" in result.answer.lower()
     assert "successfully enrolled" not in result.answer.lower()
-
-
-@pytest.mark.asyncio
-async def test_admissions_agent_accepts_payment_receipt():
-    crm = FakeCrmClient()
-    crm.student.update(
-        {
-            "name": "Kavindu Fernando",
-            "school": "Royal College",
-            "district": "Colombo",
-            "consent_at": "2026-01-01T00:00:00+00:00",
-        }
-    )
-    crm.pending_enrollment = {
-        "id": "enr-1",
-        "class_id": "class-physics-al-2026",
-        "status": "pending",
-    }
-    agent = AdmissionsAgent(crm=crm)
-    state = {
-        "tenant_id": "tenant-demo-physics",
-        "tenant_name": "Demo Physics Academy",
-        "user_id": "stu-new",
-        "phone": "94771111001",
-        "media_url": "https://example.com/receipt.jpg",
-        "messages": [HumanMessage(content="")],
-    }
-    result = await agent.run(state)
-    assert "received" in result.answer.lower()
-    assert "review" in result.answer.lower()

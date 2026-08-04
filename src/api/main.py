@@ -1,4 +1,4 @@
-"""FastAPI application — Phase 4 resource agent (Drive + RAG) + dev chat + Twilio webhook."""
+"""FastAPI application — Phase 5 escalation inbox + dashboard APIs."""
 
 from __future__ import annotations
 
@@ -17,6 +17,10 @@ from agents.runtime import configure_agent_runtime
 from api.middleware import RequestContextMiddleware
 from api.routers.chat import router as chat_router
 from api.routers.classes import router as classes_router
+from api.routers.dashboard.chat import router as dashboard_chat_router
+from api.routers.dashboard.chat_logs import router as dashboard_chat_logs_router
+from api.routers.dashboard.escalations import router as dashboard_escalations_router
+from api.routers.dashboard.overview import router as dashboard_overview_router
 from api.routers.escalations import router as escalations_router
 from api.routers.health import router as health_router
 from api.routers.students import router as students_router
@@ -39,7 +43,7 @@ async def lifespan(app: FastAPI):
     prefetch_prompts(ALL_LANGFUSE_PROMPT_NAMES)
     app.state.startup_complete = True
     logger.info(
-        "Axiom AI API ready (Phase 4 — resource agent Drive + RAG; MCP={})",
+        "Axiom AI API ready (Phase 5 — escalation inbox; MCP={})",
         use_mcp,
     )
     yield
@@ -50,7 +54,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Axiom AI",
     description="Multi-tenant tutor agent backend",
-    version="0.5.0",
+    version="0.6.0",
     lifespan=lifespan,
 )
 
@@ -67,6 +71,10 @@ app.include_router(chat_router)
 app.include_router(students_router)
 app.include_router(classes_router)
 app.include_router(escalations_router)
+app.include_router(dashboard_escalations_router, prefix="/dashboard")
+app.include_router(dashboard_chat_router, prefix="/dashboard")
+app.include_router(dashboard_chat_logs_router, prefix="/dashboard")
+app.include_router(dashboard_overview_router, prefix="/dashboard")
 app.include_router(rag_tools_router)
 app.include_router(drive_tools_router)
 app.include_router(ingest_tools_router)
@@ -77,7 +85,7 @@ app.include_router(twilio_webhook_router)
 async def root() -> dict:
     return {
         "service": "Axiom AI",
-        "phase": 4,
+        "phase": 5,
         "health": "/health",
         "ready": "/ready",
         "config": "/config",
@@ -86,6 +94,12 @@ async def root() -> dict:
         "students": "/students/{phone}",
         "classes": "/classes",
         "escalations": "/escalations",
+        "dashboard_escalations": "/dashboard/escalations",
+        "dashboard_escalation_resolve": "/dashboard/escalations/{id}/resolve",
+        "dashboard_escalation_reject": "/dashboard/escalations/{id}/reject",
+        "dashboard_overview": "/dashboard/overview",
+        "dashboard_chat_logs": "/dashboard/chat-logs",
+        "dashboard_chat_send": "/dashboard/chat/send",
         "rag_search": "/tools/rag/search",
         "drive_search": "/tools/drive/search",
         "ingest_upload": "/tools/ingest/upload",

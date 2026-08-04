@@ -201,6 +201,18 @@ class OnboardingFlow:
             f"Welcome — class details and fee info will follow shortly."
         )
 
+    def payment_rejected_message(
+        self,
+        *,
+        student: dict[str, Any],
+        tenant_name: str,
+    ) -> str:
+        name = student.get("name") or "there"
+        return (
+            f"Hi {name}, we couldn't verify your payment receipt at {tenant_name}. "
+            f"Please send a clear photo of your bank slip again, or contact the office for help."
+        )
+
     def confirmation_message(
         self,
         *,

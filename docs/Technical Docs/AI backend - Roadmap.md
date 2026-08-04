@@ -923,11 +923,13 @@ tests/test_resource_routing.py
 
 **Duration:** Day 5 (~8h)
 
+> **As implemented:** We simplified Phase 5 to an **escalation-only HITL** model (no `payments` table, no `human_mode`, no webhooks). See **[docs/PHASE5_DECISIONS.md](../PHASE5_DECISIONS.md)** for the full decision log and **[docs/API_CONTRACT.md](../API_CONTRACT.md)** for the dashboard API.
+
 #### Objective
 
 Manual payment review queue + escalation inbox + REST APIs for dashboard team.
 
-#### Features
+#### Features *(original plan — see PHASE5_DECISIONS.md for what changed)*
 
 - Payment Check: image via Twilio `MediaUrl0` → MCP `create_payment` → `payments` (`payment_status = pending`)
 - Escalation: frustration keywords / low confidence → MCP `create_escalation` → `escalations` (`escalation_status = open`)
@@ -967,12 +969,15 @@ scripts/sample_requests/dashboard_*.json
 
 #### Acceptance Criteria
 
-- [ ] Payment image creates pending row visible via API
-- [ ] Staff approve/reject updates status + triggers Twilio message to student
-- [ ] Escalation appears in inbox with urgency
-- [ ] Staff send message delivers to student WhatsApp
-- [ ] `API_CONTRACT.md` shared with dashboard team
-- [ ] Payment and escalation agents invoke MCP tools on `crm_server`; no duplicate payment/escalation logic outside `crm_tool`
+- [x] Payment image creates escalation visible via API (`reason_code=payment_receipt`, `media_url`)
+- [x] Staff approve updates enrollment + triggers Twilio message (`PATCH .../resolve`)
+- [x] Staff reject triggers Twilio rejection message (`PATCH .../reject`)
+- [x] Escalation appears in inbox with `reason_code`
+- [x] Staff send message delivers to student WhatsApp
+- [x] `API_CONTRACT.md` shared with dashboard team
+- [x] Payment and escalation agents invoke MCP tools on `crm_server`; no duplicate logic outside `crm_tool`
+
+*(Original items `payments` table, `human_mode`, and `/dashboard/payments` were intentionally deferred — see [PHASE5_DECISIONS.md](../PHASE5_DECISIONS.md).)*
 
 ---
 

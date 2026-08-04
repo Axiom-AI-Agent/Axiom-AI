@@ -16,14 +16,11 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 from loguru import logger
 
-from agents.prompts import (
-    build_direct_system_prompt,
-    build_merge_system_prompt,
-    get_escalation_stub_reply,
-    get_payment_stub_reply,
-)
 from agents.nodes.admissions_agent import McpCrmClient, run_admissions_agent
+from agents.nodes.escalation_agent import run_escalation_agent
+from agents.nodes.payment_agent import run_payment_agent
 from agents.nodes.resource_agent import McpDriveClient, McpRagClient, run_resource_agent
+from agents.prompts import build_direct_system_prompt, build_merge_system_prompt
 from agents.router import QueryRouter, get_query_router
 from agents.state import AgentState
 from agents.tools.memory_tool import MemoryTool
@@ -310,19 +307,11 @@ class AgentOrchestrator:
 
     @observe(name="node_payment_check_agent")
     async def payment_check_agent_node(self, state: AgentState) -> dict[str, Any]:
-        answer = get_payment_stub_reply()
-        return {
-            "messages": [AIMessage(content=answer)],
-            "agent_outputs": [{"route": "payment_check", "tool_output": "", "answer": answer, "status": "ok"}],
-        }
+        return await run_payment_agent(state, crm=self.mcp_crm)
 
     @observe(name="node_escalation_agent")
     async def escalation_agent_node(self, state: AgentState) -> dict[str, Any]:
-        answer = get_escalation_stub_reply()
-        return {
-            "messages": [AIMessage(content=answer)],
-            "agent_outputs": [{"route": "escalation", "tool_output": "", "answer": answer, "status": "ok"}],
-        }
+        return await run_escalation_agent(state, crm=self.mcp_crm)
 
     @observe(name="node_merge_responses")
     async def merge_responses_node(

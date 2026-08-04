@@ -1,5 +1,5 @@
 """
-CRM MCP Server — admissions actions (register_student, get_student, list_classes, create_enrollment).
+CRM MCP Server — admissions + escalation actions.
 
 Adapted from Week 13 ``mcp_servers/crm_server.py`` for tenant-scoped Axiom MVP.
 """
@@ -83,12 +83,55 @@ def create_enrollment(tenant_id: str, student_id: str, class_id: str) -> str:
 
 
 @mcp.tool()
+def create_escalation(
+    tenant_id: str,
+    student_id: str,
+    reason_code: str,
+    media_url: str | None = None,
+    student_message: str | None = None,
+    enrollment_id: str | None = None,
+) -> str:
+    """Open a dashboard escalation (payment receipt or talk-to-tutor)."""
+    return _init().create_escalation(
+        tenant_id=tenant_id,
+        student_id=student_id,
+        reason_code=reason_code,
+        media_url=media_url,
+        student_message=student_message,
+        enrollment_id=enrollment_id,
+    )
+
+
+@mcp.tool()
+def resolve_escalation(tenant_id: str, escalation_id: str) -> str:
+    """Staff resolves escalation — payment activates enrollment; tutor closes ticket."""
+    return _init().resolve_escalation(
+        tenant_id=tenant_id,
+        escalation_id=escalation_id,
+    )
+
+
+@mcp.tool()
+def reject_payment_escalation(
+    tenant_id: str,
+    escalation_id: str,
+    reviewed_by: str | None = None,
+) -> str:
+    """Staff rejects payment receipt — closes escalation without enrollment."""
+    return _init().reject_payment_escalation(
+        tenant_id=tenant_id,
+        escalation_id=escalation_id,
+        reviewed_by=reviewed_by,
+    )
+
+
+@mcp.tool()
 def submit_payment_receipt(
     tenant_id: str,
     student_id: str,
     image_ref: str,
 ) -> str:
-    """Submit payment receipt for pending enrollment and open staff review escalation."""
+    """Legacy alias — creates payment_receipt escalation."""
     return _init().submit_payment_receipt(
         tenant_id=tenant_id,
         student_id=student_id,
@@ -98,7 +141,7 @@ def submit_payment_receipt(
 
 @mcp.tool()
 def resolve_enrollment_escalation(tenant_id: str, escalation_id: str) -> str:
-    """Staff resolves payment review — activates enrollment."""
+    """Staff approves payment review — activates enrollment."""
     return _init().resolve_enrollment_escalation(
         tenant_id=tenant_id,
         escalation_id=escalation_id,

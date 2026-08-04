@@ -7,7 +7,12 @@ from typing import Any
 
 from loguru import logger
 
-from services.admissions.admissions_db_client import AdmissionsDbClient, ENROLLMENT_PAYMENT_REASON
+from domain.escalation_reasons import (
+    ENROLLMENT_PAYMENT_REASON,
+    PAYMENT_RECEIPT,
+    is_payment_reason,
+)
+from services.admissions.admissions_db_client import AdmissionsDbClient
 
 
 class CrmTool:
@@ -134,6 +139,58 @@ class CrmTool:
             }
         )
 
+    def create_escalation(
+        self,
+        *,
+        tenant_id: str,
+        student_id: str,
+        reason_code: str,
+        media_url: str | None = None,
+        student_message: str | None = None,
+        enrollment_id: str | None = None,
+    ) -> str:
+        """Open (or return existing) escalation for dashboard inbox."""
+        student = self.db.get_student_by_id(tenant_id=tenant_id, student_id=student_id)
+        if student is None:
+            return json.dumps({"ok": False, "error": f"Student not found: {student_id}"})
+
+        try:
+            self._assert_tenant(tenant_id, student["tenant_id"], resource="student")
+        except ValueError as exc:
+            return json.dumps({"ok": False, "error": str(exc)})
+
+        pending = self.db.get_pending_enrollment(tenant_id=tenant_id, student_id=student_id)
+        linked_enrollment = enrollment_id or (pending["id"] if pending else None)
+
+        if is_payment_reason(reason_code) and pending is None and linked_enrollment is None:
+            return json.dumps(
+                {
+                    "ok": False,
+                    "error": "No pending enrollment — complete admissions before submitting payment",
+                }
+            )
+
+        try:
+            escalation = self.db.create_escalation(
+                tenant_id=tenant_id,
+                student_id=student_id,
+                reason_code=reason_code,
+                enrollment_id=linked_enrollment if is_payment_reason(reason_code) else enrollment_id,
+                media_url=media_url,
+                student_message=student_message,
+            )
+        except Exception as exc:
+            logger.warning("create_escalation failed: {}", exc)
+            return json.dumps({"ok": False, "error": str(exc)})
+
+        return json.dumps(
+            {
+                "ok": True,
+                "escalation": escalation,
+                "enrollment": pending,
+            }
+        )
+
     def submit_payment_receipt(
         self,
         *,
@@ -141,85 +198,81 @@ class CrmTool:
         student_id: str,
         image_ref: str,
     ) -> str:
-        """Attach payment receipt to pending enrollment and open staff escalation."""
-        student = self.db.get_student_by_id(tenant_id=tenant_id, student_id=student_id)
-        if student is None:
-            return json.dumps({"ok": False, "error": f"Student not found: {student_id}"})
-
-        pending = self.db.get_pending_enrollment(tenant_id=tenant_id, student_id=student_id)
-        if pending is None:
-            return json.dumps({"ok": False, "error": "No pending enrollment awaiting payment"})
-
-        class_row = self.db.get_class(tenant_id=tenant_id, class_id=pending["class_id"])
-        invoice = self.db.get_latest_invoice_for_student(
+        """Legacy alias — creates payment_receipt escalation without bank_slip storage."""
+        return self.create_escalation(
             tenant_id=tenant_id,
             student_id=student_id,
+            reason_code=PAYMENT_RECEIPT,
+            media_url=image_ref,
         )
-        if invoice is None and class_row:
-            invoice = self.db.create_invoice_for_class(
-                tenant_id=tenant_id,
-                student_id=student_id,
-                class_row=class_row,
-            )
-        if invoice is None:
-            return json.dumps({"ok": False, "error": "No invoice found for payment receipt"})
 
-        try:
-            slip = self.db.create_bank_slip_upload(
+    def resolve_escalation(
+        self,
+        *,
+        tenant_id: str,
+        escalation_id: str,
+        reviewed_by: str | None = None,
+    ) -> str:
+        """Reason-aware resolve: payment → activate enrollment; tutor → close only."""
+        escalation = self.db.get_escalation(tenant_id=tenant_id, escalation_id=escalation_id)
+        if escalation is None:
+            return json.dumps({"ok": False, "error": f"Escalation not found: {escalation_id}"})
+
+        if escalation.get("status") == "resolved":
+            return json.dumps({"ok": False, "error": "Escalation already resolved"})
+
+        reason = escalation.get("reason_code")
+        if is_payment_reason(reason):
+            return self.resolve_payment_escalation(
                 tenant_id=tenant_id,
-                invoice_id=invoice["id"],
-                image_ref=image_ref,
+                escalation_id=escalation_id,
+                reviewed_by=reviewed_by,
             )
-            escalation = self.db.create_escalation(
+
+        student = self.db.get_student_by_id(
+            tenant_id=tenant_id,
+            student_id=escalation["student_id"],
+        )
+        try:
+            self.db.resolve_escalation(
                 tenant_id=tenant_id,
-                student_id=student_id,
-                enrollment_id=pending["id"],
-                reason_code=ENROLLMENT_PAYMENT_REASON,
+                escalation_id=escalation_id,
+                resolution="closed",
+                reviewed_by=reviewed_by,
             )
         except Exception as exc:
-            logger.warning("submit_payment_receipt failed: {}", exc)
+            logger.warning("resolve_escalation failed: {}", exc)
             return json.dumps({"ok": False, "error": str(exc)})
 
         return json.dumps(
             {
                 "ok": True,
-                "enrollment": pending,
-                "invoice": invoice,
-                "bank_slip": slip,
-                "escalation": escalation,
-                "class": class_row,
+                "escalation_id": escalation_id,
+                "reason_code": reason,
+                "student": student,
+                "phone": (student or {}).get("phone"),
+                "enrollment": None,
             }
         )
 
-    def resolve_enrollment_escalation(
+    def resolve_payment_escalation(
         self,
         *,
         tenant_id: str,
         escalation_id: str,
+        reviewed_by: str | None = None,
     ) -> str:
-        """Staff resolves payment review — activates enrollment."""
-        from infrastructure.db.supabase_client import get_supabase_client
-
-        supa = get_supabase_client()
-        resp = (
-            supa.table("escalations")
-            .select("id, tenant_id, student_id, enrollment_id, status, reason_code")
-            .eq("tenant_id", tenant_id)
-            .eq("id", escalation_id)
-            .limit(1)
-            .execute()
-        )
-        rows = resp.data or []
-        if not rows:
+        """Staff approves payment — activates pending enrollment."""
+        escalation = self.db.get_escalation(tenant_id=tenant_id, escalation_id=escalation_id)
+        if escalation is None:
             return json.dumps({"ok": False, "error": f"Escalation not found: {escalation_id}"})
-        escalation = rows[0]
 
         if escalation.get("status") == "resolved":
             return json.dumps({"ok": False, "error": "Escalation already resolved"})
 
         enrollment_id = escalation.get("enrollment_id")
         if not enrollment_id:
-            return json.dumps({"ok": False, "error": "Escalation has no linked enrollment"})
+            return json.dumps({"ok": False, "error": "Payment escalation has no linked enrollment"})
 
         enrollment = self.db.get_enrollment(tenant_id=tenant_id, enrollment_id=enrollment_id)
         if enrollment is None:
@@ -236,7 +289,12 @@ class CrmTool:
         )
 
         try:
-            self.db.resolve_escalation(tenant_id=tenant_id, escalation_id=escalation_id)
+            self.db.resolve_escalation(
+                tenant_id=tenant_id,
+                escalation_id=escalation_id,
+                resolution="approved",
+                reviewed_by=reviewed_by,
+            )
             activated = self.db.activate_enrollment(
                 tenant_id=tenant_id,
                 enrollment_id=enrollment_id,
@@ -244,16 +302,74 @@ class CrmTool:
             if invoice and invoice.get("status") != "paid":
                 self.db.mark_invoice_paid(tenant_id=tenant_id, invoice_id=invoice["id"])
         except Exception as exc:
-            logger.warning("resolve_enrollment_escalation failed: {}", exc)
+            logger.warning("resolve_payment_escalation failed: {}", exc)
             return json.dumps({"ok": False, "error": str(exc)})
 
         return json.dumps(
             {
                 "ok": True,
                 "escalation_id": escalation_id,
+                "reason_code": escalation.get("reason_code"),
                 "enrollment": activated,
                 "student": student,
                 "class": class_row,
                 "phone": (student or {}).get("phone"),
             }
+        )
+
+    def reject_payment_escalation(
+        self,
+        *,
+        tenant_id: str,
+        escalation_id: str,
+        reviewed_by: str | None = None,
+    ) -> str:
+        """Staff rejects payment — closes escalation without activating enrollment."""
+        escalation = self.db.get_escalation(tenant_id=tenant_id, escalation_id=escalation_id)
+        if escalation is None:
+            return json.dumps({"ok": False, "error": f"Escalation not found: {escalation_id}"})
+
+        if escalation.get("status") == "resolved":
+            return json.dumps({"ok": False, "error": "Escalation already resolved"})
+
+        if not is_payment_reason(escalation.get("reason_code")):
+            return json.dumps({"ok": False, "error": "Only payment escalations can be rejected"})
+
+        student = self.db.get_student_by_id(
+            tenant_id=tenant_id,
+            student_id=escalation["student_id"],
+        )
+        try:
+            self.db.close_escalation(
+                tenant_id=tenant_id,
+                escalation_id=escalation_id,
+                resolution="rejected",
+                reviewed_by=reviewed_by,
+            )
+        except Exception as exc:
+            logger.warning("reject_payment_escalation failed: {}", exc)
+            return json.dumps({"ok": False, "error": str(exc)})
+
+        return json.dumps(
+            {
+                "ok": True,
+                "escalation_id": escalation_id,
+                "reason_code": escalation.get("reason_code"),
+                "resolution": "rejected",
+                "student": student,
+                "phone": (student or {}).get("phone"),
+                "enrollment": None,
+            }
+        )
+
+    def resolve_enrollment_escalation(
+        self,
+        *,
+        tenant_id: str,
+        escalation_id: str,
+    ) -> str:
+        """Backward-compatible alias for payment resolve."""
+        return self.resolve_payment_escalation(
+            tenant_id=tenant_id,
+            escalation_id=escalation_id,
         )

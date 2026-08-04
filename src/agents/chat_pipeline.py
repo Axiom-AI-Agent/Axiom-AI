@@ -6,7 +6,6 @@ Ported from BookMe AI ``agents/chat_pipeline.py``; wired to Axiom IdentityContex
 
 from __future__ import annotations
 
-import json
 import time
 from dataclasses import dataclass, field
 from typing import Any, Literal
@@ -129,21 +128,15 @@ async def run_chat_turn(
         )
 
         if media_url and verdict == "proceed":
-            from agents.tools.crm_tool import CrmTool
-
-            student_payload = json.loads(
-                CrmTool().get_student(tenant_id=ctx.tenant_id, phone=ctx.phone)
-            )
-            if student_payload.get("pending_enrollment"):
-                patch["route_decisions"] = [
-                    {
-                        "route": "admissions",
-                        "action": "general",
-                        "params": {},
-                        "confidence": 1.0,
-                        "reasoning": "payment receipt for pending enrollment",
-                    }
-                ]
+            patch["route_decisions"] = [
+                {
+                    "route": "payment_check",
+                    "action": "check",
+                    "params": {},
+                    "confidence": 1.0,
+                    "reasoning": "payment receipt image attached",
+                }
+            ]
 
         if verdict == "out_of_scope":
             answer = patch.get("final_answer") or ""

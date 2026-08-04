@@ -149,8 +149,70 @@ Set `AGENT_USE_MCP=true` in `.env` to route memory recall through the Week 13-st
 
 ---
 
+## Phase 5 — Escalations (payment + talk-to-tutor)
+
+> **Design rationale:** [PHASE5_DECISIONS.md](PHASE5_DECISIONS.md) — why we use one escalation inbox instead of payments + human_mode.
+
+Apply migration first: `make init-db` (includes `sql/02_phase5_escalations.sql`).
+
+Re-seed Langfuse prompts: `make seed-langfuse`
+
+### Flow 1 — Payment receipt → dashboard inbox
+
+Complete admissions until you have a **pending enrollment**, then:
+
+```bash
+curl -s -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d @scripts/sample_requests/dashboard_payment_receipt.json
+```
+
+Staff dashboard:
+
+```bash
+# List open payment escalations
+curl -s "http://localhost:8000/dashboard/escalations?tenant_id=tenant-demo-physics&reason_code=payment_receipt"
+
+# Approve (activates enrollment + WhatsApp confirm)
+curl -s -X PATCH "http://localhost:8000/dashboard/escalations/{id}/resolve?tenant_id=tenant-demo-physics"
+
+# Reject (no enrollment + rejection WhatsApp)
+curl -s -X PATCH "http://localhost:8000/dashboard/escalations/{id}/reject?tenant_id=tenant-demo-physics"
+```
+
+### Flow 2 — Talk to tutor
+
+```bash
+curl -s -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d @scripts/sample_requests/dashboard_talk_to_tutor.json
+```
+
+Bot acknowledges and keeps chatting. Staff sees `reason_code=talk_to_tutor` in `/dashboard/escalations`.
+
+### Staff reply
+
+```bash
+curl -s -X POST http://localhost:8000/dashboard/chat/send \
+  -H "Content-Type: application/json" \
+  -d @scripts/sample_requests/dashboard_staff_send.json
+```
+
+### Dashboard overview & chat logs
+
+```bash
+curl -s "http://localhost:8000/dashboard/overview?tenant_id=tenant-demo-physics"
+curl -s "http://localhost:8000/dashboard/chat-logs?tenant_id=tenant-demo-physics&phone=94771234567"
+```
+
+Full API reference: [API_CONTRACT.md](API_CONTRACT.md)
+
+---
+
 ## Related docs
 
+- [PHASE5_DECISIONS.md](PHASE5_DECISIONS.md) — Phase 5 design decisions (escalation-only HITL)
+- [API_CONTRACT.md](API_CONTRACT.md) — dashboard REST endpoints
 - [DATABASE.md](DATABASE.md) — schema reference
 - [DRIVE_INTEGRATION.md](DRIVE_INTEGRATION.md) — Google Drive MCP setup, institute onboarding, testing
 - [AI Backend Roadmap](Technical%20Docs/AI%20backend%20-%20Roadmap.md) — phase plan
