@@ -28,7 +28,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE chat_channel AS ENUM ('twilio_whatsapp', 'telegram');
+    CREATE TYPE chat_channel AS ENUM ('twilio_whatsapp', 'telegram', 'http_dev');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN

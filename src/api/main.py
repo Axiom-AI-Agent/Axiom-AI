@@ -1,4 +1,4 @@
-"""FastAPI application — Phase 3 admissions agent + dev chat + Twilio webhook."""
+"""FastAPI application — Phase 4 resource agent (Drive + RAG) + dev chat + Twilio webhook."""
 
 from __future__ import annotations
 
@@ -20,6 +20,9 @@ from api.routers.classes import router as classes_router
 from api.routers.escalations import router as escalations_router
 from api.routers.health import router as health_router
 from api.routers.students import router as students_router
+from api.routers.tools.drive import router as drive_tools_router
+from api.routers.tools.ingest import router as ingest_tools_router
+from api.routers.tools.rag import router as rag_tools_router
 from api.webhooks.twilio import router as twilio_webhook_router
 from infrastructure.config import validate
 from infrastructure.log import setup_logging
@@ -36,7 +39,7 @@ async def lifespan(app: FastAPI):
     prefetch_prompts(ALL_LANGFUSE_PROMPT_NAMES)
     app.state.startup_complete = True
     logger.info(
-        "Axiom AI API ready (Phase 3 — admissions agent + CRM MCP; MCP={})",
+        "Axiom AI API ready (Phase 4 — resource agent Drive + RAG; MCP={})",
         use_mcp,
     )
     yield
@@ -47,7 +50,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Axiom AI",
     description="Multi-tenant tutor agent backend",
-    version="0.4.0",
+    version="0.5.0",
     lifespan=lifespan,
 )
 
@@ -64,6 +67,9 @@ app.include_router(chat_router)
 app.include_router(students_router)
 app.include_router(classes_router)
 app.include_router(escalations_router)
+app.include_router(rag_tools_router)
+app.include_router(drive_tools_router)
+app.include_router(ingest_tools_router)
 app.include_router(twilio_webhook_router)
 
 
@@ -71,7 +77,7 @@ app.include_router(twilio_webhook_router)
 async def root() -> dict:
     return {
         "service": "Axiom AI",
-        "phase": 3,
+        "phase": 4,
         "health": "/health",
         "ready": "/ready",
         "config": "/config",
@@ -80,6 +86,9 @@ async def root() -> dict:
         "students": "/students/{phone}",
         "classes": "/classes",
         "escalations": "/escalations",
+        "rag_search": "/tools/rag/search",
+        "drive_search": "/tools/drive/search",
+        "ingest_upload": "/tools/ingest/upload",
         "webhook": "/webhooks/twilio",
         "docs": "/docs",
     }

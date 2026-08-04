@@ -91,3 +91,45 @@ class ChatTurnsResponse(BaseModel):
     tenant_id: str
     session_id: str
     turns: list[ChatTurnRecord]
+
+
+class RAGSearchRequest(BaseModel):
+    tenant_id: str
+    query: str = Field(min_length=1)
+
+
+class RAGResponse(BaseModel):
+    result: str
+    latency_ms: int
+
+
+class RAGStatusResponse(BaseModel):
+    result: str
+
+
+class DriveSearchRequest(BaseModel):
+    tenant_id: str
+    query: str = Field(min_length=1)
+    folder: Optional[str] = "papers"
+
+
+class DriveListRequest(BaseModel):
+    tenant_id: str
+    folder: str = "papers"
+
+
+class DriveResponse(BaseModel):
+    result: str
+    latency_ms: int
+
+
+class IngestUploadResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    strategy: str
+    documents: int
+    chunks_upserted: int
+    collection: str
+    points_count: Optional[int] = None
+    document_title: Optional[str] = None
+    source_filename: Optional[str] = None

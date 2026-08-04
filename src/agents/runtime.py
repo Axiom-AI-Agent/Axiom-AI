@@ -6,6 +6,8 @@ from typing import Any
 
 from loguru import logger
 
+from infrastructure.config import ALLOW_INPROCESS_TOOLS
+
 _decision_graph: Any | None = None
 _orchestrator: Any | None = None
 _use_mcp: bool = False
@@ -37,10 +39,26 @@ async def get_orchestrator():
     global _orchestrator
     if _orchestrator is None:
         if _use_mcp:
-            from agents.orchestrator import build_agent_mcp
+            try:
+                from agents.orchestrator import build_agent_mcp
 
-            _orchestrator = await build_agent_mcp()
-            logger.info("Orchestrator ready (MCP memory)")
+                _orchestrator = await build_agent_mcp()
+                logger.info("Orchestrator ready (MCP subprocesses)")
+            except Exception as exc:
+                if not ALLOW_INPROCESS_TOOLS:
+                    raise RuntimeError(
+                        "MCP orchestrator failed and ALLOW_INPROCESS_TOOLS=false. "
+                        "Fix MCP setup or set ALLOW_INPROCESS_TOOLS=true for local dev."
+                    ) from exc
+                logger.warning(
+                    "MCP orchestrator unavailable ({}); falling back to in-process tools. "
+                    "Install langchain-mcp-adapters on Python 3.10+ or set AGENT_USE_MCP=false.",
+                    exc,
+                )
+                from agents.orchestrator import build_orchestrator
+
+                _orchestrator = build_orchestrator()
+                logger.info("Orchestrator ready (direct tool fallback)")
         else:
             from agents.orchestrator import build_orchestrator
 

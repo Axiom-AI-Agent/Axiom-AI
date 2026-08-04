@@ -23,6 +23,8 @@ LANGFUSE_PROMPT_NAMES = {
     "out_of_scope_reply": "axiom/out_of_scope_reply",
     "admissions_stub": "axiom/admissions-stub",
     "resource_stub": "axiom/resource-stub",
+    "resource_rag": "axiom/resource_rag",
+    "resource_drive": "axiom/resource_drive",
     "payment_stub": "axiom/payment-stub",
     "escalation_stub": "axiom/escalation-stub",
 }
@@ -67,7 +69,7 @@ Return JSON with a "routes" array (1–3 items). Each item:
 
 Rules:
   • admissions: enrollment, joining a class, registration, onboarding
-  • resource: past papers, textbooks, syllabus, lesson notes, study materials
+  • resource: past papers, textbooks, syllabus, lesson notes, study materials, explain topics from notes
   • payment_check: fee payment, bank slip, payment status, receipt
   • escalation: speak to tutor/human, complaint, urgent help
   • direct: greetings, thanks, chitchat, simple in-scope questions — no specialist tools
@@ -87,7 +89,7 @@ HARD ROUTING RULES:
   Today is {today_local} ({today_d}).
   Greeting / thanks / chitchat                         → direct
   Join class / enroll / register / new student         → admissions
-  Past papers / textbooks / syllabus / notes           → resource
+  Past papers / textbooks / syllabus / notes / explain lesson topic  → resource
   Fee / payment / bank slip / receipt                  → payment_check
   Speak to tutor / human / complaint / urgent          → escalation
   In doubt: short social reply                         → direct
@@ -126,6 +128,20 @@ in the right class. (Full onboarding arrives in Phase 3.)
 
 _RESOURCE_STUB_FALLBACK = """\
 I'll help you find past papers and study resources soon. (Resource agent arrives in Phase 4.)
+"""
+
+_RESOURCE_RAG_FALLBACK = """\
+Based on your tutor's notes:
+
+{answer}
+
+Sources: {citations}
+"""
+
+_RESOURCE_DRIVE_FALLBACK = """\
+Here are the files I found for "{query}":
+
+{file_list}
 """
 
 _PAYMENT_STUB_FALLBACK = """\
@@ -209,6 +225,61 @@ def get_resource_stub_reply() -> str:
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["resource_stub"],
         fallback=_RESOURCE_STUB_FALLBACK,
+    )
+
+
+def build_resource_rag_reply(
+    *,
+    answer: str,
+    citations: list[dict] | None = None,
+    error: str | None = None,
+) -> str:
+    if error:
+        return f"Sorry — I couldn't search the tutor notes right now. ({error})"
+    if not answer:
+        return "I couldn't find relevant tutor notes for that. Try rephrasing or ask your tutor directly."
+    cite_parts = []
+    for c in citations or []:
+        lesson = c.get("lesson")
+        title = c.get("title") or "notes"
+        if lesson:
+            cite_parts.append(f"[lesson: {lesson}] {title}")
+        elif title:
+            cite_parts.append(title)
+    citations_str = ", ".join(cite_parts) if cite_parts else "tutor notes"
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["resource_rag"],
+        fallback=_RESOURCE_RAG_FALLBACK,
+        answer=answer,
+        citations=citations_str,
+    )
+
+
+def build_resource_drive_reply(
+    *,
+    files: list[dict],
+    query: str,
+    tenant_name: str = "your tuition centre",
+    error: str | None = None,
+    empty_message: str | None = None,
+) -> str:
+    if error:
+        return f"Sorry — I couldn't search Drive for {tenant_name}. ({error})"
+    if not files:
+        return empty_message or f"I couldn't find any files matching '{query}'. Try a different search term."
+    lines = []
+    for f in files:
+        name = f.get("name", "file")
+        link = f.get("link") or "(link unavailable)"
+        folder = f.get("folder", "papers")
+        lines.append(f"• {name} ({folder})\n  {link}")
+    file_list = "\n".join(lines)
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["resource_drive"],
+        fallback=_RESOURCE_DRIVE_FALLBACK,
+        query=query,
+        file_list=file_list,
+        tenant_name=tenant_name,
     )
 
 

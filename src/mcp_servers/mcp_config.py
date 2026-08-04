@@ -1,5 +1,5 @@
 """
-MCP client configuration — memory + CRM servers (Phase 3).
+MCP client configuration — memory + CRM + Drive + RAG servers (Phase 4).
 
 Adapted from Week 13 ``mcp_servers/mcp_config.py``.
 """
@@ -25,6 +25,18 @@ def build_mcp_server_config() -> dict:
         "axiom-crm": {
             "command": _PYTHON,
             "args": ["-m", "mcp_servers.crm_server"],
+            "transport": "stdio",
+            "cwd": _SRC_DIR,
+        },
+        "axiom-drive": {
+            "command": _PYTHON,
+            "args": ["-m", "mcp_servers.drive_server"],
+            "transport": "stdio",
+            "cwd": _SRC_DIR,
+        },
+        "axiom-rag": {
+            "command": _PYTHON,
+            "args": ["-m", "mcp_servers.rag_server"],
             "transport": "stdio",
             "cwd": _SRC_DIR,
         },

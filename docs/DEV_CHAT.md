@@ -152,4 +152,5 @@ Set `AGENT_USE_MCP=true` in `.env` to route memory recall through the Week 13-st
 ## Related docs
 
 - [DATABASE.md](DATABASE.md) — schema reference
+- [DRIVE_INTEGRATION.md](DRIVE_INTEGRATION.md) — Google Drive MCP setup, institute onboarding, testing
 - [AI Backend Roadmap](Technical%20Docs/AI%20backend%20-%20Roadmap.md) — phase plan

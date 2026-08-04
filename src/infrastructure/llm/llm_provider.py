@@ -74,6 +74,7 @@ def _build_google_llm(
         temperature=temperature,
         max_output_tokens=max_tokens,
         google_api_key=api_key,
+        timeout=30,
         **kwargs,
     )
 

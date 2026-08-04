@@ -15,6 +15,8 @@ LOCAL_PROMPTS: dict[str, str | list[dict[str, str]]] = {
     ap.LANGFUSE_PROMPT_NAMES["out_of_scope_reply"]: ap._OUT_OF_SCOPE_REPLY_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["admissions_stub"]: ap._ADMISSIONS_STUB_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["resource_stub"]: ap._RESOURCE_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_rag"]: ap._RESOURCE_RAG_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_drive"]: ap._RESOURCE_DRIVE_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["payment_stub"]: ap._PAYMENT_STUB_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["escalation_stub"]: ap._ESCALATION_STUB_FALLBACK.strip(),
 }

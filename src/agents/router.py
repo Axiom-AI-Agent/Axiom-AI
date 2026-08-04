@@ -7,6 +7,7 @@ Ported from BookMe AI ``agents/router.py``; routes adapted for Axiom MVP SRS.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -25,6 +26,99 @@ MAX_ROUTES = 3
 _default_router: QueryRouter | None = None
 
 SPECIALIST_ROUTES = frozenset({"admissions", "resource", "payment_check", "escalation"})
+
+_RESOURCE_PATTERNS = (
+    r"\bpast paper",
+    r"\bmodel paper",
+    r"\btextbook\b",
+    r"\bsyllabus\b",
+    r"\bnotes?\b",
+    r"\buploaded\b",
+    r"\blesson\b",
+    r"\bexplain\b",
+    r"\bunderstand\b",
+    r"what did",
+    r"what is",
+    r"what are",
+    r"help me with",
+    r"how does",
+    r"how do",
+)
+_ESCALATION_PATTERNS = (
+    r"speak to (?:a |the )?(?:tutor|human|person|teacher|sir|madam)",
+    r"talk to (?:a |the )?(?:tutor|human|person|teacher|sir|madam)",
+    r"\bcomplaint\b",
+    r"\burgent\b",
+    r"need (?:a )?human",
+)
+_ADMISSIONS_PATTERNS = (
+    r"\benroll",
+    r"\bregister",
+    r"want to join",
+    r"join (?:the )?class",
+    r"join (?:a |an )?",
+    r"new student",
+    r"sign up",
+)
+_PAYMENT_PATTERNS = (
+    r"bank slip",
+    r"\bpayment\b",
+    r"\bfee\b",
+    r"\breceipt\b",
+    r"paid my",
+)
+_DIRECT_PATTERNS = (
+    r"^(hi|hello|hey|thanks|thank you|ok|okay|bye)[!.?\s]*$",
+)
+
+
+def _pattern_score(text: str, patterns: tuple[str, ...]) -> int:
+    return sum(1 for p in patterns if re.search(p, text))
+
+
+def heuristic_route(message: str) -> MultiRouteDecision | None:
+    """Deterministic routing for unambiguous tuition intents (before LLM)."""
+    text = message.lower().strip()
+    if not text:
+        return None
+
+    scores = {
+        "resource": _pattern_score(text, _RESOURCE_PATTERNS),
+        "escalation": _pattern_score(text, _ESCALATION_PATTERNS),
+        "admissions": _pattern_score(text, _ADMISSIONS_PATTERNS),
+        "payment_check": _pattern_score(text, _PAYMENT_PATTERNS),
+    }
+    best_route = max(scores, key=lambda k: scores[k])
+    best_score = scores[best_route]
+
+    if best_score == 0:
+        if _pattern_score(text, _DIRECT_PATTERNS):
+            return MultiRouteDecision(
+                decisions=[
+                    RouteDecision(
+                        route="direct",
+                        action="general",
+                        confidence=0.95,
+                        reasoning="greeting or social message",
+                    )
+                ]
+            )
+        return None
+
+    if best_score > 0 and sum(1 for v in scores.values() if v == best_score) > 1:
+        return None
+
+    action = _normalize_action(best_route, None)
+    return MultiRouteDecision(
+        decisions=[
+            RouteDecision(
+                route=best_route,
+                action=action,
+                confidence=0.95,
+                reasoning=f"keyword heuristic ({best_score} match(es))",
+            )
+        ]
+    )
 
 
 @dataclass
@@ -142,6 +236,9 @@ class QueryRouter:
         return response.content if hasattr(response, "content") else str(response)
 
     def _call(self, user_message: str, memory_context: str) -> MultiRouteDecision:
+        heuristic = heuristic_route(user_message)
+        if heuristic is not None:
+            return heuristic
         try:
             response = self.llm.invoke(self._build_messages(user_message, memory_context))
             content = self._content(response)
@@ -152,6 +249,9 @@ class QueryRouter:
         return self._parse_response(content)
 
     async def _acall(self, user_message: str, memory_context: str) -> MultiRouteDecision:
+        heuristic = heuristic_route(user_message)
+        if heuristic is not None:
+            return heuristic
         try:
             response = await self.llm.ainvoke(
                 self._build_messages(user_message, memory_context)

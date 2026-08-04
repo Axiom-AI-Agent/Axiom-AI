@@ -21,9 +21,9 @@ from agents.prompts import (
     build_merge_system_prompt,
     get_escalation_stub_reply,
     get_payment_stub_reply,
-    get_resource_stub_reply,
 )
 from agents.nodes.admissions_agent import McpCrmClient, run_admissions_agent
+from agents.nodes.resource_agent import McpDriveClient, McpRagClient, run_resource_agent
 from agents.router import QueryRouter, get_query_router
 from agents.state import AgentState
 from agents.tools.memory_tool import MemoryTool
@@ -162,6 +162,8 @@ class AgentOrchestrator:
         memory_tool: MemoryTool | None = None,
         mcp_memory: _MCPMemoryToolAdapter | None = None,
         mcp_crm: McpCrmClient | None = None,
+        mcp_drive: McpDriveClient | None = None,
+        mcp_rag: McpRagClient | None = None,
         router: QueryRouter | None = None,
     ) -> None:
         self.llm_chat = llm_chat
@@ -169,6 +171,8 @@ class AgentOrchestrator:
         self.memory_tool = memory_tool or MemoryTool()
         self.mcp_memory = mcp_memory
         self.mcp_crm = mcp_crm
+        self.mcp_drive = mcp_drive
+        self.mcp_rag = mcp_rag
         self.router = router or get_query_router()
         self.graph = self._build_graph()
 
@@ -298,11 +302,11 @@ class AgentOrchestrator:
 
     @observe(name="node_resource_agent")
     async def resource_agent_node(self, state: AgentState) -> dict[str, Any]:
-        answer = get_resource_stub_reply()
-        return {
-            "messages": [AIMessage(content=answer)],
-            "agent_outputs": [{"route": "resource", "tool_output": "", "answer": answer, "status": "ok"}],
-        }
+        return await run_resource_agent(
+            state,
+            drive=self.mcp_drive,
+            rag=self.mcp_rag,
+        )
 
     @observe(name="node_payment_check_agent")
     async def payment_check_agent_node(self, state: AgentState) -> dict[str, Any]:
@@ -414,6 +418,8 @@ async def build_agent_mcp(*, memory_tool: MemoryTool | None = None) -> AgentOrch
         memory_tool=memory_tool or MemoryTool(),
         mcp_memory=_MCPMemoryToolAdapter(tools_by_name),
         mcp_crm=McpCrmClient(tools_by_name),
+        mcp_drive=McpDriveClient(tools_by_name),
+        mcp_rag=McpRagClient(tools_by_name),
     )
     orchestrator.mcp_client = mcp_client
     orchestrator.mcp_tools = tools_by_name

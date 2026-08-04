@@ -39,6 +39,8 @@ def _seed_catalog() -> list[tuple[str, str, str]]:
         (ap.LANGFUSE_PROMPT_NAMES["out_of_scope_reply"], "text", ap._OUT_OF_SCOPE_REPLY_FALLBACK.strip()),
         (ap.LANGFUSE_PROMPT_NAMES["admissions_stub"], "text", ap._ADMISSIONS_STUB_FALLBACK.strip()),
         (ap.LANGFUSE_PROMPT_NAMES["resource_stub"], "text", ap._RESOURCE_STUB_FALLBACK.strip()),
+        (ap.LANGFUSE_PROMPT_NAMES["resource_rag"], "text", _langfuse_template(ap._RESOURCE_RAG_FALLBACK)),
+        (ap.LANGFUSE_PROMPT_NAMES["resource_drive"], "text", _langfuse_template(ap._RESOURCE_DRIVE_FALLBACK)),
         (ap.LANGFUSE_PROMPT_NAMES["payment_stub"], "text", ap._PAYMENT_STUB_FALLBACK.strip()),
         (ap.LANGFUSE_PROMPT_NAMES["escalation_stub"], "text", ap._ESCALATION_STUB_FALLBACK.strip()),
     ]
