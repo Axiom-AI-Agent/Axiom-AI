@@ -19,12 +19,13 @@ class MessagePersistence:
         body: str,
         intent: str = "inbound",
         media_url: str | None = None,
+        channel: ChatChannel = ChatChannel.HTTP_DEV,
     ) -> None:
         content = body.strip()
         if not content and media_url:
             content = f"[media] {media_url}"
 
-        self._insert_message_log(ctx, intent=intent)
+        self._insert_message_log(ctx, intent=intent, channel=channel)
         self._insert_turn(ctx, role=MessageRole.USER, content=content or "(empty)")
 
     def log_outbound(
@@ -33,18 +34,25 @@ class MessagePersistence:
         *,
         body: str,
         intent: str = "outbound",
+        channel: ChatChannel = ChatChannel.HTTP_DEV,
     ) -> None:
-        self._insert_message_log(ctx, intent=intent)
+        self._insert_message_log(ctx, intent=intent, channel=channel)
         self._insert_turn(ctx, role=MessageRole.ASSISTANT, content=body)
 
-    def _insert_message_log(self, ctx: IdentityContext, *, intent: str) -> None:
+    def _insert_message_log(
+        self,
+        ctx: IdentityContext,
+        *,
+        intent: str,
+        channel: ChatChannel,
+    ) -> None:
         try:
             client = get_supabase_client()
             client.table("message_logs").insert(
                 {
                     "tenant_id": ctx.tenant_id,
                     "student_id": ctx.student_id,
-                    "channel": ChatChannel.TWILIO_WHATSAPP.value,
+                    "channel": channel.value,
                     "intent": intent,
                 }
             ).execute()

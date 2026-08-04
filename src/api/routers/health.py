@@ -35,7 +35,7 @@ router = APIRouter(tags=["System"])
 @router.get("/health", response_model=HealthResponse)
 async def health(request: Request) -> HealthResponse:
     started = getattr(request.app.state, "startup_complete", False)
-    return HealthResponse(status="ok" if started else "starting", phase=1)
+    return HealthResponse(status="ok" if started else "starting", phase=3)
 
 
 @router.get("/ready", response_model=ReadinessResponse)
@@ -77,7 +77,7 @@ async def ready(request: Request) -> ReadinessResponse:
         return ReadinessCheck(
             name="langfuse",
             ok=active,
-            detail="connected" if active else "keys set but client init failed",
+            detail="connected" if active else "keys invalid or disabled — local prompt fallbacks",
         )
 
     checks = list(

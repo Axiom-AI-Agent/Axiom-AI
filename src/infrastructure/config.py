@@ -57,6 +57,17 @@ LANGFUSE_HOST = os.getenv("LANGFUSE_HOST") or os.getenv(
 LANGFUSE_PROMPT_LABEL = os.getenv("LANGFUSE_PROMPT_LABEL", "production")
 
 
+def _env_bool(name: str, *, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in ("1", "true", "yes", "on")
+
+
+# Set LANGFUSE_ENABLED=false in .env to skip tracing/prompt fetch (local fallbacks only).
+LANGFUSE_ENABLED = _env_bool("LANGFUSE_ENABLED", default=True)
+
+
 def get_chat_model(provider: str | None = None, tier: str | None = None) -> str:
     provider_key = provider or PROVIDER
     tier_key = tier or MODEL_TIER

@@ -65,5 +65,5 @@ async def twilio_webhook(request: Request, background_tasks: BackgroundTasks) ->
         raise HTTPException(status_code=400, detail="Missing From or To in Twilio payload")
 
     pipeline = ChatPipeline()
-    background_tasks.add_task(pipeline.process_twilio, inbound)
+    background_tasks.add_task(pipeline.aprocess_twilio, inbound)
     return Response(status_code=200, content="")

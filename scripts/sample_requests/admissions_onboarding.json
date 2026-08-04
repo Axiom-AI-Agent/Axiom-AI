@@ -1,0 +1,14 @@
+"""Sample multi-turn admissions onboarding messages for dev chat."""
+
+{
+  "tenant_id": "tenant-demo-physics",
+  "phone": "94771111001",
+  "turns": [
+    "Hi, I want to join A/L Physics",
+    "Kavindu Fernando",
+    "Royal College Colombo",
+    "Colombo",
+    "A/L Physics",
+    "YES"
+  ]
+}

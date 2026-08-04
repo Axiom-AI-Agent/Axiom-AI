@@ -53,7 +53,7 @@ class Guardrail:
     def __init__(self, llm: Any) -> None:
         self.llm = llm
 
-    @observe(name="guardrail")
+    @observe(name="guardrail", as_type="generation")
     async def aclassify(
         self,
         message: str,

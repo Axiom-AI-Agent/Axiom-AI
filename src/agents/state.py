@@ -19,8 +19,12 @@ class AgentState(TypedDict, total=False):
 
     tenant_id: str
     user_id: str
+    student_id: str
+    phone: str
     session_id: str
     tenant_name: str
+
+    media_url: Optional[str]
 
     memory_context: Optional[str]
 

@@ -1,4 +1,4 @@
-.PHONY: install run test lint health ready config smoke-llm smoke-twilio smoke-chat smoke-routing verify-phase0 init-db
+.PHONY: install run test lint health ready config smoke-llm smoke-twilio smoke-chat smoke-routing smoke-st-memory smoke-mcp-memory smoke-admissions smoke-gates smoke-langfuse seed-langfuse clear-demo-session check-python verify-phase0 init-db
 
 PYTHON ?= python3
 export PYTHONPATH := src
@@ -35,6 +35,29 @@ smoke-chat:
 
 smoke-routing:
 	$(PYTHON) scripts/test_routing_smoke.py
+
+smoke-st-memory:
+	$(PYTHON) scripts/smoke_st_memory.py
+
+smoke-mcp-memory:
+	$(PYTHON) scripts/smoke_mcp_memory.py
+
+smoke-admissions:
+	$(PYTHON) scripts/smoke_admissions.py
+
+smoke-gates: smoke-routing smoke-st-memory smoke-mcp-memory smoke-admissions
+
+smoke-langfuse:
+	$(PYTHON) scripts/smoke_langfuse_trace.py
+
+seed-langfuse:
+	$(PYTHON) scripts/seed_langfuse_prompts.py
+
+clear-demo-session:
+	$(PYTHON) scripts/clear_demo_session.py
+
+check-python:
+	$(PYTHON) scripts/check_python.py
 
 verify-phase0:
 	$(PYTHON) scripts/verify_phase0.py

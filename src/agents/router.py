@@ -105,11 +105,11 @@ class QueryRouter:
     def __init__(self, llm: Any) -> None:
         self.llm = llm
 
-    @observe(name="router")
+    @observe(name="router", as_type="generation")
     def route(self, user_message: str, memory_context: str = "") -> MultiRouteDecision:
         return self._call(user_message, memory_context)
 
-    @observe(name="router")
+    @observe(name="router", as_type="generation")
     async def aroute(self, user_message: str, memory_context: str = "") -> MultiRouteDecision:
         return await self._acall(user_message, memory_context)
 

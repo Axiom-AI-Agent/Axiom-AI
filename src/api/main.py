@@ -1,4 +1,4 @@
-"""FastAPI application — Phase 2 agent framework + dev chat + Twilio webhook."""
+"""FastAPI application — Phase 3 admissions agent + dev chat + Twilio webhook."""
 
 from __future__ import annotations
 
@@ -16,11 +16,14 @@ from agents.prompts import ALL_LANGFUSE_PROMPT_NAMES
 from agents.runtime import configure_agent_runtime
 from api.middleware import RequestContextMiddleware
 from api.routers.chat import router as chat_router
+from api.routers.classes import router as classes_router
+from api.routers.escalations import router as escalations_router
 from api.routers.health import router as health_router
+from api.routers.students import router as students_router
 from api.webhooks.twilio import router as twilio_webhook_router
 from infrastructure.config import validate
 from infrastructure.log import setup_logging
-from infrastructure.observability import flush, prefetch_prompts
+from infrastructure.observability import flush, get_langfuse_client, prefetch_prompts
 
 
 @asynccontextmanager
@@ -29,10 +32,11 @@ async def lifespan(app: FastAPI):
     validate(require_llm=False, require_supabase=False)
     use_mcp = os.getenv("AGENT_USE_MCP", "false").lower() == "true"
     configure_agent_runtime(use_mcp=use_mcp)
+    get_langfuse_client()
     prefetch_prompts(ALL_LANGFUSE_PROMPT_NAMES)
     app.state.startup_complete = True
     logger.info(
-        "Axiom AI API ready (Phase 2 — decision graph + orchestrator; MCP={})",
+        "Axiom AI API ready (Phase 3 — admissions agent + CRM MCP; MCP={})",
         use_mcp,
     )
     yield
@@ -43,7 +47,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Axiom AI",
     description="Multi-tenant tutor agent backend",
-    version="0.3.0",
+    version="0.4.0",
     lifespan=lifespan,
 )
 
@@ -57,6 +61,9 @@ app.add_middleware(
 app.add_middleware(RequestContextMiddleware)
 app.include_router(health_router)
 app.include_router(chat_router)
+app.include_router(students_router)
+app.include_router(classes_router)
+app.include_router(escalations_router)
 app.include_router(twilio_webhook_router)
 
 
@@ -64,12 +71,15 @@ app.include_router(twilio_webhook_router)
 async def root() -> dict:
     return {
         "service": "Axiom AI",
-        "phase": 2,
+        "phase": 3,
         "health": "/health",
         "ready": "/ready",
         "config": "/config",
         "chat": "/chat",
         "chat_turns": "/chat/turns",
+        "students": "/students/{phone}",
+        "classes": "/classes",
+        "escalations": "/escalations",
         "webhook": "/webhooks/twilio",
         "docs": "/docs",
     }

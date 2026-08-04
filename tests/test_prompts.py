@@ -11,6 +11,6 @@ def test_local_prompt_fallback_text():
 
 def test_local_prompt_fallback_messages():
     service = PromptService()
-    messages = service.get_messages("axiom/direct", message="Hello")
-    assert messages[0]["role"] == "system"
-    assert messages[-1]["content"] == "Hello"
+    text = service.get_text("axiom/router-user", memory_context="prior chat", user_message="Hello")
+    assert "Hello" in text
+    assert "prior chat" in text

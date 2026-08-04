@@ -9,7 +9,7 @@ from loguru import logger
 from agents.chat_pipeline import run_chat_turn
 from agents.runtime import get_decision_graph, get_orchestrator
 from domain.enums import ChatChannel
-from infrastructure.observability import TraceContext, flush, observe, trace_context
+from infrastructure.observability import flush
 from services.identity.context import IdentityContext
 from services.identity.resolver import IdentityResolver
 from services.messaging.persistence import MessagePersistence
@@ -31,48 +31,34 @@ class ChatPipeline:
         self.messaging = messaging or TwilioMessagingClient()
         self.persistence = persistence or MessagePersistence()
 
-    @observe(name="chat_turn")
-    def process_message(self, inbound: InboundMessage) -> ChatTurnResult:
+    async def aprocess_message(self, inbound: InboundMessage) -> ChatTurnResult:
         ctx = self._resolve_identity(inbound)
 
-        trace = TraceContext(
-            tenant_id=ctx.tenant_id,
-            session_id=ctx.session_id,
-            user_id=ctx.student_id,
-            tenant_slug=ctx.tenant_slug,
-            channel=inbound.channel.value,
-            extra_metadata={
-                "external_id": inbound.external_id,
-                "student_registered": ctx.student_registered,
-                "num_media": inbound.num_media,
-            },
+        self.persistence.log_inbound(
+            ctx,
+            body=inbound.body,
+            media_url=inbound.media_url,
+            intent="chat_inbound",
+            channel=inbound.channel,
         )
 
-        with trace_context(trace):
-            self.persistence.log_inbound(
-                ctx,
-                body=inbound.body,
-                media_url=inbound.media_url,
-                intent="chat_inbound",
-            )
-
-            if ctx.human_mode:
-                logger.info("Human mode active for session {} — skipping auto-reply", ctx.session_id)
-                flush()
-                return self._result(ctx, inbound, reply="")
-
-            reply = self._build_reply(ctx, inbound)
-            self._deliver_reply(ctx, inbound, reply)
-
+        if ctx.human_mode:
+            logger.info("Human mode active for session {} — skipping auto-reply", ctx.session_id)
             flush()
-            return self._result(ctx, inbound, reply=reply)
+            return self._result(ctx, inbound, reply="")
 
-    async def aprocess_message(self, inbound: InboundMessage) -> ChatTurnResult:
-        """Async variant — preferred when called from FastAPI async handlers."""
-        return await asyncio.to_thread(self.process_message, inbound)
+        reply = await self._build_reply(ctx, inbound)
+        self._deliver_reply(ctx, inbound, reply)
 
-    def process_twilio(self, inbound: TwilioInboundMessage) -> ChatTurnResult:
-        return self.process_message(
+        flush()
+        return self._result(ctx, inbound, reply=reply)
+
+    def process_message(self, inbound: InboundMessage) -> ChatTurnResult:
+        """Sync entry for scripts and tests without a running event loop."""
+        return asyncio.run(self.aprocess_message(inbound))
+
+    async def aprocess_twilio(self, inbound: TwilioInboundMessage) -> ChatTurnResult:
+        return await self.aprocess_message(
             InboundMessage(
                 channel=ChatChannel.TWILIO_WHATSAPP,
                 phone=inbound.from_number,
@@ -83,6 +69,9 @@ class ChatPipeline:
                 num_media=inbound.num_media,
             )
         )
+
+    def process_twilio(self, inbound: TwilioInboundMessage) -> ChatTurnResult:
+        return asyncio.run(self.aprocess_twilio(inbound))
 
     def _resolve_identity(self, inbound: InboundMessage) -> IdentityContext:
         if inbound.tenant_id:
@@ -110,15 +99,19 @@ class ChatPipeline:
                 from_number=inbound.to_number,
             )
             if result.status in {"sent", "dry_run"}:
-                self.persistence.log_outbound(ctx, body=reply, intent="auto_reply")
+                self.persistence.log_outbound(
+                    ctx, body=reply, intent="auto_reply", channel=inbound.channel
+                )
             return
 
         if reply:
-            self.persistence.log_outbound(ctx, body=reply, intent="chat_reply")
+            self.persistence.log_outbound(
+                ctx, body=reply, intent="chat_reply", channel=inbound.channel
+            )
 
-    def _build_reply(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
+    async def _build_reply(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
         try:
-            reply = asyncio.run(self._run_agent_turn(ctx, inbound))
+            reply = await self._run_agent_turn(ctx, inbound)
         except Exception as exc:
             logger.error("Agent pipeline failed: {}", exc)
             tenant_label = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
@@ -128,7 +121,7 @@ class ChatPipeline:
             )
 
         if inbound.num_media > 0 and inbound.media_url:
-            reply += " (We received your image — payment review comes in Phase 5.)"
+            pass  # payment receipt handled by admissions agent when pending enrollment exists
 
         if not ctx.student_registered:
             reply += " Welcome! We created a profile for this number."
@@ -142,6 +135,13 @@ class ChatPipeline:
             message=inbound.body,
             decision_graph=get_decision_graph(),
             orchestrator=orchestrator,
+            channel=inbound.channel.value,
+            media_url=inbound.media_url,
+            extra_metadata={
+                "external_id": inbound.external_id,
+                "student_registered": ctx.student_registered,
+                "num_media": inbound.num_media,
+            },
         )
         return result.answer.strip()
 

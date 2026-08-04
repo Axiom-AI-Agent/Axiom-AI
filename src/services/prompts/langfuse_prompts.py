@@ -8,7 +8,11 @@ from loguru import logger
 
 from agents.prompts.tutoring_prompts import LOCAL_PROMPTS
 from infrastructure.config import LANGFUSE_PROMPT_LABEL
-from infrastructure.observability import get_langfuse_client
+from infrastructure.observability import (
+    _disable_langfuse,
+    _is_langfuse_auth_error,
+    get_langfuse_client,
+)
 
 
 class PromptService:
@@ -38,7 +42,10 @@ class PromptService:
                 prompt = client.get_prompt(name, label=self.label)
                 return prompt.compile(**variables)
             except Exception as exc:
-                logger.warning("Langfuse prompt {} unavailable: {}", name, exc)
+                if _is_langfuse_auth_error(exc):
+                    _disable_langfuse("prompt fetch unauthorized")
+                else:
+                    logger.debug("Langfuse prompt {} unavailable: {}", name, exc)
 
         return self._local_fallback(name, **variables)
 

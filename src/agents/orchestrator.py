@@ -19,11 +19,11 @@ from loguru import logger
 from agents.prompts import (
     build_direct_system_prompt,
     build_merge_system_prompt,
-    get_admissions_stub_reply,
     get_escalation_stub_reply,
     get_payment_stub_reply,
     get_resource_stub_reply,
 )
+from agents.nodes.admissions_agent import McpCrmClient, run_admissions_agent
 from agents.router import QueryRouter, get_query_router
 from agents.state import AgentState
 from agents.tools.memory_tool import MemoryTool
@@ -161,12 +161,14 @@ class AgentOrchestrator:
         llm_merge: Any | None = None,
         memory_tool: MemoryTool | None = None,
         mcp_memory: _MCPMemoryToolAdapter | None = None,
+        mcp_crm: McpCrmClient | None = None,
         router: QueryRouter | None = None,
     ) -> None:
         self.llm_chat = llm_chat
         self.llm_merge = llm_merge or llm_chat
         self.memory_tool = memory_tool or MemoryTool()
         self.mcp_memory = mcp_memory
+        self.mcp_crm = mcp_crm
         self.router = router or get_query_router()
         self.graph = self._build_graph()
 
@@ -292,11 +294,7 @@ class AgentOrchestrator:
 
     @observe(name="node_admissions_agent")
     async def admissions_agent_node(self, state: AgentState) -> dict[str, Any]:
-        answer = get_admissions_stub_reply()
-        return {
-            "messages": [AIMessage(content=answer)],
-            "agent_outputs": [{"route": "admissions", "tool_output": "", "answer": answer, "status": "ok"}],
-        }
+        return await run_admissions_agent(state, crm=self.mcp_crm)
 
     @observe(name="node_resource_agent")
     async def resource_agent_node(self, state: AgentState) -> dict[str, Any]:
@@ -415,6 +413,7 @@ async def build_agent_mcp(*, memory_tool: MemoryTool | None = None) -> AgentOrch
         llm_merge=get_merge_llm(),
         memory_tool=memory_tool or MemoryTool(),
         mcp_memory=_MCPMemoryToolAdapter(tools_by_name),
+        mcp_crm=McpCrmClient(tools_by_name),
     )
     orchestrator.mcp_client = mcp_client
     orchestrator.mcp_tools = tools_by_name

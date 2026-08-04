@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "docs/Technical Docs/Tutor AI ER.png": {
-    "mtime": 1785821277.0697057,
-    "ast_hash": "168e6f8e7d693451104bb8044c248f2a",
+    "mtime": 1785824317.7904518,
+    "ast_hash": "3bd49ceafddaeb9f055f19cb202bbe1f",
     "semantic_hash": ""
   },
   "docs/Technical Docs/UserFlow.png": {
@@ -80,18 +80,18 @@
     "semantic_hash": ""
   },
   "scripts/smoke_llm.py": {
-    "mtime": 1785822042.3600466,
-    "ast_hash": "fd195e3f2e0b425e3c31e75f70b73f1c",
+    "mtime": 1785822382.392263,
+    "ast_hash": "28e2408ab04f6e6a7695330db6a85703",
     "semantic_hash": ""
   },
   "sql/01_schema.sql": {
-    "mtime": 1785822008.1911366,
-    "ast_hash": "081a331bac770c88d4f45d68102afe84",
+    "mtime": 1785824467.6546397,
+    "ast_hash": "737ae2d92f10d4c4326ff3d059609d7e",
     "semantic_hash": ""
   },
   "sql/02_seed_demo.sql": {
-    "mtime": 1785821451.3234894,
-    "ast_hash": "30a56c376b1803c843b665ed3446c45f",
+    "mtime": 1785824472.4323764,
+    "ast_hash": "026fb8ed69ace7a1bd4abba0c93d4181",
     "semantic_hash": ""
   },
   "src/__init__.py": {
@@ -220,8 +220,8 @@
     "semantic_hash": ""
   },
   "requirements.txt": {
-    "mtime": 1785822018.484986,
-    "ast_hash": "20fd7995db42f0484a325342bc40cd0c",
+    "mtime": 1785823738.006915,
+    "ast_hash": "0e95f6b1683749c5d3d8eee32d9bbfb0",
     "semantic_hash": ""
   },
   "src/agents/prompts/tutoring_prompts.py": {
@@ -230,13 +230,13 @@
     "semantic_hash": ""
   },
   "src/domain/__init__.py": {
-    "mtime": 1785822004.6016593,
-    "ast_hash": "5be0b62bd72dd893f9d8a89d497674b8",
+    "mtime": 1785824475.8035543,
+    "ast_hash": "c37ab33b73f37ef6f6f4e9008f46d42c",
     "semantic_hash": ""
   },
   "src/domain/enums.py": {
-    "mtime": 1785822222.8199625,
-    "ast_hash": "976c4864e7dbdc224c435c092245b9df",
+    "mtime": 1785824475.2937832,
+    "ast_hash": "53de48c4d9b5922e3705d90533822e30",
     "semantic_hash": ""
   },
   "src/services/prompts/__init__.py": {
@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "tests/test_enums.py": {
-    "mtime": 1785822035.5779674,
-    "ast_hash": "fa6a274bb4412d2c49d5cfb380717e89",
+    "mtime": 1785824479.38138,
+    "ast_hash": "98a0a18edf11bc7b70b8974946f37ed7",
     "semantic_hash": ""
   },
   "tests/test_observability.py": {
@@ -262,6 +262,21 @@
   "tests/test_prompts.py": {
     "mtime": 1785822037.004767,
     "ast_hash": "a7534a2beadc3caa88ad1f5430de0844",
+    "semantic_hash": ""
+  },
+  "scripts/verify_phase0.py": {
+    "mtime": 1785822385.4283187,
+    "ast_hash": "77ad8f4efa5e8e04664edc88162d4a63",
+    "semantic_hash": ""
+  },
+  "sql/00_drop_legacy.sql": {
+    "mtime": 1785824459.3879278,
+    "ast_hash": "aeb424fe25def2488e2777f35e7f178f",
+    "semantic_hash": ""
+  },
+  "tests/test_schema.py": {
+    "mtime": 1785824483.1350062,
+    "ast_hash": "a6205d13e54039f23ed4b1dbbfc9e1b4",
     "semantic_hash": ""
   }
 }

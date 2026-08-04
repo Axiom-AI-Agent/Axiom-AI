@@ -68,5 +68,20 @@
   "66": "9. High-Level Architecture",
   "67": "tutoring_prompts.py",
   "68": "prompts/__init__.py",
-  "69": "verify_phase0.py"
+  "69": "verify_phase0.py",
+  "70": "Setup & Migration",
+  "71": "Memory Tables",
+  "72": "seed_langfuse_prompts.py",
+  "73": "deps.py",
+  "74": "DATABASE.md",
+  "75": "check_python.py",
+  "76": "nodes/__init__.py",
+  "77": "agents/prompts/__init__.py",
+  "78": "admissions/__init__.py",
+  "79": "identity/__init__.py",
+  "80": "messaging/__init__.py",
+  "81": "conftest.py",
+  "82": "tools/__init__.py",
+  "83": "webhooks/__init__.py",
+  "84": "mcp_servers/__init__.py"
 }

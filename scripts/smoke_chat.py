@@ -41,7 +41,7 @@ def main() -> None:
         pipeline = ChatPipeline(resolver=resolver, persistence=persistence)
         result = pipeline.process_message(
             InboundMessage(
-                channel=ChatChannel.TWILIO_WHATSAPP,
+                channel=ChatChannel.HTTP_DEV,
                 tenant_id="tenant-demo-physics",
                 phone="94771234567",
                 body="Hello, I want to join A/L Physics",

@@ -67,5 +67,6 @@
   "65": "6. Resource Split: Google Drive vs RAG",
   "66": "9. High-Level Architecture",
   "67": "tutoring_prompts.py",
-  "68": "prompts/__init__.py"
+  "68": "prompts/__init__.py",
+  "69": "verify_phase0.py"
 }

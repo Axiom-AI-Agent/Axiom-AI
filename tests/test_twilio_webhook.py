@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -44,7 +44,7 @@ def identity_ctx():
 
 def test_twilio_webhook_returns_200_immediately(client):
     with patch("api.webhooks.twilio._should_validate_signature", return_value=False):
-        with patch("services.messaging.pipeline.ChatPipeline.process_twilio") as mock_process:
+        with patch("services.messaging.pipeline.ChatPipeline.aprocess_twilio", new_callable=AsyncMock) as mock_process:
             response = client.post("/webhooks/twilio", data=FORM)
             assert response.status_code == 200
             assert mock_process.called

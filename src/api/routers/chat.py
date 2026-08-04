@@ -24,9 +24,9 @@ async def send_chat_message(body: ChatRequest) -> ChatResponse:
     """
     pipeline = ChatPipeline()
     try:
-        result = pipeline.process_message(
+        result = await pipeline.aprocess_message(
             InboundMessage(
-                channel=ChatChannel.TWILIO_WHATSAPP,
+                channel=ChatChannel.HTTP_DEV,
                 tenant_id=body.tenant_id,
                 phone=body.phone,
                 body=body.message,

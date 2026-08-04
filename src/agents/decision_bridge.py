@@ -23,16 +23,22 @@ def map_decision_to_agent_state(
     memory_context: str = "",
     tenant_id: str = "",
     user_id: str = "",
+    student_id: str = "",
+    phone: str = "",
     session_id: str = "",
     tenant_name: str = "",
+    media_url: str | None = None,
 ) -> AgentState:
     patch: dict[str, Any] = {
         "messages": messages,
         "memory_context": memory_context or decision_out.get("router_context") or "",
         "tenant_id": tenant_id,
         "user_id": user_id,
+        "student_id": student_id or user_id,
+        "phone": phone,
         "session_id": session_id,
         "tenant_name": tenant_name,
+        "media_url": media_url,
         "guardrail": decision_out.get("guardrail", "in_scope"),
         "verdict": decision_out.get("verdict", "proceed"),
     }

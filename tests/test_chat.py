@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -35,12 +35,12 @@ def chat_result():
         phone="94771234567",
         session_id="tenant-demo-physics:94771234567",
         student_registered=True,
-        channel=ChatChannel.TWILIO_WHATSAPP,
+        channel=ChatChannel.HTTP_DEV,
     )
 
 
 def test_chat_returns_reply(client, chat_result):
-    with patch("api.routers.chat.ChatPipeline.process_message", return_value=chat_result):
+    with patch("api.routers.chat.ChatPipeline.aprocess_message", new_callable=AsyncMock, return_value=chat_result):
         response = client.post("/chat", json=CHAT_BODY)
     assert response.status_code == 200
     body = response.json()
@@ -59,7 +59,8 @@ def test_chat_requires_message(client):
 
 def test_chat_unknown_tenant_returns_404(client):
     with patch(
-        "api.routers.chat.ChatPipeline.process_message",
+        "api.routers.chat.ChatPipeline.aprocess_message",
+        new_callable=AsyncMock,
         side_effect=ValueError("Unknown tenant: missing"),
     ):
         response = client.post(
@@ -94,3 +95,44 @@ def test_get_chat_turns(client):
     assert body["session_id"] == "tenant-demo-physics:94771234567"
     assert len(body["turns"]) == 2
     assert body["turns"][0]["role"] == "user"
+
+
+@pytest.mark.asyncio
+async def test_chat_pipeline_runs_agent_inside_event_loop():
+    """Regression: /chat must not call asyncio.run() inside FastAPI's event loop."""
+    from services.identity.context import IdentityContext
+    from services.messaging.pipeline import ChatPipeline
+    from services.messaging.schemas import InboundMessage
+
+    ctx = IdentityContext(
+        tenant_id="tenant-demo-physics",
+        tenant_slug="demo-physics",
+        tenant_name="Demo Physics Academy",
+        student_id="stu-physics-001",
+        phone="94771234567",
+        session_id="tenant-demo-physics:94771234567",
+        student_registered=True,
+    )
+    resolver = MagicMock()
+    resolver.resolve_direct.return_value = ctx
+    persistence = MagicMock()
+    pipeline = ChatPipeline(resolver=resolver, persistence=persistence)
+
+    with patch.object(
+        pipeline,
+        "_run_agent_turn",
+        new_callable=AsyncMock,
+        return_value="Hello from the agent",
+    ):
+        result = await pipeline.aprocess_message(
+            InboundMessage(
+                channel=ChatChannel.HTTP_DEV,
+                tenant_id="tenant-demo-physics",
+                phone="94771234567",
+                body="Hi",
+            )
+        )
+
+    assert result.reply == "Hello from the agent"
+    persistence.log_inbound.assert_called_once()
+    persistence.log_outbound.assert_called_once()
