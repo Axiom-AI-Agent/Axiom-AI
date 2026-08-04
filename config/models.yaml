@@ -1,0 +1,24 @@
+openrouter:
+  chat:
+    general: openai/gpt-4o-mini
+    strong: openai/gpt-4o
+    merge: google/gemini-2.5-flash
+  embedding:
+    default: openai/text-embedding-3-large
+    small: openai/text-embedding-3-small
+
+openai:
+  chat:
+    general: gpt-4o-mini
+  embedding:
+    small: text-embedding-3-small
+
+google:
+  chat:
+    general: gemini-2.5-flash
+    merge: gemini-2.5-flash
+
+groq:
+  chat:
+    general: llama-3.1-8b-instant
+    strong: llama-3.3-70b-versatile

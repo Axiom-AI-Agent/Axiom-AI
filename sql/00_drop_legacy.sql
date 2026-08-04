@@ -1,0 +1,23 @@
+-- Drop legacy tables superseded by the v2 ER diagram (Tutor AI ER.png)
+-- Safe to re-run: uses IF EXISTS and preserves tenants root data.
+
+DROP TABLE IF EXISTS bank_slip_uploads CASCADE;
+DROP TABLE IF EXISTS invoices CASCADE;
+DROP TABLE IF EXISTS message_logs CASCADE;
+DROP TABLE IF EXISTS audit_logs CASCADE;
+DROP TABLE IF EXISTS mem_facts CASCADE;
+DROP TABLE IF EXISTS mem_episodes CASCADE;
+DROP TABLE IF EXISTS mem_procedures CASCADE;
+DROP TABLE IF EXISTS chat_logs CASCADE;
+DROP TABLE IF EXISTS chat_sessions CASCADE;
+DROP TABLE IF EXISTS payments CASCADE;
+DROP TABLE IF EXISTS procedures CASCADE;
+DROP TABLE IF EXISTS escalations CASCADE;
+DROP TABLE IF EXISTS st_turns CASCADE;
+DROP TABLE IF EXISTS enrollments CASCADE;
+DROP TABLE IF EXISTS students CASCADE;
+DROP TABLE IF EXISTS parent_guardians CASCADE;
+DROP TABLE IF EXISTS subject_classes CASCADE;
+DROP TABLE IF EXISTS classes CASCADE;
+DROP TABLE IF EXISTS staff_users CASCADE;
+DROP TABLE IF EXISTS tenant_integrations CASCADE;

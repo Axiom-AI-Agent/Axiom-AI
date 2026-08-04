@@ -1,0 +1,22 @@
+[project]
+name = "axiom-ai-backend"
+version = "0.1.0"
+description = "Axiom AI — multi-tenant tutor agent backend"
+requires-python = ">=3.10"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.11"

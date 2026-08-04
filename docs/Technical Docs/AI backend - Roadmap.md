@@ -2,7 +2,7 @@
 
 > **Scope:** Hackathon MVP (6 days) · AI backend only · Multi-tenant SaaS for Sri Lankan private tuition  
 > **Owner:** AI backend team · **Consumers:** Twilio (students), Next.js staff dashboard (frontend team)  
-> **Last updated:** 2026-08-04 (guardrail decision graph; no CAG/CRAG; V2 backlog §13)
+> **Last updated:** 2026-08-04 (GPT-4o-mini + Gemini merge; status enums; Langfuse tracing + prompt management)
 
 This document replaces the generic agentic-AI template (`Roadmap.md`). It is the single source of truth for **what we build, in what order, and why**.
 
@@ -11,18 +11,21 @@ This document replaces the generic agentic-AI template (`Roadmap.md`). It is the
 ## Table of Contents
 
 1. [Locked Architecture Decisions](#1-locked-architecture-decisions)
-2. [System Understanding](#2-system-understanding)
-3. [Resource Split: Google Drive vs RAG](#3-resource-split-google-drive-vs-rag)
-4. [Multi-Tenant Data Model](#4-multi-tenant-data-model)
-5. [Reference Patterns to Reuse](#5-reference-patterns-to-reuse)
-6. [High-Level Architecture](#6-high-level-architecture)
-7. [Phased Implementation Plan](#7-phased-implementation-plan)
-8. [API Contract Summary (Dashboard Team)](#8-api-contract-summary-dashboard-team)
-9. [Environment Variables](#9-environment-variables)
-10. [Explicitly Out of MVP Scope](#10-explicitly-out-of-mvp-scope)
-11. [Per-Phase Workflow](#11-per-phase-workflow)
-12. [Day-by-Day Schedule](#12-day-by-day-schedule)
-13. [Future Implementations (V2)](#13-future-implementations-v2)
+2. [LLM Model Strategy](#2-llm-model-strategy)
+3. [Status Enums & Domain Types](#3-status-enums--domain-types)
+4. [Langfuse Observability & Prompt Management](#4-langfuse-observability--prompt-management)
+5. [System Understanding](#5-system-understanding)
+6. [Resource Split: Google Drive vs RAG](#6-resource-split-google-drive-vs-rag)
+7. [Multi-Tenant Data Model](#7-multi-tenant-data-model)
+8. [Reference Patterns to Reuse](#8-reference-patterns-to-reuse)
+9. [High-Level Architecture](#9-high-level-architecture)
+10. [Phased Implementation Plan](#10-phased-implementation-plan)
+11. [API Contract Summary (Dashboard Team)](#11-api-contract-summary-dashboard-team)
+12. [Environment Variables](#12-environment-variables)
+13. [Explicitly Out of MVP Scope](#13-explicitly-out-of-mvp-scope)
+14. [Per-Phase Workflow](#14-per-phase-workflow)
+15. [Day-by-Day Schedule](#15-day-by-day-schedule)
+16. [Future Implementations (V2)](#16-future-implementations-v2)
 
 ---
 
@@ -46,10 +49,225 @@ These decisions are **final for the MVP**. Do not reintroduce removed components
 | **Frontend** | **Not in this repo** | Staff dashboard built separately; we expose REST APIs + OpenAPI |
 | **Decision graph** | **BookMe-AI pattern: guardrail ∥ router → decide** | Scope filter before expensive agent/tool calls; no semantic cache layer |
 | **Not using** | **CAG, CRAG, semantic cache** | Week 13 cache path removed from MVP; FAQ/admin queries go through RAG or direct agent |
+| **Primary chat model** | **OpenAI GPT-4o-mini** (`gpt-4o-mini`) | Main specialist agent replies, admissions turns, direct/concierge responses |
+| **Merge / synthesis model** | **Google Gemini** (`gemini-2.5-flash`) | Combining parallel agent outputs, RAG answer synthesis, final reply merge after multi-step flows |
+| **Status fields** | **PostgreSQL ENUM types + Python `StrEnum`** | Typed statuses in DB and API — no raw string literals in application code |
+| **Observability** | **Langfuse — tracing + prompt management (MVP)** | Per-tenant/session/user traces; prompts fetched from Langfuse, not hardcoded in repo |
+| **Implementation docs** | **Context7 MCP** | Fetch current Langfuse, OpenAI, Gemini SDK docs during each phase — do not rely on stale patterns |
 
 ---
 
-## 2. System Understanding
+## 2. LLM Model Strategy
+
+### Model Assignments (Locked for MVP)
+
+| Role | Model | Provider | Used in |
+|------|-------|----------|---------|
+| **Chat / specialist agents** | `gpt-4o-mini` | OpenAI (direct) or OpenRouter (`openai/gpt-4o-mini`) | Admissions, Resource Q&A, Direct, Payment/Escalation copy |
+| **Merge / synthesis** | `gemini-2.5-flash` | Google (`GOOGLE_API_KEY`) or OpenRouter (`google/gemini-2.5-flash`) | `merge_responses`, RAG final synthesis, multi-step reply consolidation |
+| **Router** | `llama-3.3-70b-versatile` | Groq | Fast intent JSON classification |
+| **Guardrail** | `llama-3.3-70b-versatile` | Groq | Fast in-scope / out-of-scope binary check |
+| **Extractor** | `llama-3.1-8b-instant` | Groq | Structured field extraction (onboarding slots) |
+| **Embeddings** | `text-embedding-3-small` | OpenAI / OpenRouter | Qdrant ingest (Phase 4) |
+
+### Why Two Models?
+
+- **GPT-4o-mini** — reliable conversational quality for student-facing tuition dialogue at low cost.
+- **Gemini** — strong at synthesising multiple context blocks (guardrail verdict + router intent + RAG chunks + tool results) into one coherent WhatsApp reply without losing citations.
+
+### Merge Points (Gemini)
+
+| Flow | Merge behaviour |
+|------|-----------------|
+| Decision graph | Guardrail + router run in parallel; **decide** is rule-based (no LLM). Gemini used **after** orchestrator when multiple tool/agent fragments need one reply |
+| Resource Agent (RAG) | Retrieve chunks → **Gemini synthesises** grounded answer with tutor-note citations |
+| Multi-step onboarding | Collect slots across turns → **Gemini merges** confirmation message |
+| Compound messages (stretch) | If two specialists both contribute partial answers → **Gemini merge** (single-route MVP; full fan-out → V2) |
+
+### Config Files
+
+```yaml
+# config/models.yaml — chat vs merge split
+openai:
+  chat:
+    general: gpt-4o-mini          # primary chat
+google:
+  chat:
+    general: gemini-2.5-flash     # merge / synthesis
+```
+
+```python
+# src/infrastructure/llm/llm_provider.py
+get_chat_llm()        # → gpt-4o-mini
+get_merge_llm()       # → gemini-2.5-flash  (NEW factory)
+get_router_llm()      # → groq fast
+get_guardrail_llm()   # → groq fast
+```
+
+**Implementation note:** Use **Context7 MCP** (`resolve-library-id` → `query-docs`) for OpenAI Python SDK, Google Gemini / LangChain integration, and Langfuse `@observe` + `propagate_attributes` when wiring these factories.
+
+---
+
+## 3. Status Enums & Domain Types
+
+Replace free-text `CHECK (status IN (...))` columns with **PostgreSQL ENUM types** and mirror them as **Python `StrEnum`** classes for API schemas, DB clients, and agent logic.
+
+### PostgreSQL ENUM Types (`sql/01_schema.sql`)
+
+```sql
+CREATE TYPE tenant_status       AS ENUM ('active', 'suspended');
+CREATE TYPE enrollment_status   AS ENUM ('active', 'paused', 'withdrawn');
+CREATE TYPE payment_status      AS ENUM ('pending', 'approved', 'rejected');
+CREATE TYPE escalation_status   AS ENUM ('open', 'assigned', 'resolved');
+CREATE TYPE escalation_urgency  AS ENUM ('low', 'normal', 'high');
+CREATE TYPE chat_direction      AS ENUM ('inbound', 'outbound');
+CREATE TYPE message_role        AS ENUM ('user', 'assistant', 'system');
+CREATE TYPE chat_channel        AS ENUM ('twilio_whatsapp');
+CREATE TYPE staff_role          AS ENUM ('admin', 'marker', 'viewer');
+```
+
+### Python Enums (`src/domain/enums.py`)
+
+```python
+from enum import StrEnum
+
+class TenantStatus(StrEnum):
+    ACTIVE = "active"
+    SUSPENDED = "suspended"
+
+class PaymentStatus(StrEnum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+# … mirror all DB enums
+```
+
+### Rules
+
+1. **DB columns** use ENUM types — not `TEXT` + inline `CHECK`.
+2. **Pydantic schemas** (`src/api/schemas.py`) reference `StrEnum` — OpenAPI shows allowed values.
+3. **Agent / service code** compares against enum members — never `"pending"` string literals.
+4. **Dashboard PATCH bodies** validate against enums; invalid value → `422`.
+5. **Migration:** update `sql/01_schema.sql` before first shared Supabase apply; add `sql/03_enums_migration.sql` if schema already live.
+
+### Enum ↔ Langfuse Tags
+
+Map enum values to trace metadata for filtering in Langfuse UI:
+
+| Metadata key | Source | Example |
+|--------------|--------|---------|
+| `tenant_id` | Identity context | `tenant-demo-physics` |
+| `payment_status` | Payment agent | `pending` |
+| `escalation_urgency` | Escalation agent | `high` |
+
+---
+
+## 4. Langfuse Observability & Prompt Management
+
+Langfuse is **required for MVP**, not a skeleton. Phase 0 ships the client; Phase 2+ wires full tracing and remote prompts.
+
+### Tracing — Per Tenant, Session, User
+
+Every `run_chat_turn()` creates one Langfuse **trace** scoped to the WhatsApp conversation:
+
+| Langfuse field | Axiom mapping | Purpose |
+|----------------|---------------|---------|
+| `session_id` | `chat_sessions.id` | Session replay — all turns in one thread |
+| `user_id` | `students.id` (or phone hash pre-registration) | User-level analytics |
+| `metadata.tenant_id` | `tenants.id` | Multi-tenant filtering |
+| `metadata.tenant_slug` | `tenants.slug` | Human-readable dashboards |
+| `tags` | `["tenant:{slug}", "channel:twilio_whatsapp"]` | Filter traces by tutor |
+| `name` | `chat_turn` | Top-level span |
+
+**SDK pattern** (from Langfuse docs via Context7):
+
+```python
+from langfuse import observe, propagate_attributes
+
+@observe(name="chat_turn")
+async def run_chat_turn(ctx: IdentityContext, message: str) -> str:
+    with propagate_attributes(
+        session_id=ctx.session_id,
+        user_id=ctx.student_id or ctx.phone,
+        tags=[f"tenant:{ctx.tenant_slug}", "channel:twilio_whatsapp"],
+        metadata={"tenant_id": ctx.tenant_id, "human_mode": ctx.human_mode},
+    ):
+        # decision graph + orchestrator spans nest automatically
+        ...
+```
+
+**Nested spans** (each graph node + LLM call):
+
+| Span name | Phase | Notes |
+|-----------|-------|-------|
+| `decision_graph` | 2 | Parent for guardrail ∥ router |
+| `guardrail` | 2 | Include verdict in output |
+| `router` | 2 | Include intent JSON |
+| `decide` | 2 | Rule-based; log verdict |
+| `orchestrator` | 2–5 | Agent dispatch |
+| `admissions` / `resource` / … | 3–5 | Specialist nodes |
+| `rag_retrieve` / `drive_search` | 4 | Tool spans |
+| `merge_response` | 2+ | Gemini synthesis span |
+| `twilio_send` | 1 | Outbound message |
+
+**LLM generations** — attach `langfuse_session_id`, `langfuse_user_id`, `langfuse_tags` via LangChain callback handler or `propagate_attributes` so token usage rolls up to the session.
+
+### Prompt Management — Langfuse as Source of Truth
+
+Prompts are **not** hardcoded in `src/agents/prompts/` for production paths. Langfuse stores versioned prompts; code fetches and compiles at runtime.
+
+| Prompt name (Langfuse) | Type | Variables | Used by |
+|------------------------|------|-----------|---------|
+| `axiom/guardrail` | text | — | Guardrail classifier |
+| `axiom/router` | chat | `router_context` placeholder | Router intent |
+| `axiom/out_of_scope_reply` | text | — | Decide short-circuit |
+| `axiom/admissions` | chat | `student`, `classes`, `chat_history` | Admissions agent |
+| `axiom/resource_rag` | chat | `chunks`, `question` | Resource RAG synthesis (→ Gemini) |
+| `axiom/resource_drive` | text | `file_name`, `link` | Drive file delivery template |
+| `axiom/payment_ack` | text | `student_name` | Payment receipt ack |
+| `axiom/escalation_ack` | text | — | Escalation handoff message |
+| `axiom/merge_response` | chat | `fragments`, `chat_history` | Gemini merge |
+| `axiom/direct` | chat | `chat_history` | Concierge / greetings |
+
+**Fetch pattern:**
+
+```python
+from langfuse import get_client
+
+langfuse = get_client()
+prompt = langfuse.get_prompt("axiom/router", label="production")
+messages = prompt.compile(router_context=ctx.build_router_context())
+```
+
+**Versioning & labels:**
+
+- `production` — live hackathon demo
+- `staging` — team testing before promote
+- Per-tenant overrides (stretch): label `tenant:{slug}` on prompt version; fallback chain: tenant label → `production`
+
+**Local fallback:** `src/agents/prompts/tutoring_prompts.py` holds **seed copies only** for offline dev when Langfuse keys absent; log warning and use local fallback.
+
+### Phase Deliverables for Langfuse
+
+| Phase | Langfuse work |
+|-------|---------------|
+| 0 | Client init, `observe` decorator, `flush()` on shutdown, env vars |
+| 1 | Trace inbound webhook → outbound send; tag with tenant |
+| 2 | Full decision graph spans; seed prompts in Langfuse project |
+| 3–5 | Agent-specific prompts + generations linked to session |
+| 6 | E2E trace review; prompt promote workflow documented in SETUP.md |
+
+### Environment
+
+```bash
+LANGFUSE_PUBLIC_KEY=
+LANGFUSE_SECRET_KEY=
+LANGFUSE_HOST=https://cloud.langfuse.com   # or self-hosted
+```
+
+---
+
+## 5. System Understanding
 
 ### Business Problem
 
@@ -85,7 +303,7 @@ A **Twilio WhatsApp Sandbox** agent that:
 
 ---
 
-## 3. Resource Split: Google Drive vs RAG
+## 6. Resource Split: Google Drive vs RAG
 
 This split is **confirmed** and matches `docs/Project Planning.md` Use Cases 1 and 2.
 
@@ -142,7 +360,7 @@ This split is **confirmed** and matches `docs/Project Planning.md` Use Cases 1 a
 
 ---
 
-## 4. Multi-Tenant Data Model
+## 7. Multi-Tenant Data Model
 
 Aligned with `docs/Tutor_AI_SRS_v2.md` §11 and ER diagram (`docs/Technical Docs/Tutor AI ER.png`).
 
@@ -150,17 +368,17 @@ Aligned with `docs/Tutor_AI_SRS_v2.md` §11 and ER diagram (`docs/Technical Docs
 
 | Entity | Key fields | Isolation |
 |--------|------------|-----------|
-| `tenants` | `id`, `name`, `slug`, `status`, `twilio_whatsapp_number` | Root boundary |
+| `tenants` | `id`, `name`, `slug`, `status` (`tenant_status` ENUM), `twilio_whatsapp_number` | Root boundary |
 | `tenant_integrations` | `tenant_id`, `drive_root_folder_id`, `drive_credentials_ref` | 1:1 tenant |
 | `classes` | `id`, `tenant_id`, `name`, `subject`, `grade`, `fee_amount` | FK `tenant_id` |
 | `students` | `id`, `tenant_id`, `phone` (unique per tenant), `name`, `school`, `district`, `consent_at` | FK `tenant_id` |
-| `enrollments` | `student_id`, `class_id`, `status` | Via student/class |
-| `staff_users` | `id`, `tenant_id`, `email`, `role` | Dashboard auth (frontend) |
-| `chat_sessions` | `id`, `tenant_id`, `student_id`, `channel`, `human_mode` | FK `tenant_id` |
-| `chat_logs` | `tenant_id`, `session_id`, `direction`, `body`, `media_url` | FK `tenant_id` |
-| `st_turns` | `tenant_id`, `session_id`, `role`, `content` | Short-term memory |
-| `payments` | `tenant_id`, `student_id`, `status`, `media_url`, `reviewed_by`, `reviewed_at` | FK `tenant_id` |
-| `escalations` | `tenant_id`, `student_id`, `urgency`, `status`, `sla_due_at` | FK `tenant_id` |
+| `enrollments` | `student_id`, `class_id`, `status` (`enrollment_status` ENUM) | Via student/class |
+| `staff_users` | `id`, `tenant_id`, `email`, `role` (`staff_role` ENUM) | Dashboard auth (frontend) |
+| `chat_sessions` | `id`, `tenant_id`, `student_id`, `channel` (`chat_channel` ENUM), `human_mode` | FK `tenant_id` |
+| `chat_logs` | `tenant_id`, `session_id`, `direction` (`chat_direction` ENUM), `body`, `media_url` | FK `tenant_id` |
+| `st_turns` | `tenant_id`, `session_id`, `role` (`message_role` ENUM), `content` | Short-term memory |
+| `payments` | `tenant_id`, `student_id`, `status` (`payment_status` ENUM), `media_url`, `reviewed_by`, `reviewed_at` | FK `tenant_id` |
+| `escalations` | `tenant_id`, `student_id`, `urgency` (`escalation_urgency` ENUM), `status` (`escalation_status` ENUM), `sla_due_at` | FK `tenant_id` |
 | `procedures` | `tenant_id`, `workflow_key`, `steps_json` | Onboarding rules |
 
 ### Tenant Resolution (Inbound Twilio)
@@ -181,18 +399,19 @@ Aligned with `docs/Tutor_AI_SRS_v2.md` §11 and ER diagram (`docs/Technical Docs
 
 ---
 
-## 5. Reference Patterns to Reuse
+## 8. Reference Patterns to Reuse
 
 | Source | Reuse | Skip |
 |--------|-------|------|
-| **Week 13** | Folder layout, `main.py` lifespan, `deps.py`, router, orchestrator, prompts, **plain RAG service** (no CAG/CRAG), config YAML | Hospital CRM, **CAG cache, CRAG, CAG decision node**, MCP servers (defer), 4-tier memory |
+| **Week 13** | Folder layout, `main.py` lifespan, `deps.py`, router, orchestrator, **plain RAG service** (no CAG/CRAG), config YAML | Hospital CRM, **CAG cache, CRAG, CAG decision node**, MCP servers (defer), 4-tier memory |
 | **BookMe AI** | **`decision_graph.py`**, **`guardrail.py`**, `decision_state` + `decision_bridge`, `chat_pipeline.py`, `build_decision_graph()`, `decide_node`, SessionStore pattern → Supabase `st_turns` | Travel tools, Clerk auth, Redis |
 | **Axiom AI (reference)** | Config, LLM factories, Qdrant client, ingest pipeline, identity schema | WhatsApp webhook, Redis queue, worker |
 | **Hackathon docs** | SRS, MVP Definition, Project Planning, ER diagram | Meta WhatsApp flows |
+| **Context7 MCP** | Langfuse `@observe` + `propagate_attributes`, OpenAI/Gemini SDK patterns, prompt `get_prompt` / `compile` | — |
 
 ---
 
-## 6. High-Level Architecture
+## 9. High-Level Architecture
 
 ```mermaid
 flowchart TD
@@ -216,8 +435,11 @@ flowchart TD
     ORCH --> PAY[Payment Check]
     ORCH --> ESC[Escalation]
     ORCH --> DIR[Direct]
+    ORCH --> MERGE[Gemini merge_response]
+    MERGE --> REPLY
     RES --> DRIVE[Drive Tool - papers/textbooks]
     RES --> RAG[RAG Tool - tutor notes]
+    RAG --> MERGE
     PAY --> SB[(Supabase payments)]
     ESC --> SB2[(Supabase escalations)]
     ADM --> SB3[(Supabase students)]
@@ -275,11 +497,13 @@ START
 3. If `verdict == out_of_scope` → return `final_answer`, save turn, **done**
 4. Else `map_decision_to_agent_state()` → invoke orchestrator
 
-Port `Guardrail` class with tutoring few-shot examples (replace BookMe travel examples). Use `get_guardrail_llm()` from infrastructure (small/fast model).
+Port `Guardrail` class with tutoring few-shot examples (replace BookMe travel examples). Use `get_guardrail_llm()` from infrastructure (Groq fast model). Prompt text fetched from Langfuse `axiom/guardrail` (§4).
+
+Specialist agents use **`get_chat_llm()` → GPT-4o-mini**. Response synthesis and RAG grounding use **`get_merge_llm()` → Gemini** (§2).
 
 ---
 
-## 7. Phased Implementation Plan
+## 10. Phased Implementation Plan
 
 Work **one phase at a time**. Complete acceptance criteria before proceeding.
 
@@ -297,22 +521,25 @@ Project scaffold, shared Supabase schema with tenant isolation, LLM/config infra
 
 - Week 13 folder structure under `src/`
 - `config/param.yaml`, `config/models.yaml`, `.env.example`
-- LLM factories (router / chat / extractor)
-- Loguru + LangFuse skeleton
-- Supabase client + SQL migrations for all MVP entities (§4)
+- LLM factories: router/guardrail (Groq), **chat (GPT-4o-mini)**, **merge (Gemini)**, extractor
+- Loguru + LangFuse client (`observe`, `propagate_attributes`, `flush`)
+- Supabase client + SQL migrations with **PostgreSQL ENUM types** (§3)
 - Seed: 2 demo tenants, 2 classes, sample students
 - `GET /health`, `GET /ready`, `GET /config`
+- `src/domain/enums.py` — Python `StrEnum` mirror of DB enums
 
 #### Files / Modules
 
 ```text
 src/infrastructure/{config,log,observability,llm,db}
+src/domain/enums.py
 src/api/{main,deps,schemas,middleware}.py
 src/api/routers/health.py
-sql/01_schema.sql
+sql/01_schema.sql                    # includes CREATE TYPE … AS ENUM
 sql/02_seed_demo.sql
 scripts/init_supabase.py
 tests/test_health.py
+tests/test_enums.py
 tests/test_tenant_isolation.py
 Makefile
 pyproject.toml
@@ -321,7 +548,8 @@ pyproject.toml
 #### Dependencies
 
 - Shared Supabase project credentials from team
-- OpenRouter / Groq keys
+- OpenAI / OpenRouter + Google (`GOOGLE_API_KEY`) + Groq keys
+- Langfuse project keys (tracing + prompt management)
 
 #### Deliverables
 
@@ -341,7 +569,9 @@ pyproject.toml
 - [ ] `/health` → 200
 - [ ] `/ready` → Supabase connected
 - [ ] 2 tenants seeded; queries with wrong `tenant_id` return empty
-- [ ] LLM factory smoke test passes
+- [ ] LLM factory smoke test passes (`get_chat_llm` → gpt-4o-mini, `get_merge_llm` → gemini)
+- [ ] DB uses ENUM types; Python `StrEnum` matches schema
+- [ ] Langfuse client initialises when keys present; no-op when absent
 
 ---
 
@@ -363,6 +593,7 @@ End-to-end Twilio WhatsApp: webhook in, reply out. No agents yet (fixed reply OK
 - `chat_logs` persistence
 - `BackgroundTasks` scaffold for async replies
 - `MESSAGING_DRY_RUN=true` for local dev without Twilio sends
+- Langfuse trace on webhook: `session_id`, `user_id`, `metadata.tenant_id`, tags
 
 #### Files / Modules
 
@@ -414,23 +645,27 @@ Replace fixed reply with LangGraph routing; channel-agnostic `run_chat_turn()`.
 - Port **BookMe-AI decision subgraph** (no CAG/CRAG nodes)
 - `DecisionState`, `AgentState`, `decision_bridge`
 - `build_decision_graph()` — parallel **guardrail** + **router**, then **decide**
-- `Guardrail.aclassify()` — tutoring domain; fail-open on LLM error
+- `Guardrail.aclassify()` — tutoring domain; fail-open on LLM error; prompt from Langfuse `axiom/guardrail`
 - `decide_node` — short-circuit `out_of_scope` before orchestrator; router override for valid agent routes
-- Router intents: `admissions`, `resource`, `payment_check`, `escalation`, `direct`
-- `chat_pipeline.run_chat_turn()` — decision graph first, orchestrator only on `proceed`
-- Orchestrator skeleton (direct agent first; specialists wired in Phases 3–5)
+- Router intents: `admissions`, `resource`, `payment_check`, `escalation`, `direct`; prompt from Langfuse `axiom/router`
+- `chat_pipeline.run_chat_turn()` — decision graph first, orchestrator only on `proceed`; **`propagate_attributes`** for Langfuse session/user/tenant
+- **`merge_response` node** — Gemini synthesises final reply via Langfuse `axiom/merge_response`
+- Orchestrator skeleton (direct agent first; specialists wired in Phases 3–5); agents use **GPT-4o-mini**
 - ST memory: Supabase `st_turns` ring buffer
 - Procedural store: onboarding workflow definitions per tenant
+- Seed all prompts in Langfuse project (`production` label)
 
 #### Files / Modules
 
 ```text
-src/agents/{state,decision_state,decision_bridge,decision_graph,guardrail,router,orchestrator,chat_pipeline}.py
-src/agents/prompts/tutoring_prompts.py   # guardrail few-shots + out_of_scope reply
+src/agents/{state,decision_state,decision_bridge,decision_graph,guardrail,router,orchestrator,chat_pipeline,merge}.py
+src/agents/prompts/tutoring_prompts.py   # local fallback seeds only — Langfuse is source of truth
+src/services/prompts/langfuse_prompts.py # get_prompt / compile wrapper
 src/memory/{schemas,st_store,procedural_store}.py
 tests/test_decision_graph.py             # OOS trivia, in-scope enrollment, router override
 tests/test_guardrail.py
 tests/test_router_intents.py
+tests/test_merge_response.py
 scripts/test_routing_smoke.py              # mirror BookMe scripts/test_decision_graph.py
 ```
 
@@ -448,6 +683,9 @@ scripts/test_routing_smoke.py              # mirror BookMe scripts/test_decision
 - [ ] No `cag_*`, `crag_*`, or cache lookup code in decision graph
 - [ ] ST memory persists across turns in same session
 - [ ] `run_chat_turn()` invoked from Twilio webhook
+- [ ] Langfuse trace shows session_id, user_id, tenant_id for sample turn
+- [ ] Prompts loaded from Langfuse; local fallback works offline
+- [ ] Gemini merge produces single coherent reply from multi-fragment context
 
 ---
 
@@ -493,12 +731,12 @@ scripts/sample_requests/admissions_onboarding.json
 
 #### Objective
 
-Two sub-paths: **Drive** for papers/textbooks, **RAG** for tutor notes. Strict content separation (§3).
+Two sub-paths: **Drive** for papers/textbooks, **RAG** for tutor notes. Strict content separation (§6).
 
 #### Features
 
 - **Drive tool:** search/list in `papers/`, `textbooks/` only; return link
-- **RAG tool:** Qdrant collection `kb_{tenant_id}`; ingest tutor notes only
+- **RAG tool:** Qdrant collection `kb_{tenant_id}`; ingest tutor notes only; **Gemini synthesis** via Langfuse `axiom/resource_rag`
 - Resource agent node: sub-router `drive` vs `rag`
 - `tenant_integrations.drive_root_folder_id` per tenant
 - Ingest script for notes markdown per tenant
@@ -549,8 +787,8 @@ Manual payment review queue + escalation inbox + REST APIs for dashboard team.
 
 #### Features
 
-- Payment Check: image via Twilio `MediaUrl0` → `payments` (`pending`)
-- Escalation: frustration keywords / low confidence → `escalations`
+- Payment Check: image via Twilio `MediaUrl0` → `payments` (`payment_status = pending`)
+- Escalation: frustration keywords / low confidence → `escalations` (`escalation_status = open`)
 - Human takeover: `chat_sessions.human_mode` — bot silent until released
 - Dashboard APIs:
   - `GET /dashboard/overview?tenant_id=`
@@ -596,7 +834,8 @@ Full orchestrator wired, E2E tests, observability, documentation.
 
 - Wire all agent nodes in orchestrator
 - E2E scenarios (onboarding, drive, rag, payment, escalation, off-topic)
-- LangFuse traces on graph nodes
+- Langfuse traces on all graph nodes + LLM generations; session replay verified
+- Langfuse prompt promote workflow (`staging` → `production`) documented
 - Error handling audit (router fallback, guardrail fail-open)
 - `docs/SETUP.md` — Twilio sandbox join, Supabase, Qdrant, Drive service account
 - Performance smoke: 10 concurrent webhook calls
@@ -605,13 +844,14 @@ Full orchestrator wired, E2E tests, observability, documentation.
 
 - [ ] 5 E2E scripts pass
 - [ ] `make test` green
-- [ ] LangFuse shows traces for sample flows
+- [ ] Langfuse shows traces per tenant/session/user for sample flows
+- [ ] All production prompts versioned in Langfuse with `production` label
 - [ ] SETUP.md + API_CONTRACT.md complete
 - [ ] Dashboard team confirms API access to shared Supabase + REST endpoints
 
 ---
 
-## 8. API Contract Summary (Dashboard Team)
+## 11. API Contract Summary (Dashboard Team)
 
 | Method | Path | Purpose |
 |--------|------|---------|
@@ -632,7 +872,7 @@ Full schemas: `docs/API_CONTRACT.md` (created in Phase 5).
 
 ---
 
-## 9. Environment Variables
+## 12. Environment Variables
 
 ```bash
 # Twilio WhatsApp Sandbox
@@ -646,9 +886,11 @@ SUPABASE_URL=
 SUPABASE_SERVICE_KEY=
 SUPABASE_DB_URL=
 
-# LLM
-OPENROUTER_API_KEY=
-GROQ_API_KEY=
+# LLM — primary chat (GPT-4o-mini) + merge (Gemini) + fast router/guardrail (Groq)
+OPENAI_API_KEY=                             # direct OpenAI for gpt-4o-mini
+OPENROUTER_API_KEY=                         # optional: openai/gpt-4o-mini + google/gemini-2.5-flash
+GOOGLE_API_KEY=                             # Gemini merge / synthesis
+GROQ_API_KEY=                               # router + guardrail + extractor
 
 # Qdrant (tutor notes RAG)
 QDRANT_URL=
@@ -658,9 +900,10 @@ QDRANT_API_KEY=
 GOOGLE_SERVICE_ACCOUNT_JSON=               # path or base64
 # OR per-tenant tokens in tenant_integrations (v2)
 
-# Observability
+# Observability — Langfuse (tracing + prompt management)
 LANGFUSE_PUBLIC_KEY=
 LANGFUSE_SECRET_KEY=
+LANGFUSE_HOST=https://cloud.langfuse.com
 
 # Dev
 MESSAGING_DRY_RUN=true
@@ -669,9 +912,9 @@ DEV_TENANT_ID=                              # local fallback only
 
 ---
 
-## 10. Explicitly Out of MVP Scope
+## 13. Explicitly Out of MVP Scope
 
-Everything below is **deferred to V2**. See [§13 Future Implementations (V2)](#13-future-implementations-v2) for the full backlog with priorities, dependencies, and suggested phasing.
+Everything below is **deferred to V2**. See [§16 Future Implementations (V2)](#16-future-implementations-v2) for the full backlog with priorities, dependencies, and suggested phasing.
 
 **Summary (MVP exclusions):**
 
@@ -690,7 +933,7 @@ Everything below is **deferred to V2**. See [§13 Future Implementations (V2)](#
 
 ---
 
-## 11. Per-Phase Workflow
+## 14. Per-Phase Workflow
 
 For **every phase**, follow this sequence:
 
@@ -702,7 +945,7 @@ For **every phase**, follow this sequence:
 
 ---
 
-## 12. Day-by-Day Schedule
+## 15. Day-by-Day Schedule
 
 | Day | Phase | Milestone |
 |-----|-------|-----------|
@@ -716,11 +959,11 @@ For **every phase**, follow this sequence:
 
 ---
 
-## 13. Future Implementations (V2)
+## 16. Future Implementations (V2)
 
 This section captures **everything intentionally excluded from the MVP** plus SRS v2 features deferred beyond the hackathon. Use it as the AI backend backlog after MVP handoff.
 
-**Sources:** `docs/Tutor_AI_SRS_v2.md` §2.2, §17, MVP Definition doc, §10 of this roadmap.
+**Sources:** `docs/Tutor_AI_SRS_v2.md` §2.2, §17, MVP Definition doc, §13 of this roadmap (MVP exclusions).
 
 **Suggested V2 phasing (high level):**
 
@@ -732,7 +975,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.1 Messaging & Infrastructure
+### 16.1 Messaging & Infrastructure
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -747,7 +990,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.2 AI Agents & Orchestration
+### 16.2 AI Agents & Orchestration
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -764,7 +1007,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.3 Memory, Caching & RAG Enhancements
+### 16.3 Memory, Caching & RAG Enhancements
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -780,7 +1023,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.4 Payments & Finance Automation
+### 16.4 Payments & Finance Automation
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -795,7 +1038,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.5 Integrations & Tooling
+### 16.5 Integrations & Tooling
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -804,11 +1047,11 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 | **Supabase MCP server** | CRM operations exposed as MCP tools | Direct DB clients in MVP | Low | `supabase_server.py` |
 | **PayHere MCP server** | Payment actions as MCP tools | Not built | Low | PayHere integration first |
 | **MCP-backed orchestrator** | `build_agent_mcp()` pattern from BookMe/Week 13 | Direct tool dispatch in MVP | Low | Stable MCP servers |
-| **LangFuse prompt management (full)** | Remote prompt versions per tenant (NFR-MO-03) | Local fallbacks in MVP | Medium | LangFuse project per env |
+| **Per-tenant Langfuse prompt labels** | Tenant-specific prompt overrides via `tenant:{slug}` label | MVP uses shared `production` prompts | Low | Langfuse prompt management (MVP baseline in §4) |
 
 ---
 
-### 13.6 CRM, Dashboard & Backend APIs (Extended)
+### 16.6 CRM, Dashboard & Backend APIs (Extended)
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -825,7 +1068,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.7 Platform, SaaS & Operations
+### 16.7 Platform, SaaS & Operations
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -842,7 +1085,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.8 Language, Media & Accessibility
+### 16.8 Language, Media & Accessibility
 
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
@@ -853,7 +1096,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 
 ---
 
-### 13.9 Product & Channel Expansion (SRS §17)
+### 16.9 Product & Channel Expansion (SRS §17)
 
 These are **product-level** V2+ items; AI backend may need supporting APIs when prioritized.
 
@@ -872,7 +1115,7 @@ These are **product-level** V2+ items; AI backend may need supporting APIs when 
 
 ---
 
-### 13.10 V2 Architecture Upgrades (Reference Patterns)
+### 16.10 V2 Architecture Upgrades (Reference Patterns)
 
 When moving to V2, consider reintroducing these **Week 13 / BookMe** patterns deferred from MVP:
 
@@ -887,7 +1130,7 @@ When moving to V2, consider reintroducing these **Week 13 / BookMe** patterns de
 
 ---
 
-### 13.11 V2 Acceptance Themes
+### 16.11 V2 Acceptance Themes
 
 When planning V2 sprints, each wave should define acceptance criteria similar to MVP phases:
 
@@ -906,7 +1149,8 @@ The previous 15-phase generic agentic-AI build guide (Week 13 teaching template)
 When implementing, prefer:
 
 - `graphify query "<question>"` for codebase orientation after `graphify update .`
-- Week 13 / BookMe AI source for concrete patterns cited in §5
+- **Context7 MCP** (`resolve-library-id` → `query-docs`) for Langfuse, OpenAI, Gemini, and Supabase SDK patterns
+- Week 13 / BookMe AI source for concrete patterns cited in §8
 
 ---
 
