@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-from domain.enums import PaymentStatus, TenantStatus
+from domain.enums import PaymentStatus, TenantStatus, MessageRole
 
 
 class HealthResponse(BaseModel):
@@ -52,3 +52,42 @@ class TenantSummary(BaseModel):
     id: str
     slug: str
     status: TenantStatus
+
+
+class ChatRequest(BaseModel):
+    """Dev chat request — simulates a student WhatsApp message over HTTP."""
+
+    tenant_id: str = Field(
+        description="Tuition agency tenant, e.g. tenant-demo-physics",
+        examples=["tenant-demo-physics"],
+    )
+    phone: str = Field(
+        description="Student phone (digits only or E.164). Demo: 94771234567",
+        examples=["94771234567"],
+    )
+    message: str = Field(min_length=1, description="Student message text")
+    media_url: Optional[str] = Field(default=None, description="Optional image URL (payment slip, etc.)")
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    tenant_id: str
+    tenant_slug: Optional[str] = None
+    tenant_name: Optional[str] = None
+    student_id: str
+    phone: str
+    session_id: str
+    student_registered: bool = True
+
+
+class ChatTurnRecord(BaseModel):
+    id: str
+    role: MessageRole
+    content: str
+    created_at: str
+
+
+class ChatTurnsResponse(BaseModel):
+    tenant_id: str
+    session_id: str
+    turns: list[ChatTurnRecord]

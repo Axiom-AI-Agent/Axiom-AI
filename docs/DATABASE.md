@@ -507,8 +507,11 @@ These tables existed before the v2 ER alignment and are dropped by `00_drop_lega
 | Consumer | Auth | Typical tables |
 |----------|------|----------------|
 | AI backend (FastAPI) | Service role key | All tables — writes on `st_turns`, `message_logs`, memory |
+| **Dev chat (`POST /chat`)** | None (local dev) | Same as WhatsApp — see [DEV_CHAT.md](DEV_CHAT.md) |
 | Dashboard (frontend) | Supabase Auth + RLS | `staff_users`, `escalations`, `invoices`, `bank_slip_uploads` |
-| Twilio webhook | Backend resolves tenant/student | `students`, `st_turns`, `message_logs` |
+| Twilio webhook *(optional)* | Signature validation | `students`, `st_turns`, `message_logs` |
+
+**Local development:** use `POST /chat` instead of Twilio — no sandbox setup required. See [DEV_CHAT.md](DEV_CHAT.md).
 
 **Tenant resolution on inbound WhatsApp:**
 
@@ -525,6 +528,7 @@ WHERE s.phone = :from_phone
 
 ## Related Documentation
 
+- [Dev Chat (WhatsApp simulator)](DEV_CHAT.md) — local HTTP chat without Twilio
 - [Tutor AI SRS v2](Tutor_AI_SRS_v2.md) — functional requirements
 - [AI Backend Roadmap](Technical%20Docs/AI%20backend%20-%20Roadmap.md) — phase plan and API surface
 - [Tutor AI ER Diagram](Technical%20Docs/Tutor%20AI%20ER.png) — visual schema reference

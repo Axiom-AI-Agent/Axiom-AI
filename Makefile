@@ -1,4 +1,4 @@
-.PHONY: install run test lint health ready config smoke-llm verify-phase0
+.PHONY: install run test lint health ready config smoke-llm smoke-twilio smoke-chat verify-phase0 init-db
 
 PYTHON ?= python3
 export PYTHONPATH := src
@@ -26,6 +26,12 @@ config:
 
 smoke-llm:
 	$(PYTHON) scripts/smoke_llm.py
+
+smoke-twilio:
+	$(PYTHON) scripts/smoke_twilio.py
+
+smoke-chat:
+	$(PYTHON) scripts/smoke_chat.py
 
 verify-phase0:
 	$(PYTHON) scripts/verify_phase0.py

@@ -1,4 +1,4 @@
-"""FastAPI application — Phase 0 foundation."""
+"""FastAPI application — Phase 1 dev chat + deferred Twilio webhook."""
 
 from __future__ import annotations
 
@@ -12,7 +12,9 @@ from loguru import logger
 load_dotenv(override=True)
 
 from api.middleware import RequestContextMiddleware
+from api.routers.chat import router as chat_router
 from api.routers.health import router as health_router
+from api.webhooks.twilio import router as twilio_webhook_router
 from infrastructure.config import validate
 from infrastructure.log import setup_logging
 from infrastructure.observability import flush
@@ -23,7 +25,7 @@ async def lifespan(app: FastAPI):
     setup_logging()
     validate(require_llm=False, require_supabase=False)
     app.state.startup_complete = True
-    logger.info("Axiom AI API ready (Phase 0 — foundation)")
+    logger.info("Axiom AI API ready (Phase 1 — dev chat; Twilio webhook optional)")
     yield
     flush()
     logger.info("Axiom AI API shutdown")
@@ -32,7 +34,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Axiom AI",
     description="Multi-tenant tutor agent backend",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
@@ -45,15 +47,20 @@ app.add_middleware(
 )
 app.add_middleware(RequestContextMiddleware)
 app.include_router(health_router)
+app.include_router(chat_router)
+app.include_router(twilio_webhook_router)
 
 
 @app.get("/")
 async def root() -> dict:
     return {
         "service": "Axiom AI",
-        "phase": 0,
+        "phase": 1,
         "health": "/health",
         "ready": "/ready",
         "config": "/config",
+        "chat": "/chat",
+        "chat_turns": "/chat/turns",
+        "webhook": "/webhooks/twilio",
         "docs": "/docs",
     }

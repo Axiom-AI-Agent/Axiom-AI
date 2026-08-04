@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import functools
+import inspect
 import os
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -126,7 +127,7 @@ def observe(name: str | None = None) -> Callable[[F], F]:
         def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             return fn(*args, **kwargs)
 
-        if functools.iscoroutinefunction(fn):
+        if inspect.iscoroutinefunction(fn):
             return async_wrapper  # type: ignore[return-value]
         return sync_wrapper  # type: ignore[return-value]
 

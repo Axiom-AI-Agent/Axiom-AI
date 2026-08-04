@@ -2,7 +2,7 @@
 
 > **Scope:** Hackathon MVP (6 days) · AI backend only · Multi-tenant SaaS for Sri Lankan private tuition  
 > **Owner:** AI backend team · **Consumers:** Twilio (students), Next.js staff dashboard (frontend team)  
-> **Last updated:** 2026-08-04 (GPT-4o-mini + Gemini merge; status enums; Langfuse tracing + prompt management)
+> **Last updated:** 2026-08-04 (GPT-4o-mini + Gemini merge; status enums; Langfuse tracing + prompt management; **MCP for all agent tools**)
 
 This document replaces the generic agentic-AI template (`Roadmap.md`). It is the single source of truth for **what we build, in what order, and why**.
 
@@ -17,7 +17,7 @@ This document replaces the generic agentic-AI template (`Roadmap.md`). It is the
 5. [System Understanding](#5-system-understanding)
 6. [Resource Split: Google Drive vs RAG](#6-resource-split-google-drive-vs-rag)
 7. [Multi-Tenant Data Model](#7-multi-tenant-data-model)
-8. [Reference Patterns to Reuse](#8-reference-patterns-to-reuse)
+8. [Reference Patterns to Reuse](#8-reference-patterns-to-reuse) — incl. [§8.1 MCP Tool Architecture](#81-mcp-tool-architecture-mvp)
 9. [High-Level Architecture](#9-high-level-architecture)
 10. [Phased Implementation Plan](#10-phased-implementation-plan)
 11. [API Contract Summary (Dashboard Team)](#11-api-contract-summary-dashboard-team)
@@ -45,7 +45,8 @@ These decisions are **final for the MVP**. Do not reintroduce removed components
 | **Payments** | **Manual staff review** | Payment Check Agent creates dashboard queue item; no bank-slip OCR in MVP |
 | **Google Drive content** | **Tutes + textbooks only** | Past papers, model papers, textbook PDFs — file retrieval via Drive tool |
 | **RAG content** | **Tutor notes only** | Lesson notes, explanations, teaching methodology — semantic Q&A via Qdrant |
-| **Drive integration (MVP)** | **Direct Python tool first** | Google Drive API scoped per tenant; MCP server wrapper deferred to v2 if time allows |
+| **Agent tool integration (MVP)** | **MCP (FastMCP) via stdio** | All CRM, Drive, RAG, memory, and payment/escalation actions exposed as MCP tools; orchestrator uses `build_agent_mcp()` (Week 13 / BookMe pattern) — no direct in-process tool dispatch |
+| **Drive integration (MVP)** | **Google Drive API behind `drive_server.py`** | Service account + shared folder for hackathon; Drive logic in `DriveTool`, exposed to agents only through MCP |
 | **Frontend** | **Not in this repo** | Staff dashboard built separately; we expose REST APIs + OpenAPI |
 | **Decision graph** | **BookMe-AI pattern: guardrail ∥ router → decide** | Scope filter before expensive agent/tool calls; no semantic cache layer |
 | **Not using** | **CAG, CRAG, semantic cache** | Week 13 cache path removed from MVP; FAQ/admin queries go through RAG or direct agent |
@@ -206,7 +207,8 @@ async def run_chat_turn(ctx: IdentityContext, message: str) -> str:
 | `decide` | 2 | Rule-based; log verdict |
 | `orchestrator` | 2–5 | Agent dispatch |
 | `admissions` / `resource` / … | 3–5 | Specialist nodes |
-| `rag_retrieve` / `drive_search` | 4 | Tool spans |
+| `rag_retrieve` / `drive_search` | 4 | MCP tool-call spans (`rag_server`, `drive_server`) |
+| `crm_*` | 3–5 | MCP tool-call spans (`crm_server`) |
 | `merge_response` | 2+ | Gemini synthesis span |
 | `twilio_send` | 1 | Outbound message |
 
@@ -253,7 +255,7 @@ messages = prompt.compile(router_context=ctx.build_router_context())
 |-------|---------------|
 | 0 | Client init, `observe` decorator, `flush()` on shutdown, env vars |
 | 1 | Trace inbound webhook → outbound send; tag with tenant |
-| 2 | Full decision graph spans; seed prompts in Langfuse project |
+| 2 | Full decision graph spans; MCP tool-call spans; seed prompts in Langfuse project |
 | 3–5 | Agent-specific prompts + generations linked to session |
 | 6 | E2E trace review; prompt promote workflow documented in SETUP.md |
 
@@ -282,6 +284,7 @@ A **Twilio WhatsApp Sandbox** agent that:
 3. **Answers** conceptual questions from **tutor notes** via **RAG** (Resource Agent — Qdrant)
 4. **Routes** payment receipts and angry/complex messages to the **staff dashboard** (Payment Check + Escalation agents)
 5. **Isolates** every tutor's data by `tenant_id` (multi-tenant)
+6. **Exposes** all agent tools (CRM, Drive, RAG, memory) via **MCP servers** — orchestrator never calls Supabase/Drive/Qdrant directly (§8.1)
 
 ### Success Metrics (from MVP Definition)
 
@@ -328,9 +331,9 @@ This split is **confirmed** and matches `docs/Project Planning.md` Use Cases 1 a
   syllabus/        ← optional: class rules, intro packs
 ```
 
-**Tool behavior:** Resource Agent sub-route `drive_search` → returns shareable link or Twilio media message. All searches filtered by `tenant_id` → mapped `drive_folder_id` in Supabase (`tenant_integrations`).
+**Tool behavior:** Resource Agent sub-route `drive_search` → MCP `drive_server` → shareable link or Twilio media message. All searches filtered by `tenant_id` → mapped `drive_folder_id` in Supabase (`tenant_integrations`).
 
-**MVP implementation note:** Use **Google Drive API** with a service account or one OAuth connection per demo tenant. Store `drive_root_folder_id` per tenant in Supabase. Wrap as `DriveTool.dispatch(action, params)`; add MCP server only if time permits in Phase 4.
+**MVP implementation note:** Use **Google Drive API** with a service account or one OAuth connection per demo tenant. Store `drive_root_folder_id` per tenant in Supabase. Implement `DriveTool` in `src/agents/tools/drive_tool.py` for business logic; expose actions exclusively via **`drive_server.py`** MCP (see §8.1). Agents never import `DriveTool` directly.
 
 ### RAG (Qdrant) — Tutor Notes Only
 
@@ -351,12 +354,12 @@ This split is **confirmed** and matches `docs/Project Planning.md` Use Cases 1 a
 
 **Router disambiguation:**
 
-| Student message | Route | Tool |
-|-----------------|-------|------|
-| "Can I get last week's physics paper?" | `resource` → `drive` | Google Drive |
-| "I don't understand velocity in lesson 5" | `resource` → `rag` | Qdrant RAG |
-| "Send me the textbook for chapter 3" | `resource` → `drive` | Google Drive |
-| "What did sir say about Newton's laws?" | `resource` → `rag` | Qdrant RAG |
+| Student message | Route | MCP tool |
+|-----------------|-------|----------|
+| "Can I get last week's physics paper?" | `resource` → `drive` | `drive_server.drive_search` |
+| "I don't understand velocity in lesson 5" | `resource` → `rag` | `rag_server.kb_search` |
+| "Send me the textbook for chapter 3" | `resource` → `drive` | `drive_server.drive_search` |
+| "What did sir say about Newton's laws?" | `resource` → `rag` | `rag_server.kb_search` |
 
 ---
 
@@ -403,11 +406,51 @@ Aligned with `docs/Tutor_AI_SRS_v2.md` §11 and ER diagram (`docs/Technical Docs
 
 | Source | Reuse | Skip |
 |--------|-------|------|
-| **Week 13** | Folder layout, `main.py` lifespan, `deps.py`, router, orchestrator, **plain RAG service** (no CAG/CRAG), config YAML | Hospital CRM, **CAG cache, CRAG, CAG decision node**, MCP servers (defer), 4-tier memory |
+| **Week 13** | Folder layout, `main.py` lifespan, `deps.py`, router, **`build_agent_mcp()`**, **`mcp_config.py`**, MCP tool servers, **plain RAG service** (no CAG/CRAG), config YAML | Hospital CRM domain, **CAG cache, CRAG, CAG decision node**, 4-tier memory |
 | **BookMe AI** | **`decision_graph.py`**, **`guardrail.py`**, `decision_state` + `decision_bridge`, `chat_pipeline.py`, `build_decision_graph()`, `decide_node`, SessionStore pattern → Supabase `st_turns` | Travel tools, Clerk auth, Redis |
 | **Axiom AI (reference)** | Config, LLM factories, Qdrant client, ingest pipeline, identity schema | WhatsApp webhook, Redis queue, worker |
 | **Hackathon docs** | SRS, MVP Definition, Project Planning, ER diagram | Meta WhatsApp flows |
 | **Context7 MCP** | Langfuse `@observe` + `propagate_attributes`, OpenAI/Gemini SDK patterns, prompt `get_prompt` / `compile` | — |
+
+### 8.1 MCP Tool Architecture (MVP)
+
+All agent-facing tools run as **MCP servers** (FastMCP, stdio transport). The orchestrator connects via `build_agent_mcp()` — the same pattern as Week 13 / BookMe AI. Tool classes in `src/agents/tools/` hold business logic; MCP servers are **thin wrappers** that expose those actions to LangGraph.
+
+**Why MCP for MVP:** isolates Supabase/Drive/Qdrant side effects, matches the reference codebase, and lets debug endpoints and agents share the same tool surface.
+
+#### MCP servers (MVP scope)
+
+| Server | File | Exposed actions | Wired in phase |
+|--------|------|-----------------|----------------|
+| **CRM** | `crm_server.py` | `register_student`, `get_student`, `list_classes`, `create_enrollment`, `create_payment`, `create_escalation`, `set_human_mode` | Phase 3 (admissions), Phase 5 (payment/escalation) |
+| **Drive** | `drive_server.py` | `drive_search`, `drive_list` (scoped to `papers/`, `textbooks/`, `syllabus/`) | Phase 4 |
+| **RAG** | `rag_server.py` | `kb_search`, `kb_ingest_status` | Phase 4 |
+| **Memory** | `memory_server.py` | `recall_turns`, `add_turn`, `get_procedural` | Phase 2 |
+
+**Not in MVP MCP scope:** `cag_server`, `web_server`, `crawler_server`, `payhere_server` (PayHere deferred to V2).
+
+#### Wiring pattern
+
+```text
+chat_pipeline.run_chat_turn()
+  → decision_graph (guardrail ∥ router → decide)
+  → build_agent_mcp()          # loads tools from mcp_config.MCP_SERVERS
+  → orchestrator (LangGraph)   # specialist nodes call MCP tools only
+  → MCP subprocesses (stdio)   # crm_server | drive_server | rag_server | memory_server
+  → *Tool classes + services   # Supabase, Drive API, Qdrant
+```
+
+#### `mcp_config.py`
+
+Defines subprocess launch commands for each server (Python module path, env passthrough). Started once at app lifespan (`main.py`) or lazily on first orchestrator invoke — prefer **lifespan preload** so first student message is not cold-start slow.
+
+#### Tenant context
+
+Every MCP tool call receives `tenant_id` (and `student_id` / `session_id` where relevant) via tool arguments injected by agent nodes from `IdentityContext`. Servers **must** filter all DB/Drive/Qdrant queries by `tenant_id`.
+
+#### Debug / REST parity
+
+Phase 4+ debug routes (`POST /tools/rag/search`, `POST /tools/drive/search`) call the same underlying `*Tool` classes as the MCP servers — not a separate code path.
 
 ---
 
@@ -437,20 +480,24 @@ flowchart TD
     ORCH --> DIR[Direct]
     ORCH --> MERGE[Gemini merge_response]
     MERGE --> REPLY
-    RES --> DRIVE[Drive Tool - papers/textbooks]
-    RES --> RAG[RAG Tool - tutor notes]
-    RAG --> MERGE
-    PAY --> SB[(Supabase payments)]
-    ESC --> SB2[(Supabase escalations)]
-    ADM --> SB3[(Supabase students)]
+    ORCH --> MCP[MCP Tool Layer]
+    MCP --> CRM_S[crm_server]
+    MCP --> DRV_S[drive_server]
+    MCP --> RAG_S[rag_server]
+    MCP --> MEM_S[memory_server]
+    CRM_S --> SB[(Supabase CRM)]
+    PAY --> CRM_S
+    ESC --> CRM_S
+    ADM --> CRM_S
+    RES --> DRV_S
+    RES --> RAG_S
+    DRV_S --> GD[Google Drive API]
+    RAG_S --> QD[(Qdrant kb_tenant_id)]
+    MEM_S --> SB4[(Supabase st_turns)]
     PIPE --> REPLY[Twilio REST reply]
     REPLY --> S
     SB --> DASH[Dashboard APIs]
-    SB2 --> DASH
-    SB3 --> DASH
     DASH --> FE[Next.js Dashboard Team]
-    RAG --> QD[(Qdrant kb_tenant_id)]
-    DRIVE --> GD[Google Drive API]
 ```
 
 ### Processing Model (No Redis)
@@ -524,6 +571,7 @@ Project scaffold, shared Supabase schema with tenant isolation, LLM/config infra
 - LLM factories: router/guardrail (Groq), **chat (GPT-4o-mini)**, **merge (Gemini)**, extractor
 - Loguru + LangFuse client (`observe`, `propagate_attributes`, `flush`)
 - Supabase client + SQL migrations with **PostgreSQL ENUM types** (§3)
+- **`fastmcp` dependency** + `src/mcp_servers/mcp_config.py` scaffold (server launch config, no tools yet)
 - Seed: 2 demo tenants, 2 classes, sample students
 - `GET /health`, `GET /ready`, `GET /config`
 - `src/domain/enums.py` — Python `StrEnum` mirror of DB enums
@@ -532,6 +580,7 @@ Project scaffold, shared Supabase schema with tenant isolation, LLM/config infra
 
 ```text
 src/infrastructure/{config,log,observability,llm,db}
+src/mcp_servers/mcp_config.py          # MCP subprocess launch config (stub)
 src/domain/enums.py
 src/api/{main,deps,schemas,middleware}.py
 src/api/routers/health.py
@@ -572,62 +621,70 @@ pyproject.toml
 - [ ] LLM factory smoke test passes (`get_chat_llm` → gpt-4o-mini, `get_merge_llm` → gemini)
 - [ ] DB uses ENUM types; Python `StrEnum` matches schema
 - [ ] Langfuse client initialises when keys present; no-op when absent
+- [ ] `mcp_config.MCP_SERVERS` defined; smoke test can import FastMCP
 
 ---
 
-### Phase 1 — Twilio WhatsApp Sandbox Pipeline
+### Phase 1 — Dev Chat + Messaging Pipeline *(Twilio deferred)*
 
 **Duration:** Day 1 PM – Day 2 AM (~8h)
 
 #### Objective
 
-End-to-end Twilio WhatsApp: webhook in, reply out. No agents yet (fixed reply OK first).
+End-to-end student messaging: message in, reply out. **Primary dev path is HTTP chat** (`POST /chat`) — no Twilio sandbox required. Twilio webhook ships but is optional until demo day.
 
 #### Features
 
-- `POST /webhooks/twilio` — parse WhatsApp sandbox payload (`From`, `Body`, `NumMedia`, `MediaUrl0`)
-- Twilio signature validation
-- `TwilioMessagingClient` — send WhatsApp message via REST
-- Tenant resolution from `To` / configured sandbox number → `tenant_id`
-- Student lookup / stub identity
-- `chat_logs` persistence
-- `BackgroundTasks` scaffold for async replies
-- `MESSAGING_DRY_RUN=true` for local dev without Twilio sends
-- Langfuse trace on webhook: `session_id`, `user_id`, `metadata.tenant_id`, tags
+- **`POST /chat`** — WhatsApp-like dev interface (tenant_id + phone + message → reply)
+- **`GET /chat/turns`** — session history from `st_turns`
+- `ChatPipeline` — channel-agnostic; shared by HTTP chat and Twilio
+- `POST /webhooks/twilio` *(optional)* — parse sandbox payload; signature validation
+- `TwilioMessagingClient` — send WhatsApp via REST when configured
+- Tenant + student resolution; stub student auto-provision
+- `message_logs` + `st_turns` persistence
+- `BackgroundTasks` on Twilio webhook only
+- Langfuse trace: `session_id`, `user_id`, `metadata.tenant_id`, tags
+
+> **Dev guide:** [docs/DEV_CHAT.md](../DEV_CHAT.md)
 
 #### Files / Modules
 
 ```text
+src/api/routers/chat.py
 src/api/webhooks/twilio.py
-src/services/messaging/{twilio_client,parser,schemas}.py
+src/services/messaging/{pipeline,twilio_client,parser,schemas,persistence}.py
 src/services/identity/resolver.py
+tests/test_chat.py
 tests/test_twilio_webhook.py
 tests/test_twilio_signature.py
+scripts/smoke_chat.py
 scripts/smoke_twilio.py
 ```
 
 #### Dependencies
 
 - Phase 0
-- Twilio account + WhatsApp Sandbox joined on test phones
+- Supabase for persistence
+- Twilio account *(optional — only for real WhatsApp demo)*
 
 #### Deliverables
 
-- Message to sandbox number → automated reply logged in Supabase
+- `curl POST /chat` → reply logged in Supabase
+- Twilio path ready when credentials + ngrok are configured
 
 #### Risks
 
 | Risk | Mitigation |
 |------|------------|
-| Sandbox join friction | Document "send join code" steps in SETUP.md |
+| Twilio sandbox join friction | Use HTTP `/chat` for all dev until demo |
 | Multi-tenant sandbox mapping | Map sandbox `To` number → `tenant_id` in config table |
 
 #### Acceptance Criteria
 
-- [ ] Valid Twilio signature enforced
-- [ ] Inbound/outbound in `chat_logs` with correct `tenant_id`
-- [ ] BackgroundTasks sends reply when handler returns immediately
-- [ ] Dry-run mode logs without sending
+- [ ] `POST /chat` returns reply with correct `tenant_id` / `session_id`
+- [ ] Inbound/outbound in `message_logs` + `st_turns` with correct `tenant_id`
+- [ ] `GET /chat/turns` returns conversation history
+- [ ] Twilio signature enforced when `TWILIO_AUTH_TOKEN` set *(optional path)*
 - [ ] No Redis, no worker process in codebase
 
 ---
@@ -650,7 +707,9 @@ Replace fixed reply with LangGraph routing; channel-agnostic `run_chat_turn()`.
 - Router intents: `admissions`, `resource`, `payment_check`, `escalation`, `direct`; prompt from Langfuse `axiom/router`
 - `chat_pipeline.run_chat_turn()` — decision graph first, orchestrator only on `proceed`; **`propagate_attributes`** for Langfuse session/user/tenant
 - **`merge_response` node** — Gemini synthesises final reply via Langfuse `axiom/merge_response`
-- Orchestrator skeleton (direct agent first; specialists wired in Phases 3–5); agents use **GPT-4o-mini**
+- **`build_agent_mcp()`** — LangGraph orchestrator loads tools from MCP servers (§8.1); no direct `*Tool` imports in agent nodes
+- **`memory_server.py`** — ST recall / add_turn / procedural lookup exposed as MCP tools
+- Orchestrator skeleton (direct agent first; specialists wired in Phases 3–5); agents use **GPT-4o-mini** and call **MCP tools only**
 - ST memory: Supabase `st_turns` ring buffer
 - Procedural store: onboarding workflow definitions per tenant
 - Seed all prompts in Langfuse project (`production` label)
@@ -658,7 +717,9 @@ Replace fixed reply with LangGraph routing; channel-agnostic `run_chat_turn()`.
 #### Files / Modules
 
 ```text
-src/agents/{state,decision_state,decision_bridge,decision_graph,guardrail,router,orchestrator,chat_pipeline,merge}.py
+src/agents/{state,decision_state,decision_bridge,decision_graph,guardrail,router,orchestrator,chat_pipeline,merge,agent_mcp}.py
+src/mcp_servers/{mcp_config,memory_server}.py
+src/agents/tools/memory_tool.py        # business logic; called by memory_server only
 src/agents/prompts/tutoring_prompts.py   # local fallback seeds only — Langfuse is source of truth
 src/services/prompts/langfuse_prompts.py # get_prompt / compile wrapper
 src/memory/{schemas,st_store,procedural_store}.py
@@ -673,6 +734,7 @@ scripts/test_routing_smoke.py              # mirror BookMe scripts/test_decision
 
 - Phase 1
 - BookMe-AI reference: `decision_graph.py`, `guardrail.py`, `decision_state.py`
+- Week 13 reference: `agent_mcp.py`, `mcp_config.py`, `memory_server.py`
 
 #### Acceptance Criteria
 
@@ -686,6 +748,8 @@ scripts/test_routing_smoke.py              # mirror BookMe scripts/test_decision
 - [ ] Langfuse trace shows session_id, user_id, tenant_id for sample turn
 - [ ] Prompts loaded from Langfuse; local fallback works offline
 - [ ] Gemini merge produces single coherent reply from multi-fragment context
+- [ ] `build_agent_mcp()` connects to `memory_server`; orchestrator invokes MCP `recall_turns` / `add_turn`
+- [ ] No agent node imports Supabase/Drive/Qdrant clients directly — only MCP tool calls
 
 ---
 
@@ -703,16 +767,20 @@ Automated student onboarding with procedural memory and multi-tenant enrollment.
 - PDPA consent capture → `students.consent_at`
 - Duplicate `(tenant_id, phone)` handling
 - Class disambiguation when grade+subject ambiguous
+- **`crm_server.py`** — admissions CRM actions (`register_student`, `get_student`, `list_classes`, `create_enrollment`) as MCP tools
+- Admissions agent node calls MCP only (no direct DB client in agent code)
 - REST: `POST /students/register`, `GET /students/{phone}`, `GET /classes?tenant_id=`
 
 #### Files / Modules
 
 ```text
-src/agents/tools/admissions_tool.py
+src/agents/tools/crm_tool.py           # business logic; used by crm_server
+src/mcp_servers/crm_server.py
 src/agents/nodes/admissions_agent.py
 src/services/admissions/{onboarding_flow,admissions_db_client}.py
 src/api/routers/{students,classes}.py
 tests/test_admissions_flow.py
+tests/test_crm_mcp_server.py
 scripts/sample_requests/admissions_onboarding.json
 ```
 
@@ -722,6 +790,8 @@ scripts/sample_requests/admissions_onboarding.json
 - [ ] Enrollment row with correct `tenant_id` + `class_id`
 - [ ] Consent recorded before confirmation
 - [ ] Dashboard can `GET /students/{phone}?tenant_id=X`
+- [ ] Admissions agent uses MCP `register_student` / `list_classes`; E2E via WhatsApp passes
+- [ ] `crm_server` rejects cross-tenant `tenant_id` mismatches
 
 ---
 
@@ -735,17 +805,18 @@ Two sub-paths: **Drive** for papers/textbooks, **RAG** for tutor notes. Strict c
 
 #### Features
 
-- **Drive tool:** search/list in `papers/`, `textbooks/` only; return link
-- **RAG tool:** Qdrant collection `kb_{tenant_id}`; ingest tutor notes only; **Gemini synthesis** via Langfuse `axiom/resource_rag`
-- Resource agent node: sub-router `drive` vs `rag`
+- **`drive_server.py`** — search/list in `papers/`, `textbooks/`, `syllabus/`; return link
+- **`rag_server.py`** — Qdrant collection `kb_{tenant_id}`; ingest tutor notes only; **Gemini synthesis** via Langfuse `axiom/resource_rag`
+- Resource agent node: sub-router `drive` vs `rag`; both paths use MCP tools only
 - `tenant_integrations.drive_root_folder_id` per tenant
 - Ingest script for notes markdown per tenant
-- Debug: `POST /tools/rag/search`, `POST /tools/drive/search`
+- Debug: `POST /tools/rag/search`, `POST /tools/drive/search` (same `*Tool` classes as MCP servers)
 
 #### Files / Modules
 
 ```text
-src/agents/tools/{resource_tool,drive_tool,rag_tool}.py
+src/agents/tools/{drive_tool,rag_tool}.py   # business logic; called by MCP servers
+src/mcp_servers/{drive_server,rag_server}.py
 src/agents/nodes/resource_agent.py
 src/services/drive_service/drive_client.py
 src/services/rag_service/{rag_service,rag_templates}.py
@@ -753,8 +824,8 @@ src/services/ingest_service/{pipeline,chunkers}.py
 src/infrastructure/db/qdrant_client.py
 scripts/ingest_tenant_notes.py
 data/knowledge_base/{tenant_slug}/*.md
-tests/test_drive_search.py
-tests/test_rag_retrieval.py
+tests/test_drive_mcp_server.py
+tests/test_rag_mcp_server.py
 tests/test_resource_routing.py
 ```
 
@@ -764,9 +835,9 @@ tests/test_resource_routing.py
 |--------|-------------------------|
 | Service account + shared folder | ✅ Fastest if one demo Drive shared with service account email |
 | OAuth per tenant | v2 — store refresh token in `tenant_integrations` |
-| MCP server | Optional stretch — direct tool is enough for MVP |
+| MCP `drive_server` | ✅ **Required** — agents access Drive only via MCP (§8.1) |
 
-**Confirm:** Drive tool **rejects** paths outside `papers/`, `textbooks/`, `syllabus/`. Notes folder (if any on Drive) is **not** exposed via Drive tool — only ingested to Qdrant.
+**Confirm:** `drive_server` **rejects** paths outside `papers/`, `textbooks/`, `syllabus/`. Notes folder (if any on Drive) is **not** exposed via Drive MCP — only ingested to Qdrant.
 
 #### Acceptance Criteria
 
@@ -774,6 +845,8 @@ tests/test_resource_routing.py
 - [ ] "Explain velocity" → RAG answer from tutor notes with citation
 - [ ] Tenant A cannot retrieve Tenant B files or chunks
 - [ ] Ingest script loads demo notes for 2 tenants
+- [ ] Resource agent calls MCP `drive_search` / `kb_search`; no direct service imports in agent nodes
+- [ ] MCP server integration tests pass for drive + rag
 
 ---
 
@@ -787,9 +860,10 @@ Manual payment review queue + escalation inbox + REST APIs for dashboard team.
 
 #### Features
 
-- Payment Check: image via Twilio `MediaUrl0` → `payments` (`payment_status = pending`)
-- Escalation: frustration keywords / low confidence → `escalations` (`escalation_status = open`)
-- Human takeover: `chat_sessions.human_mode` — bot silent until released
+- Payment Check: image via Twilio `MediaUrl0` → MCP `create_payment` → `payments` (`payment_status = pending`)
+- Escalation: frustration keywords / low confidence → MCP `create_escalation` → `escalations` (`escalation_status = open`)
+- Human takeover: MCP `set_human_mode` on `chat_sessions` — bot silent until released
+- Extend **`crm_server.py`** with payment, escalation, and human-mode MCP tools
 - Dashboard APIs:
   - `GET /dashboard/overview?tenant_id=`
   - `GET/PATCH /dashboard/payments`
@@ -802,12 +876,13 @@ Manual payment review queue + escalation inbox + REST APIs for dashboard team.
 #### Files / Modules
 
 ```text
-src/agents/tools/{payment_tool,escalation_tool}.py
 src/agents/nodes/{payment_agent,escalation_agent}.py
+src/mcp_servers/crm_server.py          # extended: create_payment, create_escalation, set_human_mode
 src/services/{payment,escalation}_service/
 src/api/routers/dashboard/{overview,payments,escalations,chat,classes}.py
 docs/API_CONTRACT.md
 tests/test_payment_escalation.py
+tests/test_crm_mcp_server.py
 tests/test_dashboard_api.py
 scripts/sample_requests/dashboard_*.json
 ```
@@ -819,6 +894,7 @@ scripts/sample_requests/dashboard_*.json
 - [ ] Escalation appears in inbox with urgency
 - [ ] Staff send message delivers to student WhatsApp
 - [ ] `API_CONTRACT.md` shared with dashboard team
+- [ ] Payment and escalation agents invoke MCP tools on `crm_server`; no duplicate payment/escalation logic outside `crm_tool`
 
 ---
 
@@ -832,8 +908,9 @@ Full orchestrator wired, E2E tests, observability, documentation.
 
 #### Features
 
-- Wire all agent nodes in orchestrator
+- Wire all agent nodes in orchestrator (all specialists via MCP)
 - E2E scenarios (onboarding, drive, rag, payment, escalation, off-topic)
+- MCP server health: all four servers start under app lifespan; graceful failure if subprocess dies
 - Langfuse traces on all graph nodes + LLM generations; session replay verified
 - Langfuse prompt promote workflow (`staging` → `production`) documented
 - Error handling audit (router fallback, guardrail fail-open)
@@ -848,6 +925,7 @@ Full orchestrator wired, E2E tests, observability, documentation.
 - [ ] All production prompts versioned in Langfuse with `production` label
 - [ ] SETUP.md + API_CONTRACT.md complete
 - [ ] Dashboard team confirms API access to shared Supabase + REST endpoints
+- [ ] All four MCP servers (`crm`, `drive`, `rag`, `memory`) running in E2E test harness
 
 ---
 
@@ -926,7 +1004,7 @@ Everything below is **deferred to V2**. See [§16 Future Implementations (V2)](#
 - Long-term semantic memory, distiller, episodic memory, procedural expansion
 - CAG, CRAG, semantic cache
 - Full Academic Assistant, Finance & Ledger, Ticketing, Marketing, Assignment Routing agents
-- Google Drive OAuth per tenant, MCP tool servers (Drive, Supabase, PayHere)
+- Google Drive OAuth per tenant, **PayHere MCP server**, external third-party MCP integrations
 - Platform super-admin, subscription billing, usage metering
 - Full CRM, analytics, marketing funnels, attendance QR, parent progress reports
 - Native mobile apps, LMS portal, video hosting, live streaming
@@ -951,7 +1029,7 @@ For **every phase**, follow this sequence:
 |-----|-------|-----------|
 | Day 1 AM | Phase 0 | Supabase multi-tenant schema live |
 | Day 1 PM – Day 2 AM | Phase 1 | Twilio WhatsApp sandbox echo |
-| Day 2 PM – Day 3 AM | Phase 2 | Router replaces fixed reply |
+| Day 2 PM – Day 3 AM | Phase 2 | Router + MCP orchestrator (`memory_server`) |
 | Day 3 PM | Phase 3 | Admissions onboarding works |
 | Day 4 | Phase 4 | Drive papers + RAG notes |
 | Day 5 | Phase 5 | Dashboard APIs ready |
@@ -971,7 +1049,7 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 |------|-------|-----------|
 | **V2.1** | Production messaging, PayHere + OCR, Redis queue, CAG | Revenue-critical automation |
 | **V2.2** | Full agents (Academic, Grading, Ticketing), LT memory, voice | Core product differentiation |
-| **V2.3** | Platform SaaS, MCP, super-admin, analytics | Scale and operations |
+| **V2.3** | Platform SaaS, super-admin, analytics, PayHere MCP | Scale and operations |
 
 ---
 
@@ -1043,11 +1121,11 @@ This section captures **everything intentionally excluded from the MVP** plus SR
 | Item | Description | MVP gap | Priority | Dependencies |
 |------|-------------|---------|----------|--------------|
 | **Google Drive OAuth per tenant** | Each tutor connects own Drive; refresh tokens in `tenant_integrations` | Service account + shared folder in MVP | High | OAuth flow, token encryption |
-| **Google Drive MCP server** | Portable Drive tools via MCP (Project Planning) | Direct Python `DriveTool` in MVP | Medium | FastMCP, `drive_server.py` |
-| **Supabase MCP server** | CRM operations exposed as MCP tools | Direct DB clients in MVP | Low | `supabase_server.py` |
-| **PayHere MCP server** | Payment actions as MCP tools | Not built | Low | PayHere integration first |
-| **MCP-backed orchestrator** | `build_agent_mcp()` pattern from BookMe/Week 13 | Direct tool dispatch in MVP | Low | Stable MCP servers |
+| **PayHere MCP server** | Payment checkout and webhook actions as MCP tools | Not built; CRM MCP handles pending rows only | Medium | PayHere integration first |
+| **External MCP integrations** | Third-party MCP servers (calendar, LMS, etc.) | MVP uses internal servers only | Low | Stable MCP client, auth |
 | **Per-tenant Langfuse prompt labels** | Tenant-specific prompt overrides via `tenant:{slug}` label | MVP uses shared `production` prompts | Low | Langfuse prompt management (MVP baseline in §4) |
+
+**Already in MVP (§8.1):** `crm_server`, `drive_server`, `rag_server`, `memory_server`, and `build_agent_mcp()` orchestrator wiring.
 
 ---
 
@@ -1125,7 +1203,6 @@ When moving to V2, consider reintroducing these **Week 13 / BookMe** patterns de
 | **CAG in decision graph** | Third parallel node: guardrail ∥ router ∥ cache | V2.1 after FAQ volume justifies it |
 | **CRAG** | Better RAG accuracy for academic answers | V2.2 with Academic Assistant |
 | **4-tier memory** | ST + LT + episodic + procedural | V2.2 |
-| **MCP tool servers** | Drive, Supabase, PayHere isolation | V2.2–V2.3 |
 | **Multi-agent fan-out / merge** | Compound student messages | V2.2+ |
 
 ---
@@ -1149,7 +1226,7 @@ The previous 15-phase generic agentic-AI build guide (Week 13 teaching template)
 When implementing, prefer:
 
 - `graphify query "<question>"` for codebase orientation after `graphify update .`
-- **Context7 MCP** (`resolve-library-id` → `query-docs`) for Langfuse, OpenAI, Gemini, and Supabase SDK patterns
+- **Context7 MCP** (`resolve-library-id` → `query-docs`) for Langfuse, OpenAI, Gemini, Supabase SDK, and **FastMCP** server patterns
 - Week 13 / BookMe AI source for concrete patterns cited in §8
 
 ---
