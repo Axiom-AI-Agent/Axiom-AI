@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from app.routes import classes, payments
 from app.database.session import engine, Base
 
+import app.models  # noqa: F401 — register all ORM models with metadata
+
 # Create tables in Supabase automatically on boot
 Base.metadata.create_all(bind=engine)
 
