@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -10,7 +10,11 @@ from app.schemas.schemas import (
     EscalationCreate,
     EscalationResponse,
 )
-from app.services.escalation_service import create_escalation
+
+from app.services.escalation_service import (
+    create_escalation,
+    update_escalation_status,
+)
 
 router = APIRouter(prefix="/escalations", tags=["Escalations"])
 
@@ -35,3 +39,32 @@ def create_new_escalation(
         student_id=escalation_data.student_id,
         reason_code=escalation_data.reason_code,
     )
+
+@router.put("/{escalation_id}/assign", response_model=EscalationResponse)
+def assign_escalation(
+    escalation_id: str,
+    db: Session = Depends(get_db),
+):
+    try:
+        return update_escalation_status(
+            db=db,
+            escalation_id=escalation_id,
+            status=EscalationStatus.ASSIGNED,
+        )
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Escalation not found")
+
+
+@router.put("/{escalation_id}/resolve", response_model=EscalationResponse)
+def resolve_escalation(
+    escalation_id: str,
+    db: Session = Depends(get_db),
+):
+    try:
+        return update_escalation_status(
+            db=db,
+            escalation_id=escalation_id,
+            status=EscalationStatus.RESOLVED,
+        )
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Escalation not found")
