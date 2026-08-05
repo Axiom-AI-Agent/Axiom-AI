@@ -54,7 +54,7 @@ class Enrollment(Base):
 
     # Enrollment Status
     status = Column(
-        Enum(EnrollmentStatus, name="enrollment_status"),
+        Enum(EnrollmentStatus, name="enrollment_status", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="active",
     )

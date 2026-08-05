@@ -28,7 +28,7 @@ class StaffUser(Base):
 
     # Staff Details
     role = Column(
-        Enum(StaffRole, name="staff_role"),
+        Enum(StaffRole, name="staff_role", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="admin",
     )

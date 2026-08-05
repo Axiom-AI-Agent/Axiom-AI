@@ -47,7 +47,7 @@ class SubjectClass(Base):
     )
 
     fee_cycle = Column(
-        Enum(FeeCycle, name="fee_cycle"),
+        Enum(FeeCycle, name="fee_cycle", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="monthly",
     )

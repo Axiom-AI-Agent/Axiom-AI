@@ -52,7 +52,7 @@ class Invoice(Base):
     )
 
     status = Column(
-        Enum(InvoiceStatus, name="invoice_status"),
+        Enum(InvoiceStatus, name="invoice_status", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="pending",
     )

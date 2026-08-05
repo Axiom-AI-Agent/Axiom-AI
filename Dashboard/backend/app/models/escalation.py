@@ -52,7 +52,7 @@ class Escalation(Base):
     )
 
     status = Column(
-        Enum(EscalationStatus, name="escalation_status"),
+        Enum(EscalationStatus, name="escalation_status", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="open",
     )

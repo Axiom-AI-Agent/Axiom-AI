@@ -32,6 +32,13 @@ class MessageRole(str, Enum):
 
 
 class ChatChannel(str, Enum):
+    # --------------------------------------------------------------------
+    # TEMPORARY:
+    # Supports legacy demo records created before the ChatChannel enum
+    # was standardized. Remove after migrating existing "http_dev"
+    # rows to "twilio_whatsapp".
+    # --------------------------------------------------------------------
+    HTTP_DEV = "http_dev"
     TWILIO_WHATSAPP = "twilio_whatsapp"
     TELEGRAM = "telegram"
 

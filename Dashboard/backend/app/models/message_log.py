@@ -47,9 +47,13 @@ class MessageLog(Base):
 
     # Message Metadata
     channel = Column(
-        Enum(ChatChannel, name="chat_channel"),
-        nullable=False,
-        server_default="twilio_whatsapp",
+    Enum(
+        ChatChannel,
+        name="chat_channel",
+        values_callable=lambda enum: [e.value for e in enum],
+    ),
+    nullable=False,
+    server_default="twilio_whatsapp",
     )
 
     intent = Column(
