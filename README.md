@@ -34,6 +34,8 @@ The app falls back to in-process tools when MCP is unavailable (`src/agents/runt
 
 ## Docs
 
+- [demo-ui-org/README.md](demo-ui-org/README.md) — WhatsApp student chat demo UI (`make demo-ui`)
+- [SETUP.md](docs/SETUP.md) — install, env, Phase 6 verification gate
 - [DEV_CHAT.md](docs/DEV_CHAT.md) — local `/chat` testing (no Twilio)
 - [DRIVE_INTEGRATION.md](docs/DRIVE_INTEGRATION.md) — Google Drive MCP, institute onboarding, testing
 - [DATABASE.md](docs/DATABASE.md) — Supabase schema

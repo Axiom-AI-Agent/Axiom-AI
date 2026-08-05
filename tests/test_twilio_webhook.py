@@ -38,7 +38,7 @@ def identity_ctx():
         student_id="stu-physics-001",
         phone="94771234567",
         session_id="tenant-demo-physics:94771234567",
-        student_registered=True,
+        student_exists=True,
     )
 
 

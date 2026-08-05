@@ -1,4 +1,4 @@
-.PHONY: install venv run test lint health ready config smoke-llm smoke-twilio smoke-chat smoke-routing smoke-st-memory smoke-mcp-memory smoke-admissions smoke-phase4 smoke-gates smoke-langfuse seed-langfuse clear-demo-session check-python verify-phase0 init-db ingest-demo
+.PHONY: install venv run test lint health ready config smoke-llm smoke-twilio smoke-chat smoke-routing smoke-st-memory smoke-mcp-memory smoke-mcp-client smoke-admissions smoke-phase4 smoke-phase5-dashboard smoke-phase6 smoke-concurrent smoke-gates smoke-gates-phase6 smoke-langfuse seed-langfuse clear-demo-session check-python verify-phase0 init-db ingest-demo demo-ui-install demo-ui
 
 # Prefer Python 3.11 when available (required for MCP packages mcp + langchain-mcp-adapters)
 PYTHON ?= $(shell (command -v python3.11 >/dev/null 2>&1 && echo python3.11) || echo python3)
@@ -58,6 +58,9 @@ smoke-st-memory:
 smoke-mcp-memory:
 	$(PYTHON) scripts/smoke_mcp_memory.py
 
+smoke-mcp-client:
+	$(VENV_PY) scripts/test_mcp_client.py
+
 smoke-admissions:
 	$(PYTHON) scripts/smoke_admissions.py
 
@@ -72,6 +75,20 @@ ingest-demo:
 	PYTHONPATH=src $(VENV_PY) scripts/ingest_tenant_notes.py --tenant-id tenant-demo-chemistry
 
 smoke-gates: smoke-routing smoke-st-memory smoke-mcp-memory smoke-admissions smoke-phase4
+
+smoke-phase5-dashboard:
+	$(VENV_PY) scripts/smoke_phase5_dashboard.py
+
+smoke-phase6:
+	$(VENV_PY) scripts/smoke_phase6_e2e.py
+
+smoke-phase6-oos:
+	$(VENV_PY) scripts/smoke_phase6_e2e.py --scenario oos
+
+smoke-concurrent:
+	$(VENV_PY) scripts/smoke_concurrent_chat.py
+
+smoke-gates-phase6: smoke-phase6 smoke-phase5-dashboard smoke-mcp-client smoke-langfuse smoke-concurrent
 
 smoke-langfuse:
 	$(PYTHON) scripts/smoke_langfuse_trace.py
@@ -90,3 +107,9 @@ verify-phase0:
 
 init-db:
 	$(PYTHON) scripts/init_supabase.py
+
+demo-ui-install:
+	cd demo-ui-org/student-chat && npm install
+
+demo-ui:
+	cd demo-ui-org/student-chat && npm run dev

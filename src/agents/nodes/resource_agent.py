@@ -10,7 +10,11 @@ from typing import Any, Literal, Protocol
 from langchain_core.messages import AIMessage
 from loguru import logger
 
-from agents.prompts.agent_prompts import build_resource_drive_reply, build_resource_rag_reply
+from agents.prompts.agent_prompts import (
+    build_resource_drive_reply,
+    build_resource_rag_reply,
+    get_resource_not_enrolled_reply,
+)
 from agents.state import AgentState
 
 ResourceSubPath = Literal["drive", "rag"]
@@ -167,6 +171,13 @@ class ResourceAgent:
         user_message = _last_user_text(state)
         tenant_name = state.get("tenant_name") or "your tuition centre"
         sub_path = classify_resource_subpath(user_message)
+
+        if not state.get("is_enrolled"):
+            return ResourceAgentResult(
+                answer=get_resource_not_enrolled_reply(tenant_name=tenant_name),
+                sub_path=sub_path,
+            )
+
         tool_log: list[str] = []
 
         if sub_path == "drive":

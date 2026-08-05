@@ -18,7 +18,10 @@ LOCAL_PROMPTS: dict[str, str | list[dict[str, str]]] = {
     ap.LANGFUSE_PROMPT_NAMES["resource_rag"]: ap._RESOURCE_RAG_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["resource_drive"]: ap._RESOURCE_DRIVE_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["payment_stub"]: ap._PAYMENT_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["payment_ack"]: ap._PAYMENT_ACK_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["payment_missing_media"]: ap._PAYMENT_MISSING_MEDIA_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["escalation_stub"]: ap._ESCALATION_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["escalation_ack"]: ap._ESCALATION_ACK_FALLBACK.strip(),
 }
 
 # Legacy aliases kept for older tests

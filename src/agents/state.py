@@ -20,9 +20,12 @@ class AgentState(TypedDict, total=False):
     tenant_id: str
     user_id: str
     student_id: str
+    student_name: str
     phone: str
     session_id: str
     tenant_name: str
+    is_enrolled: bool
+    student_profile_context: str
 
     media_url: Optional[str]
 

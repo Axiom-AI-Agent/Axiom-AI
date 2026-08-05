@@ -19,7 +19,7 @@ from loguru import logger
 from agents.nodes.admissions_agent import McpCrmClient, run_admissions_agent
 from agents.nodes.escalation_agent import run_escalation_agent
 from agents.nodes.payment_agent import run_payment_agent
-from agents.nodes.resource_agent import McpDriveClient, McpRagClient, run_resource_agent
+from agents.nodes.resource_agent import DirectDriveClient, McpDriveClient, McpRagClient, run_resource_agent
 from agents.prompts import build_direct_system_prompt, build_merge_system_prompt
 from agents.router import QueryRouter, get_query_router
 from agents.state import AgentState
@@ -270,9 +270,11 @@ class AgentOrchestrator:
         user_message = _last_user_text(state)
         memory_context = state.get("memory_context") or ""
         tenant_name = state.get("tenant_name") or "your tuition centre"
+        student_profile_context = state.get("student_profile_context") or ""
         system_prompt = build_direct_system_prompt(
             memory_context=memory_context,
             tenant_name=tenant_name,
+            student_profile_context=student_profile_context,
         )
         messages = [
             SystemMessage(content=system_prompt),
@@ -401,13 +403,20 @@ async def build_agent_mcp(*, memory_tool: MemoryTool | None = None) -> AgentOrch
     tools_by_name = {t.name: t for t in all_tools}
     logger.info("Loaded {} MCP tools: {}", len(all_tools), list(tools_by_name.keys()))
 
+    drive_client: McpDriveClient | DirectDriveClient
+    if "drive_search" in tools_by_name:
+        drive_client = McpDriveClient(tools_by_name)
+    else:
+        logger.info("Drive MCP excluded — resource agent uses in-process DriveTool")
+        drive_client = DirectDriveClient()
+
     orchestrator = AgentOrchestrator(
         get_chat_llm(),
         llm_merge=get_merge_llm(),
         memory_tool=memory_tool or MemoryTool(),
         mcp_memory=_MCPMemoryToolAdapter(tools_by_name),
         mcp_crm=McpCrmClient(tools_by_name),
-        mcp_drive=McpDriveClient(tools_by_name),
+        mcp_drive=drive_client,
         mcp_rag=McpRagClient(tools_by_name),
     )
     orchestrator.mcp_client = mcp_client

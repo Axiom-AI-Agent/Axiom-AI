@@ -17,7 +17,7 @@ def test_root(client):
     assert response.status_code == 200
     body = response.json()
     assert body["service"] == "Axiom AI"
-    assert body["phase"] == 5
+    assert body["phase"] == 6
 
 
 def test_health(client):
@@ -25,7 +25,7 @@ def test_health(client):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
-    assert body["phase"] == 5
+    assert body["phase"] == 6
 
 
 def test_config(client):

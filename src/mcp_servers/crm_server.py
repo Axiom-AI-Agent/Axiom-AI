@@ -43,8 +43,10 @@ def register_student(
     school: str | None = None,
     district: str | None = None,
     consent: bool = False,
+    selected_class_id: str | None = None,
+    clear_selected_class: bool = False,
 ) -> str:
-    """Update student profile during onboarding (name, school, district, consent)."""
+    """Update student profile during onboarding (name, school, district, consent, class)."""
     return _init().register_student(
         tenant_id=tenant_id,
         phone=phone,
@@ -53,6 +55,8 @@ def register_student(
         school=school,
         district=district,
         consent=consent,
+        selected_class_id=selected_class_id,
+        clear_selected_class=clear_selected_class,
     )
 
 
@@ -70,6 +74,56 @@ def list_classes(
 ) -> str:
     """List available classes for a tenant, optionally filtered by subject/grade."""
     return _init().list_classes(tenant_id=tenant_id, subject=subject, grade=grade)
+
+
+@mcp.tool()
+def get_tenant_info(tenant_id: str) -> str:
+    """Fetch tuition centre profile, open classes, and staff summary."""
+    return _init().get_tenant_info(tenant_id=tenant_id)
+
+
+@mcp.tool()
+def get_class_details(
+    tenant_id: str,
+    class_id: str | None = None,
+    class_name: str | None = None,
+    subject: str | None = None,
+    grade: str | None = None,
+) -> str:
+    """Look up one or more classes by id, name, subject, or grade."""
+    return _init().get_class_details(
+        tenant_id=tenant_id,
+        class_id=class_id,
+        class_name=class_name,
+        subject=subject,
+        grade=grade,
+    )
+
+
+@mcp.tool()
+def list_staff(tenant_id: str, role: str | None = None) -> str:
+    """List staff/tutors for a tenant, optionally filtered by role."""
+    return _init().list_staff(tenant_id=tenant_id, role=role)
+
+
+@mcp.tool()
+def commit_onboarding(
+    tenant_id: str,
+    phone: str,
+    name: str,
+    school: str,
+    district: str,
+    class_id: str,
+) -> str:
+    """Create student profile and pending enrollment after explicit confirmation."""
+    return _init().commit_onboarding(
+        tenant_id=tenant_id,
+        phone=phone,
+        name=name,
+        school=school,
+        district=district,
+        class_id=class_id,
+    )
 
 
 @mcp.tool()

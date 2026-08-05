@@ -27,5 +27,9 @@ logs/
 data/knowledge_base/*/
 !data/knowledge_base/.gitkeep
 
+# Demo UI (Node)
+demo-ui-org/student-chat/node_modules/
+demo-ui-org/student-chat/dist/
+
 # Graphify (optional local cache — commit graph.json if team wants)
 # graphify-out/cache/

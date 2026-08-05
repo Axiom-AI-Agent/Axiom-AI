@@ -64,7 +64,14 @@ async def _run_mcp_adapter_path() -> int:
     print("MCP tools loaded:", tool_names)
     print("MCP recall snippet:", recalled[:200])
 
-    expected_tools = {"recall_turns", "add_turn", "get_procedural"}
+    expected_tools = {
+        "recall_turns",
+        "add_turn",
+        "get_procedural",
+        "get_student",
+        "create_escalation",
+        "kb_search",
+    }
     tools_ok = expected_tools.issubset(set(tool_names))
     recall_ok = "nebula" in recalled.lower()
     return 0 if tools_ok and recall_ok else 1

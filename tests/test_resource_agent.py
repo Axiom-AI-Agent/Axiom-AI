@@ -41,6 +41,7 @@ async def test_resource_agent_drive_path():
     state = {
         "tenant_id": "tenant-demo-physics",
         "tenant_name": "Demo Physics",
+        "is_enrolled": True,
         "messages": [HumanMessage(content="Can I get last week's physics paper?")],
     }
     result = await agent.run(state)
@@ -53,6 +54,7 @@ async def test_resource_agent_rag_path():
     agent = ResourceAgent(drive=FakeDrive(), rag=FakeRag())
     state = {
         "tenant_id": "tenant-demo-physics",
+        "is_enrolled": True,
         "messages": [HumanMessage(content="Explain velocity from lesson 5")],
     }
     result = await agent.run(state)

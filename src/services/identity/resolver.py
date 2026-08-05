@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import uuid
 from typing import Any
 
 from loguru import logger
@@ -13,6 +12,7 @@ from infrastructure.db.supabase_client import get_supabase_client
 from services.identity.context import IdentityContext
 
 _WHATSAPP_PREFIX = re.compile(r"^whatsapp:", re.IGNORECASE)
+_ENROLLED_STATUSES = frozenset({"active", "pending"})
 
 
 def normalize_phone(value: str) -> str:
@@ -45,18 +45,8 @@ class IdentityResolver:
     ) -> IdentityContext:
         tenant = self._resolve_tenant(to_number, fallback_tenant_id)
         phone = normalize_phone(from_number)
-        student, registered = self._resolve_or_create_student(tenant["id"], phone)
-        session_id = build_session_id(tenant["id"], phone)
-
-        return IdentityContext(
-            tenant_id=tenant["id"],
-            tenant_slug=tenant.get("slug"),
-            tenant_name=tenant.get("name"),
-            student_id=student["id"],
-            phone=phone,
-            session_id=session_id,
-            student_registered=registered,
-        )
+        student = self._lookup_student(tenant["id"], phone)
+        return self._build_context(tenant, phone, student)
 
     def _resolve_tenant(
         self, to_number: str, fallback_tenant_id: str | None
@@ -118,22 +108,63 @@ class IdentityResolver:
             raise ValueError(f"Tenant is not active: {tenant_id}")
 
         normalized_phone = normalize_phone(phone)
-        student, registered = self._resolve_or_create_student(tenant["id"], normalized_phone)
-        session_id = build_session_id(tenant["id"], normalized_phone)
+        student = self._lookup_student(tenant_id, normalized_phone)
+        return self._build_context(tenant, normalized_phone, student)
+
+    def _build_context(
+        self,
+        tenant: dict[str, Any],
+        phone: str,
+        student: dict[str, Any] | None,
+    ) -> IdentityContext:
+        tenant_id = tenant["id"]
+        session_id = build_session_id(tenant_id, phone)
+
+        if not student:
+            return IdentityContext(
+                tenant_id=tenant_id,
+                tenant_slug=tenant.get("slug"),
+                tenant_name=tenant.get("name"),
+                phone=phone,
+                session_id=session_id,
+                student_exists=False,
+            )
+
+        enrollments = self._lookup_enrollments(tenant_id, student["id"])
+        class_names = self._lookup_class_names(
+            tenant_id,
+            [row["class_id"] for row in enrollments if row.get("class_id")],
+        )
+        enrolled_rows = [
+            row for row in enrollments if row.get("status") in _ENROLLED_STATUSES
+        ]
+        enrollment_status = self._enrollment_status(enrollments)
 
         return IdentityContext(
-            tenant_id=tenant["id"],
+            tenant_id=tenant_id,
             tenant_slug=tenant.get("slug"),
             tenant_name=tenant.get("name"),
             student_id=student["id"],
-            phone=normalized_phone,
+            phone=phone,
             session_id=session_id,
-            student_registered=registered,
+            student_exists=True,
+            student_name=student.get("name"),
+            is_enrolled=bool(enrolled_rows),
+            enrollment_status=enrollment_status,
+            active_class_names=tuple(
+                class_names.get(row["class_id"], row["class_id"]) for row in enrolled_rows
+            ),
         )
 
-    def _resolve_or_create_student(
-        self, tenant_id: str, phone: str
-    ) -> tuple[dict[str, Any], bool]:
+    @staticmethod
+    def _enrollment_status(enrollments: list[dict[str, Any]]) -> str:
+        if any(row.get("status") == "active" for row in enrollments):
+            return "active"
+        if any(row.get("status") == "pending" for row in enrollments):
+            return "pending"
+        return "none"
+
+    def _lookup_student(self, tenant_id: str, phone: str) -> dict[str, Any] | None:
         client = get_supabase_client()
         response = (
             client.table("students")
@@ -144,17 +175,30 @@ class IdentityResolver:
             .execute()
         )
         rows = response.data or []
-        if rows:
-            return rows[0], True
+        return rows[0] if rows else None
 
-        student_id = f"stu-{uuid.uuid4().hex[:12]}"
-        payload = {
-            "id": student_id,
-            "tenant_id": tenant_id,
-            "phone": phone,
-            "name": None,
-        }
-        insert = client.table("students").insert(payload).execute()
-        created = (insert.data or [payload])[0]
-        logger.info("Provisioned stub student {} for tenant {}", student_id, tenant_id)
-        return created, False
+    def _lookup_enrollments(self, tenant_id: str, student_id: str) -> list[dict[str, Any]]:
+        client = get_supabase_client()
+        response = (
+            client.table("enrollments")
+            .select("id, class_id, status")
+            .eq("tenant_id", tenant_id)
+            .eq("student_id", student_id)
+            .execute()
+        )
+        return response.data or []
+
+    def _lookup_class_names(
+        self, tenant_id: str, class_ids: list[str]
+    ) -> dict[str, str]:
+        if not class_ids:
+            return {}
+        client = get_supabase_client()
+        response = (
+            client.table("subject_classes")
+            .select("id, name")
+            .eq("tenant_id", tenant_id)
+            .in_("id", class_ids)
+            .execute()
+        )
+        return {row["id"]: row["name"] for row in (response.data or []) if row.get("id")}

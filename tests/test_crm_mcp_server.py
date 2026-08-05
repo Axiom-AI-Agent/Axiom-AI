@@ -109,3 +109,27 @@ def test_list_classes_scoped_to_tenant(mock_db):
         subject=None,
         grade=None,
     )
+
+
+def test_get_tenant_info_returns_profile(mock_db):
+    mock_db.get_tenant.return_value = {
+        "id": "tenant-a",
+        "name": "Demo Physics Academy",
+        "whatsapp_number": "whatsapp:+14155238886",
+    }
+    mock_db.list_staff.return_value = [{"id": "s1", "name": "Demo Physics Admin", "role": "admin"}]
+    tool = CrmTool(db=mock_db)
+    raw = tool.get_tenant_info(tenant_id="tenant-a")
+    payload = json.loads(raw)
+    assert payload["ok"] is True
+    assert payload["tenant"]["name"] == "Demo Physics Academy"
+    assert len(payload["staff"]) == 1
+
+
+def test_list_staff_scoped_to_tenant(mock_db):
+    mock_db.list_staff.return_value = [{"id": "s1", "name": "Demo Physics Admin", "role": "admin"}]
+    tool = CrmTool(db=mock_db)
+    raw = tool.list_staff(tenant_id="tenant-a")
+    payload = json.loads(raw)
+    assert payload["ok"] is True
+    mock_db.list_staff.assert_called_once_with(tenant_id="tenant-a", role=None)

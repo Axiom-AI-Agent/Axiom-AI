@@ -49,8 +49,8 @@ class ChatTurnResult(BaseModel):
     tenant_id: str
     tenant_slug: Optional[str] = None
     tenant_name: Optional[str] = None
-    student_id: str
+    student_id: Optional[str] = None
     phone: str
     session_id: str
-    student_registered: bool = True
+    student_exists: bool = False
     channel: ChatChannel = ChatChannel.TWILIO_WHATSAPP

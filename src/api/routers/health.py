@@ -35,7 +35,7 @@ router = APIRouter(tags=["System"])
 @router.get("/health", response_model=HealthResponse)
 async def health(request: Request) -> HealthResponse:
     started = getattr(request.app.state, "startup_complete", False)
-    return HealthResponse(status="ok" if started else "starting", phase=5)
+    return HealthResponse(status="ok" if started else "starting", phase=6)
 
 
 @router.get("/ready", response_model=ReadinessResponse)
@@ -80,9 +80,37 @@ async def ready(request: Request) -> ReadinessResponse:
             detail="connected" if active else "keys invalid or disabled — local prompt fallbacks",
         )
 
+    async def check_mcp(request: Request) -> ReadinessCheck:
+        orchestrator = getattr(request.app.state, "orchestrator", None)
+        if orchestrator is None:
+            return ReadinessCheck(name="mcp", ok=False, detail="orchestrator not initialised")
+        tools = getattr(orchestrator, "mcp_tools", None)
+        if not tools:
+            return ReadinessCheck(name="mcp", ok=True, detail="in-process tools (no MCP subprocess)")
+        from mcp_servers.mcp_config import expected_mcp_tool_names
+
+        expected = expected_mcp_tool_names()
+        loaded = set(tools.keys())
+        missing = sorted(expected - loaded)
+        if missing:
+            return ReadinessCheck(
+                name="mcp",
+                ok=False,
+                detail=f"missing tools: {', '.join(missing[:8])}",
+            )
+        return ReadinessCheck(
+            name="mcp",
+            ok=True,
+            detail=f"{len(loaded)} tools ({', '.join(sorted(loaded)[:6])}…)",
+        )
+
     checks = list(
         await asyncio.gather(
-            check_config(), check_supabase(), check_qdrant(), check_langfuse()
+            check_config(),
+            check_supabase(),
+            check_qdrant(),
+            check_langfuse(),
+            check_mcp(request),
         )
     )
     # Phase 0: ready when startup + config OK; Supabase required for full ready in prod

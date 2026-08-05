@@ -157,6 +157,10 @@ EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE INDEX IF NOT EXISTS idx_subject_classes_tenant ON subject_classes(tenant_id);
 
+DO $$ BEGIN
+    ALTER TABLE students ADD COLUMN IF NOT EXISTS selected_class_id TEXT REFERENCES subject_classes(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
 CREATE TABLE IF NOT EXISTS enrollments (
     id              TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     tenant_id       TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,

@@ -34,7 +34,7 @@ def chat_result():
         student_id="stu-physics-001",
         phone="94771234567",
         session_id="tenant-demo-physics:94771234567",
-        student_registered=True,
+        student_exists=True,
         channel=ChatChannel.HTTP_DEV,
     )
 
@@ -111,7 +111,7 @@ async def test_chat_pipeline_runs_agent_inside_event_loop():
         student_id="stu-physics-001",
         phone="94771234567",
         session_id="tenant-demo-physics:94771234567",
-        student_registered=True,
+        student_exists=True,
     )
     resolver = MagicMock()
     resolver.resolve_direct.return_value = ctx

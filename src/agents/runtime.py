@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from loguru import logger
@@ -23,6 +24,31 @@ def reset_agent_runtime() -> None:
     global _decision_graph, _orchestrator
     _decision_graph = None
     _orchestrator = None
+
+
+def preload_agent_runtime(*, decision_graph: Any, orchestrator: Any) -> None:
+    """Store warmed instances from FastAPI lifespan (BookMe AI ``main.py`` pattern)."""
+    global _decision_graph, _orchestrator
+    _decision_graph = decision_graph
+    _orchestrator = orchestrator
+
+
+async def shutdown_agent_runtime() -> None:
+    """Close MCP subprocess client on app shutdown (Week 13 / BookMe pattern)."""
+    global _orchestrator
+    orch = _orchestrator
+    if orch is not None:
+        mcp_client = getattr(orch, "mcp_client", None)
+        if mcp_client is not None:
+            try:
+                close = getattr(mcp_client, "aclose", None) or getattr(mcp_client, "close", None)
+                if close:
+                    result = close()
+                    if asyncio.iscoroutine(result):
+                        await result
+            except Exception as exc:
+                logger.warning("MCP client shutdown raised: {}", exc)
+    reset_agent_runtime()
 
 
 def get_decision_graph():

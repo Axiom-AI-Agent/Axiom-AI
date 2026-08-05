@@ -1,7 +1,8 @@
-"""FastAPI application — Phase 5 escalation inbox + dashboard APIs."""
+"""FastAPI application — Phase 6 integration (MCP warmup + dashboard APIs)."""
 
 from __future__ import annotations
 
+import asyncio
 import os
 from contextlib import asynccontextmanager
 
@@ -13,7 +14,13 @@ from loguru import logger
 load_dotenv(override=True)
 
 from agents.prompts import ALL_LANGFUSE_PROMPT_NAMES
-from agents.runtime import configure_agent_runtime
+from agents.runtime import (
+    configure_agent_runtime,
+    get_decision_graph,
+    get_orchestrator,
+    preload_agent_runtime,
+    shutdown_agent_runtime,
+)
 from api.middleware import RequestContextMiddleware
 from api.routers.chat import router as chat_router
 from api.routers.classes import router as classes_router
@@ -35,26 +42,57 @@ from infrastructure.observability import flush, get_langfuse_client, prefetch_pr
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Warm agent stack before accepting traffic (BookMe AI ``api/main.py`` pattern).
+
+    Preloads decision graph + orchestrator (MCP when ``AGENT_USE_MCP=true``) so
+    the first ``/chat`` request does not pay cold-start cost.
+    """
     setup_logging()
     validate(require_llm=False, require_supabase=False)
     use_mcp = os.getenv("AGENT_USE_MCP", "false").lower() == "true"
     configure_agent_runtime(use_mcp=use_mcp)
     get_langfuse_client()
-    prefetch_prompts(ALL_LANGFUSE_PROMPT_NAMES)
+
+    decision_graph = get_decision_graph()
+    orchestrator = await get_orchestrator()
+    preload_agent_runtime(decision_graph=decision_graph, orchestrator=orchestrator)
+    app.state.decision_graph = decision_graph
+    app.state.orchestrator = orchestrator
+
+    async def _warmup_prompts() -> None:
+        try:
+            await asyncio.to_thread(prefetch_prompts, ALL_LANGFUSE_PROMPT_NAMES)
+        except Exception as exc:
+            logger.warning("Prompt prefetch failed: {}", exc)
+
+    async def _warmup_router() -> None:
+        try:
+            from agents.router import get_query_router
+
+            await get_query_router().aroute("ping", "")
+        except Exception as exc:
+            logger.debug("Router warmup (non-fatal): {}", exc)
+
+    await asyncio.gather(_warmup_prompts(), _warmup_router())
     app.state.startup_complete = True
     logger.info(
-        "Axiom AI API ready (Phase 5 — escalation inbox; MCP={})",
+        "Axiom AI API ready (Phase 6 — MCP={}; drive MCP via MCP_INCLUDE_DRIVE)",
         use_mcp,
     )
-    yield
-    flush()
-    logger.info("Axiom AI API shutdown")
+
+    try:
+        yield
+    finally:
+        logger.info("Axiom AI API shutdown")
+        await shutdown_agent_runtime()
+        flush()
 
 
 app = FastAPI(
     title="Axiom AI",
     description="Multi-tenant tutor agent backend",
-    version="0.6.0",
+    version="0.7.0",
     lifespan=lifespan,
 )
 
@@ -85,7 +123,7 @@ app.include_router(twilio_webhook_router)
 async def root() -> dict:
     return {
         "service": "Axiom AI",
-        "phase": 5,
+        "phase": 6,
         "health": "/health",
         "ready": "/ready",
         "config": "/config",

@@ -25,6 +25,8 @@ from infrastructure.observability import (
     update_current_trace,
 )
 from services.identity.context import IdentityContext
+from services.identity.recall_context import build_recall_context
+from services.admissions.onboarding_route import apply_onboarding_patch_overrides
 
 Verdict = Literal["proceed", "out_of_scope"]
 
@@ -55,18 +57,6 @@ def _routes_from_patch(patch: dict, *, verdict: Verdict) -> tuple[str, list[str]
     return names[0], names
 
 
-def _format_memory_context(ctx: IdentityContext, memory_tool: MemoryTool) -> str:
-    try:
-        return memory_tool.recall_turns(
-            tenant_id=ctx.tenant_id,
-            session_id=ctx.session_id,
-            user_id=ctx.student_id,
-            limit=10,
-        )
-    except Exception:
-        return ""
-
-
 @observe(name="chat_turn")
 async def run_chat_turn(
     *,
@@ -84,7 +74,7 @@ async def run_chat_turn(
     t_total = time.perf_counter()
     timings: dict[str, int] = {}
     memory = memory_tool or MemoryTool()
-    memory_context = _format_memory_context(ctx, memory)
+    memory_context, student_profile_context = build_recall_context(ctx, memory)
     tenant_name = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
 
     turn_metadata: dict[str, Any] = {
@@ -116,18 +106,29 @@ async def run_chat_turn(
             messages=[HumanMessage(content=message)],
             memory_context=memory_context,
             tenant_id=ctx.tenant_id,
-            user_id=ctx.student_id,
-            student_id=ctx.student_id,
+            user_id=ctx.student_id or ctx.phone,
+            student_id=ctx.student_id or "",
+            student_name=ctx.student_name or "",
             phone=ctx.phone,
             session_id=ctx.session_id,
             tenant_name=tenant_name,
+            is_enrolled=ctx.is_enrolled,
+            student_profile_context=student_profile_context,
             media_url=media_url,
         )
         verdict: Verdict = (
             "out_of_scope" if patch.get("verdict") == "out_of_scope" else "proceed"
         )
 
-        if media_url and verdict == "proceed":
+        if apply_onboarding_patch_overrides(
+            patch,
+            tenant_id=ctx.tenant_id,
+            phone=ctx.phone,
+            student_exists=ctx.student_exists,
+            message=message,
+        ):
+            verdict = "proceed"
+        elif media_url and verdict == "proceed":
             patch["route_decisions"] = [
                 {
                     "route": "payment_check",

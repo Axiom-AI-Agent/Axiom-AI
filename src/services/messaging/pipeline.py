@@ -121,10 +121,7 @@ class ChatPipeline:
             )
 
         if inbound.num_media > 0 and inbound.media_url:
-            pass  # payment receipt handled by admissions agent when pending enrollment exists
-
-        if not ctx.student_registered:
-            reply += " Welcome! We created a profile for this number."
+            pass  # payment receipt handled by payment agent when pending enrollment exists
 
         return reply
 
@@ -139,7 +136,7 @@ class ChatPipeline:
             media_url=inbound.media_url,
             extra_metadata={
                 "external_id": inbound.external_id,
-                "student_registered": ctx.student_registered,
+                "student_exists": ctx.student_exists,
                 "num_media": inbound.num_media,
             },
         )
@@ -157,10 +154,10 @@ class ChatPipeline:
             tenant_id=ctx.tenant_id,
             tenant_slug=ctx.tenant_slug,
             tenant_name=ctx.tenant_name,
-            student_id=ctx.student_id,
+            student_id=ctx.student_id or "",
             phone=ctx.phone,
             session_id=ctx.session_id,
-            student_registered=ctx.student_registered,
+            student_exists=ctx.student_exists,
             channel=inbound.channel,
         )
 

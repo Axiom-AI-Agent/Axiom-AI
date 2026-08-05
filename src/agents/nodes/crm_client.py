@@ -17,6 +17,25 @@ class CrmClient(Protocol):
         grade: str | None = None,
     ) -> list[dict[str, Any]]: ...
 
+    async def get_tenant_info(self, *, tenant_id: str) -> dict[str, Any]: ...
+
+    async def get_class_details(
+        self,
+        *,
+        tenant_id: str,
+        class_id: str | None = None,
+        class_name: str | None = None,
+        subject: str | None = None,
+        grade: str | None = None,
+    ) -> dict[str, Any]: ...
+
+    async def list_staff(
+        self,
+        *,
+        tenant_id: str,
+        role: str | None = None,
+    ) -> list[dict[str, Any]]: ...
+
     async def register_student(
         self,
         *,
@@ -27,6 +46,8 @@ class CrmClient(Protocol):
         school: str | None = None,
         district: str | None = None,
         consent: bool = False,
+        selected_class_id: str | None = None,
+        clear_selected_class: bool = False,
     ) -> dict[str, Any]: ...
 
     async def create_enrollment(
@@ -34,6 +55,17 @@ class CrmClient(Protocol):
         *,
         tenant_id: str,
         student_id: str,
+        class_id: str,
+    ) -> dict[str, Any]: ...
+
+    async def commit_onboarding(
+        self,
+        *,
+        tenant_id: str,
+        phone: str,
+        name: str,
+        school: str,
+        district: str,
         class_id: str,
     ) -> dict[str, Any]: ...
 
@@ -79,11 +111,45 @@ class DirectCrmClient:
         )
         return payload.get("classes") or []
 
+    async def get_tenant_info(self, *, tenant_id: str) -> dict[str, Any]:
+        return json.loads(self._tool.get_tenant_info(tenant_id=tenant_id))
+
+    async def get_class_details(
+        self,
+        *,
+        tenant_id: str,
+        class_id: str | None = None,
+        class_name: str | None = None,
+        subject: str | None = None,
+        grade: str | None = None,
+    ) -> dict[str, Any]:
+        return json.loads(
+            self._tool.get_class_details(
+                tenant_id=tenant_id,
+                class_id=class_id,
+                class_name=class_name,
+                subject=subject,
+                grade=grade,
+            )
+        )
+
+    async def list_staff(
+        self,
+        *,
+        tenant_id: str,
+        role: str | None = None,
+    ) -> list[dict[str, Any]]:
+        payload = json.loads(self._tool.list_staff(tenant_id=tenant_id, role=role))
+        return payload.get("staff") or []
+
     async def register_student(self, **kwargs: Any) -> dict[str, Any]:
         return json.loads(self._tool.register_student(**kwargs))
 
     async def create_enrollment(self, **kwargs: Any) -> dict[str, Any]:
         return json.loads(self._tool.create_enrollment(**kwargs))
+
+    async def commit_onboarding(self, **kwargs: Any) -> dict[str, Any]:
+        return json.loads(self._tool.commit_onboarding(**kwargs))
 
     async def create_escalation(self, **kwargs: Any) -> dict[str, Any]:
         return json.loads(self._tool.create_escalation(**kwargs))
@@ -131,11 +197,49 @@ class McpCrmClient:
         )
         return payload.get("classes") or []
 
+    async def get_tenant_info(self, *, tenant_id: str) -> dict[str, Any]:
+        return await self._invoke("get_tenant_info", {"tenant_id": tenant_id})
+
+    async def get_class_details(
+        self,
+        *,
+        tenant_id: str,
+        class_id: str | None = None,
+        class_name: str | None = None,
+        subject: str | None = None,
+        grade: str | None = None,
+    ) -> dict[str, Any]:
+        return await self._invoke(
+            "get_class_details",
+            {
+                "tenant_id": tenant_id,
+                "class_id": class_id,
+                "class_name": class_name,
+                "subject": subject,
+                "grade": grade,
+            },
+        )
+
+    async def list_staff(
+        self,
+        *,
+        tenant_id: str,
+        role: str | None = None,
+    ) -> list[dict[str, Any]]:
+        payload = await self._invoke(
+            "list_staff",
+            {"tenant_id": tenant_id, "role": role},
+        )
+        return payload.get("staff") or []
+
     async def register_student(self, **kwargs: Any) -> dict[str, Any]:
         return await self._invoke("register_student", kwargs)
 
     async def create_enrollment(self, **kwargs: Any) -> dict[str, Any]:
         return await self._invoke("create_enrollment", kwargs)
+
+    async def commit_onboarding(self, **kwargs: Any) -> dict[str, Any]:
+        return await self._invoke("commit_onboarding", kwargs)
 
     async def create_escalation(self, **kwargs: Any) -> dict[str, Any]:
         return await self._invoke("create_escalation", kwargs)

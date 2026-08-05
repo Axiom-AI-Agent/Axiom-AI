@@ -18,6 +18,7 @@ from agents.prompts import build_router_prompt
 from agents.state import AgentState
 from infrastructure.llm import get_router_llm
 from infrastructure.observability import observe, update_current_observation
+from services.admissions.institute_info import looks_like_institute_info
 
 VALID_ROUTES = frozenset({"admissions", "resource", "payment_check", "escalation", "direct"})
 VALID_ACTIONS = frozenset({"general", "search", "check", "escalate"})
@@ -52,13 +53,16 @@ _ESCALATION_PATTERNS = (
     r"need (?:a )?human",
 )
 _ADMISSIONS_PATTERNS = (
-    r"\benroll",
-    r"\bregister",
+    r"\benroll\b",
+    r"\bregister\b",
     r"want to join",
     r"join (?:the )?class",
     r"join (?:a |an )?",
     r"new student",
     r"sign up",
+    r"am i enrolled",
+    r"enrollment status",
+    r"am i registered",
 )
 _PAYMENT_PATTERNS = (
     r"bank slip",
@@ -81,6 +85,18 @@ def heuristic_route(message: str) -> MultiRouteDecision | None:
     text = message.lower().strip()
     if not text:
         return None
+
+    if looks_like_institute_info(message):
+        return MultiRouteDecision(
+            decisions=[
+                RouteDecision(
+                    route="admissions",
+                    action="search",
+                    confidence=0.97,
+                    reasoning="institute/class/staff info lookup via CRM",
+                )
+            ]
+        )
 
     scores = {
         "resource": _pattern_score(text, _RESOURCE_PATTERNS),
@@ -180,7 +196,12 @@ def get_query_router() -> QueryRouter:
 def router_node(state: AgentState) -> dict:
     user_message = _last_user_text(state)
     memory_context = state.get("memory_context") or ""
-    result = get_query_router().route(user_message, memory_context=memory_context)
+    tenant_name = state.get("tenant_name") or "your tuition centre"
+    result = get_query_router().route(
+        user_message,
+        memory_context=memory_context,
+        tenant_name=tenant_name,
+    )
     return {"route_decisions": [asdict(d) for d in result.decisions]}
 
 
@@ -200,15 +221,37 @@ class QueryRouter:
         self.llm = llm
 
     @observe(name="router", as_type="generation")
-    def route(self, user_message: str, memory_context: str = "") -> MultiRouteDecision:
-        return self._call(user_message, memory_context)
+    def route(
+        self,
+        user_message: str,
+        memory_context: str = "",
+        *,
+        tenant_name: str = "your tuition centre",
+    ) -> MultiRouteDecision:
+        return self._call(user_message, memory_context, tenant_name=tenant_name)
 
     @observe(name="router", as_type="generation")
-    async def aroute(self, user_message: str, memory_context: str = "") -> MultiRouteDecision:
-        return await self._acall(user_message, memory_context)
+    async def aroute(
+        self,
+        user_message: str,
+        memory_context: str = "",
+        *,
+        tenant_name: str = "your tuition centre",
+    ) -> MultiRouteDecision:
+        return await self._acall(user_message, memory_context, tenant_name=tenant_name)
 
-    def _build_messages(self, user_message: str, memory_context: str):
-        system_prompt, user_prompt = build_router_prompt(user_message, memory_context)
+    def _build_messages(
+        self,
+        user_message: str,
+        memory_context: str,
+        *,
+        tenant_name: str = "your tuition centre",
+    ):
+        system_prompt, user_prompt = build_router_prompt(
+            user_message,
+            memory_context,
+            tenant_name=tenant_name,
+        )
         update_current_observation(
             input=user_prompt[:1000],
             model=self._model_name(),
@@ -235,12 +278,20 @@ class QueryRouter:
     def _content(response) -> str:
         return response.content if hasattr(response, "content") else str(response)
 
-    def _call(self, user_message: str, memory_context: str) -> MultiRouteDecision:
+    def _call(
+        self,
+        user_message: str,
+        memory_context: str,
+        *,
+        tenant_name: str = "your tuition centre",
+    ) -> MultiRouteDecision:
         heuristic = heuristic_route(user_message)
         if heuristic is not None:
             return heuristic
         try:
-            response = self.llm.invoke(self._build_messages(user_message, memory_context))
+            response = self.llm.invoke(
+                self._build_messages(user_message, memory_context, tenant_name=tenant_name)
+            )
             content = self._content(response)
             self._record_usage(content, response)
         except Exception as exc:
@@ -248,13 +299,19 @@ class QueryRouter:
             return _fallback_multi(f"Router LLM error: {exc}")
         return self._parse_response(content)
 
-    async def _acall(self, user_message: str, memory_context: str) -> MultiRouteDecision:
+    async def _acall(
+        self,
+        user_message: str,
+        memory_context: str,
+        *,
+        tenant_name: str = "your tuition centre",
+    ) -> MultiRouteDecision:
         heuristic = heuristic_route(user_message)
         if heuristic is not None:
             return heuristic
         try:
             response = await self.llm.ainvoke(
-                self._build_messages(user_message, memory_context)
+                self._build_messages(user_message, memory_context, tenant_name=tenant_name)
             )
             content = self._content(response)
             self._record_usage(content, response)

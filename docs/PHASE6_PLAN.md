@@ -2,6 +2,8 @@
 
 **Objective:** Integration, E2E verification, observability audit, and handoff to dashboard + ops.
 
+> **Scope (current):** Twilio live webhook and **Google Drive MCP** deferred. Gate uses `POST /chat`, MCP **crm + rag + memory** (`MCP_INCLUDE_DRIVE=false`), and [SETUP.md](SETUP.md).
+
 **Duration:** ~1 day (8h)  
 **Prerequisite:** Phase 5 complete ([PHASE5_DECISIONS.md](PHASE5_DECISIONS.md), [API_CONTRACT.md](API_CONTRACT.md))  
 **Roadmap reference:** [AI backend - Roadmap § Phase 6](Technical%20Docs/AI%20backend%20-%20Roadmap.md)
@@ -19,11 +21,11 @@
 | Langfuse `@observe` on router, guardrail, orchestrator nodes, tools | ✅ |
 | MCP server config (crm, drive, rag, memory) | ✅ `mcp_config.py` |
 | Prompt local fallbacks + `seed-langfuse` script | ✅ |
-| **Phase 6 E2E bundle** | ❌ not yet |
-| **MCP lifespan in FastAPI** | ❌ optional env flag only |
-| **`docs/SETUP.md`** | ❌ not yet |
-| **Concurrent webhook perf smoke** | ❌ not yet |
-| **Dashboard handoff checklist** | ❌ not yet |
+| **Phase 6 E2E bundle** | ✅ `make smoke-phase6` |
+| **MCP lifespan in FastAPI** | ✅ BookMe `main.py` pattern |
+| **`docs/SETUP.md`** | ✅ |
+| **Concurrent webhook perf smoke** | ✅ `make smoke-concurrent` (HTTP /chat) |
+| **Dashboard handoff checklist** | ✅ in SETUP.md §9 |
 
 ---
 

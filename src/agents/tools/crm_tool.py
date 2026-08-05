@@ -35,6 +35,8 @@ class CrmTool:
         school: str | None = None,
         district: str | None = None,
         consent: bool = False,
+        selected_class_id: str | None = None,
+        clear_selected_class: bool = False,
     ) -> str:
         """Update student profile fields for onboarding."""
         row = self.db.get_student(tenant_id=tenant_id, phone=phone)
@@ -53,6 +55,8 @@ class CrmTool:
             school=school,
             district=district,
             consent=consent,
+            selected_class_id=selected_class_id,
+            clear_selected_class=clear_selected_class,
         )
         return json.dumps({"ok": True, "student": updated})
 
@@ -79,6 +83,65 @@ class CrmTool:
             }
         )
 
+    def commit_onboarding(
+        self,
+        *,
+        tenant_id: str,
+        phone: str,
+        name: str,
+        school: str,
+        district: str,
+        class_id: str,
+    ) -> str:
+        """Atomic post-confirmation write: student profile + pending enrollment."""
+        if self.db.get_student(tenant_id=tenant_id, phone=phone):
+            return json.dumps({"ok": False, "error": "A student profile already exists for this number"})
+
+        class_row = self.db.get_class(tenant_id=tenant_id, class_id=class_id)
+        if class_row is None:
+            return json.dumps({"ok": False, "error": f"Class not found: {class_id}"})
+
+        student: dict | None = None
+        try:
+            student = self.db.create_student(
+                tenant_id=tenant_id,
+                phone=phone,
+                name=name,
+                school=school,
+                district=district,
+                consent=True,
+            )
+            enrollment = self.db.create_enrollment(
+                tenant_id=tenant_id,
+                student_id=student["id"],
+                class_id=class_id,
+                status="pending",
+            )
+            invoice = self.db.create_invoice_for_class(
+                tenant_id=tenant_id,
+                student_id=student["id"],
+                class_row=class_row,
+            )
+        except Exception as exc:
+            logger.warning("commit_onboarding failed: {}", exc)
+            if student:
+                try:
+                    self.db.delete_student(tenant_id=tenant_id, student_id=student["id"])
+                except Exception as rollback_exc:
+                    logger.warning("commit_onboarding rollback failed: {}", rollback_exc)
+            return json.dumps({"ok": False, "error": str(exc)})
+
+        return json.dumps(
+            {
+                "ok": True,
+                "student": student,
+                "enrollment": enrollment,
+                "class": class_row,
+                "invoice": invoice,
+                "status": "pending",
+            }
+        )
+
     def list_classes(
         self,
         *,
@@ -88,6 +151,55 @@ class CrmTool:
     ) -> str:
         classes = self.db.list_classes(tenant_id=tenant_id, subject=subject, grade=grade)
         return json.dumps({"ok": True, "classes": classes})
+
+    def get_tenant_info(self, *, tenant_id: str) -> str:
+        tenant = self.db.get_tenant(tenant_id=tenant_id)
+        if tenant is None:
+            return json.dumps({"ok": False, "error": f"Tenant not found: {tenant_id}"})
+        classes = self.db.list_classes(tenant_id=tenant_id)
+        staff = self.db.list_staff(tenant_id=tenant_id)
+        return json.dumps(
+            {
+                "ok": True,
+                "tenant": tenant,
+                "classes": classes,
+                "staff": staff,
+            }
+        )
+
+    def get_class_details(
+        self,
+        *,
+        tenant_id: str,
+        class_id: str | None = None,
+        class_name: str | None = None,
+        subject: str | None = None,
+        grade: str | None = None,
+    ) -> str:
+        if class_id:
+            row = self.db.get_class(tenant_id=tenant_id, class_id=class_id)
+            if row is None:
+                return json.dumps({"ok": False, "error": f"Class not found: {class_id}"})
+            return json.dumps({"ok": True, "classes": [row]})
+
+        classes = self.db.list_classes(
+            tenant_id=tenant_id,
+            subject=subject,
+            grade=grade,
+        )
+        if class_name:
+            lowered = class_name.lower()
+            classes = [
+                c
+                for c in classes
+                if lowered in str(c.get("name") or "").lower()
+                or str(c.get("name") or "").lower() in lowered
+            ]
+        return json.dumps({"ok": True, "classes": classes})
+
+    def list_staff(self, *, tenant_id: str, role: str | None = None) -> str:
+        staff = self.db.list_staff(tenant_id=tenant_id, role=role)
+        return json.dumps({"ok": True, "staff": staff})
 
     def create_enrollment(
         self,

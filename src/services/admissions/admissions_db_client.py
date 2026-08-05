@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import datetime, timezone
 from typing import Any
 
@@ -19,7 +20,8 @@ class AdmissionsDbClient:
         response = (
             client.table("students")
             .select(
-                "id, tenant_id, name, phone, school, district, consent_at, language_pref, created_at"
+                "id, tenant_id, name, phone, school, district, consent_at, "
+                "selected_class_id, language_pref, created_at"
             )
             .eq("tenant_id", tenant_id)
             .eq("phone", phone)
@@ -34,7 +36,8 @@ class AdmissionsDbClient:
         response = (
             client.table("students")
             .select(
-                "id, tenant_id, name, phone, school, district, consent_at, language_pref, created_at"
+                "id, tenant_id, name, phone, school, district, consent_at, "
+                "selected_class_id, language_pref, created_at"
             )
             .eq("tenant_id", tenant_id)
             .eq("id", student_id)
@@ -53,6 +56,8 @@ class AdmissionsDbClient:
         school: str | None = None,
         district: str | None = None,
         consent: bool = False,
+        selected_class_id: str | None = None,
+        clear_selected_class: bool = False,
     ) -> dict[str, Any]:
         payload: dict[str, Any] = {"updated_at": datetime.now(timezone.utc).isoformat()}
         if name is not None:
@@ -63,6 +68,10 @@ class AdmissionsDbClient:
             payload["district"] = district
         if consent:
             payload["consent_at"] = datetime.now(timezone.utc).isoformat()
+        if selected_class_id is not None:
+            payload["selected_class_id"] = selected_class_id
+        if clear_selected_class:
+            payload["selected_class_id"] = None
 
         client = get_supabase_client()
         response = (
@@ -76,6 +85,45 @@ class AdmissionsDbClient:
         if not rows:
             raise RuntimeError(f"Student not found: {student_id}")
         return rows[0]
+
+    def create_student(
+        self,
+        *,
+        tenant_id: str,
+        phone: str,
+        name: str,
+        school: str,
+        district: str,
+        consent: bool = True,
+    ) -> dict[str, Any]:
+        existing = self.get_student(tenant_id=tenant_id, phone=phone)
+        if existing:
+            raise RuntimeError(f"Student already exists for phone {phone}")
+
+        student_id = f"stu-{uuid.uuid4().hex[:12]}"
+        now = datetime.now(timezone.utc).isoformat()
+        payload: dict[str, Any] = {
+            "id": student_id,
+            "tenant_id": tenant_id,
+            "phone": phone,
+            "name": name,
+            "school": school,
+            "district": district,
+            "updated_at": now,
+        }
+        if consent:
+            payload["consent_at"] = now
+
+        client = get_supabase_client()
+        response = client.table("students").insert(payload).execute()
+        rows = response.data or []
+        if rows:
+            return rows[0]
+        return payload
+
+    def delete_student(self, *, tenant_id: str, student_id: str) -> None:
+        client = get_supabase_client()
+        client.table("students").delete().eq("tenant_id", tenant_id).eq("id", student_id).execute()
 
     def list_classes(
         self,
@@ -109,6 +157,35 @@ class AdmissionsDbClient:
         )
         rows = response.data or []
         return rows[0] if rows else None
+
+    def get_tenant(self, *, tenant_id: str) -> dict[str, Any] | None:
+        client = get_supabase_client()
+        response = (
+            client.table("tenants")
+            .select("id, name, slug, status, whatsapp_number, drive_folder_id, created_at")
+            .eq("id", tenant_id)
+            .limit(1)
+            .execute()
+        )
+        rows = response.data or []
+        return rows[0] if rows else None
+
+    def list_staff(
+        self,
+        *,
+        tenant_id: str,
+        role: str | None = None,
+    ) -> list[dict[str, Any]]:
+        client = get_supabase_client()
+        query = (
+            client.table("staff_users")
+            .select("id, tenant_id, role, name, created_at")
+            .eq("tenant_id", tenant_id)
+        )
+        if role:
+            query = query.eq("role", role)
+        response = query.order("name").execute()
+        return response.data or []
 
     def list_enrollments(self, *, tenant_id: str, student_id: str) -> list[dict[str, Any]]:
         client = get_supabase_client()

@@ -48,7 +48,7 @@ async def send_chat_message(body: ChatRequest) -> ChatResponse:
         student_id=result.student_id,
         phone=result.phone,
         session_id=result.session_id,
-        student_registered=result.student_registered,
+        student_exists=result.student_exists,
     )
 
 

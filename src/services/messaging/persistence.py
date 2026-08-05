@@ -25,8 +25,9 @@ class MessagePersistence:
         if not content and media_url:
             content = f"[media] {media_url}"
 
-        self._insert_message_log(ctx, intent=intent, channel=channel)
-        self._insert_turn(ctx, role=MessageRole.USER, content=content or "(empty)")
+        if ctx.student_exists and ctx.student_id:
+            self._insert_message_log(ctx, intent=intent, channel=channel)
+            self._insert_turn(ctx, role=MessageRole.USER, content=content or "(empty)")
 
     def log_outbound(
         self,
@@ -36,8 +37,9 @@ class MessagePersistence:
         intent: str = "outbound",
         channel: ChatChannel = ChatChannel.HTTP_DEV,
     ) -> None:
-        self._insert_message_log(ctx, intent=intent, channel=channel)
-        self._insert_turn(ctx, role=MessageRole.ASSISTANT, content=body)
+        if ctx.student_exists and ctx.student_id:
+            self._insert_message_log(ctx, intent=intent, channel=channel)
+            self._insert_turn(ctx, role=MessageRole.ASSISTANT, content=body)
 
     def log_staff_reply(
         self,
@@ -47,8 +49,9 @@ class MessagePersistence:
         channel: ChatChannel = ChatChannel.HTTP_DEV,
     ) -> None:
         """Persist a staff-authored message (role=system → sender=staff in dashboard UI)."""
-        self._insert_message_log(ctx, intent="staff_reply", channel=channel)
-        self._insert_turn(ctx, role=MessageRole.SYSTEM, content=body)
+        if ctx.student_exists and ctx.student_id:
+            self._insert_message_log(ctx, intent="staff_reply", channel=channel)
+            self._insert_turn(ctx, role=MessageRole.SYSTEM, content=body)
 
     def _insert_message_log(
         self,
