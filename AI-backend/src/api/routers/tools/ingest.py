@@ -18,6 +18,7 @@ MAX_PDF_BYTES = 20 * 1024 * 1024  # 20 MB
 @router.post("/upload", response_model=IngestUploadResponse)
 async def upload_document(
     tenant_id: str = Form(..., description="Tenant id, e.g. tenant-demo-physics"),
+    class_id: str = Form(..., description="Subject class id, e.g. class-physics-al-2026"),
     file: UploadFile = File(..., description="Tutor note PDF"),
     title: Optional[str] = Form(None, description="Optional document title"),
     lesson: Optional[str] = Form(None, description="Optional lesson label for citations"),
@@ -29,6 +30,8 @@ async def upload_document(
     """
     if not tenant_id.strip():
         raise HTTPException(status_code=422, detail="tenant_id is required")
+    if not class_id.strip():
+        raise HTTPException(status_code=422, detail="class_id is required")
 
     filename = file.filename or "upload.pdf"
     if not filename.lower().endswith(".pdf"):
@@ -48,6 +51,7 @@ async def upload_document(
         result = await asyncio.to_thread(
             run_pdf_ingest,
             tenant_id=tenant_id.strip(),
+            class_id=class_id.strip(),
             file_bytes=raw,
             filename=filename,
             title=title.strip() if title else None,

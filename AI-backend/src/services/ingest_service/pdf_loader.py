@@ -30,6 +30,7 @@ def document_from_pdf(
     tenant_id: str,
     filename: str,
     content: bytes,
+    class_id: str,
     title: str | None = None,
     lesson: str | None = None,
 ) -> dict:
@@ -41,6 +42,7 @@ def document_from_pdf(
         "url": f"upload://{tenant_id}/{stem}",
         "title": doc_title,
         "lesson": lesson or stem,
+        "class_id": class_id,
         "content": text,
         "source_filename": filename,
         "source_type": "pdf",

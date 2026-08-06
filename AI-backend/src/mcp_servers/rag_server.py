@@ -31,9 +31,9 @@ def _init() -> RagTool:
 
 
 @mcp.tool()
-def kb_search(tenant_id: str, query: str) -> str:
+def kb_search(tenant_id: str, query: str, class_ids: list[str] | None = None) -> str:
     """Search tutor lesson notes (Qdrant) and return a grounded answer with citations."""
-    return _init().kb_search(tenant_id=tenant_id, query=query)
+    return _init().kb_search(tenant_id=tenant_id, query=query, class_ids=class_ids)
 
 
 @mcp.tool()

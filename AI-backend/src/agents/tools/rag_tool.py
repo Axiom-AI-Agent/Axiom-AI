@@ -34,14 +34,20 @@ class RagTool:
         return self._llm
 
     @observe(name="kb_search")
-    def kb_search(self, *, tenant_id: str, query: str) -> str:
+    def kb_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        class_ids: list[str] | None = None,
+    ) -> str:
         if not tenant_id:
             return json.dumps({"ok": False, "error": "tenant_id is required"})
         if not query or not query.strip():
             return json.dumps({"ok": False, "error": "query is required"})
 
         try:
-            if count_points(tenant_id=tenant_id) == 0:
+            if not class_ids and count_points(tenant_id=tenant_id) == 0:
                 return json.dumps(
                     {
                         "ok": True,
@@ -58,14 +64,21 @@ class RagTool:
                 tenant_id=tenant_id,
                 embedder=self._embedder_instance(),
                 llm=self._llm_instance(),
+                class_ids=class_ids,
             )
             result = service.generate(query.strip())
             answer = result.get("answer", "").strip()
             if not answer:
-                answer = (
-                    "I couldn't find relevant tutor notes for that question. "
-                    "Try rephrasing or ask your tutor in class."
-                )
+                if class_ids:
+                    answer = (
+                        "I couldn't find tutor notes for your enrolled class(es) on that topic. "
+                        "Try rephrasing or ask your tutor in class."
+                    )
+                else:
+                    answer = (
+                        "I couldn't find relevant tutor notes for that question. "
+                        "Try rephrasing or ask your tutor in class."
+                    )
             return json.dumps(
                 {
                     "ok": True,

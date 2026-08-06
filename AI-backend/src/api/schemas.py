@@ -144,6 +144,7 @@ class DashboardChatSendResponse(BaseModel):
 class RAGSearchRequest(BaseModel):
     tenant_id: str
     query: str = Field(min_length=1)
+    class_ids: Optional[list[str]] = None
 
 
 class RAGResponse(BaseModel):

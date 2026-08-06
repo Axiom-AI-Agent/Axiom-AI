@@ -113,6 +113,7 @@ async def run_chat_turn(
             session_id=ctx.session_id,
             tenant_name=tenant_name,
             is_enrolled=ctx.is_enrolled,
+            enrolled_class_ids=list(ctx.enrolled_class_ids),
             student_profile_context=student_profile_context,
             media_url=media_url,
         )

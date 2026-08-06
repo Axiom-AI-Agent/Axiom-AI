@@ -21,7 +21,7 @@ class FakeDrive:
 
 
 class FakeRag:
-    async def kb_search(self, *, tenant_id: str, query: str):
+    async def kb_search(self, *, tenant_id: str, query: str, class_ids: list[str] | None = None):
         return {"ok": True, "answer": "Velocity is speed with direction.", "citations": []}
 
 
@@ -111,6 +111,7 @@ async def test_resource_agent_allows_pending_enrollment():
     state = {
         "tenant_id": "tenant-demo-physics",
         "is_enrolled": True,
+        "enrolled_class_ids": ["class-physics-al-2026"],
         "messages": [HumanMessage(content="Explain velocity from tutor notes")],
     }
     result = await agent.run(state)

@@ -27,6 +27,11 @@ TENANT_SLUGS = {
 def main() -> int:
     parser = argparse.ArgumentParser(description="Ingest tutor notes into Qdrant")
     parser.add_argument("--tenant-id", required=True, help="Tenant UUID, e.g. tenant-demo-physics")
+    parser.add_argument(
+        "--class-id",
+        default=None,
+        help="Subject class id for all notes (default: TENANT_DEFAULT_CLASS map)",
+    )
     parser.add_argument("--path", default=None, help="Override KB path (default: data/knowledge_base/{slug})")
     parser.add_argument(
         "--strategy",
@@ -45,6 +50,7 @@ def main() -> int:
             tenant_slug=slug,
             kb_path=kb_path,
             strategy=args.strategy,
+            class_id=args.class_id,
         )
         print(f"OK: ingested {n} chunks for {args.tenant_id}")
         return 0

@@ -21,6 +21,7 @@ class IdentityContext:
     is_enrolled: bool = False
     enrollment_status: str = "none"
     active_class_names: tuple[str, ...] = ()
+    enrolled_class_ids: tuple[str, ...] = ()
 
     @property
     def memory_user_id(self) -> str:

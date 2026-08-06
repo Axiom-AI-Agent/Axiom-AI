@@ -7,7 +7,7 @@ from typing import Any
 
 from loguru import logger
 from qdrant_client import QdrantClient
-from qdrant_client.http.models import Distance, PointStruct, VectorParams
+from qdrant_client.http.models import Distance, FieldCondition, Filter, MatchAny, PointStruct, VectorParams
 
 from infrastructure.config import EMBEDDING_DIM, QDRANT_API_KEY, QDRANT_URL, qdrant_collection_for_tenant
 
@@ -48,8 +48,29 @@ def ensure_collection(
         collection_name=collection_name,
         vectors_config=VectorParams(size=vector_size, distance=distance, on_disk=True),
     )
-    logger.info("Created Qdrant collection {}", collection_name)
+    client.create_payload_index(
+        collection_name=collection_name,
+        field_name="class_id",
+        field_schema="keyword",
+    )
+    logger.info("Created Qdrant collection {} with class_id index", collection_name)
     return collection_name
+
+
+def ensure_class_id_index(*, tenant_id: str) -> None:
+    """Create class_id payload index on existing collections (idempotent)."""
+    collection_name = qdrant_collection_for_tenant(tenant_id)
+    client = get_qdrant_client()
+    if collection_name not in [c.name for c in client.get_collections().collections]:
+        return
+    try:
+        client.create_payload_index(
+            collection_name=collection_name,
+            field_name="class_id",
+            field_schema="keyword",
+        )
+    except Exception as exc:
+        logger.debug("class_id index on {} (may already exist): {}", collection_name, exc)
 
 
 def delete_collection(*, tenant_id: str) -> None:
@@ -89,6 +110,7 @@ def upsert_chunks(
         for chunk, vec in zip(batch_chunks, batch_embeds):
             payload = {
                 "tenant_id": tenant_id,
+                "class_id": chunk.get("class_id", ""),
                 "chunk_text": chunk.get("text", ""),
                 "url": chunk.get("url", ""),
                 "title": chunk.get("title", ""),
@@ -117,16 +139,23 @@ def search_chunks(
     query_vector: list[float],
     top_k: int = 4,
     score_threshold: float = 0.0,
+    class_ids: list[str] | None = None,
 ) -> list[dict[str, Any]]:
     collection_name = qdrant_collection_for_tenant(tenant_id)
     client = get_qdrant_client()
-    # Collection is already tenant-scoped by name — no payload filter needed
-    # (avoids requiring a keyword index on tenant_id in managed Qdrant Cloud).
+    query_filter: Filter | None = None
+    if class_ids:
+        allowed = [cid.strip() for cid in class_ids if cid and cid.strip()]
+        if allowed:
+            query_filter = Filter(
+                must=[FieldCondition(key="class_id", match=MatchAny(any=allowed))]
+            )
     response = client.query_points(
         collection_name=collection_name,
         query=query_vector,
         limit=top_k,
         score_threshold=score_threshold,
+        query_filter=query_filter,
     )
     results: list[dict[str, Any]] = []
     seen_parents: set[str] = set()
@@ -142,6 +171,7 @@ def search_chunks(
             "url": payload.get("url", ""),
             "title": payload.get("title", ""),
             "lesson": payload.get("lesson", ""),
+            "class_id": payload.get("class_id", ""),
             "strategy": payload.get("strategy", "fixed"),
             "chunk_index": payload.get("chunk_index", 0),
             "score": hit.score,

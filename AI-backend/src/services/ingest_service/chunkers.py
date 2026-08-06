@@ -27,6 +27,7 @@ def fixed_chunk(documents: list[dict[str, Any]]) -> list[dict[str, Any]]:
         url = doc.get("url", "")
         title = doc.get("title", "")
         lesson = doc.get("lesson", "")
+        class_id = doc.get("class_id", "")
         if not content.strip():
             continue
 
@@ -40,6 +41,7 @@ def fixed_chunk(documents: list[dict[str, Any]]) -> list[dict[str, Any]]:
                         "url": url,
                         "title": title,
                         "lesson": lesson,
+                        "class_id": class_id,
                         "text": text,
                         "strategy": "fixed",
                         "chunk_index": chunk_idx,
@@ -85,6 +87,7 @@ def parent_child_chunk(
         url = doc.get("url", "")
         title = doc.get("title", "")
         lesson = doc.get("lesson", "")
+        class_id = doc.get("class_id", "")
         if not content.strip():
             continue
 
@@ -98,6 +101,7 @@ def parent_child_chunk(
                     "url": url,
                     "title": title,
                     "lesson": lesson,
+                    "class_id": class_id,
                     "text": parent_text.strip(),
                     "strategy": "parent",
                     "chunk_index": parent_idx,
@@ -113,6 +117,7 @@ def parent_child_chunk(
                         "url": url,
                         "title": title,
                         "lesson": lesson,
+                        "class_id": class_id,
                         "text": child_text.strip(),
                         "strategy": "child",
                         "chunk_index": child_idx,

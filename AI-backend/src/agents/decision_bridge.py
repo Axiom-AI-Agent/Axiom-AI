@@ -29,6 +29,7 @@ def map_decision_to_agent_state(
     session_id: str = "",
     tenant_name: str = "",
     is_enrolled: bool = False,
+    enrolled_class_ids: list[str] | None = None,
     student_profile_context: str = "",
     media_url: str | None = None,
 ) -> AgentState:
@@ -43,6 +44,7 @@ def map_decision_to_agent_state(
         "session_id": session_id,
         "tenant_name": tenant_name,
         "is_enrolled": is_enrolled,
+        "enrolled_class_ids": list(enrolled_class_ids or []),
         "student_profile_context": student_profile_context,
         "media_url": media_url,
         "guardrail": decision_out.get("guardrail", "in_scope"),

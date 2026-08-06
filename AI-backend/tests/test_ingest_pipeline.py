@@ -55,7 +55,7 @@ def test_parent_child_chunk_links_parent_text():
 def test_ingest_documents_parent_child(mock_info, mock_embed, mock_upsert):
     from services.ingest_service.pipeline import ingest_documents
 
-    docs = [{"url": "u", "title": "T", "lesson": "1", "content": "word " * 5000}]
+    docs = [{"url": "u", "title": "T", "lesson": "1", "class_id": "class-a", "content": "word " * 5000}]
     result = ingest_documents(tenant_id="tenant-a", documents=docs, strategy="parent_child")
     assert result["ok"] is True
     assert result["strategy"] == "parent_child"
@@ -80,6 +80,7 @@ def test_run_pdf_ingest(mock_extract, mock_ingest):
     }
     result = run_pdf_ingest(
         tenant_id="tenant-a",
+        class_id="class-a",
         file_bytes=b"%PDF-1.4 fake",
         filename="notes.pdf",
         title="Newton Laws",

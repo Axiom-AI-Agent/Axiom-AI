@@ -57,7 +57,13 @@ class DriveClient(Protocol):
 
 
 class RagClient(Protocol):
-    async def kb_search(self, *, tenant_id: str, query: str) -> dict[str, Any]: ...
+    async def kb_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        class_ids: list[str] | None = None,
+    ) -> dict[str, Any]: ...
 
 
 @dataclass
@@ -113,8 +119,14 @@ class DirectRagClient:
 
         self._tool = RagTool()
 
-    async def kb_search(self, *, tenant_id: str, query: str) -> dict[str, Any]:
-        raw = self._tool.kb_search(tenant_id=tenant_id, query=query)
+    async def kb_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        class_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
+        raw = self._tool.kb_search(tenant_id=tenant_id, query=query, class_ids=class_ids)
         return json.loads(raw)
 
 
@@ -141,11 +153,20 @@ class McpRagClient:
     def __init__(self, tools_by_name: dict[str, Any]) -> None:
         self._tools = tools_by_name
 
-    async def kb_search(self, *, tenant_id: str, query: str) -> dict[str, Any]:
+    async def kb_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        class_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
         tool = self._tools.get("kb_search")
         if tool is None:
             return {"ok": False, "error": "MCP tool unavailable: kb_search"}
-        raw = await tool.ainvoke({"tenant_id": tenant_id, "query": query})
+        payload: dict[str, Any] = {"tenant_id": tenant_id, "query": query}
+        if class_ids:
+            payload["class_ids"] = class_ids
+        raw = await tool.ainvoke(payload)
         text = _mcp_text(raw)
         return json.loads(text)
 
@@ -171,10 +192,20 @@ class ResourceAgent:
         user_message = _last_user_text(state)
         tenant_name = state.get("tenant_name") or "your tuition centre"
         sub_path = classify_resource_subpath(user_message)
+        enrolled_class_ids = list(state.get("enrolled_class_ids") or [])
 
         if not state.get("is_enrolled"):
             return ResourceAgentResult(
                 answer=get_resource_not_enrolled_reply(tenant_name=tenant_name),
+                sub_path=sub_path,
+            )
+
+        if not enrolled_class_ids:
+            return ResourceAgentResult(
+                answer=(
+                    "I couldn't find an active class enrollment for your account. "
+                    f"Please contact {tenant_name} to confirm your enrollment."
+                ),
                 sub_path=sub_path,
             )
 
@@ -201,7 +232,11 @@ class ResourceAgent:
                 sub_path="drive",
             )
 
-        result = await self.rag.kb_search(tenant_id=tenant_id, query=user_message)
+        result = await self.rag.kb_search(
+            tenant_id=tenant_id,
+            query=user_message,
+            class_ids=enrolled_class_ids,
+        )
         tool_log.append(f"kb_search: ok={result.get('ok')}")
         answer = build_resource_rag_reply(
             answer=result.get("answer", ""),

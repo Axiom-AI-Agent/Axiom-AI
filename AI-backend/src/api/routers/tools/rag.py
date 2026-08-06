@@ -17,7 +17,12 @@ router = APIRouter(prefix="/tools/rag", tags=["Tools — RAG"])
 @router.post("/search", response_model=RAGResponse)
 async def search(req: RAGSearchRequest, rag: RagTool = Depends(get_rag_tool)) -> RAGResponse:
     t0 = time.perf_counter()
-    raw = await asyncio.to_thread(rag.kb_search, tenant_id=req.tenant_id, query=req.query)
+    raw = await asyncio.to_thread(
+        rag.kb_search,
+        tenant_id=req.tenant_id,
+        query=req.query,
+        class_ids=req.class_ids,
+    )
     return RAGResponse(result=raw, latency_ms=int((time.perf_counter() - t0) * 1000))
 
 

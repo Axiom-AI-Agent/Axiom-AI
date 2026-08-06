@@ -362,6 +362,7 @@ Content-Type: multipart/form-data
 | Form field | Required | Description |
 |------------|----------|-------------|
 | `tenant_id` | yes | Tenant id, e.g. `tenant-demo-physics` |
+| `class_id` | yes | Subject class id — chunks are scoped to this class for RAG retrieval |
 | `file` | yes | Tutor note PDF (max 20 MB) |
 | `title` | no | Document title for citations |
 | `lesson` | no | Lesson label for citations |
@@ -371,6 +372,7 @@ Example:
 ```bash
 curl -s -X POST "http://localhost:8000/tools/ingest/upload" \
   -F "tenant_id=tenant-demo-physics" \
+  -F "class_id=class-physics-al-2026" \
   -F "title=Lesson 7 Notes" \
   -F "lesson=7" \
   -F "file=@lesson7.pdf;type=application/pdf"
@@ -396,10 +398,10 @@ Success response:
 |--------|---------|
 | **200** | PDF ingested successfully |
 | **413** | File exceeds 20 MB limit |
-| **422** | Missing `tenant_id`, non-PDF file, empty file, or unsupported content type |
+| **422** | Missing `tenant_id` or `class_id`, non-PDF file, empty file, or unsupported content type |
 | **500** | Ingest pipeline failure (extraction, embedding, or Qdrant upsert) |
 
-The raw PDF is persisted under `data/uploads/{tenant_id}/` for audit. After upload, the RAG agent can retrieve chunks via `POST /tools/rag/search` or the `kb_search` MCP tool.
+The raw PDF is persisted under `data/uploads/{tenant_id}/` for audit. Chunks are tagged with `class_id` in Qdrant; students only retrieve notes for classes they are enrolled in. After upload, staff can verify via `POST /tools/rag/search` with `class_ids` or the `kb_search` MCP tool.
 
 ---
 

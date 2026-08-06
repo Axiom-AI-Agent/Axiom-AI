@@ -26,7 +26,13 @@ class FakeDrive:
 
 
 class FakeRag:
-    async def kb_search(self, *, tenant_id: str, query: str) -> dict[str, Any]:
+    async def kb_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        class_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
         return {
             "ok": True,
             "answer": "Velocity is the rate of change of displacement.",
@@ -42,6 +48,7 @@ async def test_resource_agent_drive_path():
         "tenant_id": "tenant-demo-physics",
         "tenant_name": "Demo Physics",
         "is_enrolled": True,
+        "enrolled_class_ids": ["class-physics-al-2026"],
         "messages": [HumanMessage(content="Can I get last week's physics paper?")],
     }
     result = await agent.run(state)
@@ -55,6 +62,7 @@ async def test_resource_agent_rag_path():
     state = {
         "tenant_id": "tenant-demo-physics",
         "is_enrolled": True,
+        "enrolled_class_ids": ["class-physics-al-2026"],
         "messages": [HumanMessage(content="Explain velocity from lesson 5")],
     }
     result = await agent.run(state)

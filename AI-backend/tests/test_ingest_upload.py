@@ -31,7 +31,12 @@ def test_ingest_upload_pdf(mock_ingest, client):
     }
     response = client.post(
         "/tools/ingest/upload",
-        data={"tenant_id": "tenant-demo-physics", "title": "Lesson 7 Notes", "lesson": "7"},
+        data={
+            "tenant_id": "tenant-demo-physics",
+            "class_id": "class-physics-al-2026",
+            "title": "Lesson 7 Notes",
+            "lesson": "7",
+        },
         files={"file": ("lesson7.pdf", b"%PDF-1.4 test content", "application/pdf")},
     )
     assert response.status_code == 200
@@ -45,7 +50,7 @@ def test_ingest_upload_pdf(mock_ingest, client):
 def test_ingest_upload_rejects_non_pdf(client):
     response = client.post(
         "/tools/ingest/upload",
-        data={"tenant_id": "tenant-demo-physics"},
+        data={"tenant_id": "tenant-demo-physics", "class_id": "class-physics-al-2026"},
         files={"file": ("notes.txt", b"hello", "text/plain")},
     )
     assert response.status_code == 422
@@ -54,7 +59,7 @@ def test_ingest_upload_rejects_non_pdf(client):
 def test_ingest_upload_rejects_empty_file(client):
     response = client.post(
         "/tools/ingest/upload",
-        data={"tenant_id": "tenant-demo-physics"},
+        data={"tenant_id": "tenant-demo-physics", "class_id": "class-physics-al-2026"},
         files={"file": ("empty.pdf", b"", "application/pdf")},
     )
     assert response.status_code == 422

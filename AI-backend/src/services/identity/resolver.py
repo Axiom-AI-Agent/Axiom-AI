@@ -154,6 +154,9 @@ class IdentityResolver:
             active_class_names=tuple(
                 class_names.get(row["class_id"], row["class_id"]) for row in enrolled_rows
             ),
+            enrolled_class_ids=tuple(
+                row["class_id"] for row in enrolled_rows if row.get("class_id")
+            ),
         )
 
     @staticmethod

@@ -18,12 +18,31 @@ from services.ingest_service.pdf_loader import document_from_pdf
 _LESSON_RE = re.compile(r"lesson[_\s-]*(\d+)", re.I)
 ChunkStrategy = Literal["fixed", "parent_child"]
 
+# Demo tenant → default class when ingesting flat KB folders (single-class tenants).
+TENANT_DEFAULT_CLASS: dict[str, str] = {
+    "tenant-demo-physics": "class-physics-al-2026",
+    "tenant-demo-chemistry": "class-chemistry-al-2026",
+}
 
-def load_tenant_docs(*, tenant_id: str, tenant_slug: str, kb_path: Path | None = None) -> list[dict[str, Any]]:
+
+def load_tenant_docs(
+    *,
+    tenant_id: str,
+    tenant_slug: str,
+    kb_path: Path | None = None,
+    class_id: str | None = None,
+) -> list[dict[str, Any]]:
     """Load markdown tutor notes from data/knowledge_base/{tenant_slug}/."""
     root = kb_path or (KB_DIR / tenant_slug)
     if not root.exists():
         raise FileNotFoundError(f"Knowledge-base directory not found: {root}")
+
+    resolved_class_id = (class_id or TENANT_DEFAULT_CLASS.get(tenant_id) or "").strip()
+    if not resolved_class_id:
+        raise ValueError(
+            f"class_id is required for ingest (no default for tenant {tenant_id}). "
+            "Pass --class-id or use TENANT_DEFAULT_CLASS."
+        )
 
     docs: list[dict[str, Any]] = []
     for md_file in sorted(root.glob("*.md")):
@@ -38,11 +57,12 @@ def load_tenant_docs(*, tenant_id: str, tenant_slug: str, kb_path: Path | None =
                 "url": f"internal://{tenant_id}/{md_file.stem}",
                 "title": title,
                 "lesson": lesson,
+                "class_id": resolved_class_id,
                 "content": content,
                 "source_type": "markdown",
             }
         )
-    logger.info("Loaded {} tutor-note documents from {}", len(docs), root)
+    logger.info("Loaded {} tutor-note documents from {} (class_id={})", len(docs), root, resolved_class_id)
     return docs
 
 
@@ -86,6 +106,10 @@ def ingest_documents(
     if not documents:
         raise ValueError("No documents to ingest")
 
+    for doc in documents:
+        if not str(doc.get("class_id") or "").strip():
+            raise ValueError("Each document must include class_id for class-scoped retrieval")
+
     if strategy == "parent_child":
         children, parents = parent_child_chunk(documents)
         if not children:
@@ -126,10 +150,16 @@ def run_tenant_ingest(
     tenant_slug: str,
     kb_path: Path | None = None,
     strategy: ChunkStrategy = "parent_child",
+    class_id: str | None = None,
 ) -> int:
     """Load markdown tutor notes and ingest (append — does not wipe collection)."""
     logger.info("Ingesting tutor notes for tenant={} slug={}", tenant_id, tenant_slug)
-    docs = load_tenant_docs(tenant_id=tenant_id, tenant_slug=tenant_slug, kb_path=kb_path)
+    docs = load_tenant_docs(
+        tenant_id=tenant_id,
+        tenant_slug=tenant_slug,
+        kb_path=kb_path,
+        class_id=class_id,
+    )
     result = ingest_documents(tenant_id=tenant_id, documents=docs, strategy=strategy)
     logger.success("Ingest complete: {}", result)
     return int(result["chunks_upserted"])
@@ -140,6 +170,7 @@ def run_pdf_ingest(
     tenant_id: str,
     file_bytes: bytes,
     filename: str,
+    class_id: str,
     title: str | None = None,
     lesson: str | None = None,
     save_upload: bool = True,
@@ -150,6 +181,8 @@ def run_pdf_ingest(
     """
     if not filename.lower().endswith(".pdf"):
         raise ValueError("Only PDF uploads are supported")
+    if not class_id.strip():
+        raise ValueError("class_id is required")
 
     if save_upload:
         dest_dir = UPLOADS_DIR / tenant_id
@@ -162,6 +195,7 @@ def run_pdf_ingest(
         tenant_id=tenant_id,
         filename=filename,
         content=file_bytes,
+        class_id=class_id.strip(),
         title=title,
         lesson=lesson,
     )

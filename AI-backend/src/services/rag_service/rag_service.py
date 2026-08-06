@@ -23,6 +23,7 @@ class TenantQdrantRetriever(BaseRetriever):
 
     embedder: Any = None
     tenant_id: str = ""
+    class_ids: list[str] | None = None
     top_k: int = RETRIEVAL_TOP_K
     score_threshold: float = RETRIEVAL_SIMILARITY_THRESHOLD
 
@@ -36,6 +37,7 @@ class TenantQdrantRetriever(BaseRetriever):
             query_vector=query_vec,
             top_k=self.top_k,
             score_threshold=self.score_threshold,
+            class_ids=self.class_ids,
         )
         docs: list[Document] = []
         seen_parents: set[str] = set()
@@ -76,13 +78,21 @@ def build_rag_chain(retriever: BaseRetriever, llm: Any, template: str = RAG_TEMP
 class RAGService:
     """Tenant-scoped RAG: retrieve tutor notes → synthesize grounded answer."""
 
-    def __init__(self, *, tenant_id: str, embedder: Any, llm: Any) -> None:
+    def __init__(
+        self,
+        *,
+        tenant_id: str,
+        embedder: Any,
+        llm: Any,
+        class_ids: list[str] | None = None,
+    ) -> None:
         self.tenant_id = tenant_id
         self.embedder = embedder
         self.llm = llm
         self.retriever = TenantQdrantRetriever(
             embedder=embedder,
             tenant_id=tenant_id,
+            class_ids=class_ids,
             top_k=RETRIEVAL_TOP_K,
             score_threshold=RETRIEVAL_SIMILARITY_THRESHOLD,
         )
