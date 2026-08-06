@@ -16,13 +16,6 @@ import {
   resolveEscalation,
 } from "@/lib/api";
 
-import {
-  EscalationSocketEvent,
-  useEscalationSocket,
-} from "@/hooks/useEscalationSocket";
-
-const TENANT_ID = "tenant-demo-physics";
-
 function statusClass(status: Escalation["status"]) {
   if (status === "resolved") {
     return "bg-emerald-500/10 text-emerald-300";
@@ -60,24 +53,6 @@ export default function ChatsPage() {
   useEffect(() => {
     void loadEscalations();
   }, [loadEscalations]);
-
-  const handleSocketEvent = useCallback(
-    (event: EscalationSocketEvent) => {
-      if (
-        event.type === "escalation.created" ||
-        event.type === "escalation.assigned" ||
-        event.type === "escalation.resolved"
-      ) {
-        void loadEscalations();
-      }
-    },
-    [loadEscalations],
-  );
-
-  const { connected } = useEscalationSocket({
-    tenantId: TENANT_ID,
-    onEvent: handleSocketEvent,
-  });
 
   async function handleAssign(escalationId: string) {
     setActionId(escalationId);
@@ -126,28 +101,9 @@ export default function ChatsPage() {
           <h1 className="text-2xl font-semibold text-white">
             Escalation Inbox
           </h1>
-
           <p className="mt-1 text-sm text-gray-400">
             Review conversations that require human attention.
           </p>
-
-          <div
-            className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${
-              connected
-                ? "bg-emerald-500/10 text-emerald-300"
-                : "bg-amber-500/10 text-amber-300"
-            }`}
-          >
-            <span
-              className={`h-2 w-2 rounded-full ${
-                connected ? "bg-emerald-400" : "bg-amber-400"
-              }`}
-            />
-
-            {connected
-              ? "Live updates connected"
-              : "Reconnecting..."}
-          </div>
         </div>
 
         <button
@@ -156,11 +112,7 @@ export default function ChatsPage() {
           disabled={loading}
           className="flex items-center gap-2 rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
         >
-          <RefreshCw
-            className={`h-4 w-4 ${
-              loading ? "animate-spin" : ""
-            }`}
-          />
+          <RefreshCw className="h-4 w-4" />
           Refresh
         </button>
       </div>
@@ -220,7 +172,6 @@ export default function ChatsPage() {
                     <p className="text-xs uppercase tracking-wide text-gray-500">
                       Student message
                     </p>
-
                     <p className="mt-2 text-sm text-gray-200">
                       {escalation.student_message}
                     </p>
@@ -230,7 +181,6 @@ export default function ChatsPage() {
                 <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
                   <div className="text-xs text-gray-500">
                     <p>Escalation ID: {escalation.id}</p>
-
                     <p className="mt-1">
                       Created:{" "}
                       {new Date(
@@ -267,11 +217,7 @@ export default function ChatsPage() {
                         }
                         className="flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white hover:bg-emerald-500 disabled:opacity-50"
                       >
-                        {processing ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <CheckCircle2 className="h-4 w-4" />
-                        )}
+                        <CheckCircle2 className="h-4 w-4" />
                         Resolve
                       </button>
                     )}
