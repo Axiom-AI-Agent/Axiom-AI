@@ -104,10 +104,10 @@ function IngestContent() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-white">
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
           Upload Tutor Notes
         </h1>
-        <p className="mt-1 text-sm text-gray-400">
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
           PDFs are chunked and added to the tenant knowledge base for RAG.
         </p>
       </div>
@@ -121,15 +121,15 @@ function IngestContent() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-5"
+        className="space-y-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
       >
         <label className="block space-y-2">
-          <span className="text-sm text-gray-300">Class</span>
+          <span className="text-sm text-slate-700 dark:text-slate-300">Class</span>
           <select
             value={classId}
             onChange={(event) => setClassId(event.target.value)}
             disabled={loadingClasses}
-            className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-gray-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-gray-500"
           >
             {classes.map((subjectClass) => (
               <option key={subjectClass.id} value={subjectClass.id}>
@@ -140,36 +140,36 @@ function IngestContent() {
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm text-gray-300">PDF file</span>
+          <span className="text-sm text-slate-700 dark:text-slate-300">PDF file</span>
           <input
             type="file"
             accept="application/pdf,.pdf"
             onChange={(event) =>
               setFile(event.target.files?.[0] ?? null)
             }
-            className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-sm text-gray-300"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-700 dark:text-slate-300"
           />
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm text-gray-300">Title (optional)</span>
+          <span className="text-sm text-slate-700 dark:text-slate-300">Title (optional)</span>
           <input
             type="text"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Lesson 7 Notes"
-            className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-gray-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-gray-500"
           />
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm text-gray-300">Lesson label (optional)</span>
+          <span className="text-sm text-slate-700 dark:text-slate-300">Lesson label (optional)</span>
           <input
             type="text"
             value={lesson}
             onChange={(event) => setLesson(event.target.value)}
             placeholder="7"
-            className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white outline-none focus:border-gray-500"
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-gray-500"
           />
         </label>
 
@@ -187,7 +187,7 @@ function IngestContent() {
         </button>
       </form>
 
-      <div className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-950 p-4 text-sm text-gray-400">
+      <div className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 text-sm text-slate-600 dark:text-slate-400">
         <FileUp className="mt-0.5 h-5 w-5 shrink-0" />
         <p>
           Maximum file size is 20 MB. Chunks are appended to the existing
@@ -203,7 +203,7 @@ export default function IngestPage() {
     <Suspense
       fallback={
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-gray-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
         </div>
       }
     >

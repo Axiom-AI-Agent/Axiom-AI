@@ -77,14 +77,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "bg-gradient-to-b from-gray-800 to-gray-900 text-gray-100 min-h-screen flex flex-col p-4",
+        "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 min-h-screen flex flex-col p-4 border-r border-slate-200 dark:border-slate-800",
         "fixed lg:relative inset-y-0 left-0 w-64 transform transition-transform duration-300 ease-in-out z-50",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:translate-x-0 lg:flex",
       )}
     >
       <button
-        className="absolute top-4 right-4 lg:hidden text-gray-300 hover:text-white"
+        className="absolute top-4 right-4 lg:hidden text-slate-400 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
         onClick={onClose}
         aria-label="Close sidebar"
         type="button"
@@ -92,7 +92,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <X className="h-6 w-6" />
       </button>
 
-      <h2 className="text-xl font-semibold mb-6">Axiom AI</h2>
+      <div className="flex items-center gap-3 mb-6 px-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="Axiom AI Logo" className="h-8 w-auto" />
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Axiom AI</h2>
+      </div>
 
       <nav className="flex-1 space-y-2">
         {mainNavItems.map((item) => {
@@ -104,8 +108,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                "flex items-center space-x-3 rounded-md p-2 hover:bg-gray-700 transition-colors",
-                active && "bg-gray-700 font-medium",
+                "flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ease-in-out",
+                active 
+                  ? "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-medium" 
+                  : "hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white",
               )}
             >
               {item.icon}
@@ -115,14 +121,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      <nav className="mt-auto border-t border-gray-700 pt-4">
+      <nav className="mt-auto border-t border-slate-200 dark:border-slate-800 pt-4">
         <Link
           href={settingsNavItem.href}
           onClick={onClose}
           className={cn(
-            "flex items-center space-x-3 rounded-md p-2 hover:bg-gray-700 transition-colors",
-            pathname?.startsWith(settingsNavItem.href) &&
-              "bg-gray-700 font-medium",
+            "flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ease-in-out",
+            pathname?.startsWith(settingsNavItem.href)
+              ? "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-medium"
+              : "hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white",
           )}
         >
           {settingsNavItem.icon}

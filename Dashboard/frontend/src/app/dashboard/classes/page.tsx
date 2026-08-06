@@ -175,8 +175,8 @@ export default function ClassesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Classes</h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Classes</h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Create and manage tuition classes for this tenant.
           </p>
         </div>
@@ -184,7 +184,7 @@ export default function ClassesPage() {
         <div className="flex gap-2">
           <Link
             href="/dashboard/ingest"
-            className="flex items-center gap-2 rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-200 hover:bg-gray-800"
+            className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
           >
             <Upload className="h-4 w-4" />
             Upload notes
@@ -194,7 +194,7 @@ export default function ClassesPage() {
             type="button"
             onClick={() => void loadClasses()}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800 disabled:opacity-50"
           >
             <RefreshCw className="h-4 w-4" />
             Refresh
@@ -221,10 +221,10 @@ export default function ClassesPage() {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="grid gap-4 rounded-xl border border-gray-800 bg-gray-900 p-5 md:grid-cols-2 xl:grid-cols-3"
+          className="grid gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 md:grid-cols-2 xl:grid-cols-3"
         >
           <label className="space-y-2">
-            <span className="text-sm text-gray-300">Subject</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">Subject</span>
             <input
               required
               value={form.subject}
@@ -234,34 +234,34 @@ export default function ClassesPage() {
                   subject: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm text-gray-300">Display name</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">Display name</span>
             <input
               value={form.name}
               onChange={(event) =>
                 setForm((current) => ({ ...current, name: event.target.value }))
               }
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm text-gray-300">Grade</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">Grade</span>
             <input
               value={form.grade}
               onChange={(event) =>
                 setForm((current) => ({ ...current, grade: event.target.value }))
               }
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm text-gray-300">Fee amount (LKR)</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">Fee amount (LKR)</span>
             <input
               required
               type="number"
@@ -274,12 +274,12 @@ export default function ClassesPage() {
                   fee_amount: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             />
           </label>
 
           <label className="space-y-2">
-            <span className="text-sm text-gray-300">Fee cycle</span>
+            <span className="text-sm text-slate-700 dark:text-slate-300">Fee cycle</span>
             <select
               value={form.fee_cycle}
               onChange={(event) =>
@@ -288,7 +288,7 @@ export default function ClassesPage() {
                   fee_cycle: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-gray-700 bg-gray-950 px-3 py-2 text-white"
+              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             >
               <option value="monthly">Monthly</option>
               <option value="termly">Termly</option>
@@ -311,45 +311,45 @@ export default function ClassesPage() {
 
       {loading ? (
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-gray-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
         </div>
       ) : classes.length === 0 ? (
-        <div className="rounded-xl border border-gray-800 bg-gray-900 p-10 text-center">
-          <BookOpen className="mx-auto h-10 w-10 text-gray-500" />
-          <p className="mt-3 text-gray-300">No classes yet.</p>
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-10 text-center">
+          <BookOpen className="mx-auto h-10 w-10 text-slate-500 dark:text-slate-400" />
+          <p className="mt-3 text-slate-700 dark:text-slate-300">No classes yet.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {classes.map((subjectClass) => (
             <article
               key={subjectClass.id}
-              className="rounded-xl border border-gray-800 bg-gray-900 p-5"
+              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">
+                  <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
                     {subjectClass.name ?? subjectClass.subject}
                   </h2>
-                  <p className="text-sm text-gray-400">{subjectClass.subject}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{subjectClass.subject}</p>
                   {subjectClass.grade && (
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Grade {subjectClass.grade}
                     </p>
                   )}
                 </div>
-                <BookOpen className="h-5 w-5 text-gray-400" />
+                <BookOpen className="h-5 w-5 text-slate-600 dark:text-slate-400" />
               </div>
 
               <dl className="mt-5 space-y-2 text-sm">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-gray-400">Fee</dt>
-                  <dd className="text-white">
+                  <dt className="text-slate-600 dark:text-slate-400">Fee</dt>
+                  <dd className="text-slate-900 dark:text-white">
                     LKR {Number(subjectClass.fee_amount ?? 0).toLocaleString()}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="text-gray-400">Cycle</dt>
-                  <dd className="capitalize text-gray-200">
+                  <dt className="text-slate-600 dark:text-slate-400">Cycle</dt>
+                  <dd className="capitalize text-slate-800 dark:text-slate-200">
                     {subjectClass.fee_cycle}
                   </dd>
                 </div>
@@ -359,7 +359,7 @@ export default function ClassesPage() {
                 <button
                   type="button"
                   onClick={() => openEditForm(subjectClass)}
-                  className="inline-flex items-center gap-1 rounded-lg border border-gray-700 px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-800"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
                 >
                   <Pencil className="h-4 w-4" />
                   Edit
@@ -374,7 +374,7 @@ export default function ClassesPage() {
                 </button>
                 <Link
                   href={`/dashboard/ingest?class_id=${encodeURIComponent(subjectClass.id)}`}
-                  className="inline-flex items-center gap-1 rounded-lg border border-gray-700 px-3 py-1.5 text-sm text-indigo-300 hover:bg-gray-800"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm text-blue-300 hover:bg-slate-100 dark:bg-slate-800"
                 >
                   <Upload className="h-4 w-4" />
                   Ingest

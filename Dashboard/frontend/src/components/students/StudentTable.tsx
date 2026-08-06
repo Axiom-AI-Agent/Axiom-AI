@@ -24,10 +24,10 @@ export default function StudentTable({
   onDelete,
 }: StudentTableProps) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-800 bg-gray-950">
-      <table className="min-w-full divide-y divide-gray-800">
-        <thead className="bg-gray-900">
-          <tr className="text-left text-xs uppercase tracking-wide text-gray-400">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+      <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+        <thead className="bg-slate-50 dark:bg-slate-800/50">
+          <tr className="text-left text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <th className="px-5 py-4 font-medium">Name</th>
             <th className="px-5 py-4 font-medium">Phone</th>
             <th className="px-5 py-4 font-medium">District</th>
@@ -40,27 +40,27 @@ export default function StudentTable({
           </tr>
         </thead>
 
-        <tbody className="divide-y divide-gray-800">
+        <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
           {students.map((student) => (
-            <tr key={student.id} className="hover:bg-gray-900/70">
+            <tr key={student.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
               <td className="px-5 py-4 align-top">
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-slate-900 dark:text-white">
                   {student.name?.trim() || "Unnamed"}
                 </p>
-                <p className="mt-1 font-mono text-xs text-gray-500">
+                <p className="mt-1 font-mono text-xs text-slate-500 dark:text-slate-400">
                   {student.id}
                 </p>
               </td>
 
-              <td className="px-5 py-4 align-top text-sm text-gray-300">
+              <td className="px-5 py-4 align-top text-sm text-slate-700 dark:text-slate-300">
                 {student.phone}
               </td>
 
-              <td className="px-5 py-4 align-top text-sm text-gray-400">
+              <td className="px-5 py-4 align-top text-sm text-slate-600 dark:text-slate-400">
                 {student.district?.trim() || "—"}
               </td>
 
-              <td className="px-5 py-4 align-top text-sm uppercase text-gray-400">
+              <td className="px-5 py-4 align-top text-sm uppercase text-slate-600 dark:text-slate-400">
                 {student.language_pref || "en"}
               </td>
 
@@ -70,23 +70,23 @@ export default function StudentTable({
                     {student.enrollments.map((enrollment) => (
                       <span
                         key={enrollment.id}
-                        className="inline-flex items-center rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1 text-xs text-indigo-200"
+                        className="inline-flex items-center rounded-full border border-blue-200 dark:border-blue-500/20 bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-700 dark:text-blue-300"
                       >
                         {enrollment.class_subject ??
                           enrollment.class_name ??
                           enrollment.class_id}
-                        <span className="ml-1.5 capitalize text-indigo-400/70">
+                        <span className="ml-1.5 capitalize text-blue-500 dark:text-blue-400/70">
                           {enrollment.status}
                         </span>
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <span className="text-sm text-gray-500">Not enrolled</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400 italic">Not enrolled</span>
                 )}
               </td>
 
-              <td className="px-5 py-4 align-top text-sm text-gray-400">
+              <td className="px-5 py-4 align-top text-sm text-slate-600 dark:text-slate-400">
                 {student.created_at
                   ? new Date(student.created_at).toLocaleDateString()
                   : "—"}
@@ -96,7 +96,7 @@ export default function StudentTable({
                 <div className="flex flex-wrap justify-end gap-1.5">
                   <Link
                     href={`/dashboard/messages?phone=${encodeURIComponent(student.phone)}`}
-                    className="inline-flex items-center gap-1 rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-200 hover:bg-gray-800"
+                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
                   >
                     <MessageSquare className="h-3.5 w-3.5" />
                     Chat
@@ -105,7 +105,7 @@ export default function StudentTable({
                   <button
                     type="button"
                     onClick={() => onEnroll(student)}
-                    className="inline-flex items-center gap-1 rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-200 hover:bg-gray-800"
+                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
                   >
                     <UserPlus className="h-3.5 w-3.5" />
                     Enroll
@@ -114,7 +114,7 @@ export default function StudentTable({
                   <button
                     type="button"
                     onClick={() => onEdit(student)}
-                    className="inline-flex items-center gap-1 rounded-md border border-gray-700 px-2.5 py-1.5 text-xs text-gray-200 hover:bg-gray-800"
+                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Edit
@@ -123,7 +123,7 @@ export default function StudentTable({
                   <button
                     type="button"
                     onClick={() => onDelete(student.id)}
-                    className="inline-flex items-center gap-1 rounded-md border border-red-500/30 px-2.5 py-1.5 text-xs text-red-200 hover:bg-red-500/10"
+                    className="inline-flex items-center gap-1 rounded-md border border-red-200 dark:border-red-500/30 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 bg-white dark:bg-transparent shadow-sm transition-colors"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                     Delete

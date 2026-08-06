@@ -21,7 +21,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <TenantProvider>
       <ToastProvider>
-        <div className="flex min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
+        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50">
           <Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />
 
           {sidebarOpen && (

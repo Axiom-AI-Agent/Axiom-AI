@@ -199,13 +199,13 @@ function InboxContent() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
             Escalation Inbox
           </h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Unified HITL queue for payment receipts and tutor requests.
           </p>
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Auto-refreshes every 5 seconds
             {connected ? " · WebSocket connected" : " · WebSocket reconnecting"}
           </p>
@@ -215,7 +215,7 @@ function InboxContent() {
           type="button"
           onClick={() => void loadEscalations(true)}
           disabled={loading}
-          className="flex items-center gap-2 rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-200 hover:bg-gray-800 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800 disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -226,7 +226,7 @@ function InboxContent() {
         <select
           value={statusFilter ?? ""}
           onChange={(event) => updateFilter("status", event.target.value)}
-          className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-white"
+          className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white"
         >
           <option value="">All statuses</option>
           <option value="open">Open</option>
@@ -239,7 +239,7 @@ function InboxContent() {
           onChange={(event) =>
             updateFilter("reason_code", event.target.value)
           }
-          className="rounded-lg border border-gray-700 bg-gray-900 px-3 py-2 text-sm text-white"
+          className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white"
         >
           <option value="">All reasons</option>
           <option value="payment_receipt">Payment receipt</option>
@@ -256,10 +256,10 @@ function InboxContent() {
 
       {loading ? (
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-gray-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
         </div>
       ) : escalations.length === 0 ? (
-        <div className="rounded-xl border border-gray-800 bg-gray-900 p-10 text-center text-gray-400">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-10 text-center text-slate-600 dark:text-slate-400">
           No escalations match the current filters.
         </div>
       ) : (
@@ -271,17 +271,17 @@ function InboxContent() {
             return (
               <article
                 key={escalation.id}
-                className="rounded-xl border border-gray-800 bg-gray-900 p-5"
+                className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <h2 className="font-semibold text-white">
+                    <h2 className="font-semibold text-slate-900 dark:text-white">
                       {escalation.student_name ?? escalation.student_id}
                     </h2>
-                    <p className="mt-1 text-sm text-gray-400">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                       {escalation.student_phone ?? "No phone on file"}
                     </p>
-                    <p className="mt-1 text-sm text-gray-400">
+                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                       Reason:{" "}
                       {escalation.reason_code.replaceAll("_", " ")}
                     </p>
@@ -297,19 +297,19 @@ function InboxContent() {
                 </div>
 
                 {escalation.student_message && (
-                  <div className="mt-4 rounded-lg border border-gray-800 bg-gray-950 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                  <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       Student message
                     </p>
-                    <p className="mt-2 text-sm text-gray-200">
+                    <p className="mt-2 text-sm text-slate-800 dark:text-slate-200">
                       {escalation.student_message}
                     </p>
                   </div>
                 )}
 
                 {escalation.media_url && (
-                  <div className="mt-4 rounded-lg border border-gray-800 bg-gray-950 p-4">
-                    <p className="text-xs uppercase tracking-wide text-gray-500">
+                  <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4">
+                    <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                       Payment slip
                     </p>
                     <div className="mt-3 flex flex-wrap items-start gap-4">
@@ -317,7 +317,7 @@ function InboxContent() {
                       <img
                         src={escalation.media_url}
                         alt="Payment receipt"
-                        className="max-h-48 rounded-lg border border-gray-700 object-contain"
+                        className="max-h-48 rounded-lg border border-slate-300 dark:border-slate-700 object-contain"
                       />
                       <a
                         href={escalation.media_url}
@@ -333,7 +333,7 @@ function InboxContent() {
                 )}
 
                 {(escalation.reviewed_by || escalation.reviewed_at) && (
-                  <div className="mt-4 text-xs text-gray-500">
+                  <div className="mt-4 text-xs text-slate-500 dark:text-slate-400">
                     {escalation.reviewed_by && (
                       <p>Reviewed by: {escalation.reviewed_by}</p>
                     )}
@@ -352,7 +352,7 @@ function InboxContent() {
                 )}
 
                 <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
                     <p>ID: {escalation.id}</p>
                     <p className="mt-1">
                       Created:{" "}
@@ -366,7 +366,7 @@ function InboxContent() {
                         href={`/dashboard/messages?phone=${encodeURIComponent(
                           escalation.student_phone,
                         )}`}
-                        className="inline-flex items-center gap-2 rounded-lg border border-gray-700 px-3 py-2 text-sm text-gray-200 hover:bg-gray-800"
+                        className="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
                       >
                         <MessageSquare className="h-4 w-4" />
                         Open chat
@@ -416,7 +416,7 @@ export default function InboxPage() {
     <Suspense
       fallback={
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-gray-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
         </div>
       }
     >

@@ -46,15 +46,15 @@ export default function OverviewPage() {
     return (
       <div className="space-y-6">
         <div>
-          <div className="h-8 w-56 animate-pulse rounded bg-gray-700" />
-          <div className="mt-2 h-4 w-72 animate-pulse rounded bg-gray-800" />
+          <div className="h-8 w-56 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
+          <div className="mt-2 h-4 w-72 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <div
               key={index}
-              className="h-28 animate-pulse rounded-lg bg-gray-800"
+              className="h-28 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800"
             />
           ))}
         </div>
@@ -86,10 +86,10 @@ export default function OverviewPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-white">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             Dashboard Overview
           </h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Live operational data for {data.tenant_id}.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function OverviewPage() {
         <button
           type="button"
           onClick={() => void loadOverview()}
-          className="flex items-center gap-2 rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-200 hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 shadow-sm transition-colors"
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
@@ -160,24 +160,24 @@ export default function OverviewPage() {
         </Link>
       </div>
 
-      <div className="rounded-xl border border-gray-800 bg-gray-900 p-5">
-        <h2 className="font-medium text-white">Quick actions</h2>
-        <div className="mt-3 flex flex-wrap gap-3 text-sm">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+        <h2 className="font-semibold text-slate-900 dark:text-white text-lg mb-4">Quick actions</h2>
+        <div className="flex flex-wrap gap-3 text-sm">
           <Link
             href="/dashboard/inbox?status=open"
-            className="rounded-lg border border-gray-700 px-3 py-2 text-gray-200 hover:bg-gray-800"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
           >
             Open inbox
           </Link>
           <Link
             href="/dashboard/messages"
-            className="rounded-lg border border-gray-700 px-3 py-2 text-gray-200 hover:bg-gray-800"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
           >
             Staff messages
           </Link>
           <Link
             href="/dashboard/ingest"
-            className="rounded-lg border border-gray-700 px-3 py-2 text-gray-200 hover:bg-gray-800"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
           >
             Upload tutor notes
           </Link>
