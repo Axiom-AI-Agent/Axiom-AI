@@ -344,6 +344,65 @@ Use `POST /chat` (see [DEV_CHAT.md](DEV_CHAT.md)):
 
 ---
 
+## Document ingest (knowledge base)
+
+Upload tutor PDFs into the tenant RAG collection. Chunks are **appended** to the existing Qdrant collection (`axiom_kb_{tenant_id}`); uploads do not wipe prior documents.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/tools/ingest/upload` | Upload PDF → extract text → parent-child chunk → embed → upsert |
+
+### Upload PDF
+
+```http
+POST /tools/ingest/upload
+Content-Type: multipart/form-data
+```
+
+| Form field | Required | Description |
+|------------|----------|-------------|
+| `tenant_id` | yes | Tenant id, e.g. `tenant-demo-physics` |
+| `file` | yes | Tutor note PDF (max 20 MB) |
+| `title` | no | Document title for citations |
+| `lesson` | no | Lesson label for citations |
+
+Example:
+
+```bash
+curl -s -X POST "http://localhost:8000/tools/ingest/upload" \
+  -F "tenant_id=tenant-demo-physics" \
+  -F "title=Lesson 7 Notes" \
+  -F "lesson=7" \
+  -F "file=@lesson7.pdf;type=application/pdf"
+```
+
+Success response:
+
+```json
+{
+  "ok": true,
+  "tenant_id": "tenant-demo-physics",
+  "strategy": "parent_child",
+  "documents": 1,
+  "chunks_upserted": 12,
+  "collection": "axiom_kb_tenant_demo_physics",
+  "points_count": 12,
+  "document_title": "Lesson 7 Notes",
+  "source_filename": "lesson7.pdf"
+}
+```
+
+| Status | Meaning |
+|--------|---------|
+| **200** | PDF ingested successfully |
+| **413** | File exceeds 20 MB limit |
+| **422** | Missing `tenant_id`, non-PDF file, empty file, or unsupported content type |
+| **500** | Ingest pipeline failure (extraction, embedding, or Qdrant upsert) |
+
+The raw PDF is persisted under `data/uploads/{tenant_id}/` for audit. After upload, the RAG agent can retrieve chunks via `POST /tools/rag/search` or the `kb_search` MCP tool.
+
+---
+
 ## MCP tools (agents)
 
 | Tool | Purpose |
