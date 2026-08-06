@@ -1,0 +1,66 @@
+# Axiom AI — runtime parameters (non-secret)
+
+provider:
+  default: openai
+  tier: general
+
+llm:
+  temperature: 0.0
+  max_tokens: 2000
+  streaming: false
+  roles:
+    chat:
+      provider: openai
+      tier: general
+    merge:
+      provider: google
+      tier: general
+    router:
+      provider: openai
+      tier: general
+    guardrail:
+      provider: openai
+      tier: general
+    extractor:
+      provider: openai
+      tier: general
+
+embedding:
+  provider: openai
+  tier: small
+  batch_size: 100
+
+chunking:
+  fixed:
+    chunk_size: 800
+    chunk_overlap: 100
+  parent_child:
+    parent_size: 1200
+    child_size: 250
+    child_overlap: 50
+
+retrieval:
+  top_k: 4
+  similarity_threshold: 0.35
+
+paths:
+  data_dir: data
+  kb_dir: data/knowledge_base
+  uploads_dir: data/uploads
+  logs_dir: logs
+
+logging:
+  level: INFO
+
+observability:
+  enabled: true
+
+qdrant:
+  collection_prefix: axiom_kb
+
+memory:
+  st_max_turns: 30
+  st_ttl_seconds: 86400
+
+messaging:
+  dry_run: true

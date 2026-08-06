@@ -22,10 +22,24 @@ htmlcov/
 *.swp
 .DS_Store
 
-# Logs & data
+# Logs
 logs/
-data/knowledge_base/*/
-!data/knowledge_base/.gitkeep
 
-# Graphify (optional local cache — commit graph.json if team wants)
+# AI backend data (keep structure, ignore tenant content)
+AI-backend/data/knowledge_base/*/
+!AI-backend/data/knowledge_base/.gitkeep
+
+# Demo UI (Node)
+AI-backend/demo-ui-org/student-chat/node_modules/
+AI-backend/demo-ui-org/student-chat/dist/
+
+# Dashboard frontend (Node)
+Dashboard/frontend/node_modules/
+Dashboard/frontend/.next/
+Dashboard/frontend/out/
+
+# Dashboard backend venv
+Dashboard/backend/venv/
+
+# Graphify (optional local cache)
 # graphify-out/cache/

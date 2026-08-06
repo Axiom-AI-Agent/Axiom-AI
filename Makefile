@@ -1,34 +1,21 @@
-.PHONY: install run test lint health ready config smoke-llm verify-phase0
+.PHONY: ai-backend dashboard-backend dashboard-frontend demo-ui
 
-PYTHON ?= python3
-export PYTHONPATH := src
+# Convenience targets from repo root — delegate to subprojects
 
-install:
-	$(PYTHON) -m pip install -r requirements.txt
+ai-backend:
+	$(MAKE) -C AI-backend run
 
-run:
-	$(PYTHON) -m uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+ai-test:
+	$(MAKE) -C AI-backend test
 
-test:
-	$(PYTHON) -m pytest tests/ -v
+ai-install:
+	$(MAKE) -C AI-backend install
 
-lint:
-	$(PYTHON) -m ruff check src tests scripts
+dashboard-backend:
+	cd Dashboard/backend && uvicorn app.main:app --reload --port 8000
 
-health:
-	curl -s http://localhost:8000/health | $(PYTHON) -m json.tool
+dashboard-frontend:
+	cd Dashboard/frontend && npm run dev
 
-ready:
-	curl -s http://localhost:8000/ready | $(PYTHON) -m json.tool
-
-config:
-	curl -s http://localhost:8000/config | $(PYTHON) -m json.tool
-
-smoke-llm:
-	$(PYTHON) scripts/smoke_llm.py
-
-verify-phase0:
-	$(PYTHON) scripts/verify_phase0.py
-
-init-db:
-	$(PYTHON) scripts/init_supabase.py
+demo-ui:
+	$(MAKE) -C AI-backend demo-ui
