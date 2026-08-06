@@ -293,19 +293,27 @@ High-level log of inbound/outbound messaging intents (not full turn content).
 
 ### `escalations` (ESCALATION)
 
-Cases routed to human staff when the agent cannot resolve confidently.
+Unified human-in-the-loop inbox for Phase 5: payment receipts and talk-to-tutor requests. See [PHASE5_DECISIONS.md](PHASE5_DECISIONS.md).
 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | `id` | TEXT | PK | Escalation ID |
 | `tenant_id` | TEXT | FK → `tenants`, NOT NULL | Tenant scope |
 | `student_id` | TEXT | FK → `students`, NOT NULL | Affected student |
-| `reason_code` | TEXT | NOT NULL | Machine-readable reason |
+| `enrollment_id` | TEXT | FK → `enrollments`, nullable | Linked pending enrollment (payment flow) |
+| `reason_code` | TEXT | NOT NULL | `payment_receipt`, `talk_to_tutor`, … |
 | `status` | `escalation_status` | NOT NULL, default `open` | Queue state |
+| `media_url` | TEXT | nullable | Payment slip URL (Phase 5) |
+| `student_message` | TEXT | nullable | Triggering message (Phase 5) |
+| `resolution` | TEXT | nullable | `approved`, `rejected`, `closed` (Phase 5) |
+| `reviewed_by` | TEXT | nullable | Staff audit (Phase 5) |
+| `reviewed_at` | TIMESTAMPTZ | nullable | Staff audit (Phase 5) |
 | `created_at` | TIMESTAMPTZ | NOT NULL | Row created |
 | `updated_at` | TIMESTAMPTZ | NOT NULL | Row updated |
 
 **Index:** `idx_escalations_tenant_status (tenant_id, status)`
+
+**Migration:** `sql/02_phase5_escalations.sql`
 
 ---
 
@@ -507,8 +515,11 @@ These tables existed before the v2 ER alignment and are dropped by `00_drop_lega
 | Consumer | Auth | Typical tables |
 |----------|------|----------------|
 | AI backend (FastAPI) | Service role key | All tables — writes on `st_turns`, `message_logs`, memory |
+| **Dev chat (`POST /chat`)** | None (local dev) | Same as WhatsApp — see [DEV_CHAT.md](DEV_CHAT.md) |
 | Dashboard (frontend) | Supabase Auth + RLS | `staff_users`, `escalations`, `invoices`, `bank_slip_uploads` |
-| Twilio webhook | Backend resolves tenant/student | `students`, `st_turns`, `message_logs` |
+| Twilio webhook *(optional)* | Signature validation | `students`, `st_turns`, `message_logs` |
+
+**Local development:** use `POST /chat` instead of Twilio — no sandbox setup required. See [DEV_CHAT.md](DEV_CHAT.md).
 
 **Tenant resolution on inbound WhatsApp:**
 
@@ -525,6 +536,9 @@ WHERE s.phone = :from_phone
 
 ## Related Documentation
 
+- [Phase 5 design decisions](PHASE5_DECISIONS.md) — escalation-only HITL rationale
+- [Dashboard API contract](API_CONTRACT.md) — staff REST endpoints
+- [Dev Chat (WhatsApp simulator)](DEV_CHAT.md) — local HTTP chat without Twilio
 - [Tutor AI SRS v2](Tutor_AI_SRS_v2.md) — functional requirements
 - [AI Backend Roadmap](Technical%20Docs/AI%20backend%20-%20Roadmap.md) — phase plan and API surface
 - [Tutor AI ER Diagram](Technical%20Docs/Tutor%20AI%20ER.png) — visual schema reference

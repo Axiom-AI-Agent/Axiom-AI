@@ -9,6 +9,7 @@ class TenantStatus(str, Enum):
 
 
 class EnrollmentStatus(str, Enum):
+    PENDING = "pending"
     ACTIVE = "active"
     PAUSED = "paused"
     WITHDRAWN = "withdrawn"
@@ -42,6 +43,7 @@ class MessageRole(str, Enum):
 
 
 class ChatChannel(str, Enum):
+    HTTP_DEV = "http_dev"
     TWILIO_WHATSAPP = "twilio_whatsapp"
     TELEGRAM = "telegram"
 

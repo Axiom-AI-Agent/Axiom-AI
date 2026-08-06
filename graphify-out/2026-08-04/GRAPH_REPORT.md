@@ -1,12 +1,12 @@
 # Graph Report - Axiom-AI  (2026-08-04)
 
 ## Corpus Check
-- 41 files · ~362,894 words
+- 44 files · ~364,222 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 552 nodes · 652 edges · 69 communities (62 shown, 7 thin omitted)
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 36 edges (avg confidence: 0.69)
+- 565 nodes · 666 edges · 70 communities (63 shown, 7 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 36 edges (avg confidence: 0.69)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -75,6 +75,7 @@
 - 6. Resource Split: Google Drive vs RAG
 - 9. High-Level Architecture
 - tutoring_prompts.py
+- verify_phase0.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `Week 13 Technical Documentation` - 34 edges
@@ -89,21 +90,21 @@
 10. `Retrieval and Ingestion` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `test_validate_creates_directories()` --calls--> `validate()`  [INFERRED]
-  tests/test_config.py → src/infrastructure/config.py
 - `test_payment_status_update_accepts_enum()` --calls--> `PaymentStatusUpdate`  [INFERRED]
   tests/test_enums.py → src/api/schemas.py
 - `test_payment_status_update_rejects_invalid()` --calls--> `PaymentStatusUpdate`  [INFERRED]
   tests/test_enums.py → src/api/schemas.py
 - `test_tenant_summary_schema()` --calls--> `TenantSummary`  [INFERRED]
   tests/test_enums.py → src/api/schemas.py
+- `test_validate_creates_directories()` --calls--> `validate()`  [INFERRED]
+  tests/test_config.py → src/infrastructure/config.py
 - `test_trace_context_tags_and_metadata()` --calls--> `TraceContext`  [INFERRED]
   tests/test_observability.py → src/infrastructure/observability.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (69 total, 7 thin omitted)
+## Communities (70 total, 7 thin omitted)
 
 ### Community 0 - "Roadmap.md"
 Cohesion: 0.05
@@ -111,7 +112,7 @@ Nodes (43): 10. Phased Implementation Plan, Acceptance Criteria, Acceptance Crit
 
 ### Community 1 - "Infrastructure Support"
 Cohesion: 0.05
-Nodes (38): 4. File-by-File Explanation, Agent Core, Backend Entry and Transport, Chat Flow, MCP Servers, [src/agents/decision_graph.py](src/agents/decision_graph.py), [src/agents/guardrail.py](src/agents/guardrail.py), [src/agents/orchestrator.py](src/agents/orchestrator.py) (+30 more)
+Nodes (41): 4. File-by-File Explanation, Agent Core, Backend Entry and Transport, Infrastructure Support, MCP Servers, [src/agents/decision_graph.py](src/agents/decision_graph.py), [src/agents/guardrail.py](src/agents/guardrail.py), [src/agents/orchestrator.py](src/agents/orchestrator.py) (+33 more)
 
 ### Community 2 - "23. Important Classes"
 Cohesion: 0.11
@@ -122,24 +123,24 @@ Cohesion: 0.18
 Nodes (10): 11. API Contract Summary (Dashboard Team), 12. Environment Variables, 13. Explicitly Out of MVP Scope, 14. Per-Phase Workflow, 15. Day-by-Day Schedule, 1. Locked Architecture Decisions, 8. Reference Patterns to Reuse, Appendix: Generic Template (+2 more)
 
 ### Community 4 - "Tasks"
-Cohesion: 0.14
-Nodes (14): Infrastructure Support, [src/infrastructure/config.py](src/infrastructure/config.py), [src/infrastructure/db/crm_init.py](src/infrastructure/db/crm_init.py), [src/infrastructure/db/crm_models.py](src/infrastructure/db/crm_models.py), [src/infrastructure/db/qdrant_client.py](src/infrastructure/db/qdrant_client.py), [src/infrastructure/db/sql_client.py](src/infrastructure/db/sql_client.py), [src/infrastructure/db/supabase_client.py](src/infrastructure/db/supabase_client.py), [src/infrastructure/db/supabase_schema.py](src/infrastructure/db/supabase_schema.py) (+6 more)
+Cohesion: 0.18
+Nodes (11): Chat Flow, [src/api/routers/chat.py](src/api/routers/chat.py), [src/api/routers/chat_sessions.py](src/api/routers/chat_sessions.py), [src/api/routers/health.py](src/api/routers/health.py), [src/api/routers/patients.py](src/api/routers/patients.py), [src/api/routers/tools/cag.py](src/api/routers/tools/cag.py), [src/api/routers/tools/crawl.py](src/api/routers/tools/crawl.py), [src/api/routers/tools/crm.py](src/api/routers/tools/crm.py) (+3 more)
 
 ### Community 5 - "3. Folder-by-Folder Explanation"
 Cohesion: 0.12
 Nodes (16): 3. Folder-by-Folder Explanation, [config](config), [docker](docker), [notebooks](notebooks), Root Files, [scripts](scripts), [sql](sql), [src/agents](src/agents) (+8 more)
 
 ### Community 6 - "Tasks"
-Cohesion: 0.08
-Nodes (30): F, FastAPI, LogRecord, get_request_id(), Request, FastAPI dependency injection helpers., _require_startup(), lifespan() (+22 more)
+Cohesion: 0.15
+Nodes (17): F, flush(), get_langfuse_client(), _import_langfuse_symbols(), is_langfuse_enabled(), observe(), Any, Langfuse observability — tracing per tenant/session/user and prompt hooks. (+9 more)
 
 ### Community 7 - "Appendix: Complete File Inventory"
 Cohesion: 0.13
 Nodes (15): Appendix: Complete File Inventory, config, docker, notebooks, Root, scripts, sql, src/agents (+7 more)
 
 ### Community 8 - "Phase 1 — Twilio WhatsApp Sandbox Pipeline"
-Cohesion: 0.23
-Nodes (19): BaseChatModel, ChatOpenAI, main(), get_api_key(), Validate config and ensure data directories exist., validate(), _build_google_llm(), _build_llm() (+11 more)
+Cohesion: 0.10
+Nodes (33): BaseChatModel, ChatOpenAI, main(), get_api_key(), get_chat_model(), get_embedding_model(), _get_nested(), get_role_config() (+25 more)
 
 ### Community 9 - "Week 13 Technical Documentation"
 Cohesion: 0.14
@@ -170,20 +171,20 @@ Cohesion: 0.40
 Nodes (5): 14. Configuration, [config/faqs.yaml](config/faqs.yaml), [config/models.yaml](config/models.yaml), [config/param.yaml](config/param.yaml), [.env.example](.env.example)
 
 ### Community 16 - "config.py"
-Cohesion: 0.10
-Nodes (22): get_chat_model(), get_embedding_model(), _get_nested(), get_role_config(), _get_str(), langfuse_configured(), _load_yaml(), Any (+14 more)
+Cohesion: 0.32
+Nodes (7): get_supabase_client(), list_tenants(), ping_supabase(), Any, Supabase REST client wrapper., Return a singleton Supabase client (requires service role key)., Lightweight connectivity check via tenants table.
 
 ### Community 17 - "Tutor_AI_SRS_v2.md"
 Cohesion: 0.17
 Nodes (11): 11\. Data Model - Key Entities, 12\. Third-Party Integrations and Technical Constraints, 13\. Risk Register, 14\. Monetisation and SaaS Pricing Model (New), 15\. Success Metrics / KPIs (New), 17\. Future Roadmap (Beyond v1), 18\. Glossary, 1.1 The Problem in One Sentence (+3 more)
 
 ### Community 18 - "health.py"
-Cohesion: 0.12
-Nodes (33): BaseModel, Enum, parametrize, active_config(), health(), get, Request, Health, readiness, and config endpoints. (+25 more)
+Cohesion: 0.11
+Nodes (35): BaseModel, Enum, parametrize, active_config(), health(), get, Request, Health, readiness, and config endpoints. (+27 more)
 
 ### Community 19 - "test_health.py"
-Cohesion: 0.25
-Nodes (3): fixture, client(), Phase 0 health endpoint tests.
+Cohesion: 0.07
+Nodes (21): BaseHTTPMiddleware, FastAPI, LogRecord, Response, get_request_id(), Request, FastAPI dependency injection helpers., _require_startup() (+13 more)
 
 ### Community 20 - "supabase_client.py"
 Cohesion: 0.17
@@ -287,7 +288,7 @@ Nodes (9): Memory Core, [src/memory/episodic_store.py](src/memory/episodic_store
 
 ### Community 59 - "middleware.py"
 Cohesion: 0.29
-Nodes (5): BaseHTTPMiddleware, Response, Request, Request ID and latency headers., RequestContextMiddleware
+Nodes (4): db_conn(), _db_url(), fixture, Validate v2 ER schema tables exist in Supabase when DATABASE_URL is configured.
 
 ### Community 60 - "2. LLM Model Strategy"
 Cohesion: 0.40
@@ -317,6 +318,10 @@ Nodes (3): 6. Resource Split: Google Drive vs RAG, Google Drive — Tutes & Text
 Cohesion: 0.67
 Nodes (3): 9. High-Level Architecture, Decision Graph — BookMe-AI Pattern (No CAG/CRAG), Processing Model (No Redis)
 
+### Community 69 - "verify_phase0.py"
+Cohesion: 0.83
+Nodes (3): check_live(), main(), run_pytest()
+
 ## Knowledge Gaps
 - **314 isolated node(s):** `axiom-ai-backend`, `Quick start (Phase 0)`, `Table of Contents`, `1. Locked Architecture Decisions`, `Model Assignments (Locked for MVP)` (+309 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -326,16 +331,16 @@ Nodes (3): 9. High-Level Architecture, Decision Graph — BookMe-AI Pattern (No 
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Week 13 Technical Documentation` connect `Week 13 Technical Documentation` to `Infrastructure Support`, `23. Important Classes`, `3. Folder-by-Folder Explanation`, `Appendix: Complete File Inventory`, `8. LLM Integration`, `29. How I Can Build a Similar Project`, `5. Architecture`, `14. Configuration`, `7. Agentic AI Design`, `13. APIs`, `16. Execution Flow`, `2. Overall Project Structure`, `30. Learning Notes`, `11. Retrieval`, `22. Key Algorithms`, `21. Dependency Graph`, `24. Important Functions`, `9. Memory`, `25. Data Models`, `12. Database`, `28. How Everything Connects`, `18. Security`?**
-  _High betweenness centrality (0.147) - this node is a cross-community bridge._
+  _High betweenness centrality (0.140) - this node is a cross-community bridge._
 - **Why does `4. File-by-File Explanation` connect `Infrastructure Support` to `Memory Core`, `Week 13 Technical Documentation`, `Tasks`, `Chat Flow`?**
-  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
 - **Why does `23. Important Classes` connect `23. Important Classes` to `Week 13 Technical Documentation`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `axiom-ai-backend`, `Quick start (Phase 0)`, `Table of Contents` to the rest of the system?**
   _314 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Roadmap.md` be split into smaller, more focused modules?**
   _Cohesion score 0.046511627906976744 - nodes in this community are weakly interconnected._
 - **Should `Infrastructure Support` be split into smaller, more focused modules?**
-  _Cohesion score 0.05263157894736842 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
 - **Should `23. Important Classes` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._

@@ -73,6 +73,50 @@
       "norm_label": "main()"
     },
     {
+      "label": "verify_phase0.py",
+      "file_type": "code",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scripts_verify_phase0",
+      "community": 69,
+      "community_name": "verify_phase0.py",
+      "norm_label": "verify_phase0.py"
+    },
+    {
+      "label": "run_pytest()",
+      "file_type": "code",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "scripts_verify_phase0_run_pytest",
+      "community": 69,
+      "community_name": "verify_phase0.py",
+      "norm_label": "run_pytest()"
+    },
+    {
+      "label": "check_live()",
+      "file_type": "code",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "scripts_verify_phase0_check_live",
+      "community": 69,
+      "community_name": "verify_phase0.py",
+      "norm_label": "check_live()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "scripts_verify_phase0_main",
+      "community": 69,
+      "community_name": "verify_phase0.py",
+      "norm_label": "main()"
+    },
+    {
       "label": "src/__init__.py",
       "file_type": "code",
       "source_file": "src/__init__.py",
@@ -145,8 +189,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_api_deps",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "deps.py"
     },
     {
@@ -156,8 +200,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_api_deps_require_startup",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "_require_startup()"
     },
     {
@@ -167,8 +211,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_api_deps_py_request",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "request"
     },
     {
@@ -178,8 +222,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_api_deps_get_request_id",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "get_request_id()"
     },
     {
@@ -189,8 +233,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_api_deps_rationale_1",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "fastapi dependency injection helpers."
     },
     {
@@ -200,8 +244,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_api_main",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "main.py"
     },
     {
@@ -211,8 +255,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_api_main_lifespan",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "lifespan()"
     },
     {
@@ -222,8 +266,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "fastapi",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "fastapi"
     },
     {
@@ -233,8 +277,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_api_main_py_get",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "get"
     },
     {
@@ -244,8 +288,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "src_api_main_root",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "root()"
     },
     {
@@ -255,8 +299,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_api_main_rationale_1",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "fastapi application \u2014 phase 0 foundation."
     },
     {
@@ -266,8 +310,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_api_middleware",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "middleware.py"
     },
     {
@@ -277,8 +321,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_api_middleware_requestcontextmiddleware",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "requestcontextmiddleware"
     },
     {
@@ -288,8 +332,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "basehttpmiddleware",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "basehttpmiddleware"
     },
     {
@@ -299,8 +343,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_api_middleware_requestcontextmiddleware_dispatch",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": ".dispatch()"
     },
     {
@@ -310,8 +354,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_api_middleware_py_request",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "request"
     },
     {
@@ -321,8 +365,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "response",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "response"
     },
     {
@@ -332,8 +376,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_api_middleware_rationale_1",
-      "community": 59,
-      "community_name": "middleware.py",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "request id and latency headers."
     },
     {
@@ -634,10 +678,21 @@
       "norm_label": "enrollmentstatus"
     },
     {
-      "label": "PaymentStatus",
+      "label": "InvoiceStatus",
       "file_type": "code",
       "source_file": "src/domain/enums.py",
       "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_domain_enums_invoicestatus",
+      "community": 18,
+      "community_name": "health.py",
+      "norm_label": "invoicestatus"
+    },
+    {
+      "label": "PaymentStatus",
+      "file_type": "code",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "src_domain_enums_paymentstatus",
       "community": 18,
@@ -648,7 +703,7 @@
       "label": "EscalationStatus",
       "file_type": "code",
       "source_file": "src/domain/enums.py",
-      "source_location": "L23",
+      "source_location": "L32",
       "_origin": "ast",
       "id": "src_domain_enums_escalationstatus",
       "community": 18,
@@ -656,32 +711,10 @@
       "norm_label": "escalationstatus"
     },
     {
-      "label": "EscalationUrgency",
-      "file_type": "code",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L29",
-      "_origin": "ast",
-      "id": "src_domain_enums_escalationurgency",
-      "community": 18,
-      "community_name": "health.py",
-      "norm_label": "escalationurgency"
-    },
-    {
-      "label": "ChatDirection",
-      "file_type": "code",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L35",
-      "_origin": "ast",
-      "id": "src_domain_enums_chatdirection",
-      "community": 18,
-      "community_name": "health.py",
-      "norm_label": "chatdirection"
-    },
-    {
       "label": "MessageRole",
       "file_type": "code",
       "source_file": "src/domain/enums.py",
-      "source_location": "L40",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "src_domain_enums_messagerole",
       "community": 18,
@@ -692,7 +725,7 @@
       "label": "ChatChannel",
       "file_type": "code",
       "source_file": "src/domain/enums.py",
-      "source_location": "L46",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_domain_enums_chatchannel",
       "community": 18,
@@ -703,12 +736,23 @@
       "label": "StaffRole",
       "file_type": "code",
       "source_file": "src/domain/enums.py",
-      "source_location": "L50",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "src_domain_enums_staffrole",
       "community": 18,
       "community_name": "health.py",
       "norm_label": "staffrole"
+    },
+    {
+      "label": "FeeCycle",
+      "file_type": "code",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "src_domain_enums_feecycle",
+      "community": 18,
+      "community_name": "health.py",
+      "norm_label": "feecycle"
     },
     {
       "label": "Domain status enums \u2014 mirror PostgreSQL ENUM types in sql/01_schema.sql.",
@@ -722,14 +766,25 @@
       "norm_label": "domain status enums \u2014 mirror postgresql enum types in sql/01_schema.sql."
     },
     {
+      "label": "Bank-slip review workflow \u2014 kept for dashboard API compatibility.",
+      "file_type": "rationale",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "src_domain_enums_rationale_25",
+      "community": 18,
+      "community_name": "health.py",
+      "norm_label": "bank-slip review workflow \u2014 kept for dashboard api compatibility."
+    },
+    {
       "label": "infrastructure/__init__.py",
       "file_type": "code",
       "source_file": "src/infrastructure/__init__.py",
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_infrastructure_init",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "infrastructure/__init__.py"
     },
     {
@@ -739,8 +794,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_infrastructure_init_rationale_1",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "infrastructure package."
     },
     {
@@ -750,8 +805,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_infrastructure_config",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "config.py"
     },
     {
@@ -761,8 +816,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_infrastructure_config_load_yaml",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "_load_yaml()"
     },
     {
@@ -772,8 +827,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "src_infrastructure_config_py_any",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "any"
     },
     {
@@ -783,8 +838,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_infrastructure_config_get_nested",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "_get_nested()"
     },
     {
@@ -794,8 +849,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_infrastructure_config_get_str",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "_get_str()"
     },
     {
@@ -805,8 +860,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "src_infrastructure_config_get_chat_model",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "get_chat_model()"
     },
     {
@@ -816,8 +871,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_infrastructure_config_get_role_config",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "get_role_config()"
     },
     {
@@ -827,8 +882,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "src_infrastructure_config_get_embedding_model",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "get_embedding_model()"
     },
     {
@@ -849,8 +904,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "src_infrastructure_config_langfuse_configured",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 18,
+      "community_name": "health.py",
       "norm_label": "langfuse_configured()"
     },
     {
@@ -871,8 +926,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "src_infrastructure_config_qdrant_collection_for_tenant",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "qdrant_collection_for_tenant()"
     },
     {
@@ -882,8 +937,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_infrastructure_config_rationale_1",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "application configuration \u2014 yaml + environment variables.  secrets live only in"
     },
     {
@@ -893,8 +948,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "src_infrastructure_config_rationale_69",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "return (model, provider) for an llm role defined in param.yaml."
     },
     {
@@ -1212,8 +1267,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_infrastructure_log",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "log.py"
     },
     {
@@ -1223,8 +1278,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_infrastructure_log_intercepthandler",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "_intercepthandler"
     },
     {
@@ -1234,8 +1289,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_infrastructure_log_intercepthandler_emit",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": ".emit()"
     },
     {
@@ -1245,8 +1300,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "logrecord",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "logrecord"
     },
     {
@@ -1256,8 +1311,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_infrastructure_log_setup_logging",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "setup_logging()"
     },
     {
@@ -1267,8 +1322,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_infrastructure_log_rationale_1",
-      "community": 6,
-      "community_name": "Tasks",
+      "community": 19,
+      "community_name": "test_health.py",
       "norm_label": "centralised loguru setup (stderr-only for future mcp safety)."
     },
     {
@@ -1619,8 +1674,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_config",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "test_config.py"
     },
     {
@@ -1630,8 +1685,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_config_test_validate_creates_directories",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "test_validate_creates_directories()"
     },
     {
@@ -1641,8 +1696,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "tests_test_config_test_qdrant_collection_per_tenant",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "test_qdrant_collection_per_tenant()"
     },
     {
@@ -1652,8 +1707,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "tests_test_config_test_model_constants",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "test_model_constants()"
     },
     {
@@ -1663,8 +1718,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "tests_test_config_test_chat_and_merge_model_split",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "test_chat_and_merge_model_split()"
     },
     {
@@ -1674,8 +1729,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_config_rationale_1",
-      "community": 16,
-      "community_name": "config.py",
+      "community": 8,
+      "community_name": "Phase 1 \u2014 Twilio WhatsApp Sandbox Pipeline",
       "norm_label": "config and tenant isolation unit tests."
     },
     {
@@ -1704,7 +1759,7 @@
       "label": "test_enum_values()",
       "file_type": "code",
       "source_file": "tests/test_enums.py",
-      "source_location": "L34",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "tests_test_enums_test_enum_values",
       "community": 18,
@@ -1715,7 +1770,7 @@
       "label": "test_payment_status_update_accepts_enum()",
       "file_type": "code",
       "source_file": "tests/test_enums.py",
-      "source_location": "L39",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "tests_test_enums_test_payment_status_update_accepts_enum",
       "community": 18,
@@ -1726,7 +1781,7 @@
       "label": "test_payment_status_update_rejects_invalid()",
       "file_type": "code",
       "source_file": "tests/test_enums.py",
-      "source_location": "L44",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "tests_test_enums_test_payment_status_update_rejects_invalid",
       "community": 18,
@@ -1737,7 +1792,7 @@
       "label": "test_tenant_summary_schema()",
       "file_type": "code",
       "source_file": "tests/test_enums.py",
-      "source_location": "L49",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "tests_test_enums_test_tenant_summary_schema",
       "community": 18,
@@ -1761,7 +1816,7 @@
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "fixture",
+      "id": "tests_test_health_py_fixture",
       "community": 19,
       "community_name": "test_health.py",
       "norm_label": "fixture"
@@ -1919,6 +1974,94 @@
       "community": 12,
       "community_name": "Agent Core",
       "norm_label": "prompt service tests."
+    },
+    {
+      "label": "test_schema.py",
+      "file_type": "code",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_schema",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "test_schema.py"
+    },
+    {
+      "label": "_db_url()",
+      "file_type": "code",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L37",
+      "_origin": "ast",
+      "id": "tests_test_schema_db_url",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "_db_url()"
+    },
+    {
+      "label": "fixture",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "tests_test_schema_py_fixture",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "fixture"
+    },
+    {
+      "label": "db_conn()",
+      "file_type": "code",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "tests_test_schema_db_conn",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "db_conn()"
+    },
+    {
+      "label": "test_expected_tables_exist()",
+      "file_type": "code",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "tests_test_schema_test_expected_tables_exist",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "test_expected_tables_exist()"
+    },
+    {
+      "label": "test_legacy_tables_removed()",
+      "file_type": "code",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L67",
+      "_origin": "ast",
+      "id": "tests_test_schema_test_legacy_tables_removed",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "test_legacy_tables_removed()"
+    },
+    {
+      "label": "test_demo_seed_present()",
+      "file_type": "code",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L83",
+      "_origin": "ast",
+      "id": "tests_test_schema_test_demo_seed_present",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "test_demo_seed_present()"
+    },
+    {
+      "label": "Validate v2 ER schema tables exist in Supabase when DATABASE_URL is configured.",
+      "file_type": "rationale",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_test_schema_rationale_1",
+      "community": 59,
+      "community_name": "middleware.py",
+      "norm_label": "validate v2 er schema tables exist in supabase when database_url is configured."
     },
     {
       "label": "README.md",
@@ -3390,8 +3533,8 @@
       "source_location": "L422",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_chat_flow",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "chat flow"
     },
     {
@@ -3401,8 +3544,8 @@
       "source_location": "L424",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_chat_py_src_api_routers_chat_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/chat.py](src/api/routers/chat.py)"
     },
     {
@@ -3412,8 +3555,8 @@
       "source_location": "L453",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_chat_sessions_py_src_api_routers_chat_sessions_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/chat_sessions.py](src/api/routers/chat_sessions.py)"
     },
     {
@@ -3423,8 +3566,8 @@
       "source_location": "L463",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_health_py_src_api_routers_health_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/health.py](src/api/routers/health.py)"
     },
     {
@@ -3434,8 +3577,8 @@
       "source_location": "L470",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_patients_py_src_api_routers_patients_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/patients.py](src/api/routers/patients.py)"
     },
     {
@@ -3445,8 +3588,8 @@
       "source_location": "L479",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_tools_crm_py_src_api_routers_tools_crm_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/tools/crm.py](src/api/routers/tools/crm.py)"
     },
     {
@@ -3456,8 +3599,8 @@
       "source_location": "L482",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_tools_rag_py_src_api_routers_tools_rag_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/tools/rag.py](src/api/routers/tools/rag.py)"
     },
     {
@@ -3467,8 +3610,8 @@
       "source_location": "L485",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_tools_web_py_src_api_routers_tools_web_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/tools/web.py](src/api/routers/tools/web.py)"
     },
     {
@@ -3478,8 +3621,8 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_tools_cag_py_src_api_routers_tools_cag_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/tools/cag.py](src/api/routers/tools/cag.py)"
     },
     {
@@ -3489,8 +3632,8 @@
       "source_location": "L491",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_tools_memory_py_src_api_routers_tools_memory_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/tools/memory.py](src/api/routers/tools/memory.py)"
     },
     {
@@ -3500,8 +3643,8 @@
       "source_location": "L494",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_api_routers_tools_crawl_py_src_api_routers_tools_crawl_py",
-      "community": 1,
-      "community_name": "Infrastructure Support",
+      "community": 4,
+      "community_name": "Tasks",
       "norm_label": "[src/api/routers/tools/crawl.py](src/api/routers/tools/crawl.py)"
     },
     {
@@ -3841,8 +3984,8 @@
       "source_location": "L694",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_infrastructure_support",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "infrastructure support"
     },
     {
@@ -3852,8 +3995,8 @@
       "source_location": "L696",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_config_py_src_infrastructure_config_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/config.py](src/infrastructure/config.py)"
     },
     {
@@ -3863,8 +4006,8 @@
       "source_location": "L713",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_observability_py_src_infrastructure_observability_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/observability.py](src/infrastructure/observability.py)"
     },
     {
@@ -3874,8 +4017,8 @@
       "source_location": "L725",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_llm_llm_provider_py_src_infrastructure_llm_llm_provider_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/llm/llm_provider.py](src/infrastructure/llm/llm_provider.py)"
     },
     {
@@ -3885,8 +4028,8 @@
       "source_location": "L736",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_llm_embeddings_py_src_infrastructure_llm_embeddings_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/llm/embeddings.py](src/infrastructure/llm/embeddings.py)"
     },
     {
@@ -3896,8 +4039,8 @@
       "source_location": "L743",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_db_sql_client_py_src_infrastructure_db_sql_client_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/db/sql_client.py](src/infrastructure/db/sql_client.py)"
     },
     {
@@ -3907,8 +4050,8 @@
       "source_location": "L748",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_db_supabase_client_py_src_infrastructure_db_supabase_client_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/db/supabase_client.py](src/infrastructure/db/supabase_client.py)"
     },
     {
@@ -3918,8 +4061,8 @@
       "source_location": "L759",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_db_supabase_schema_py_src_infrastructure_db_supabase_schema_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/db/supabase_schema.py](src/infrastructure/db/supabase_schema.py)"
     },
     {
@@ -3929,8 +4072,8 @@
       "source_location": "L762",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_db_crm_models_py_src_infrastructure_db_crm_models_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/db/crm_models.py](src/infrastructure/db/crm_models.py)"
     },
     {
@@ -3940,8 +4083,8 @@
       "source_location": "L773",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_db_crm_init_py_src_infrastructure_db_crm_init_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/db/crm_init.py](src/infrastructure/db/crm_init.py)"
     },
     {
@@ -3951,8 +4094,8 @@
       "source_location": "L776",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_db_qdrant_client_py_src_infrastructure_db_qdrant_client_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/db/qdrant_client.py](src/infrastructure/db/qdrant_client.py)"
     },
     {
@@ -3962,8 +4105,8 @@
       "source_location": "L781",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_models_py_src_infrastructure_models_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/models.py](src/infrastructure/models.py)"
     },
     {
@@ -3973,8 +4116,8 @@
       "source_location": "L784",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_utils_py_src_infrastructure_utils_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/utils.py](src/infrastructure/utils.py)"
     },
     {
@@ -3984,8 +4127,8 @@
       "source_location": "L793",
       "_origin": "ast",
       "id": "docs_technical_docs_technical_documentation_src_infrastructure_log_py_src_infrastructure_log_py",
-      "community": 4,
-      "community_name": "Tasks",
+      "community": 1,
+      "community_name": "Infrastructure Support",
       "norm_label": "[src/infrastructure/log.py](src/infrastructure/log.py)"
     },
     {
@@ -6198,6 +6341,63 @@
       "target": "src_infrastructure_llm_llm_provider_get_router_llm"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_verify_phase0",
+      "target": "scripts_verify_phase0_check_live",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_verify_phase0",
+      "target": "scripts_verify_phase0_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_verify_phase0",
+      "target": "scripts_verify_phase0_run_pytest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_verify_phase0_main",
+      "target": "scripts_verify_phase0_run_pytest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "scripts/verify_phase0.py",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scripts_verify_phase0_main",
+      "target": "scripts_verify_phase0_check_live",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src/__init__.py",
@@ -7050,7 +7250,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_enums.py",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums_test_payment_status_update_accepts_enum",
@@ -7062,7 +7262,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_enums.py",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums_test_payment_status_update_rejects_invalid",
@@ -7096,7 +7296,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "tests/test_enums.py",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums_test_tenant_summary_schema",
@@ -7141,22 +7341,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L46",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums",
       "target": "src_domain_enums_chatchannel",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L35",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_domain_enums",
-      "target": "src_domain_enums_chatdirection",
       "confidence_score": 1.0
     },
     {
@@ -7174,7 +7363,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L23",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums",
@@ -7185,22 +7374,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L29",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums",
-      "target": "src_domain_enums_escalationurgency",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_domain_enums",
-      "target": "src_domain_enums_messagerole",
+      "target": "src_domain_enums_feecycle",
       "confidence_score": 1.0
     },
     {
@@ -7211,6 +7389,28 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums",
+      "target": "src_domain_enums_invoicestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_domain_enums",
+      "target": "src_domain_enums_messagerole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_domain_enums",
       "target": "src_domain_enums_paymentstatus",
       "confidence_score": 1.0
     },
@@ -7218,7 +7418,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums",
@@ -7285,21 +7485,10 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L46",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums_chatchannel",
-      "target": "str",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "inherits",
-      "confidence": "EXTRACTED",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L35",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_domain_enums_chatdirection",
       "target": "str",
       "confidence_score": 1.0
     },
@@ -7318,7 +7507,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L23",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums_escalationstatus",
@@ -7329,21 +7518,10 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L29",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_domain_enums_escalationurgency",
-      "target": "str",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "inherits",
-      "confidence": "EXTRACTED",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_domain_enums_messagerole",
+      "source": "src_domain_enums_feecycle",
       "target": "str",
       "confidence_score": 1.0
     },
@@ -7354,6 +7532,28 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
+      "source": "src_domain_enums_invoicestatus",
+      "target": "str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_domain_enums_messagerole",
+      "target": "str",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "src_domain_enums_paymentstatus",
       "target": "str",
       "confidence_score": 1.0
@@ -7362,7 +7562,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums_staffrole",
@@ -7373,21 +7573,10 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L46",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums_chatchannel",
-      "target": "enum",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "inherits",
-      "confidence": "EXTRACTED",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L35",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_domain_enums_chatdirection",
       "target": "enum",
       "confidence_score": 1.0
     },
@@ -7406,7 +7595,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L23",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums_escalationstatus",
@@ -7417,21 +7606,10 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L29",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "src_domain_enums_escalationurgency",
-      "target": "enum",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "inherits",
-      "confidence": "EXTRACTED",
-      "source_file": "src/domain/enums.py",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_domain_enums_messagerole",
+      "source": "src_domain_enums_feecycle",
       "target": "enum",
       "confidence_score": 1.0
     },
@@ -7442,6 +7620,28 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
+      "source": "src_domain_enums_invoicestatus",
+      "target": "enum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_domain_enums_messagerole",
+      "target": "enum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "src_domain_enums_paymentstatus",
       "target": "enum",
       "confidence_score": 1.0
@@ -7450,11 +7650,22 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "src/domain/enums.py",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_domain_enums_staffrole",
       "target": "enum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/domain/enums.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_domain_enums_rationale_25",
+      "target": "src_domain_enums_paymentstatus",
       "confidence_score": 1.0
     },
     {
@@ -9077,7 +9288,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_enums.py",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums",
@@ -9088,7 +9299,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_enums.py",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums",
@@ -9099,7 +9310,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_enums.py",
-      "source_location": "L44",
+      "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums",
@@ -9110,7 +9321,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_enums.py",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_test_enums",
@@ -9204,7 +9415,7 @@
       "context": "decorator",
       "_origin": "ast",
       "source": "tests_test_health_client",
-      "target": "fixture",
+      "target": "tests_test_health_py_fixture",
       "confidence_score": 1.0
     },
     {
@@ -9271,6 +9482,96 @@
       "_origin": "ast",
       "source": "tests_test_prompts_rationale_1",
       "target": "tests_test_prompts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema",
+      "target": "tests_test_schema_db_conn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema",
+      "target": "tests_test_schema_db_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema",
+      "target": "tests_test_schema_test_demo_seed_present",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema",
+      "target": "tests_test_schema_test_expected_tables_exist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema",
+      "target": "tests_test_schema_test_legacy_tables_removed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema_rationale_1",
+      "target": "tests_test_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_schema_db_conn",
+      "target": "tests_test_schema_db_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_schema.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "tests_test_schema_db_conn",
+      "target": "tests_test_schema_py_fixture",
       "confidence_score": 1.0
     },
     {

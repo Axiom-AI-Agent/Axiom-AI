@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
+  <rect width="640" height="400" fill="#f8fafc"/>
+  <rect x="24" y="24" width="592" height="352" rx="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="48" y="72" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#0f172a">BANK TRANSFER SLIP (DEMO)</text>
+  <text x="48" y="110" font-family="Arial,sans-serif" font-size="14" fill="#475569">Demo Physics Academy — A/L Physics Fee</text>
+  <text x="48" y="160" font-family="Arial,sans-serif" font-size="16" fill="#0f172a">Amount: LKR 5,000.00</text>
+  <text x="48" y="190" font-family="Arial,sans-serif" font-size="16" fill="#0f172a">Ref: DPA-DEMO-2026</text>
+  <text x="48" y="220" font-family="Arial,sans-serif" font-size="16" fill="#0f172a">Date: 05 Aug 2026</text>
+  <text x="48" y="280" font-family="Arial,sans-serif" font-size="13" fill="#64748b">Sample image for hackathon payment_receipt escalation</text>
+  <rect x="48" y="310" width="180" height="40" rx="6" fill="#075E54"/>
+  <text x="70" y="336" font-family="Arial,sans-serif" font-size="14" font-weight="600" fill="#fff">PAID ✓</text>
+</svg>

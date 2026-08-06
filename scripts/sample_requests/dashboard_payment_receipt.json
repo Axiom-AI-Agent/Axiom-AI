@@ -1,0 +1,6 @@
+{
+  "tenant_id": "tenant-demo-physics",
+  "phone": "94771234567",
+  "message": "Here is my payment receipt",
+  "media_url": "https://example.com/bank-slip.jpg"
+}

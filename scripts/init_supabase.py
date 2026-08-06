@@ -36,7 +36,7 @@ def _run_via_psycopg(db_url: str) -> None:
             for path in files:
                 print(f"Applying {path.name}...")
                 cur.execute(path.read_text(encoding="utf-8"))
-        conn.commit()
+                conn.commit()
     print("Schema applied successfully.")
 
 

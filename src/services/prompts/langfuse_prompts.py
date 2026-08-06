@@ -8,7 +8,11 @@ from loguru import logger
 
 from agents.prompts.tutoring_prompts import LOCAL_PROMPTS
 from infrastructure.config import LANGFUSE_PROMPT_LABEL
-from infrastructure.observability import get_langfuse_client
+from infrastructure.observability import (
+    _disable_langfuse,
+    _is_langfuse_auth_error,
+    get_langfuse_client,
+)
 
 
 class PromptService:
@@ -38,7 +42,10 @@ class PromptService:
                 prompt = client.get_prompt(name, label=self.label)
                 return prompt.compile(**variables)
             except Exception as exc:
-                logger.warning("Langfuse prompt {} unavailable: {}", name, exc)
+                if _is_langfuse_auth_error(exc):
+                    _disable_langfuse("prompt fetch unauthorized")
+                else:
+                    logger.debug("Langfuse prompt {} unavailable: {}", name, exc)
 
         return self._local_fallback(name, **variables)
 
@@ -49,18 +56,22 @@ class PromptService:
             raise KeyError(f"No Langfuse or local prompt registered for {name!r}")
 
         if isinstance(template, str):
-            result = template
-            for key, value in variables.items():
-                result = result.replace(f"{{{{{key}}}}}", str(value))
-            return result
+            return self._substitute_variables(template, **variables)
 
         messages: list[dict[str, str]] = []
         for message in template:
-            content = message["content"]
-            for key, value in variables.items():
-                content = content.replace(f"{{{{{key}}}}}", str(value))
+            content = self._substitute_variables(message["content"], **variables)
             messages.append({"role": message["role"], "content": content})
         return messages
+
+    @staticmethod
+    def _substitute_variables(template: str, **variables: Any) -> str:
+        """Support Langfuse `{{var}}` and local `{var}` placeholders."""
+        result = template
+        for key, value in variables.items():
+            result = result.replace(f"{{{{{key}}}}}", str(value))
+            result = result.replace(f"{{{key}}}", str(value))
+        return result
 
 
 prompt_service = PromptService()

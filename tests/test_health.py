@@ -17,7 +17,7 @@ def test_root(client):
     assert response.status_code == 200
     body = response.json()
     assert body["service"] == "Axiom AI"
-    assert body["phase"] == 0
+    assert body["phase"] == 6
 
 
 def test_health(client):
@@ -25,7 +25,7 @@ def test_health(client):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
-    assert body["phase"] == 0
+    assert body["phase"] == 6
 
 
 def test_config(client):
@@ -34,7 +34,7 @@ def test_config(client):
     body = response.json()
     assert body["chat_model"] == "gpt-4o-mini"
     assert body["chat_provider"] == "openai"
-    assert body["merge_model"] == "gemini-2.5-flash"
+    assert body["merge_model"] == "gemini-2.0-flash"
     assert body["merge_provider"] == "google"
     assert "router_model" in body
     assert "guardrail_model" in body

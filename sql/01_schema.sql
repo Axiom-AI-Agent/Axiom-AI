@@ -12,7 +12,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE enrollment_status AS ENUM ('active', 'paused', 'withdrawn');
+    CREATE TYPE enrollment_status AS ENUM ('pending', 'active', 'paused', 'withdrawn');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
@@ -28,7 +28,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE chat_channel AS ENUM ('twilio_whatsapp', 'telegram');
+    CREATE TYPE chat_channel AS ENUM ('twilio_whatsapp', 'telegram', 'http_dev');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
@@ -112,12 +112,22 @@ CREATE TABLE IF NOT EXISTS students (
     parent_id       TEXT REFERENCES parent_guardians(id) ON DELETE SET NULL,
     name            TEXT,
     phone           TEXT NOT NULL,
+    school          TEXT,
     district        TEXT,
+    consent_at      TIMESTAMPTZ,
     language_pref   TEXT DEFAULT 'en',
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (tenant_id, phone)
 );
+
+DO $$ BEGIN
+    ALTER TABLE students ADD COLUMN IF NOT EXISTS school TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE students ADD COLUMN IF NOT EXISTS consent_at TIMESTAMPTZ;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE INDEX IF NOT EXISTS idx_students_tenant_phone ON students(tenant_id, phone);
 CREATE INDEX IF NOT EXISTS idx_students_parent ON students(parent_id);
@@ -128,26 +138,44 @@ CREATE INDEX IF NOT EXISTS idx_students_parent ON students(parent_id);
 CREATE TABLE IF NOT EXISTS subject_classes (
     id              TEXT PRIMARY KEY,
     tenant_id       TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    name            TEXT,
     subject         TEXT NOT NULL,
+    grade           TEXT,
     fee_amount      NUMERIC(12, 2) NOT NULL DEFAULT 0,
     fee_cycle       fee_cycle NOT NULL DEFAULT 'monthly',
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+DO $$ BEGIN
+    ALTER TABLE subject_classes ADD COLUMN IF NOT EXISTS name TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE subject_classes ADD COLUMN IF NOT EXISTS grade TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
 CREATE INDEX IF NOT EXISTS idx_subject_classes_tenant ON subject_classes(tenant_id);
+
+DO $$ BEGIN
+    ALTER TABLE students ADD COLUMN IF NOT EXISTS selected_class_id TEXT REFERENCES subject_classes(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE TABLE IF NOT EXISTS enrollments (
     id              TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     tenant_id       TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     student_id      TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     class_id        TEXT NOT NULL REFERENCES subject_classes(id) ON DELETE CASCADE,
-    status          enrollment_status NOT NULL DEFAULT 'active',
+    status          enrollment_status NOT NULL DEFAULT 'pending',
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (student_id, class_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_enrollments_tenant ON enrollments(tenant_id);
+
+DO $$ BEGIN
+    ALTER TABLE enrollments ALTER COLUMN status SET DEFAULT 'pending';
+EXCEPTION WHEN undefined_table THEN NULL; END $$;
 
 -- ---------------------------------------------------------------------------
 -- INVOICE + BANK_SLIP_UPLOAD
@@ -194,11 +222,16 @@ CREATE TABLE IF NOT EXISTS escalations (
     id              TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     tenant_id       TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
     student_id      TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    enrollment_id   TEXT REFERENCES enrollments(id) ON DELETE SET NULL,
     reason_code     TEXT NOT NULL,
     status          escalation_status NOT NULL DEFAULT 'open',
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+DO $$ BEGIN
+    ALTER TABLE escalations ADD COLUMN IF NOT EXISTS enrollment_id TEXT REFERENCES enrollments(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE INDEX IF NOT EXISTS idx_escalations_tenant_status ON escalations(tenant_id, status);
 

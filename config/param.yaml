@@ -1,9 +1,8 @@
 # Axiom AI — runtime parameters (non-secret)
 
 provider:
-  default: openrouter
+  default: openai
   tier: general
-  openrouter_base_url: https://openrouter.ai/api/v1
 
 llm:
   temperature: 0.0
@@ -17,16 +16,17 @@ llm:
       provider: google
       tier: general
     router:
-      provider: groq
-      tier: strong
+      provider: openai
+      tier: general
     guardrail:
-      provider: groq
-      tier: strong
+      provider: openai
+      tier: general
     extractor:
-      provider: groq
+      provider: openai
       tier: general
 
 embedding:
+  provider: openai
   tier: small
   batch_size: 100
 
@@ -34,6 +34,10 @@ chunking:
   fixed:
     chunk_size: 800
     chunk_overlap: 100
+  parent_child:
+    parent_size: 1200
+    child_size: 250
+    child_overlap: 50
 
 retrieval:
   top_k: 4
@@ -42,6 +46,7 @@ retrieval:
 paths:
   data_dir: data
   kb_dir: data/knowledge_base
+  uploads_dir: data/uploads
   logs_dir: logs
 
 logging:

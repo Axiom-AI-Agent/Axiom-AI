@@ -44,8 +44,12 @@ def db_conn():
     if not url:
         pytest.skip("SUPABASE_DB_URL not set — run `make init-db` first")
     psycopg = pytest.importorskip("psycopg")
-    with psycopg.connect(url) as conn:
-        yield conn
+    try:
+        conn = psycopg.connect(url)
+    except Exception as exc:
+        pytest.skip(f"Database unavailable: {exc}")
+    yield conn
+    conn.close()
 
 
 def test_expected_tables_exist(db_conn):

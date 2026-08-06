@@ -1,4 +1,4 @@
-"""LLM factories — router/guardrail (Groq), chat (GPT-4o-mini), merge (Gemini)."""
+"""LLM factories — guardrail/router/chat/extractor (GPT-4o-mini), merge (Gemini). Groq provider retained for optional use."""
 
 from __future__ import annotations
 
@@ -74,6 +74,7 @@ def _build_google_llm(
         temperature=temperature,
         max_output_tokens=max_tokens,
         google_api_key=api_key,
+        timeout=30,
         **kwargs,
     )
 

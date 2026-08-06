@@ -2,46 +2,31 @@
 
 from __future__ import annotations
 
-OUT_OF_SCOPE_REPLY = (
-    "I'm here to help with tuition-related questions — classes, enrollment, "
-    "past papers, fees, and lesson topics. I can't help with that request, "
-    "but feel free to ask about your class!"
-)
+from agents.prompts import agent_prompts as ap
 
-GUARDRAIL_SYSTEM = (
-    "You are a scope classifier for a Sri Lankan private tuition WhatsApp assistant. "
-    "Reply with exactly one token: in_scope or out_of_scope."
-)
-
-ROUTER_SYSTEM = (
-    "Route the student message to one intent: admissions, resource, payment_check, "
-    "escalation, or direct. Respond with JSON: "
-    '{"intent": "<intent>", "confidence": 0.0-1.0, "reason": "<short reason>"}'
-)
-
-MERGE_SYSTEM = (
-    "You synthesise tutor assistant fragments into one clear WhatsApp reply. "
-    "Keep the tutor's tone, preserve citations when present, and stay concise."
-)
-
-DIRECT_SYSTEM = (
-    "You are a friendly tuition centre assistant on WhatsApp. "
-    "Answer greetings and simple in-scope questions briefly."
-)
-
+# Mirror Langfuse names → local fallback text (PromptService offline path).
 LOCAL_PROMPTS: dict[str, str | list[dict[str, str]]] = {
-    "axiom/guardrail": GUARDRAIL_SYSTEM,
-    "axiom/router": [
-        {"role": "system", "content": ROUTER_SYSTEM},
-        {"role": "user", "content": "{{message}}"},
-    ],
-    "axiom/out_of_scope_reply": OUT_OF_SCOPE_REPLY,
-    "axiom/merge_response": [
-        {"role": "system", "content": MERGE_SYSTEM},
-        {"role": "user", "content": "{{fragments}}"},
-    ],
-    "axiom/direct": [
-        {"role": "system", "content": DIRECT_SYSTEM},
-        {"role": "user", "content": "{{message}}"},
-    ],
+    ap.LANGFUSE_PROMPT_NAMES["guardrail_system"]: ap._GUARDRAIL_SYSTEM_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["router_system"]: ap._ROUTER_SYSTEM_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["router_hard_rules"]: ap._ROUTER_HARD_RULES_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["router_user"]: ap._ROUTER_USER_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["direct_system"]: ap._DIRECT_SYSTEM_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["merge_system"]: ap._MERGE_SYSTEM_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["out_of_scope_reply"]: ap._OUT_OF_SCOPE_REPLY_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["admissions_stub"]: ap._ADMISSIONS_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_stub"]: ap._RESOURCE_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_rag"]: ap._RESOURCE_RAG_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_drive"]: ap._RESOURCE_DRIVE_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["payment_stub"]: ap._PAYMENT_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["payment_ack"]: ap._PAYMENT_ACK_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["payment_missing_media"]: ap._PAYMENT_MISSING_MEDIA_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["escalation_stub"]: ap._ESCALATION_STUB_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["escalation_ack"]: ap._ESCALATION_ACK_FALLBACK.strip(),
 }
+
+# Legacy aliases kept for older tests
+OUT_OF_SCOPE_REPLY = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["out_of_scope_reply"]]
+GUARDRAIL_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["guardrail_system"]]
+ROUTER_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["router_system"]]
+MERGE_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["merge_system"]]
+DIRECT_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["direct_system"]]

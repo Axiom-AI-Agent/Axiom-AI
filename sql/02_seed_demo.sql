@@ -16,11 +16,15 @@ VALUES
     ('parent-chemistry-001', 'tenant-demo-chemistry', '94770002222', 'Sunil Silva')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO subject_classes (id, tenant_id, subject, fee_amount, fee_cycle)
+INSERT INTO subject_classes (id, tenant_id, name, subject, grade, fee_amount, fee_cycle)
 VALUES
-    ('class-physics-al-2026', 'tenant-demo-physics', 'Physics', 5000.00, 'monthly'),
-    ('class-chemistry-al-2026', 'tenant-demo-chemistry', 'Chemistry', 5500.00, 'monthly')
-ON CONFLICT (id) DO NOTHING;
+    ('class-physics-al-2026', 'tenant-demo-physics', 'A/L Physics 2026', 'Physics', 'A/L', 5000.00, 'monthly'),
+    ('class-physics-ol-2026', 'tenant-demo-physics', 'O/L Physics 2026', 'Physics', 'O/L', 3500.00, 'monthly'),
+    ('class-chemistry-al-2026', 'tenant-demo-chemistry', 'A/L Chemistry 2026', 'Chemistry', 'A/L', 5500.00, 'monthly')
+ON CONFLICT (id) DO UPDATE SET
+    name = EXCLUDED.name,
+    grade = EXCLUDED.grade,
+    fee_amount = EXCLUDED.fee_amount;
 
 INSERT INTO students (id, tenant_id, parent_id, phone, name, district, language_pref)
 VALUES
@@ -54,10 +58,11 @@ VALUES
         'admissions_onboarding',
         'Student onboarding workflow for new admissions',
         '[
-            {"step": "greet", "prompt": "Welcome! Which class would you like to join?"},
             {"step": "name", "prompt": "What is your full name?"},
+            {"step": "school", "prompt": "Which school do you attend?"},
             {"step": "district", "prompt": "Which district are you from?"},
-            {"step": "parent_phone", "prompt": "What is your parent/guardian WhatsApp number?"}
+            {"step": "class", "prompt": "Which class would you like to join? (e.g. A/L Physics)"},
+            {"step": "consent", "prompt": "Do you agree to our data policy? Reply YES to confirm."}
         ]'::jsonb,
         TRUE
     )
