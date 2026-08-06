@@ -51,6 +51,18 @@ class Escalation(Base):
         nullable=False,
     )
 
+    enrollment_id = Column(
+        String,
+        ForeignKey("enrollments.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+
+    media_url = Column(String, nullable=True)
+    student_message = Column(String, nullable=True)
+    resolution = Column(String, nullable=True)
+    reviewed_by = Column(String, nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+
     status = Column(
         Enum(EscalationStatus, name="escalation_status", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,

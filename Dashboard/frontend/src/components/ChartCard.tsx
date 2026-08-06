@@ -55,8 +55,8 @@ export default function ChartCard({ title, type, labels, data }: ChartCardProps)
       {
         label: title,
         data,
-        borderColor: "hsl(220, 80%, 60%)",
-        backgroundColor: "hsla(220, 80%, 60%, 0.3)",
+        borderColor: "#2563EB",
+        backgroundColor: "rgba(37, 99, 235, 0.1)",
         tension: 0.4,
       },
     ],
@@ -86,8 +86,8 @@ export default function ChartCard({ title, type, labels, data }: ChartCardProps)
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-      <h2 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">{title}</h2>
+    <div className="p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{title}</h2>
       {type === "line" ? <Line data={chartData} options={options} /> : <Bar data={chartData} options={options} />}
     </div>
   );

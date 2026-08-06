@@ -3,9 +3,9 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from app.models.enums import ChatChannel, EscalationStatus
+from app.models.enums import ChatChannel, EscalationStatus, EnrollmentStatus
 
 # Hardcoded for hackathon demo — matches sql/02_seed_demo.sql
 DEMO_TENANT_ID = "tenant-demo-physics"
@@ -16,19 +16,147 @@ class ClassBase(BaseModel):
     subject: str
     fee_amount: Decimal
     fee_cycle: str = "monthly"
+    name: Optional[str] = None
+    grade: Optional[str] = None
 
 
 class ClassCreate(ClassBase):
     tenant_id: str = DEMO_TENANT_ID
 
 
+class ClassUpdate(BaseModel):
+    subject: Optional[str] = None
+    fee_amount: Optional[Decimal] = None
+    fee_cycle: Optional[str] = None
+    name: Optional[str] = None
+    grade: Optional[str] = None
+
+
 class ClassResponse(ClassBase):
     id: str
     tenant_id: str
     created_at: datetime
+    updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
+
+# ---------- Enrollments ----------
+class EnrollmentSummary(BaseModel):
+    id: str
+    class_id: str
+    class_subject: Optional[str] = None
+    class_name: Optional[str] = None
+    status: EnrollmentStatus
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class EnrollmentCreate(BaseModel):
+    class_id: str
+    status: EnrollmentStatus = EnrollmentStatus.PENDING
+
+
+# ---------- Students ----------
+class StudentBase(BaseModel):
+    name: Optional[str] = None
+    phone: str
+    district: Optional[str] = None
+    language_pref: str = "en"
+
+
+class StudentCreate(StudentBase):
+    tenant_id: str = DEMO_TENANT_ID
+    class_id: Optional[str] = Field(
+        default=None,
+        description="Optional class to enroll the student in on creation",
+    )
+
+
+class StudentUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    district: Optional[str] = None
+    language_pref: Optional[str] = None
+
+
+class StudentResponse(StudentBase):
+    id: str
+    tenant_id: str
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class StudentDetailResponse(StudentResponse):
+    enrollments: list[EnrollmentSummary] = Field(default_factory=list)
+
+
+class StudentsListResponse(BaseModel):
+    tenant_id: str
+    students: list[StudentDetailResponse]
+
+
+# ---------- Escalations ----------
+class EscalationCreate(BaseModel):
+    tenant_id: str = DEMO_TENANT_ID
+    student_id: str
+    reason_code: str
+    enrollment_id: Optional[str] = None
+    media_url: Optional[str] = None
+    student_message: Optional[str] = None
+
+
+class EscalationResponse(BaseModel):
+    id: str
+    tenant_id: str
+    student_id: str
+    student_name: Optional[str] = None
+    student_phone: Optional[str] = None
+    enrollment_id: Optional[str] = None
+    reason_code: str
+    status: EscalationStatus
+    student_message: Optional[str] = None
+    media_url: Optional[str] = None
+    resolution: Optional[str] = None
+    reviewed_by: Optional[str] = None
+    reviewed_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class EscalationsListResponse(BaseModel):
+    tenant_id: str
+    escalations: list[EscalationResponse]
+
+
+class EscalationActionResponse(BaseModel):
+    ok: bool
+    escalation_id: str
+    reason_code: str
+    resolution: Optional[str] = None
+    enrollment_status: Optional[str] = None
+    student_notified: bool = False
+    notification_message: Optional[str] = None
+
+
+# ---------- Dashboard overview ----------
+class DashboardOverviewResponse(BaseModel):
+    tenant_id: str
+    open_escalations: int
+    open_payment_receipts: int
+    open_talk_to_tutor: int
+    pending_enrollments: int
+    students: int
+    classes: int
 
 
 # ---------- Invoices / Payments ----------
@@ -49,53 +177,12 @@ class PaymentApproveReject(BaseModel):
     reason: Optional[str] = None
 
 
-# ---------- Students ----------
-class StudentBase(BaseModel):
-    name: Optional[str] = None
-    phone: str
-    district: Optional[str] = None
-    language_pref: str = "en"
-
-
-class StudentCreate(StudentBase):
-    tenant_id: str = DEMO_TENANT_ID
-
-
-class StudentResponse(StudentBase):
-    id: str
-    tenant_id: str
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-# ---------- Escalations ----------
-
-class EscalationCreate(BaseModel):
-    tenant_id: str = DEMO_TENANT_ID
-    student_id: str
-    reason_code: str
-
-
-class EscalationResponse(BaseModel):
-    id: str
-    tenant_id: str
-    student_id: str
-    reason_code: str
-    status: EscalationStatus
-    created_at: datetime
-    updated_at: datetime
-
-    class Config:
-        from_attributes = True
-
-# ---------- Invoices ----------
 class InvoiceCreate(BaseModel):
     tenant_id: str = DEMO_TENANT_ID
     student_id: str
     period: str
     amount_due: Decimal
+
 
 # ---------- Message Logs ----------
 class MessageLogCreate(BaseModel):
@@ -109,9 +196,47 @@ class MessageLogResponse(BaseModel):
     id: str
     tenant_id: str
     student_id: str
+    student_name: Optional[str] = None
     channel: ChatChannel
     intent: Optional[str] = None
     timestamp: datetime
 
     class Config:
         from_attributes = True
+
+
+# ---------- Tenant / Settings ----------
+class TenantSummary(BaseModel):
+    id: str
+    name: str
+    slug: str
+    status: str
+
+    class Config:
+        from_attributes = True
+
+
+class TenantsListResponse(BaseModel):
+    tenants: list[TenantSummary]
+
+
+class TenantProfileResponse(BaseModel):
+    id: str
+    name: str
+    slug: str
+    status: str
+    whatsapp_number: Optional[str] = None
+    drive_folder_id: Optional[str] = None
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class TenantUpdate(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    slug: str = Field(min_length=1, max_length=100)
+    whatsapp_number: Optional[str] = None
+    drive_folder_id: Optional[str] = None
+    status: Optional[str] = Field(default=None, pattern="^(active|suspended)$")

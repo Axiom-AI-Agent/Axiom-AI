@@ -10,6 +10,7 @@ from app.routes import (
     escalation_websocket,
     invoices,
     dashboard,
+    tenant,
 )
 from app.database.session import engine, Base
 
@@ -34,6 +35,7 @@ app.include_router(message_logs.router)
 app.include_router(escalations.router)
 app.include_router(invoices.router)
 app.include_router(dashboard.router)
+app.include_router(tenant.router)
 app.include_router(escalation_websocket.router)
 
 

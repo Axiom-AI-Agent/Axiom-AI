@@ -9,8 +9,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "hsl(220, 10%, 12%)",
-        accent: "hsl(210, 80%, 50%)",
+        primary: {
+          DEFAULT: "#2563EB",
+          hover: "#1D4ED8",
+          light: "#EFF6FF",
+        }
       },
     },
   },

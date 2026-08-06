@@ -7,6 +7,7 @@ class TenantStatus(str, Enum):
 
 
 class EnrollmentStatus(str, Enum):
+    PENDING = "pending"
     ACTIVE = "active"
     PAUSED = "paused"
     WITHDRAWN = "withdrawn"
