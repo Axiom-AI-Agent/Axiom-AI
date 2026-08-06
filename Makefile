@@ -29,40 +29,40 @@ test:
 	$(VENV_PY) -m pytest tests/ -v
 
 lint:
-	$(PYTHON) -m ruff check src tests scripts
+	$(VENV_PY) -m ruff check src tests scripts
 
 health:
-	curl -s http://localhost:8000/health | $(PYTHON) -m json.tool
+	curl -s http://localhost:8000/health | $(VENV_PY) -m json.tool
 
 ready:
-	curl -s http://localhost:8000/ready | $(PYTHON) -m json.tool
+	curl -s http://localhost:8000/ready | $(VENV_PY) -m json.tool
 
 config:
-	curl -s http://localhost:8000/config | $(PYTHON) -m json.tool
+	curl -s http://localhost:8000/config | $(VENV_PY) -m json.tool
 
 smoke-llm:
-	$(PYTHON) scripts/smoke_llm.py
+	$(VENV_PY) scripts/smoke_llm.py
 
 smoke-twilio:
-	$(PYTHON) scripts/smoke_twilio.py
+	$(VENV_PY) scripts/smoke_twilio.py
 
 smoke-chat:
-	$(PYTHON) scripts/smoke_chat.py
+	$(VENV_PY) scripts/smoke_chat.py
 
 smoke-routing:
-	$(PYTHON) scripts/test_routing_smoke.py
+	$(VENV_PY) scripts/test_routing_smoke.py
 
 smoke-st-memory:
-	$(PYTHON) scripts/smoke_st_memory.py
+	$(VENV_PY) scripts/smoke_st_memory.py
 
 smoke-mcp-memory:
-	$(PYTHON) scripts/smoke_mcp_memory.py
+	$(VENV_PY) scripts/smoke_mcp_memory.py
 
 smoke-mcp-client:
 	$(VENV_PY) scripts/test_mcp_client.py
 
 smoke-admissions:
-	$(PYTHON) scripts/smoke_admissions.py
+	$(VENV_PY) scripts/smoke_admissions.py
 
 smoke-phase4:
 	$(VENV_PY) scripts/smoke_phase4_e2e.py
@@ -91,22 +91,22 @@ smoke-concurrent:
 smoke-gates-phase6: smoke-phase6 smoke-phase5-dashboard smoke-mcp-client smoke-langfuse smoke-concurrent
 
 smoke-langfuse:
-	$(PYTHON) scripts/smoke_langfuse_trace.py
+	$(VENV_PY) scripts/smoke_langfuse_trace.py
 
 seed-langfuse:
-	$(PYTHON) scripts/seed_langfuse_prompts.py
+	$(VENV_PY) scripts/seed_langfuse_prompts.py
 
 clear-demo-session:
-	$(PYTHON) scripts/clear_demo_session.py
+	$(VENV_PY) scripts/clear_demo_session.py
 
 check-python:
-	$(PYTHON) scripts/check_python.py
+	$(VENV_PY) scripts/check_python.py
 
 verify-phase0:
-	$(PYTHON) scripts/verify_phase0.py
+	$(VENV_PY) scripts/verify_phase0.py
 
 init-db:
-	$(PYTHON) scripts/init_supabase.py
+	$(VENV_PY) scripts/init_supabase.py
 
 demo-ui-install:
 	cd demo-ui-org/student-chat && npm install

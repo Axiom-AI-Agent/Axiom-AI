@@ -43,16 +43,22 @@ async def main() -> None:
         raise SystemExit(f"Missing tools: {sorted(missing)}")
 
     by_name = {t.name: t for t in tools}
-    proc_raw = await by_name["get_procedural"].ainvoke(
-        {"tenant_id": "tenant-demo-physics", "name": "admissions_onboarding"}
-    )
-    proc_data = json.loads(_text(proc_raw))
-    if not proc_data.get("ok"):
-        raise SystemExit(f"get_procedural failed: {proc_data}")
-    print("get_procedural: ok")
+    # Memory get_procedural returns plain text (steps or "(no procedure…)"), not JSON.
+    proc_text = _text(
+        await by_name["get_procedural"].ainvoke(
+            {"tenant_id": "tenant-demo-physics", "name": "admissions_onboarding"}
+        )
+    ).strip()
+    if not proc_text:
+        raise SystemExit("get_procedural failed: empty response")
+    print(f"get_procedural: ok ({proc_text[:80]!r}…)" if len(proc_text) > 80 else f"get_procedural: ok ({proc_text!r})")
 
     status_raw = await by_name["kb_ingest_status"].ainvoke({"tenant_id": "tenant-demo-physics"})
-    status_data = json.loads(_text(status_raw))
+    status_text = _text(status_raw).strip()
+    try:
+        status_data = json.loads(status_text) if status_text.startswith("{") else {"raw": status_text}
+    except json.JSONDecodeError:
+        status_data = {"raw": status_text}
     print("kb_ingest_status:", status_data.get("points_count", status_data))
 
     close = getattr(client, "aclose", None) or getattr(client, "close", None)

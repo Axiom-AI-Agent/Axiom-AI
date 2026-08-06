@@ -72,6 +72,7 @@ async def smoke_drive_paper_link() -> None:
             {
                 "tenant_id": "tenant-demo-physics",
                 "tenant_name": "Demo Physics Academy",
+                "is_enrolled": True,
                 "messages": [HumanMessage(content="Do you have the 2024 physics past paper?")],
             }
         )
@@ -109,6 +110,7 @@ async def smoke_rag_velocity_mock() -> None:
     result = await agent.run(
         {
             "tenant_id": "tenant-demo-physics",
+            "is_enrolled": True,
             "messages": [HumanMessage(content="Explain velocity from the tutor notes")],
         }
     )
@@ -133,6 +135,7 @@ async def smoke_rag_velocity_live() -> None:
     result = await agent.run(
         {
             "tenant_id": "tenant-demo-physics",
+            "is_enrolled": True,
             "messages": [HumanMessage(content="Explain velocity from the tutor notes")],
         }
     )

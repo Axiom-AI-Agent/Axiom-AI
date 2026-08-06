@@ -13,6 +13,16 @@ from infrastructure.observability import observe
 from services.drive_service.drive_client import build_drive_backend, resolve_subfolder_id
 
 
+def _normalize_drive_folder_id(raw: str | None) -> str | None:
+    """Strip URL query junk users paste from Drive share links (e.g. ``?usp=drive_link``)."""
+    if raw is None:
+        return None
+    value = str(raw).strip()
+    if not value:
+        return None
+    return value.split("?", 1)[0].strip() or None
+
+
 class DriveTool:
     """Business logic for drive_search / drive_list — used by drive_server and REST."""
 
@@ -30,7 +40,7 @@ class DriveTool:
         data = (row.data or [{}])[0]
         if data.get("id") != tenant_id:
             return None
-        return data.get("drive_folder_id")
+        return _normalize_drive_folder_id(data.get("drive_folder_id"))
 
     def _assert_allowed_folder(self, folder: str | None) -> str:
         normalized = (folder or "papers").strip().lower().strip("/")

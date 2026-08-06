@@ -361,7 +361,10 @@ class OnboardingFlow:
             f"Welcome to {tenant_name}! Thank you for your enrollment in **{class_label}**.\n\n"
             f"Our staff will review your request and get back to you soon. "
             f"Please proceed with the payment to continue your enrollment — "
-            f"send a photo of your **payment receipt / bank slip** on WhatsApp."
+            f"send a photo of your **payment receipt / bank slip** on WhatsApp.\n\n"
+            f"We also have **tutes** and **past papers** for your class. "
+            f"If you'd like them now, just ask me (e.g. “send me a past paper”) — "
+            f"or you can collect them physically from the class."
         )
 
     def payment_pending_message(

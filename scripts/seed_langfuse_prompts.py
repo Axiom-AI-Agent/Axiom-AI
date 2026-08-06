@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import re
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -64,14 +65,29 @@ def main() -> int:
     print(f"=== Seeding Langfuse prompts (label={label}) ===")
     seeded = 0
     for name, prompt_type, prompt in _seed_catalog():
-        client.create_prompt(
-            name=name,
-            type=prompt_type,
-            prompt=prompt,
-            labels=[label],
-        )
+        last_err: Exception | None = None
+        for attempt in range(3):
+            try:
+                client.create_prompt(
+                    name=name,
+                    type=prompt_type,
+                    prompt=prompt,
+                    labels=[label],
+                )
+                last_err = None
+                break
+            except Exception as exc:  # noqa: BLE001 — Langfuse SDK error types vary by version
+                last_err = exc
+                msg = str(exc).lower()
+                if "unique constraint" in msg or "concurrent" in msg:
+                    time.sleep(0.75 * (attempt + 1))
+                    continue
+                raise
+        if last_err is not None:
+            raise last_err
         print(f"  + {name} ({prompt_type})")
         seeded += 1
+        time.sleep(0.35)
 
     print(f"Done: {seeded} prompts uploaded")
     return 0

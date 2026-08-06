@@ -273,6 +273,8 @@ Server logs should include `axiom-drive` when MCP is active.
 | MCP import error | Python 3.9 or missing packages | Python 3.11 venv, `pip install -r requirements.txt` |
 | Permission / 403 from Google | Folder not shared with SA | Share root as Viewer |
 | Links don't open for students | Drive link sharing policy | Institute adjusts file/folder sharing |
+| `"timed out"` / ~60s latency | Broken IPv6 route + old httplib2 path | App uses `requests` + IPv4-prefer urllib3; restart API. Do **not** paste `?usp=drive_link` into `drive_folder_id` |
+| `File not found` / empty results | Folder ID includes URL query (`?usp=…`) | Store only the ID segment from the Drive URL |
 
 ---
 

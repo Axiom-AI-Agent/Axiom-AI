@@ -2,13 +2,36 @@
 
 from __future__ import annotations
 
-import json
 import os
+import socket
 from typing import Any, Protocol
 
 from loguru import logger
 
 from infrastructure.config import DRIVE_MOCK, GOOGLE_SERVICE_ACCOUNT_JSON
+
+_DRIVE_API_BASE = "https://www.googleapis.com/drive/v3"
+_DRIVE_READONLY_SCOPE = "https://www.googleapis.com/auth/drive.readonly"
+_IPV4_PREFERRED = False
+
+
+def _prefer_ipv4_for_urllib3() -> None:
+    """Make urllib3/requests resolve A records only (AF_INET).
+
+    On dual-stack macOS, ``getaddrinfo`` often returns IPv6 first. httplib2
+    (default googleapiclient transport) connects to that address and can hang
+    ~60s when the IPv6 route is broken. urllib3/requests honor
+    ``allowed_gai_family()``; forcing AF_INET avoids machine-specific
+    ``networksetup -setv6off`` workarounds.
+    """
+    global _IPV4_PREFERRED
+    if _IPV4_PREFERRED:
+        return
+    import urllib3.util.connection as urllib3_cn
+
+    urllib3_cn.allowed_gai_family = lambda: socket.AF_INET  # type: ignore[assignment]
+    _IPV4_PREFERRED = True
+    logger.info("Drive HTTP transport: urllib3 prefer IPv4 (AF_INET)")
 
 
 class DriveBackend(Protocol):
@@ -48,15 +71,21 @@ class MockDriveBackend:
 
 
 class GoogleDriveBackend:
-    """Google Drive API v3 via service account."""
+    """Google Drive API v3 via service account + requests (not httplib2)."""
 
     def __init__(self, credentials_path: str) -> None:
+        from google.auth.transport.requests import AuthorizedSession
         from google.oauth2 import service_account
-        from googleapiclient.discovery import build
 
-        scopes = ["https://www.googleapis.com/auth/drive.readonly"]
-        creds = service_account.Credentials.from_service_account_file(credentials_path, scopes=scopes)
-        self._service = build("drive", "v3", credentials=creds, cache_discovery=False)
+        _prefer_ipv4_for_urllib3()
+        creds = service_account.Credentials.from_service_account_file(
+            credentials_path,
+            scopes=[_DRIVE_READONLY_SCOPE],
+        )
+        # AuthorizedSession uses requests/urllib3 (Happy Eyeballs-friendly + our IPv4 preference)
+        # instead of googleapiclient's default httplib2 transport.
+        self._session = AuthorizedSession(creds)
+        self._timeout_s = float(os.getenv("DRIVE_HTTP_TIMEOUT_S", "30"))
 
     def list_files(
         self,
@@ -71,19 +100,29 @@ class GoogleDriveBackend:
             search_term = max(tokens, key=len) if tokens else query.replace("'", "\\'")
             q_parts.append(f"name contains '{search_term}'")
         q = " and ".join(q_parts)
-        response = (
-            self._service.files()
-            .list(
-                q=q,
-                pageSize=page_size,
-                fields="files(id, name, mimeType, webViewLink, webContentLink)",
-                supportsAllDrives=True,
-                includeItemsFromAllDrives=True,
-            )
-            .execute()
+
+        response = self._session.get(
+            f"{_DRIVE_API_BASE}/files",
+            params={
+                "q": q,
+                "pageSize": page_size,
+                "fields": "files(id, name, mimeType, webViewLink, webContentLink)",
+                "supportsAllDrives": "true",
+                "includeItemsFromAllDrives": "true",
+            },
+            timeout=self._timeout_s,
         )
+        if response.status_code >= 400:
+            logger.error(
+                "Drive files.list failed status={} body={}",
+                response.status_code,
+                response.text[:500],
+            )
+            response.raise_for_status()
+
+        payload = response.json()
         results: list[dict[str, Any]] = []
-        for item in response.get("files", []):
+        for item in payload.get("files", []):
             link = item.get("webViewLink") or item.get("webContentLink") or ""
             results.append(
                 {

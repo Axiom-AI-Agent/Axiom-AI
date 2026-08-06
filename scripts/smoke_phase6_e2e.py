@@ -80,13 +80,16 @@ async def scenario_onboarding(pipeline, phone: str) -> bool:
 
 async def scenario_resource_rag(pipeline, phone: str) -> bool:
     print("\n[2/5] Resource (RAG — no Drive MCP)")
+    # RAG is enrolled-only — use seeded student (Amaya / 94771234567).
+    enrolled_phone = phone or "94771234567"
     reply = await _chat(
         pipeline,
-        phone,
+        enrolled_phone,
         "Can you explain velocity from the tutor notes you have uploaded?",
     )
-    ok = len(reply.strip()) > 20
-    print("OK resource/rag" if ok else "FAIL resource: empty reply")
+    blocked = "enrolled students only" in reply.lower() or "join class" in reply.lower()
+    ok = len(reply.strip()) > 20 and not blocked and "velocity" in reply.lower()
+    print("OK resource/rag" if ok else "FAIL resource: empty/blocked/no velocity")
     return ok
 
 
@@ -106,7 +109,13 @@ async def scenario_payment(pipeline, phone: str) -> bool:
 
 async def scenario_escalation(pipeline, phone: str) -> bool:
     print("\n[4/5] Talk to tutor")
-    reply = await _chat(pipeline, phone, "Can I speak to sir please? I need to talk to my tutor.")
+    # Escalation requires a DB student row — use seeded enrolled student, not a visitor phone.
+    enrolled_phone = phone or "94771234567"
+    reply = await _chat(
+        pipeline,
+        enrolled_phone,
+        "Can I speak to sir please? I need to talk to my tutor.",
+    )
     ok = any(w in reply.lower() for w in ("tutor", "notify", "team", "contact"))
     print("OK escalation ack" if ok else "FAIL escalation: no tutor ack")
     return ok
@@ -168,11 +177,11 @@ async def main() -> int:
     if args.scenario in ("all", "onboarding"):
         results.append(await scenario_onboarding(pipeline, _phone()))
     if args.scenario in ("all", "resource"):
-        results.append(await scenario_resource_rag(pipeline, _phone()))
+        results.append(await scenario_resource_rag(pipeline, "94771234567"))
     if args.scenario in ("all", "payment"):
         results.append(await scenario_payment(pipeline, _phone()))
     if args.scenario in ("all", "escalation"):
-        results.append(await scenario_escalation(pipeline, _phone()))
+        results.append(await scenario_escalation(pipeline, "94771234567"))
     if args.scenario in ("all", "oos"):
         results.append(await scenario_out_of_scope())
 
