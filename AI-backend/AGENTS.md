@@ -67,4 +67,4 @@ Default provider: OpenRouter. Use `get_role_config(role)` to resolve model+provi
 - `MESSAGING_DRY_RUN=true` by default — Twilio won't actually send messages
 - Qdrant is optional until Phase 4 (RAG)
 - Langfuse is optional — gracefully degrades if keys missing
-- Dashboard is a separate repo (only a README placeholder here)
+- Dashboard lives in `../Dashboard/` (frontend + backend are separate from this package)

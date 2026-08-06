@@ -1,43 +1,61 @@
-# Axiom AI — Backend
+# Axiom AI
 
-Multi-tenant AI backend for Sri Lankan private tuition (hackathon MVP).
+Multi-tenant AI tutor platform for Sri Lankan private tuition (hackathon MVP).
+
+## Monorepo layout
+
+```text
+Axiom-AI/
+├── AI-backend/          Multi-agent FastAPI backend, agents, MCP, RAG, demo chat UI
+├── Dashboard/
+│   ├── frontend/        Next.js staff dashboard (:3000)
+│   └── backend/         FastAPI dashboard API (:8000)
+└── LICENSE
+```
 
 ## Quick start
 
-**Requires Python 3.10+** (3.11 recommended). MCP subprocess servers (`mcp`, `langchain-mcp-adapters`) do not install on Python 3.9.
+### AI backend (multi-agent chat)
 
 ```bash
-# Recommended — recreate venv with Python 3.11 (you have it at ~/.local/bin/python3.11)
-rm -rf .venv
-make venv
-source .venv/bin/activate
-
-cp .env.example .env
-# Set OPENAI_API_KEY, QDRANT_*, SUPABASE_*; use AGENT_USE_MCP=true only on Python 3.10+
-
-make run
-make test
+cd AI-backend
+cp .env.example .env   # set OPENAI_API_KEY, SUPABASE_*, etc.
+make venv && source .venv/bin/activate
+make init-db
+make run               # http://localhost:8000
 ```
 
-If you must stay on Python 3.9 temporarily:
+Optional student demo UI:
 
 ```bash
-pip install -r requirements.txt   # MCP lines are skipped automatically
-# In .env:
-AGENT_USE_MCP=false
+cd AI-backend
+make demo-ui           # http://localhost:5173
 ```
 
-The app falls back to in-process tools when MCP is unavailable (`src/agents/runtime.py`).
+### Staff dashboard
 
-- API docs: http://localhost:8000/docs
-- Health: http://localhost:8000/health
+**Backend** (terminal 1):
+
+```bash
+cd Dashboard/backend
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+# Uses AI-backend/.env for SUPABASE_DB_URL (or set env vars directly)
+uvicorn app.main:app --reload --port 8000
+```
+
+**Frontend** (terminal 2):
+
+```bash
+cd Dashboard/frontend
+npm install
+npm run dev            # http://localhost:3000
+```
+
+> **Port note:** AI backend and Dashboard backend both default to port 8000. Run only one at a time, or start Dashboard backend on another port and set `NEXT_PUBLIC_API_URL` in `Dashboard/frontend/.env.local`.
 
 ## Docs
 
-- [demo-ui-org/README.md](demo-ui-org/README.md) — WhatsApp student chat demo UI (`make demo-ui`)
-- [SETUP.md](docs/SETUP.md) — install, env, Phase 6 verification gate
-- [FINALIZE_CHECKLIST.md](docs/FINALIZE_CHECKLIST.md) — master MVP + Drive MCP + Telegram sign-off list
-- [DEV_CHAT.md](docs/DEV_CHAT.md) — local `/chat` testing (no Twilio)
-- [DRIVE_INTEGRATION.md](docs/DRIVE_INTEGRATION.md) — Google Drive MCP, institute onboarding, testing
-- [DATABASE.md](docs/DATABASE.md) — Supabase schema
-- [AI Backend Roadmap](docs/Technical%20Docs/AI%20backend%20-%20Roadmap.md) — full implementation plan
+- [AI-backend/README.md](AI-backend/README.md) — agents, MCP, smoke tests
+- [AI-backend/docs/SETUP.md](AI-backend/docs/SETUP.md) — full setup guide
+- [Dashboard/README.md](Dashboard/README.md) — staff dashboard

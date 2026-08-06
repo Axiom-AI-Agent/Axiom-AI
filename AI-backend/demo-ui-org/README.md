@@ -5,11 +5,11 @@ WhatsApp-style chat mock for **Demo Physics Academy**. Talks to the existing Axi
 ## Quick start
 
 ```bash
-# Terminal 1 — API (from repo root)
-make run
+# Terminal 1 — API (from AI-backend/)
+cd AI-backend && make run
 
 # Terminal 2 — demo UI
-make demo-ui
+cd AI-backend && make demo-ui
 ```
 
 Open http://localhost:5173

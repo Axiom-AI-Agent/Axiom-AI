@@ -25,7 +25,7 @@ Get from clone to a working **`POST /chat`** and dashboard APIs. Patterns follow
 
 ```bash
 git clone <repo>
-cd Axiom-AI
+cd Axiom-AI/AI-backend
 cp .env.example .env
 make venv
 source .venv/bin/activate
