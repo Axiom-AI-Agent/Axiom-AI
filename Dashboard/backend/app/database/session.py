@@ -9,14 +9,16 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 def _load_env() -> None:
     """Load env from Dashboard, shared AI-backend, or repo root."""
     here = Path(__file__).resolve()
+
     for candidate in (
-        here.parents[1] / ".env",
-        here.parents[2] / "AI-backend" / ".env",
-        here.parents[2] / ".env",
+        here.parents[2] / ".env",                # Dashboard/backend/.env
+        here.parents[4] / "AI-backend" / ".env", # Axiom-AI/AI-backend/.env
+        here.parents[4] / ".env",                # Axiom-AI/.env
     ):
         if candidate.is_file():
             load_dotenv(candidate)
             return
+
     load_dotenv()
 
 
