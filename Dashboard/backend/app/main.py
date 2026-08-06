@@ -7,6 +7,7 @@ from app.routes import (
     students,
     message_logs,
     escalations,
+    escalation_websocket,
     invoices,
     dashboard,
 )
@@ -33,6 +34,7 @@ app.include_router(message_logs.router)
 app.include_router(escalations.router)
 app.include_router(invoices.router)
 app.include_router(dashboard.router)
+app.include_router(escalation_websocket.router)
 
 
 @app.get("/")
