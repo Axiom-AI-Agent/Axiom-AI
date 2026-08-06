@@ -1,185 +1,227 @@
-// src/lib/api.ts
-/**
- * Dashboard API client placeholder.
- * This file provides TypeScript functions that represent the real backend endpoints
- * defined in the Phase 5 API contract. For now, each function returns mock data via
- * resolved promises. The UI components can import these functions and later switch
- * to real network calls without changing component logic.
- */
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
+  "http://127.0.0.1:8000";
 
-export type TenantId = string;
+export interface DashboardSummary {
+  total_students: number;
+  active_classes?: number;
+  pending_payments: number;
+  active_conversations?: number;
+  open_escalations: number;
+}
+
+export interface SubjectClass {
+  id: string;
+  tenant_id: string;
+  subject: string;
+  fee_amount: string | number;
+  fee_cycle: string;
+  created_at: string;
+}
+
+export interface CreateClassPayload {
+  tenant_id?: string;
+  subject: string;
+  fee_amount: number;
+  fee_cycle: string;
+}
+
+export interface UpdateClassPayload {
+  subject?: string;
+  fee_amount?: number;
+  fee_cycle?: string;
+}
+
+export interface Payment {
+  id: string;
+  tenant_id: string;
+  student_id: string;
+  student_name?: string | null;
+  student_phone?: string | null;
+  period: string;
+  amount_due: string | number;
+  status: string;
+  receipt_url?: string | null;
+  created_at: string;
+}
+
+export interface Student {
+  id: string;
+  tenant_id: string;
+  name: string | null;
+  phone: string;
+  district: string | null;
+  language_pref: string;
+  created_at: string;
+}
+
+export type EscalationStatus = "open" | "assigned" | "resolved";
 
 export interface Escalation {
   id: string;
-  tenant_id: TenantId;
+  tenant_id: string;
   student_id: string;
-  student_name: string;
-  student_phone: string;
-  enrollment_id: string;
-  reason_code: 'payment_receipt' | 'talk_to_tutor';
-  status: 'open' | 'assigned' | 'resolved';
-  media_url: string | null;
-  student_message: string;
-  resolution: string | null;
-  reviewed_by: string | null;
-  reviewed_at: string | null;
+  student_name?: string | null;
+  student_phone?: string | null;
+  reason_code: string;
+  status: EscalationStatus;
+  student_message?: string | null;
+  media_url?: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export interface OverviewStats {
-  tenant_id: TenantId;
-  open_escalations: number;
-  open_payment_receipts: number;
-  open_talk_to_tutor: number;
-  pending_enrollments: number;
-  students: number;
-  classes: number;
-}
-
-export interface ChatTurn {
+export interface MessageLog {
   id: string;
-  role: 'user' | 'assistant' | 'staff';
-  content: string;
-  created_at: string;
+  tenant_id: string;
+  student_id: string;
+  student_name?: string | null;
+  channel: string;
+  intent: string | null;
+  timestamp: string;
 }
 
-export interface ChatLog {
-  tenant_id: TenantId;
-  session_id: string;
-  turns: ChatTurn[];
+export class ApiError extends Error {
+  status: number;
+  details: unknown;
+
+  constructor(message: string, status: number, details?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.details = details;
+  }
 }
 
-// Helper to simulate network latency for the demo UI.
-const fakeDelay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * GET /dashboard/escalations
- */
-export async function getEscalations(
-  tenantId: TenantId,
-  params?: { status?: string; reason_code?: string }
-): Promise<Escalation[]> {
-  await fakeDelay(300);
-  // Mock data – in a real implementation this would `fetch` the endpoint.
-  return [
-    {
-      id: 'esc-001',
-      tenant_id: tenantId,
-      student_id: 'stu-001',
-      student_name: 'Amaya Perera',
-      student_phone: '94771234567',
-      enrollment_id: 'enr-001',
-      reason_code: 'payment_receipt',
-      status: 'open',
-      media_url: null,
-      student_message: 'Here is my payment receipt.',
-      resolution: null,
-      reviewed_by: null,
-      reviewed_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+async function apiRequest<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
     },
-    {
-      id: 'esc-002',
-      tenant_id: tenantId,
-      student_id: 'stu-002',
-      student_name: 'Nadeesha Silva',
-      student_phone: '94773332211',
-      enrollment_id: '',
-      reason_code: 'talk_to_tutor',
-      status: 'open',
-      media_url: null,
-      student_message: 'Can I speak to a tutor?',
-      resolution: null,
-      reviewed_by: null,
-      reviewed_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
+  });
+
+  if (!response.ok) {
+    let details: unknown;
+
+    try {
+      details = await response.json();
+    } catch {
+      details = await response.text();
+    }
+
+    throw new ApiError(
+      `Request failed: ${response.status} ${response.statusText}`,
+      response.status,
+      details,
+    );
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  return response.json() as Promise<T>;
 }
 
-/**
- * PATCH /dashboard/escalations/{id}/resolve
- */
-export async function resolveEscalation(
-  tenantId: TenantId,
+/* Dashboard */
+
+export function getDashboardSummary(): Promise<DashboardSummary> {
+  return apiRequest<DashboardSummary>("/dashboard/summary");
+}
+
+/* Classes */
+
+export function getClasses(): Promise<SubjectClass[]> {
+  return apiRequest<SubjectClass[]>("/classes");
+}
+
+export function createClass(
+  payload: CreateClassPayload,
+): Promise<SubjectClass> {
+  return apiRequest<SubjectClass>("/classes", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateClass(
+  classId: string,
+  payload: UpdateClassPayload,
+): Promise<SubjectClass> {
+  return apiRequest<SubjectClass>(`/classes/${classId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+/* Payments */
+
+export function getPendingPayments(): Promise<Payment[]> {
+  return apiRequest<Payment[]>("/payments/pending");
+}
+
+export function getAllPayments(): Promise<Payment[]> {
+  return apiRequest<Payment[]>("/dashboard/payments");
+}
+
+export function approvePayment(paymentId: string): Promise<Payment> {
+  return apiRequest<Payment>(`/payments/${paymentId}/approve`, {
+    method: "PUT",
+  });
+}
+
+export function rejectPayment(paymentId: string): Promise<Payment> {
+  return apiRequest<Payment>(`/payments/${paymentId}/reject`, {
+    method: "PUT",
+  });
+}
+
+/* Students */
+
+export function getStudents(): Promise<Student[]> {
+  return apiRequest<Student[]>("/students");
+}
+
+/* Escalations */
+
+export function getEscalations(): Promise<Escalation[]> {
+  return apiRequest<Escalation[]>("/escalations");
+}
+
+export function getOpenEscalations(): Promise<Escalation[]> {
+  return apiRequest<Escalation[]>("/escalations/open");
+}
+
+export function assignEscalation(
   escalationId: string,
-  options?: { notify?: boolean; reviewed_by?: string }
-): Promise<{ ok: true; escalation_id: string; reason_code: string; resolution: string }> {
-  await fakeDelay(200);
-  // Return a static success shape.
-  return {
-    ok: true,
-    escalation_id: escalationId,
-    reason_code: 'payment_receipt',
-    resolution: 'approved',
-  };
-}
-
-/**
- * PATCH /dashboard/escalations/{id}/reject
- */
-export async function rejectEscalation(
-  tenantId: TenantId,
-  escalationId: string,
-  options?: { notify?: boolean; reviewed_by?: string }
-): Promise<{ ok: true; escalation_id: string; reason_code: string; resolution: string }> {
-  await fakeDelay(200);
-  return {
-    ok: true,
-    escalation_id: escalationId,
-    reason_code: 'payment_receipt',
-    resolution: 'rejected',
-  };
-}
-
-/**
- * GET /dashboard/overview
- */
-export async function getOverviewStats(tenantId: TenantId): Promise<OverviewStats> {
-  await fakeDelay(250);
-  return {
-    tenant_id: tenantId,
-    open_escalations: 2,
-    open_payment_receipts: 1,
-    open_talk_to_tutor: 1,
-    pending_enrollments: 1,
-    students: 42,
-    classes: 3,
-  };
-}
-
-/**
- * GET /dashboard/chat-logs
- */
-export async function getChatLogs(
-  tenantId: TenantId,
-  phone?: string
-): Promise<ChatLog[]> {
-  await fakeDelay(300);
-  return [
+): Promise<Escalation> {
+  return apiRequest<Escalation>(
+    `/escalations/${escalationId}/assign`,
     {
-      tenant_id: tenantId,
-      session_id: `${tenantId}:94771234567`,
-      turns: [
-        { id: 't1', role: 'user', content: 'Hello', created_at: new Date().toISOString() },
-        { id: 't2', role: 'assistant', content: 'Hi! How can I help?', created_at: new Date().toISOString() },
-      ],
+      method: "PUT",
     },
-  ];
+  );
 }
 
-/**
- * POST /dashboard/chat/send
- */
-export async function sendChatMessage(
-  tenantId: TenantId,
-  phone: string,
-  message: string
-): Promise<{ ok: true }> {
-  await fakeDelay(200);
-  console.log('Mock sendChatMessage', { tenantId, phone, message });
-  return { ok: true };
+export function resolveEscalation(
+  escalationId: string,
+): Promise<Escalation> {
+  return apiRequest<Escalation>(
+    `/escalations/${escalationId}/resolve`,
+    {
+      method: "PUT",
+    },
+  );
+}
+
+/* Logs */
+
+export function getMessageLogs(): Promise<MessageLog[]> {
+  return apiRequest<MessageLog[]>("/message-logs");
 }
