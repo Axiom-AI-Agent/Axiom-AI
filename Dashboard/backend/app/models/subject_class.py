@@ -40,6 +40,9 @@ class SubjectClass(Base):
         nullable=False,
     )
 
+    name = Column(String, nullable=True)
+    grade = Column(String, nullable=True)
+
     fee_amount = Column(
         Numeric(12, 2),
         nullable=False,
