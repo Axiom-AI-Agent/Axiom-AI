@@ -1,5 +1,9 @@
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
+  "http://127.0.0.1:8001";
+
+const AI_API_URL =
+  process.env.NEXT_PUBLIC_AI_API_URL?.replace(/\/$/, "") ??
   "http://127.0.0.1:8000";
 
 export interface DashboardSummary {
@@ -224,4 +228,66 @@ export function resolveEscalation(
 
 export function getMessageLogs(): Promise<MessageLog[]> {
   return apiRequest<MessageLog[]>("/message-logs");
+}
+
+/* Class Documents */
+
+export interface ClassDocumentUploadResponse {
+  ok: boolean;
+  tenant_id: string;
+  strategy: string;
+  documents: number;
+  chunks_upserted: number;
+  collection: string;
+  points_count: number | null;
+  document_title: string | null;
+  source_filename: string | null;
+}
+
+export async function uploadClassDocument(
+  classId: string,
+  tenantId: string,
+  file: File,
+  title?: string,
+  lesson?: string,
+): Promise<ClassDocumentUploadResponse> {
+  const formData = new FormData();
+  formData.append("tenant_id", tenantId);
+  formData.append("class_id", classId);
+  formData.append("file", file);
+
+  if (title) {
+    formData.append("title", title);
+  }
+
+  if (lesson) {
+    formData.append("lesson", lesson);
+  }
+
+  const response = await fetch(
+    `${AI_API_URL}/tools/ingest/upload`,
+    {
+      method: "POST",
+      body: formData,
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    let details: unknown;
+
+    try {
+      details = await response.json();
+    } catch {
+      details = await response.text();
+    }
+
+    throw new ApiError(
+      `Upload failed: ${response.status} ${response.statusText}`,
+      response.status,
+      details,
+    );
+  }
+
+  return response.json() as Promise<ClassDocumentUploadResponse>;
 }
