@@ -23,7 +23,7 @@ htmlcov/
 .DS_Store
 
 # Logs & data
-logs/
+
 data/knowledge_base/*/
 !data/knowledge_base/.gitkeep
 
