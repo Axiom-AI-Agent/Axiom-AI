@@ -1,0 +1,33 @@
+# Production API only — DigitalOcean Droplet (same host as BookMe AI).
+#
+# BookMe AI binds 127.0.0.1:8000 — Axiom uses 127.0.0.1:8001 by default.
+# Put Caddy/nginx in front on :443 → localhost:${API_PORT:-8001}.
+#
+# On the droplet:
+#   git clone … && cd Axiom-AI/AI-backend
+#   cp .env.example .env   # fill secrets
+#   export DOCKER_REGISTRY_USER=your_dockerhub_username
+#   docker compose -f compose.prod.api.yaml pull
+#   docker compose -f compose.prod.api.yaml up -d
+#
+# Caddy example (append to existing Caddyfile — keep BookMe block on :8000):
+#   axiom-api.yourdomain.com {
+#       reverse_proxy 127.0.0.1:8001
+#   }
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY_USER}/axiom-ai-api:latest
+    container_name: axiom-ai-api
+    restart: always
+    init: true
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:${API_PORT:-8001}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
