@@ -1,18 +1,65 @@
-"""Tenant scope for dashboard API requests."""
+"""Authenticated tenant scope for dashboard API requests."""
 
-from fastapi import Header, HTTPException, Query
+from fastapi import (
+    Depends,
+    Header,
+    HTTPException,
+    Query,
+)
 
-from app.schemas.schemas import DEMO_TENANT_ID
+from app.deps.auth import (
+    get_current_staff,
+)
+
+from app.models import StaffUser
 
 
 def get_tenant_id(
-    tenant_id: str | None = Query(None, alias="tenant_id"),
-    x_tenant_id: str | None = Header(None, alias="X-Tenant-ID"),
+    tenant_id: str | None = Query(
+        None,
+        alias="tenant_id",
+    ),
+    x_tenant_id: str | None = Header(
+        None,
+        alias="X-Tenant-ID",
+    ),
+    current_staff: StaffUser = Depends(
+        get_current_staff,
+    ),
 ) -> str:
-    query_tenant = tenant_id
-    header_tenant = x_tenant_id
 
-    if query_tenant and header_tenant and query_tenant != header_tenant:
-        raise HTTPException(status_code=400, detail="tenant_id mismatch")
+    authenticated_tenant = (
+        current_staff.tenant_id
+    )
 
-    return query_tenant or header_tenant or DEMO_TENANT_ID
+    supplied_tenant = (
+        tenant_id
+        or x_tenant_id
+    )
+
+    if (
+        tenant_id
+        and x_tenant_id
+        and tenant_id
+        != x_tenant_id
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "tenant_id mismatch"
+            ),
+        )
+
+    if (
+        supplied_tenant
+        and supplied_tenant
+        != authenticated_tenant
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "You cannot access another tenant."
+            ),
+        )
+
+    return authenticated_tenant
