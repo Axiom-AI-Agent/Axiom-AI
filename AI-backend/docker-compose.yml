@@ -1,0 +1,31 @@
+# =============================================================================
+# Axiom AI — local / single-host deployment (API only)
+#
+#   api   FastAPI + MCP stdio servers              :8000
+#
+# External: Supabase, Qdrant, OpenAI, Gemini, Twilio, Langfuse — via .env
+#
+# Usage:
+#   export DOCKER_REGISTRY_USER=your_dockerhub_username   # optional tag prefix
+#   docker compose up --build
+#   curl http://localhost:8000/health
+# =============================================================================
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    image: ${DOCKER_REGISTRY_USER:-axiom}/axiom-ai-api:local
+    container_name: axiom-ai-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped

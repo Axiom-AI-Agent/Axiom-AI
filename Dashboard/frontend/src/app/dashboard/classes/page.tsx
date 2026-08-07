@@ -5,6 +5,7 @@ import {
   FormEvent,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
@@ -26,6 +27,7 @@ import {
   deleteClass,
   getClasses,
   SubjectClass,
+  uploadClassDocument,
   updateClass,
 } from "@/lib/api";
 
@@ -56,6 +58,9 @@ export default function ClassesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadingClassId, setUploadingClassId] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadClasses = useCallback(async () => {
     setLoading(true);
@@ -156,6 +161,35 @@ export default function ClassesPage() {
     }
   }
 
+  function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>, classId: string) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    handleUpload(classId, file);
+    event.target.value = "";
+  }
+
+  async function handleUpload(classId: string, file: File) {
+    setUploadingClassId(classId);
+    setUploadError(null);
+
+    try {
+      await uploadClassDocument(classId, tenantId, file);
+    } catch (requestError) {
+      console.error(requestError);
+      setUploadError("Failed to upload document.");
+    } finally {
+      setUploadingClassId(null);
+    }
+  }
+
+  function triggerFileInput(classId: string) {
+    if (fileInputRef.current) {
+      fileInputRef.current.dataset.classId = classId;
+      fileInputRef.current.click();
+    }
+  }
+
   async function handleDelete(classId: string) {
     if (!window.confirm("Delete this class? Related enrollments may be removed.")) {
       return;
@@ -217,6 +251,24 @@ export default function ClassesPage() {
           {error}
         </div>
       )}
+
+      {uploadError && (
+        <div className="flex items-center gap-2 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4 text-yellow-200">
+          <AlertTriangle className="h-5 w-5" />
+          <span>{uploadError}</span>
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf"
+        className="hidden"
+        onChange={(e) => {
+          const classId = e.currentTarget.dataset.classId;
+          if (classId) handleFileSelect(e, classId);
+        }}
+      />
 
       {showForm && (
         <form
@@ -356,6 +408,21 @@ export default function ClassesPage() {
               </dl>
 
               <div className="mt-5 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => triggerFileInput(subjectClass.id)}
+                  disabled={uploadingClassId === subjectClass.id}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800 disabled:opacity-50"
+                >
+                  {uploadingClassId === subjectClass.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="h-4 w-4" />
+                  )}
+                  {uploadingClassId === subjectClass.id
+                    ? "Uploading..."
+                    : "Upload PDF"}
+                </button>
                 <button
                   type="button"
                   onClick={() => openEditForm(subjectClass)}

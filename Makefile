@@ -12,7 +12,7 @@ ai-install:
 	$(MAKE) -C AI-backend install
 
 dashboard-backend:
-	cd Dashboard/backend && uvicorn app.main:app --reload --port 8000
+	cd Dashboard/backend && uvicorn app.main:app --reload --port 8001
 
 dashboard-frontend:
 	cd Dashboard/frontend && npm run dev

@@ -12,10 +12,10 @@ import type {
 
 function resolveApiBase(): string {
   const url = import.meta.env.VITE_API_URL?.trim();
-  if (import.meta.env.PROD && url && /^https?:\/\//i.test(url)) {
-    return url.replace(/\/$/, "");
+  if (!url) {
+    throw new Error("VITE_API_URL is not set — add it to student-chat/.env");
   }
-  return "/api";
+  return url.replace(/\/$/, "");
 }
 
 const BASE = resolveApiBase();
@@ -59,7 +59,7 @@ async function request<T>(
       msg = detail.detail[0].msg;
     }
     if (res.status === 503) {
-      msg = "Backend unavailable (503). Is `make run` up on :8000?";
+      msg = `Backend unavailable (503). Check VITE_API_URL (${BASE}).`;
     }
     throw new ApiError(res.status, body, msg);
   }

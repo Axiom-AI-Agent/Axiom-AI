@@ -1,4 +1,12 @@
-from sqlalchemy import Column, String, DateTime, Enum, ForeignKey, Index
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    String,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -12,38 +20,75 @@ class StaffUser(Base):
     """
 
     __tablename__ = "staff_users"
+
     __table_args__ = (
         Index("idx_staff_users_tenant", "tenant_id"),
+        Index(
+            "idx_staff_users_email",
+            "email",
+            unique=True,
+        ),
     )
 
-    # Primary Key
-    id = Column(String, primary_key=True)
+    id = Column(
+        String,
+        primary_key=True,
+    )
 
-    # Foreign Key
     tenant_id = Column(
         String,
-        ForeignKey("tenants.id", ondelete="CASCADE"),
+        ForeignKey(
+            "tenants.id",
+            ondelete="CASCADE",
+        ),
         nullable=False,
     )
 
-    # Staff Details
     role = Column(
-        Enum(StaffRole, name="staff_role", values_callable=lambda enum: [e.value for e in enum]),
+        Enum(
+            StaffRole,
+            name="staff_role",
+            values_callable=lambda enum: [
+                item.value for item in enum
+            ],
+        ),
         nullable=False,
-        server_default="admin",
+        server_default="viewer",
     )
 
-    name = Column(String, nullable=False)
+    name = Column(
+        String,
+        nullable=False,
+    )
 
-    # Timestamp
+    email = Column(
+        String,
+        nullable=False,
+        unique=True,
+    )
+
+    password_hash = Column(
+        String,
+        nullable=False,
+    )
+
+    is_active = Column(
+        Boolean,
+        nullable=False,
+        default=True,
+        server_default="true",
+    )
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
     )
 
-    # Relationships
-    tenant = relationship("Tenant", back_populates="staff_users")
+    tenant = relationship(
+        "Tenant",
+        back_populates="staff_users",
+    )
 
     audit_logs = relationship(
         "AuditLog",
@@ -53,5 +98,6 @@ class StaffUser(Base):
     def __repr__(self):
         return (
             f"<StaffUser(id='{self.id}', "
-            f"name='{self.name}', role='{self.role.value}')>"
-        )
+            f"email='{self.email}', "
+            f"role='{self.role.value}')>"
+        ) 

@@ -43,3 +43,4 @@ Dashboard/backend/venv/
 
 # Graphify (optional local cache)
 # graphify-out/cache/
+Dashboard/node_modules/

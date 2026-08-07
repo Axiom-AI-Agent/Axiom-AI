@@ -8,11 +8,26 @@ interface Props {
   backendOk: boolean | null;
   children: ReactNode;
   footer?: ReactNode;
+  /** Full viewport width/height on mobile (no phone-frame chrome). */
+  fullBleedMobile?: boolean;
 }
 
-export function WhatsAppShell({ phone, backendOk, children, footer }: Props) {
+export function WhatsAppShell({
+  phone,
+  backendOk,
+  children,
+  footer,
+  fullBleedMobile = false,
+}: Props) {
   return (
-    <div className="flex flex-col h-full min-h-0 bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm max-w-[420px] w-full mx-auto">
+    <div
+      className={clsx(
+        "flex flex-col h-full min-h-0 bg-white overflow-hidden w-full mx-auto",
+        fullBleedMobile
+          ? "max-w-none rounded-none border-0 shadow-none lg:max-w-[420px] lg:rounded-xl lg:border lg:border-slate-200 lg:shadow-sm"
+          : "max-w-[420px] rounded-xl border border-slate-200 shadow-sm",
+      )}
+    >
       <header className="bg-wa-header text-white px-3 py-2.5 flex items-center gap-3 shrink-0">
         <div className="size-10 rounded-full bg-white/15 flex items-center justify-center text-sm font-bold tracking-wide">
           {TENANT_SHORT}
@@ -40,7 +55,7 @@ export function WhatsAppShell({ phone, backendOk, children, footer }: Props) {
         </div>
       </header>
       <div className="flex-1 min-h-0 flex flex-col">{children}</div>
-      {footer}
+      {footer && <div className="shrink-0 safe-bottom">{footer}</div>}
     </div>
   );
 }
