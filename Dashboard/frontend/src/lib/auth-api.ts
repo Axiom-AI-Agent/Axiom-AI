@@ -15,13 +15,19 @@ const API_URL =
   "http://127.0.0.1:8001";
 
 export class AuthApiError extends Error {
+  status: number;
+  details?: unknown;
+
   constructor(
     message: string,
-    public status: number,
-    public details?: unknown,
+    status: number,
+    details?: unknown,
   ) {
     super(message);
+
     this.name = "AuthApiError";
+    this.status = status;
+    this.details = details;
   }
 }
 
@@ -53,7 +59,9 @@ async function authRequest<T>(
     );
   }
 
-  return (await response.json()) as T;
+  const data: T = await response.json();
+
+  return data;
 }
 
 export function loginStaff(
@@ -104,20 +112,13 @@ export async function getMe(): Promise<AuthUser> {
   }
 
   if (!response.ok) {
-    let details: unknown;
-
-    try {
-      details = await response.json();
-    } catch {
-      details = await response.text();
-    }
-
     throw new AuthApiError(
       "Could not verify session",
       response.status,
-      details,
     );
   }
 
-  return (await response.json()) as AuthUser;
+  const user: AuthUser = await response.json();
+
+  return user;
 }

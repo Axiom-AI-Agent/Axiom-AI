@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  FormEvent,
-  useState,
-} from "react";
-
+import { FormEvent, useState } from "react";
 import Link from "next/link";
-
-import {
-  useRouter,
-} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import {
   Building2,
@@ -33,9 +26,7 @@ import type {
   StaffRole,
 } from "@/types/auth";
 
-
-function emptyStaff():
-  StaffRegistration {
+function emptyStaff(): StaffRegistration {
   return {
     name: "",
     email: "",
@@ -44,10 +35,8 @@ function emptyStaff():
   };
 }
 
-
 export default function RegisterPage() {
-  const router =
-    useRouter();
+  const router = useRouter();
 
   const [
     institutionName,
@@ -82,9 +71,7 @@ export default function RegisterPage() {
   const [
     staffMembers,
     setStaffMembers,
-  ] = useState<
-    StaffRegistration[]
-  >([]);
+  ] = useState<StaffRegistration[]>([]);
 
   const [
     loading,
@@ -94,242 +81,191 @@ export default function RegisterPage() {
   const [
     error,
     setError,
-  ] = useState<
-    string | null
-  >(null);
-
+  ] = useState<string | null>(null);
 
   function addStaff() {
-    if (
-      staffMembers.length
-      >= 5
-    ) {
+    if (staffMembers.length >= 5) {
       setError(
         "You can add up to five staff members during onboarding.",
       );
-
       return;
     }
 
-    setStaffMembers(
-      (current) => [
-        ...current,
-        emptyStaff(),
-      ],
-    );
+    setStaffMembers((current) => [
+      ...current,
+      emptyStaff(),
+    ]);
   }
-
 
   function updateStaff(
     index: number,
-    field:
-      keyof StaffRegistration,
+    field: keyof StaffRegistration,
     value: string,
   ) {
-    setStaffMembers(
-      (current) =>
-        current.map(
-          (
-            staff,
-            staffIndex,
-          ) =>
-            staffIndex
-            === index
-              ? {
-                  ...staff,
-                  [field]:
-                    field === "role"
-                      ? (value as StaffRole)
-                      : value,
-                }
-              : staff,
-        ),
+    setStaffMembers((current) =>
+      current.map((staff, staffIndex) =>
+        staffIndex === index
+          ? {
+              ...staff,
+              [field]:
+                field === "role"
+                  ? (value as StaffRole)
+                  : value,
+            }
+          : staff,
+      ),
     );
   }
 
-
-  function removeStaff(
-    index: number,
-  ) {
-    setStaffMembers(
-      (current) =>
-        current.filter(
-          (
-            _,
-            staffIndex,
-          ) =>
-            staffIndex
-            !== index,
-        ),
+  function removeStaff(index: number) {
+    setStaffMembers((current) =>
+      current.filter(
+        (_, staffIndex) =>
+          staffIndex !== index,
+      ),
     );
   }
-
 
   async function handleSubmit(
-    event:
-      FormEvent<HTMLFormElement>,
+    event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
 
     setError(null);
 
-
     if (
-      !institutionName.trim()
-      || !adminName.trim()
-      || !adminEmail.trim()
-      || !adminPassword
+      !institutionName.trim() ||
+      !adminName.trim() ||
+      !adminEmail.trim() ||
+      !adminPassword
     ) {
       setError(
         "Complete all required organization and administrator fields.",
       );
-
       return;
     }
 
-
-    if (
-      adminPassword.length
-      < 8
-    ) {
+    if (adminPassword.length < 8) {
       setError(
         "Administrator password must be at least 8 characters.",
       );
-
       return;
     }
 
-
-    if (
-      adminPassword
-      !== confirmPassword
-    ) {
+    if (adminPassword !== confirmPassword) {
       setError(
         "Administrator passwords do not match.",
       );
-
       return;
     }
-
 
     const incompleteStaff =
       staffMembers.some(
         (staff) =>
-          !staff.name.trim()
-          || !staff.email.trim()
-          || staff.password.length
-            < 8,
+          !staff.name.trim() ||
+          !staff.email.trim() ||
+          staff.password.length < 8,
       );
 
-
-    if (
-      incompleteStaff
-    ) {
+    if (incompleteStaff) {
       setError(
         "Complete every added staff member. Passwords must be at least 8 characters.",
       );
-
       return;
     }
 
-
     setLoading(true);
-
 
     try {
       const response =
-        await registerOrganization(
-          {
-            institution_name:
-              institutionName
-                .trim(),
+        await registerOrganization({
+          institution_name:
+            institutionName.trim(),
 
-            whatsapp_number:
-              whatsappNumber
+          whatsapp_number:
+            whatsappNumber.trim() ||
+            null,
+
+          admin: {
+            name:
+              adminName.trim(),
+
+            email:
+              adminEmail
                 .trim()
-              || null,
+                .toLowerCase(),
 
-            admin: {
-              name:
-                adminName
-                  .trim(),
-
-              email:
-                adminEmail
-                  .trim()
-                  .toLowerCase(),
-
-              password:
-                adminPassword,
-            },
-
-            staff_members:
-              staffMembers.map(
-                (staff) => ({
-                  ...staff,
-
-                  name:
-                    staff.name
-                      .trim(),
-
-                  email:
-                    staff.email
-                      .trim()
-                      .toLowerCase(),
-                }),
-              ),
+            password:
+              adminPassword,
           },
-        );
 
+          staff_members:
+            staffMembers.map(
+              (staff) => ({
+                ...staff,
 
-      saveAuthSession(
-        response,
-      );
+                name:
+                  staff.name.trim(),
 
+                email:
+                  staff.email
+                    .trim()
+                    .toLowerCase(),
+              }),
+            ),
+        });
+
+      saveAuthSession(response);
 
       router.replace(
         "/dashboard/overview",
       );
-
-    } catch (requestError) {
-      console.error(
-        requestError,
-      );
-
+    } catch (requestError: unknown) {
+      console.error(requestError);
 
       if (
-        requestError
-        instanceof AuthApiError
+        requestError instanceof
+        AuthApiError
       ) {
-          const details = requestError.details as {
-            detail?: string;
-          } | undefined;
+        let message =
+          "Organization registration failed.";
 
+        if (
+          typeof requestError.details ===
+            "object" &&
+          requestError.details !== null &&
+          "detail" in
+            requestError.details
+        ) {
+          const detail = (
+            requestError.details as {
+              detail?: unknown;
+            }
+          ).detail;
 
-        setError(
-          details?.detail
-          ?? "Organization registration failed.",
-        );
+          if (
+            typeof detail ===
+            "string"
+          ) {
+            message = detail;
+          }
+        }
 
+        setError(message);
       } else {
         setError(
           "Could not connect to the authentication server.",
         );
       }
-
     } finally {
       setLoading(false);
     }
   }
 
-
   return (
     <main className="min-h-screen bg-slate-950 px-4 py-10 text-white">
-
       <div className="mx-auto max-w-4xl">
-
         <div className="mb-8 text-center">
-
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600">
             <Building2 className="h-6 w-6" />
           </div>
@@ -339,49 +275,37 @@ export default function RegisterPage() {
           </h1>
 
           <p className="mt-2 text-sm text-slate-400">
-            Set up your organization, administrator, and initial staff accounts.
+            Set up your organization,
+            administrator, and initial staff
+            accounts.
           </p>
-
         </div>
 
-
         <form
-          onSubmit={
-            handleSubmit
-          }
+          onSubmit={handleSubmit}
           className="space-y-6"
         >
-
           {error && (
             <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
               {error}
             </div>
           )}
 
-
           <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-
             <h2 className="text-lg font-semibold">
               Institution
             </h2>
 
-
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-
               <label className="space-y-2 sm:col-span-2">
-
                 <span className="text-sm text-slate-300">
                   Institution name *
                 </span>
 
                 <input
                   required
-                  value={
-                    institutionName
-                  }
-                  onChange={(
-                    event,
-                  ) =>
+                  value={institutionName}
+                  onChange={(event) =>
                     setInstitutionName(
                       event.target.value,
                     )
@@ -389,23 +313,16 @@ export default function RegisterPage() {
                   placeholder="Apex Physics Academy"
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
-
               </label>
 
-
               <label className="space-y-2 sm:col-span-2">
-
                 <span className="text-sm text-slate-300">
                   WhatsApp number
                 </span>
 
                 <input
-                  value={
-                    whatsappNumber
-                  }
-                  onChange={(
-                    event,
-                  ) =>
+                  value={whatsappNumber}
+                  onChange={(event) =>
                     setWhatsappNumber(
                       event.target.value,
                     )
@@ -413,53 +330,39 @@ export default function RegisterPage() {
                   placeholder="94771234567"
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
-
               </label>
-
             </div>
-
           </section>
 
-
           <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-
             <h2 className="text-lg font-semibold">
               Administrator
             </h2>
 
             <p className="mt-1 text-sm text-slate-400">
-              This account receives full organization access.
+              This account receives full
+              organization access.
             </p>
 
-
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-
               <label className="space-y-2">
-
                 <span className="text-sm text-slate-300">
                   Full name *
                 </span>
 
                 <input
                   required
-                  value={
-                    adminName
-                  }
-                  onChange={(
-                    event,
-                  ) =>
+                  value={adminName}
+                  onChange={(event) =>
                     setAdminName(
                       event.target.value,
                     )
                   }
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
-
               </label>
 
-
               <label className="space-y-2">
-
                 <span className="text-sm text-slate-300">
                   Email *
                 </span>
@@ -467,24 +370,17 @@ export default function RegisterPage() {
                 <input
                   type="email"
                   required
-                  value={
-                    adminEmail
-                  }
-                  onChange={(
-                    event,
-                  ) =>
+                  value={adminEmail}
+                  onChange={(event) =>
                     setAdminEmail(
                       event.target.value,
                     )
                   }
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
-
               </label>
 
-
               <label className="space-y-2">
-
                 <span className="text-sm text-slate-300">
                   Password *
                 </span>
@@ -493,24 +389,17 @@ export default function RegisterPage() {
                   type="password"
                   minLength={8}
                   required
-                  value={
-                    adminPassword
-                  }
-                  onChange={(
-                    event,
-                  ) =>
+                  value={adminPassword}
+                  onChange={(event) =>
                     setAdminPassword(
                       event.target.value,
                     )
                   }
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
-
               </label>
 
-
               <label className="space-y-2">
-
                 <span className="text-sm text-slate-300">
                   Confirm password *
                 </span>
@@ -519,99 +408,67 @@ export default function RegisterPage() {
                   type="password"
                   minLength={8}
                   required
-                  value={
-                    confirmPassword
-                  }
-                  onChange={(
-                    event,
-                  ) =>
+                  value={confirmPassword}
+                  onChange={(event) =>
                     setConfirmPassword(
                       event.target.value,
                     )
                   }
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
-
               </label>
-
             </div>
-
           </section>
 
-
           <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-
             <div className="flex flex-wrap items-center justify-between gap-4">
-
               <div>
-
                 <div className="flex items-center gap-2">
-
                   <Users className="h-5 w-5 text-blue-400" />
 
                   <h2 className="text-lg font-semibold">
                     Initial staff
                   </h2>
-
                 </div>
 
                 <p className="mt-1 text-sm text-slate-400">
-                  Optional — add up to five staff accounts.
+                  Optional — add up to five
+                  staff accounts.
                 </p>
-
               </div>
-
 
               <button
                 type="button"
-                onClick={
-                  addStaff
-                }
+                onClick={addStaff}
                 disabled={
-                  staffMembers.length
-                  >= 5
+                  staffMembers.length >=
+                  5
                 }
                 className="flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
-
                 Add staff
               </button>
-
             </div>
 
-
-            {staffMembers.length
-            === 0 ? (
-
+            {staffMembers.length === 0 ? (
               <div className="mt-5 rounded-lg border border-dashed border-slate-700 p-6 text-center text-sm text-slate-500">
-                You can skip this and add staff later.
+                You can skip this and add
+                staff later.
               </div>
-
             ) : (
-
               <div className="mt-5 space-y-4">
-
                 {staffMembers.map(
-                  (
-                    staff,
-                    index,
-                  ) => (
-
+                  (staff, index) => (
                     <div
-                      key={
-                        index
-                      }
+                      key={index}
                       className="rounded-xl border border-slate-800 bg-slate-950 p-4"
                     >
-
                       <div className="mb-4 flex items-center justify-between">
-
                         <h3 className="font-medium">
                           Staff member{" "}
                           {index + 1}
                         </h3>
-
 
                         <button
                           type="button"
@@ -624,83 +481,65 @@ export default function RegisterPage() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
-
                       </div>
 
-
                       <div className="grid gap-4 sm:grid-cols-2">
-
                         <input
                           required
                           placeholder="Full name"
-                          value={
-                            staff.name
-                          }
-                          onChange={(
-                            event,
-                          ) =>
+                          value={staff.name}
+                          onChange={(event) =>
                             updateStaff(
                               index,
                               "name",
-                              event.target.value,
+                              event.target
+                                .value,
                             )
                           }
                           className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
                         />
-
 
                         <input
                           required
                           type="email"
                           placeholder="Email"
-                          value={
-                            staff.email
-                          }
-                          onChange={(
-                            event,
-                          ) =>
+                          value={staff.email}
+                          onChange={(event) =>
                             updateStaff(
                               index,
                               "email",
-                              event.target.value,
+                              event.target
+                                .value,
                             )
                           }
                           className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
                         />
-
 
                         <input
                           required
                           type="password"
                           minLength={8}
                           placeholder="Temporary password"
-                          value={
-                            staff.password
-                          }
-                          onChange={(
-                            event,
-                          ) =>
+                          value={staff.password}
+                          onChange={(event) =>
                             updateStaff(
                               index,
                               "password",
-                              event.target.value,
+                              event.target
+                                .value,
                             )
                           }
                           className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
                         />
 
-
                         <select
-                          value={
-                            staff.role
-                          }
-                          onChange={(
-                            event,
-                          ) =>
+                          value={staff.role}
+                          onChange={(event) =>
                             updateStaff(
                               index,
                               "role",
-                              event.target.value,
+                              event.target
+                                .value,
                             )
                           }
                           className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
@@ -717,41 +556,28 @@ export default function RegisterPage() {
                             Admin
                           </option>
                         </select>
-
                       </div>
-
                     </div>
-
                   ),
                 )}
-
               </div>
-
             )}
-
           </section>
-
 
           <button
             type="submit"
-            disabled={
-              loading
-            }
+            disabled={loading}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-medium hover:bg-blue-500 disabled:opacity-50"
           >
-
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin" />
             )}
 
             Create institution
-
           </button>
-
 
           <p className="text-center text-sm text-slate-400">
             Already registered?{" "}
-
             <Link
               href="/login"
               className="font-medium text-blue-400 hover:text-blue-300"
@@ -759,11 +585,8 @@ export default function RegisterPage() {
               Sign in
             </Link>
           </p>
-
         </form>
-
       </div>
-
     </main>
   );
 }
