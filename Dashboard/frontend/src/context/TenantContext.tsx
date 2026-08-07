@@ -78,13 +78,10 @@ export function TenantProvider({
     );
 
 
-  const setTenantId =
-    useCallback(
-      (
-        _nextTenantId:
-          string,
-      ) => {
-        // Tenant is controlled by authentication.
+    const setTenantId = useCallback(
+      (tenantId: string) => {
+        void tenantId;
+
       },
       [],
     );

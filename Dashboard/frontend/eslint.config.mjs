@@ -5,9 +5,19 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+
+  {
+    rules: {
+      /*
+       * Dashboard pages perform initial asynchronous data loading
+       * from effects. This is intentional for the MVP client-side
+       * dashboard.
+       */
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
+
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
