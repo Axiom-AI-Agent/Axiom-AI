@@ -85,6 +85,7 @@ export function ChatPage({
       <WhatsAppShell
         phone={session.phone}
         backendOk={chat.backendOk}
+        fullBleedMobile
         footer={
           <>
             <QuickActions
@@ -111,7 +112,9 @@ export function ChatPage({
           error={chat.error}
         />
       </WhatsAppShell>
-      <DemoProgress state={lifecycle} />
+      <div className="hidden lg:block min-h-0">
+        <DemoProgress state={lifecycle} variant="sidebar" />
+      </div>
     </div>
   );
 }

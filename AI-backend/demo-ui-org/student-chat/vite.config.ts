@@ -9,7 +9,7 @@ const sharedDir = path.resolve(__dirname, "../shared");
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const apiTarget = env.VITE_API_URL || "http://localhost:8000";
+  const apiTarget = env.VITE_API_URL;
 
   return {
     plugins: [react()],
