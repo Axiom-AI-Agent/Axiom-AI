@@ -1,0 +1,11 @@
+ALTER TABLE staff_users
+ADD COLUMN IF NOT EXISTS email TEXT;
+
+ALTER TABLE staff_users
+ADD COLUMN IF NOT EXISTS password_hash TEXT;
+
+ALTER TABLE staff_users
+ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_staff_users_email
+ON staff_users(email);
