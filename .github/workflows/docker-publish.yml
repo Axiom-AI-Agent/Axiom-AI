@@ -46,7 +46,11 @@ jobs:
           host: ${{ secrets.DROPLET_HOST }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script_stop: true
+          command_timeout: 10m
           script: |
+            set -e
             cd ~/Axiom-AI
             git pull origin AI-Backend-dev
             cd AI-backend
