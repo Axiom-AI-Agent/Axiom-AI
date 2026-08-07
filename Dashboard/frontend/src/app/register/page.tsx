@@ -138,10 +138,8 @@ export default function RegisterPage() {
               ? {
                   ...staff,
                   [field]:
-                    field
-                    === "role"
-                      ? value
-                        as StaffRole
+                    field === "role"
+                      ? (value as StaffRole)
                       : value,
                 }
               : staff,
@@ -303,12 +301,9 @@ export default function RegisterPage() {
         requestError
         instanceof AuthApiError
       ) {
-        const details =
-          requestError.details
-          as {
+          const details = requestError.details as {
             detail?: string;
-          }
-          | undefined;
+          } | undefined;
 
 
         setError(

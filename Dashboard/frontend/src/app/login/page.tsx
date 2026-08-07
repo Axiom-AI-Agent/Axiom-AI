@@ -102,12 +102,9 @@ export default function LoginPage() {
         requestError
         instanceof AuthApiError
       ) {
-        const details =
-          requestError.details
-          as {
-            detail?: string;
-          }
-          | undefined;
+          const details = requestError.details as
+            | { detail?: string }
+            | undefined;
 
         setError(
           details?.detail
