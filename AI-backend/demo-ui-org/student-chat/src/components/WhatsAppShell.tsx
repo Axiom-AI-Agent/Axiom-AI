@@ -1,6 +1,6 @@
 import { MoreVertical, Phone, Wifi, WifiOff } from "lucide-react";
 import clsx from "clsx";
-import { TENANT_NAME, TENANT_SHORT } from "@shared/constants";
+import { TENANT_NAME, TENANT_SHORT } from "@/shared/constants";
 import type { ReactNode } from "react";
 
 interface Props {

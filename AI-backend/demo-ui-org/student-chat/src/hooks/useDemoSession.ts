@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { DemoSession } from "@/types";
-import { ENROLLED_DEMO_PHONE, SESSION_STORAGE_KEY, TENANT_ID } from "@shared/constants";
+import { ENROLLED_DEMO_PHONE, SESSION_STORAGE_KEY, TENANT_ID } from "@/shared/constants";
 
 function generatePhone(): string {
   const suffix = Math.floor(Math.random() * 10000)

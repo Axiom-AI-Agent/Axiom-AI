@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Check } from "lucide-react";
-import { LIFECYCLE_STEPS, type LifecycleState } from "@shared/lifecycle";
+import { LIFECYCLE_STEPS, type LifecycleState } from "@/shared/lifecycle";
 
 interface Props {
   state: LifecycleState;

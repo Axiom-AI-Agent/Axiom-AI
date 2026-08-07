@@ -6,12 +6,12 @@ import { QuickActions } from "@/components/QuickActions";
 import { WhatsAppShell } from "@/components/WhatsAppShell";
 import { useChat } from "@/hooks/useChat";
 import type { DemoSession } from "@/types";
-import { PAYMENT_SLIP_PATH } from "@shared/constants";
+import { PAYMENT_SLIP_PATH } from "@/shared/constants";
 import {
   detectLifecycleProgress,
   emptyLifecycle,
   type LifecycleState,
-} from "@shared/lifecycle";
+} from "@/shared/lifecycle";
 
 interface Props {
   session: DemoSession;

@@ -5,7 +5,6 @@ import path from "node:path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const srcDir = path.resolve(__dirname, "src");
-const sharedDir = path.resolve(__dirname, "../shared");
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -16,7 +15,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": srcDir,
-        "@shared": sharedDir,
       },
     },
     server: {

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import type { UIMessage } from "@/types";
 import { MessageBubble } from "./MessageBubble";
 import { TypingIndicator } from "./TypingIndicator";
-import { WELCOME_HINT } from "@shared/constants";
+import { WELCOME_HINT } from "@/shared/constants";
 
 interface Props {
   messages: UIMessage[];

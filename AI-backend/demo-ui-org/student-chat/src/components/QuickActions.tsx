@@ -1,5 +1,5 @@
 import { ImageIcon } from "lucide-react";
-import { QUICK_ACTIONS, ENROLLED_DEMO_PHONE } from "@shared/constants";
+import { QUICK_ACTIONS, ENROLLED_DEMO_PHONE } from "@/shared/constants";
 
 interface Props {
   disabled?: boolean;

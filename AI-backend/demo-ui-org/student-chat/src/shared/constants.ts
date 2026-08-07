@@ -25,4 +25,4 @@ export const QUICK_ACTIONS = [
 ] as const;
 
 export const WELCOME_HINT =
-  "New student demo — tap a quick action or type a message. Use Enrolled student for Amaya (seed data), or Reset Demo for a fresh phone.";
+  "New student demo — tap a quick action or type a message. Use Enrolled student for Amaya (seed data), or Reset Demo for a fresh phone."

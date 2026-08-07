@@ -3,8 +3,8 @@ import { RotateCcw } from "lucide-react";
 import { ChatPage, emptyLifecycle } from "@/pages/ChatPage";
 import { DemoProgress } from "@/components/DemoProgress";
 import { useDemoSession } from "@/hooks/useDemoSession";
-import { TENANT_NAME } from "@shared/constants";
-import type { LifecycleState } from "@shared/lifecycle";
+import { TENANT_NAME } from "@/shared/constants";
+import type { LifecycleState } from "@/shared/lifecycle";
 
 export default function App() {
   const { session, resetDemo, useEnrolledStudent } = useDemoSession();
