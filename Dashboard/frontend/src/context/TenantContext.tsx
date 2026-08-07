@@ -5,89 +5,125 @@ import {
   ReactNode,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
 } from "react";
 
-import { listTenants, TenantSummary } from "@/lib/api";
 import {
-  AVAILABLE_TENANTS,
+  useAuth,
+} from "@/context/AuthContext";
+
+import {
   getTenantId,
-  setTenantId as persistTenantId,
 } from "@/lib/tenant";
+
 
 export interface TenantOption {
   id: string;
   label: string;
 }
 
+
 interface TenantContextValue {
   tenantId: string;
-  setTenantId: (tenantId: string) => void;
-  tenants: TenantOption[];
-  refreshTenants: () => Promise<void>;
+
+  setTenantId:
+    (tenantId: string)
+      => void;
+
+  tenants:
+    TenantOption[];
+
+  refreshTenants:
+    () => Promise<void>;
 }
 
-const TenantContext = createContext<TenantContextValue | null>(null);
 
-function toTenantOptions(rows: TenantSummary[]): TenantOption[] {
-  return rows.map((tenant) => ({
-    id: tenant.id,
-    label: tenant.name,
-  }));
-}
+const TenantContext =
+  createContext<
+    TenantContextValue | null
+  >(null);
 
-export function TenantProvider({ children }: { children: ReactNode }) {
-  const [tenantId, setTenantIdState] = useState(getTenantId);
-  const [tenants, setTenants] = useState<TenantOption[]>(
-    AVAILABLE_TENANTS.map((tenant) => ({
-      id: tenant.id,
-      label: tenant.label,
-    })),
-  );
 
-  const refreshTenants = useCallback(async () => {
-    try {
-      const rows = await listTenants();
-      if (rows.length > 0) {
-        setTenants(toTenantOptions(rows));
-      }
-    } catch (requestError) {
-      console.error("Could not load tenant list:", requestError);
-    }
-  }, []);
+export function TenantProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const {
+    user,
+  } = useAuth();
 
-  useEffect(() => {
-    setTenantIdState(getTenantId());
-    void refreshTenants();
-  }, [refreshTenants]);
 
-  const setTenantId = useCallback((nextTenantId: string) => {
-    persistTenantId(nextTenantId);
-    setTenantIdState(nextTenantId);
-  }, []);
+  const tenantId =
+    user?.tenant_id
+    ?? getTenantId();
 
-  const value = useMemo(
-    () => ({
-      tenantId,
-      setTenantId,
-      tenants,
-      refreshTenants,
-    }),
-    [tenantId, setTenantId, tenants, refreshTenants],
-  );
+
+  const tenants =
+    useMemo(
+      () => [
+        {
+          id: tenantId,
+
+          label:
+            user
+              ?.institution_name
+            ?? "Axiom AI",
+        },
+      ],
+      [
+        tenantId,
+        user,
+      ],
+    );
+
+
+  const setTenantId =
+    useCallback(
+      (
+        _nextTenantId:
+          string,
+      ) => {
+        // Tenant is controlled by authentication.
+      },
+      [],
+    );
+
+
+  const refreshTenants =
+    useCallback(
+      async () => {
+        return;
+      },
+      [],
+    );
+
 
   return (
-    <TenantContext.Provider value={value}>{children}</TenantContext.Provider>
+    <TenantContext.Provider
+      value={{
+        tenantId,
+        setTenantId,
+        tenants,
+        refreshTenants,
+      }}
+    >
+      {children}
+    </TenantContext.Provider>
   );
 }
 
+
 export function useTenant() {
-  const context = useContext(TenantContext);
+  const context =
+    useContext(
+      TenantContext,
+    );
 
   if (!context) {
-    throw new Error("useTenant must be used within TenantProvider");
+    throw new Error(
+      "useTenant must be used within TenantProvider",
+    );
   }
 
   return context;

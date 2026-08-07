@@ -1,4 +1,8 @@
 import { getTenantId } from "./tenant";
+import {
+  clearAuthSession,
+  getAccessToken,
+} from "./auth";
 
 const DASHBOARD_API_URL =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
@@ -36,9 +40,18 @@ async function request<T>(
     url.searchParams.set("tenant_id", tenant);
   }
 
-  const headers: Record<string, string> = {
-    "X-Tenant-ID": tenant,
-  };
+  const token =
+    getAccessToken();
+
+  const headers:
+    Record<string, string> = {
+      "X-Tenant-ID": tenant,
+    };
+
+  if (token) {
+    headers.Authorization =
+      `Bearer ${token}`;
+  }
 
   if (hasBody && !isFormData) {
     headers["Content-Type"] = "application/json";
@@ -52,6 +65,19 @@ async function request<T>(
       ...(options.headers as Record<string, string> | undefined),
     },
   });
+    if (
+    response.status === 401
+  ) {
+    clearAuthSession();
+
+    if (
+      typeof window
+      !== "undefined"
+    ) {
+      window.location.href =
+        "/login";
+    }
+  }
 
   if (!response.ok) {
     let details: unknown;
