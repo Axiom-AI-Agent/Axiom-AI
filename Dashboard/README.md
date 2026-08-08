@@ -26,6 +26,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
+
 Environment: loads `SUPABASE_DB_URL` from the first file found:
 
 1. `Dashboard/backend/.env`

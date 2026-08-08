@@ -351,6 +351,16 @@ Here are the files I found for "{query}":
 {file_list}
 """
 
+_RESOURCE_RAG_ERROR_FALLBACK = (
+    "Sorry — I couldn't search the tutor notes right now. "
+    "Please try again in a moment or ask your tutor directly."
+)
+
+_RESOURCE_DRIVE_ERROR_FALLBACK = (
+    "Sorry — I couldn't search for files right now. "
+    "Please try again in a moment or contact your tuition centre."
+)
+
 _PAYMENT_STUB_FALLBACK = """\
 Got your payment message — I'll help get that verified with the team at {tenant_name}.
 """
@@ -479,7 +489,7 @@ def build_resource_rag_reply(
     error: str | None = None,
 ) -> str:
     if error:
-        return f"Sorry — I couldn't search the tutor notes right now. ({error})"
+        return _RESOURCE_RAG_ERROR_FALLBACK
     if not answer:
         return "I couldn't find relevant tutor notes for that. Try rephrasing or ask your tutor directly."
     cite_parts = []
@@ -508,7 +518,7 @@ def build_resource_drive_reply(
     empty_message: str | None = None,
 ) -> str:
     if error:
-        return f"Sorry — I couldn't search Drive for {tenant_name}. ({error})"
+        return _RESOURCE_DRIVE_ERROR_FALLBACK
     if not files:
         return empty_message or f"I couldn't find any files matching '{query}'. Try a different search term."
     lines = []

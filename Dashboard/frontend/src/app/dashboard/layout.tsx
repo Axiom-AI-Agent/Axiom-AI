@@ -1,6 +1,5 @@
 "use client";
 
-import "@/app/globals.css";
 
 import {
   ReactNode,

@@ -10,57 +10,46 @@ import type {
   RegisterOrganizationPayload,
 } from "@/types/auth";
 
-
 const API_URL =
-  process.env
-    .NEXT_PUBLIC_API_URL
-    ?.replace(/\/$/, "")
-  ?? "http://127.0.0.1:8001";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
+  "http://127.0.0.1:8001";
 
+export class AuthApiError extends Error {
+  status: number;
+  details?: unknown;
 
-export class AuthApiError
-  extends Error {
   constructor(
     message: string,
-    public status: number,
-    public details?: unknown,
+    status: number,
+    details?: unknown,
   ) {
     super(message);
 
-    this.name =
-      "AuthApiError";
+    this.name = "AuthApiError";
+    this.status = status;
+    this.details = details;
   }
 }
-
 
 async function authRequest<T>(
   path: string,
   options: RequestInit,
 ): Promise<T> {
-  const response =
-    await fetch(
-      `${API_URL}${path}`,
-      {
-        ...options,
-
-        headers: {
-          "Content-Type":
-            "application/json",
-
-          ...options.headers,
-        },
-      },
-    );
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
 
   if (!response.ok) {
     let details: unknown;
 
     try {
-      details =
-        await response.json();
+      details = await response.json();
     } catch {
-      details =
-        await response.text();
+      details = await response.text();
     }
 
     throw new AuthApiError(
@@ -70,46 +59,31 @@ async function authRequest<T>(
     );
   }
 
-  return response.json()
-    as Promise<T>;
-}
+  const data: T = await response.json();
 
+  return data;
+}
 
 export function loginStaff(
   payload: LoginPayload,
 ): Promise<AuthResponse> {
-  return authRequest<AuthResponse>(
-    "/auth/login",
-    {
-      method: "POST",
-      body: JSON.stringify(
-        payload,
-      ),
-    },
-  );
+  return authRequest<AuthResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
-
 
 export function registerOrganization(
-  payload:
-    RegisterOrganizationPayload,
+  payload: RegisterOrganizationPayload,
 ): Promise<AuthResponse> {
-  return authRequest<AuthResponse>(
-    "/auth/register",
-    {
-      method: "POST",
-      body: JSON.stringify(
-        payload,
-      ),
-    },
-  );
+  return authRequest<AuthResponse>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
-
-export async function getMe():
-  Promise<AuthUser> {
-  const token =
-    getAccessToken();
+export async function getMe(): Promise<AuthUser> {
+  const token = getAccessToken();
 
   if (!token) {
     throw new AuthApiError(
@@ -118,21 +92,17 @@ export async function getMe():
     );
   }
 
-  const response =
-    await fetch(
-      `${API_URL}/auth/me`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${token}`,
-        },
-        cache: "no-store",
+  const response = await fetch(
+    `${API_URL}/auth/me`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+      cache: "no-store",
+    },
+  );
 
-  if (
-    response.status === 401
-  ) {
+  if (response.status === 401) {
     clearAuthSession();
 
     throw new AuthApiError(
@@ -148,6 +118,7 @@ export async function getMe():
     );
   }
 
-  return response.json()
-    as Promise<AuthUser>;
+  const user: AuthUser = await response.json();
+
+  return user;
 }
