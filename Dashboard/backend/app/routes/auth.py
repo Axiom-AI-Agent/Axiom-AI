@@ -1,6 +1,8 @@
 import os
 
-from app.models import StaffUser
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
 from app.services.auth_service import hash_password
 
 from fastapi import (
@@ -183,46 +185,123 @@ def me(
         ),
     )
 
-@router.post("/bootstrap-demo-physics")
-def bootstrap_demo_physics(
-    bootstrap_key: str,
-    db: Session = Depends(get_db),
-):
-    expected_key = os.getenv("DEMO_BOOTSTRAP_KEY")
+    @router.post("/bootstrap-demo-physics")
+    def bootstrap_demo_physics(
+        bootstrap_key: str,
+        db: Session = Depends(get_db),
+    ):
+        expected_key = os.getenv("DEMO_BOOTSTRAP_KEY")
 
-    if not expected_key or bootstrap_key != expected_key:
-        raise HTTPException(
-            status_code=403,
-            detail="Invalid bootstrap key",
-        )
+        if not expected_key or bootstrap_key != expected_key:
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid bootstrap key",
+            )
 
-    staff = (
-        db.query(StaffUser)
-        .filter(
-            StaffUser.id == "staff-physics-001",
-            StaffUser.tenant_id == "tenant-demo-physics",
-        )
-        .first()
-    )
+        try:
+            # Bring the old demo staff table up to the auth schema.
+            db.execute(
+                text(
+                    """
+                    ALTER TABLE staff_users
+                    ADD COLUMN IF NOT EXISTS email TEXT
+                    """
+                )
+            )
 
-    if staff is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Demo Physics admin not found",
-        )
+            db.execute(
+                text(
+                    """
+                    ALTER TABLE staff_users
+                    ADD COLUMN IF NOT EXISTS password_hash TEXT
+                    """
+                )
+            )
 
-    staff.email = "demo.physics@axiom.ai"
-    staff.password_hash = hash_password(
-        "DemoPhysics123!"
-    )
-    staff.is_active = True
+            db.execute(
+                text(
+                    """
+                    ALTER TABLE staff_users
+                    ADD COLUMN IF NOT EXISTS is_active BOOLEAN
+                    NOT NULL DEFAULT TRUE
+                    """
+                )
+            )
 
-    db.commit()
-    db.refresh(staff)
+            db.execute(
+                text(
+                    """
+                    CREATE UNIQUE INDEX IF NOT EXISTS
+                    idx_staff_users_email
+                    ON staff_users(email)
+                    """
+                )
+            )
 
-    return {
-        "ok": True,
-        "tenant_id": staff.tenant_id,
-        "staff_id": staff.id,
-        "email": staff.email,
-    }
+            password_hash = hash_password(
+                "DemoPhysics123!"
+            )
+
+            result = db.execute(
+                text(
+                    """
+                    UPDATE staff_users
+                    SET
+                        email = :email,
+                        password_hash = :password_hash,
+                        is_active = TRUE
+                    WHERE id = :staff_id
+                    AND tenant_id = :tenant_id
+                    RETURNING
+                        id,
+                        tenant_id,
+                        name,
+                        email,
+                        role,
+                        is_active
+                    """
+                ),
+                {
+                    "email": "demo.physics@axiom.ai",
+                    "password_hash": password_hash,
+                    "staff_id": "staff-physics-001",
+                    "tenant_id": "tenant-demo-physics",
+                },
+            )
+
+            staff = result.mappings().first()
+
+            if staff is None:
+                db.rollback()
+
+                raise HTTPException(
+                    status_code=404,
+                    detail=(
+                        "Demo Physics admin was not found. "
+                        "The demo seed may not exist in this database."
+                    ),
+                )
+
+            db.commit()
+
+            return {
+                "ok": True,
+                "tenant_id": staff["tenant_id"],
+                "staff_id": staff["id"],
+                "name": staff["name"],
+                "email": staff["email"],
+                "role": str(staff["role"]),
+                "is_active": staff["is_active"],
+            }
+
+        except HTTPException:
+            raise
+
+        except Exception as error:
+            db.rollback()
+
+            # TEMPORARY debugging detail for hackathon setup.
+            raise HTTPException(
+                status_code=500,
+                detail=f"Bootstrap failed: {str(error)}",
+            ) from error
