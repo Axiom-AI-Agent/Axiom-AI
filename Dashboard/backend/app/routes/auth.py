@@ -1,10 +1,5 @@
 import os
 
-from sqlalchemy import text
-from sqlalchemy.orm import Session
-
-from app.services.auth_service import hash_password
-
 from fastapi import (
     APIRouter,
     Depends,
@@ -12,7 +7,11 @@ from fastapi import (
     status,
 )
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
+
+from app.database.session import get_db
+from app.services.auth_service import hash_password
 
 from app.database.session import (
     get_db,
