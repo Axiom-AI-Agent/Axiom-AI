@@ -1,3 +1,8 @@
+import os
+
+from app.models import StaffUser
+from app.services.auth_service import hash_password
+
 from fastapi import (
     APIRouter,
     Depends,
@@ -177,3 +182,47 @@ def me(
             current_staff.created_at
         ),
     )
+
+@router.post("/bootstrap-demo-physics")
+def bootstrap_demo_physics(
+    bootstrap_key: str,
+    db: Session = Depends(get_db),
+):
+    expected_key = os.getenv("DEMO_BOOTSTRAP_KEY")
+
+    if not expected_key or bootstrap_key != expected_key:
+        raise HTTPException(
+            status_code=403,
+            detail="Invalid bootstrap key",
+        )
+
+    staff = (
+        db.query(StaffUser)
+        .filter(
+            StaffUser.id == "staff-physics-001",
+            StaffUser.tenant_id == "tenant-demo-physics",
+        )
+        .first()
+    )
+
+    if staff is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Demo Physics admin not found",
+        )
+
+    staff.email = "demo.physics@axiom.ai"
+    staff.password_hash = hash_password(
+        "DemoPhysics123!"
+    )
+    staff.is_active = True
+
+    db.commit()
+    db.refresh(staff)
+
+    return {
+        "ok": True,
+        "tenant_id": staff.tenant_id,
+        "staff_id": staff.id,
+        "email": staff.email,
+    }
