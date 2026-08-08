@@ -89,7 +89,7 @@ class RagTool:
             )
         except Exception as exc:
             logger.exception("kb_search failed for tenant={}: {}", tenant_id, exc)
-            return json.dumps({"ok": False, "error": str(exc)})
+            return json.dumps({"ok": False, "error": "search_unavailable"})
 
     def kb_ingest_status(self, *, tenant_id: str) -> str:
         if not tenant_id:

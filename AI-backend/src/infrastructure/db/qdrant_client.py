@@ -43,6 +43,7 @@ def ensure_collection(
     client = get_qdrant_client()
     existing = [c.name for c in client.get_collections().collections]
     if collection_name in existing:
+        ensure_class_id_index(tenant_id=tenant_id)
         return collection_name
     client.create_collection(
         collection_name=collection_name,
@@ -147,6 +148,7 @@ def search_chunks(
     if class_ids:
         allowed = [cid.strip() for cid in class_ids if cid and cid.strip()]
         if allowed:
+            ensure_class_id_index(tenant_id=tenant_id)
             query_filter = Filter(
                 must=[FieldCondition(key="class_id", match=MatchAny(any=allowed))]
             )

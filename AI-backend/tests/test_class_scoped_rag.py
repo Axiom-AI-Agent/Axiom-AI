@@ -64,10 +64,14 @@ async def test_resource_agent_blocks_enrolled_without_class_ids():
 @patch("infrastructure.db.qdrant_client.get_qdrant_client")
 def test_search_chunks_applies_class_id_filter(mock_get_client):
     from infrastructure.db.qdrant_client import search_chunks
+    from infrastructure.config import qdrant_collection_for_tenant
 
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client
     mock_client.query_points.return_value = MagicMock(points=[])
+    collection = MagicMock()
+    collection.name = qdrant_collection_for_tenant("tenant-demo-physics")
+    mock_client.get_collections.return_value = MagicMock(collections=[collection])
 
     search_chunks(
         tenant_id="tenant-demo-physics",
@@ -77,6 +81,26 @@ def test_search_chunks_applies_class_id_filter(mock_get_client):
 
     call_kwargs = mock_client.query_points.call_args.kwargs
     assert call_kwargs["query_filter"] is not None
+    mock_client.create_payload_index.assert_called_once()
+    index_kwargs = mock_client.create_payload_index.call_args.kwargs
+    assert index_kwargs["field_name"] == "class_id"
+    assert index_kwargs["field_schema"] == "keyword"
+
+
+@patch("infrastructure.db.qdrant_client.get_qdrant_client")
+def test_search_chunks_skips_class_id_index_without_filter(mock_get_client):
+    from infrastructure.db.qdrant_client import search_chunks
+
+    mock_client = MagicMock()
+    mock_get_client.return_value = mock_client
+    mock_client.query_points.return_value = MagicMock(points=[])
+
+    search_chunks(
+        tenant_id="tenant-demo-physics",
+        query_vector=[0.1, 0.2],
+    )
+
+    mock_client.create_payload_index.assert_not_called()
 
 
 def test_kb_search_forwards_class_ids_to_rag_service():
