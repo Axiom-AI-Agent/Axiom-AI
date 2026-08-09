@@ -154,8 +154,7 @@ export default function LoginPage() {
             void handleDemoLogin()
           }
           disabled={busy}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 font-medium text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"        >
           {demoLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
