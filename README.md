@@ -26,7 +26,7 @@ Axiom AI is an intelligent tutoring system built on a modern AI architecture des
 - [MCP Servers (Tool Layer)](#-mcp-servers-tool-layer)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
+- [Instructions and Running](#-instructions-and-running)
 - [Deployment](#-deployment)
 - [CI/CD Pipeline](#-cicd-pipeline)
 - [Configuration](#-configuration)
@@ -232,9 +232,19 @@ Axiom-AI/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Instructions and Running
 
-### Prerequisites
+### Live Demos & Links
+
+- **Chat Demo UI**: [https://axiom-ai-nine-blue.vercel.app](https://axiom-ai-nine-blue.vercel.app)
+- **Dashboard**: [https://axiom-dashboard-xi.vercel.app](https://axiom-dashboard-xi.vercel.app)
+- **API Backend**: [https://axiom.178.128.17.103.sslip.io](https://axiom.178.128.17.103.sslip.io)
+
+---
+
+### Running the System Locally
+
+#### Prerequisites
 
 | Tool | Version |
 |------|---------|
@@ -244,7 +254,7 @@ Axiom-AI/
 
 ---
 
-### Backend (AI Agents & MCP)
+#### 1. Backend (AI Agents & MCP)
 
 ```bash
 cd AI-backend
@@ -255,7 +265,7 @@ make init-db
 make run               # Runs on http://localhost:8000
 ```
 
-### Dashboard Backend
+#### 2. Dashboard Backend
 
 ```bash
 cd Dashboard/backend
@@ -265,7 +275,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8001
 ```
 
-### Dashboard Frontend
+#### 3. Dashboard Frontend
 
 ```bash
 cd Dashboard/frontend
@@ -273,7 +283,7 @@ npm install
 npm run dev            # Runs on http://localhost:3000
 ```
 
-### Student Chat Demo UI
+#### 4. Student Chat Demo UI
 
 ```bash
 cd AI-backend
