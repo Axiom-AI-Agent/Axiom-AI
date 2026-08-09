@@ -10,6 +10,7 @@ import {
   Inbox,
   LayoutDashboard,
   MessageSquare,
+  ScrollText,
   Settings,
   Users,
   X,
@@ -55,6 +56,11 @@ const mainNavItems: NavItem[] = [
     icon: <Users className="h-5 w-5" />,
   },
   {
+    href: "/dashboard/logs",
+    label: "Logs",
+    icon: <ScrollText className="h-5 w-5" />,
+  },
+  {
     href: "/dashboard/ingest",
     label: "Ingest",
     icon: <FileUp className="h-5 w-5" />,
@@ -77,9 +83,7 @@ export default function Sidebar({
     <aside
       className={cn(
         "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-slate-200 bg-white p-4 text-slate-700 transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 lg:relative",
-        isOpen
-          ? "translate-x-0"
-          : "-translate-x-full",
+        isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:flex lg:translate-x-0",
       )}
     >
@@ -139,9 +143,7 @@ export default function Sidebar({
           className={cn(
             "flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ease-in-out",
             pathname === settingsNavItem.href ||
-              pathname?.startsWith(
-                `${settingsNavItem.href}/`,
-              )
+              pathname?.startsWith(`${settingsNavItem.href}/`)
               ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
               : "hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-slate-800/50 dark:hover:text-white",
           )}
