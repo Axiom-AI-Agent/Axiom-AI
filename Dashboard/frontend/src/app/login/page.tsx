@@ -167,7 +167,7 @@ export default function LoginPage() {
         </button>
 
         <p className="mt-2 text-center text-xs text-slate-500">
-          Opens the preconfigured Demo Physics dashboard.
+          Click to open the preconfigured Demo Physics dashboard.
         </p>
 
         <div className="my-6 flex items-center gap-3">
