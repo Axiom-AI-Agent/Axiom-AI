@@ -68,3 +68,94 @@ async def test_resource_agent_rag_path():
     result = await agent.run(state)
     assert result.sub_path == "rag"
     assert "velocity" in result.answer.lower()
+
+
+class FakeLowConfidenceRag:
+    async def kb_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        class_ids: list[str]
+        | None = None,
+    ) -> dict[str, Any]:
+        return {
+            "ok": True,
+            "answer": "",
+            "citations": [
+                {
+                    "title":
+                        "Weak match",
+                    "score": 0.38,
+                }
+            ],
+            "num_docs": 1,
+        }
+
+
+class FakeCrm:
+    def __init__(self):
+        self.calls = []
+
+    async def create_escalation(
+        self,
+        **kwargs,
+    ):
+        self.calls.append(kwargs)
+
+        return {
+            "ok": True,
+            "escalation": {
+                "id": "esc-low-rag-1",
+            },
+        }
+
+
+@pytest.mark.asyncio
+async def test_resource_agent_escalates_low_confidence_rag():
+    crm = FakeCrm()
+
+    agent = ResourceAgent(
+        drive=FakeDrive(),
+        rag=FakeLowConfidenceRag(),
+        crm=crm,
+    )
+
+    state = {
+        "tenant_id":
+            "tenant-demo-physics",
+        "student_id": "stu-1",
+        "user_id": "stu-1",
+        "tenant_name":
+            "Demo Physics",
+        "is_enrolled": True,
+        "enrolled_class_ids": [
+            "class-physics-al-2026",
+        ],
+        "messages": [
+            HumanMessage(
+                content=(
+                    "Explain something "
+                    "not in the notes"
+                )
+            )
+        ],
+    }
+
+    result = await agent.run(
+        state
+    )
+
+    assert crm.calls
+
+    assert (
+        crm.calls[0][
+            "reason_code"
+        ]
+        == "low_rag_confidence"
+    )
+
+    assert (
+        "tutor"
+        in result.answer.lower()
+    )

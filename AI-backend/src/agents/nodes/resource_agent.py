@@ -15,7 +15,18 @@ from agents.prompts.agent_prompts import (
     build_resource_rag_reply,
     get_resource_not_enrolled_reply,
 )
+
+from agents.nodes.crm_client import (
+    CrmClient,
+    DirectCrmClient,
+)
 from agents.state import AgentState
+from domain.escalation_reasons import (
+    LOW_RAG_CONFIDENCE,
+)
+from domain.escalation_reasons import (
+    LOW_RAG_CONFIDENCE,
+)
 
 ResourceSubPath = Literal["drive", "rag"]
 
@@ -183,9 +194,11 @@ class ResourceAgent:
         *,
         drive: DriveClient,
         rag: RagClient,
+        crm: CrmClient | None = None,
     ) -> None:
         self.drive = drive
         self.rag = rag
+        self.crm = crm or DirectCrmClient()
 
     async def run(self, state: AgentState) -> ResourceAgentResult:
         tenant_id = state.get("tenant_id") or ""
@@ -230,22 +243,110 @@ class ResourceAgent:
                 answer=answer,
                 tool_output="\n".join(tool_log),
                 sub_path="drive",
-            )
-
+                    )
         result = await self.rag.kb_search(
             tenant_id=tenant_id,
             query=user_message,
             class_ids=enrolled_class_ids,
         )
-        tool_log.append(f"kb_search: ok={result.get('ok')}")
+
+        tool_log.append(
+            f"kb_search: ok={result.get('ok')}"
+        )
+
+        citations = (
+            result.get("citations")
+            or []
+        )
+
+        num_docs = int(
+            result.get("num_docs")
+            or 0
+        )
+
+        scores = [
+            float(citation.get("score"))
+            for citation in citations
+            if citation.get("score")
+            is not None
+        ]
+
+        best_score = (
+            max(scores)
+            if scores
+            else 0.0
+        )
+
+        low_confidence = (
+            not result.get("ok")
+            or num_docs == 0
+            or best_score
+            < RETRIEVAL_ESCALATION_THRESHOLD
+        )
+
+        if low_confidence:
+            student_id = (
+                state.get("user_id")
+                or state.get("student_id")
+                or ""
+            )
+
+            tool_log.append(
+                "rag_confidence: "
+                f"docs={num_docs}, "
+                f"best_score={best_score:.3f}, "
+                f"threshold="
+                f"{RETRIEVAL_ESCALATION_THRESHOLD}"
+            )
+
+            if tenant_id and student_id:
+                escalation = (
+                    await self.crm.create_escalation(
+                        tenant_id=tenant_id,
+                        student_id=student_id,
+                        reason_code=(
+                            LOW_RAG_CONFIDENCE
+                        ),
+                        student_message=(
+                            user_message
+                            or None
+                        ),
+                    )
+                )
+
+                tool_log.append(
+                    "create_escalation: "
+                    f"ok={escalation.get('ok')}"
+                )
+
+            return ResourceAgentResult(
+                answer=(
+                    "I couldn't find enough reliable "
+                    "information in your tutor's notes "
+                    "to answer that confidently. "
+                    "I've sent this to your tutor "
+                    "for review."
+                ),
+                tool_output="\n".join(
+                    tool_log
+                ),
+                sub_path="rag",
+            )
+
         answer = build_resource_rag_reply(
-            answer=result.get("answer", ""),
-            citations=result.get("citations") or [],
+            answer=result.get(
+                "answer",
+                "",
+            ),
+            citations=citations,
             error=result.get("error"),
         )
+
         return ResourceAgentResult(
             answer=answer,
-            tool_output="\n".join(tool_log),
+            tool_output="\n".join(
+                tool_log
+            ),
             sub_path="rag",
         )
 
@@ -266,6 +367,7 @@ async def run_resource_agent(
     *,
     drive: DriveClient | None = None,
     rag: RagClient | None = None,
+    crm: CrmClient | None = None,
 ) -> dict[str, Any]:
     from infrastructure.config import ALLOW_INPROCESS_TOOLS
 
@@ -282,7 +384,7 @@ async def run_resource_agent(
             )
         rag = DirectRagClient()
 
-    agent = ResourceAgent(drive=drive, rag=rag)
+    agent = ResourceAgent(drive=drive, rag=rag,crm=crm)
     result = await agent.run(state)
     logger.debug("Resource agent sub_path={} tool_output={}", result.sub_path, result.tool_output[:300])
     return {

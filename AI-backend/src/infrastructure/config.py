@@ -116,6 +116,14 @@ RETRIEVAL_TOP_K = int(_get_nested(_PARAMS, "retrieval", "top_k", default=4))
 RETRIEVAL_SIMILARITY_THRESHOLD = float(
     _get_nested(_PARAMS, "retrieval", "similarity_threshold", default=0.35)
 )
+RETRIEVAL_ESCALATION_THRESHOLD = float(
+    _get_nested(
+        _PARAMS,
+        "retrieval",
+        "escalation_threshold",
+        default=0.45,
+    )
+)
 
 FIXED_CHUNK_SIZE = int(_get_nested(_PARAMS, "chunking", "fixed", "chunk_size", default=800))
 FIXED_CHUNK_OVERLAP = int(_get_nested(_PARAMS, "chunking", "fixed", "chunk_overlap", default=100))
