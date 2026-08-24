@@ -93,21 +93,39 @@ def get_overview(
     }
 
 
-    @router.get(
-        "/analytics",
-        response_model=DashboardAnalyticsResponse,
+@router.get("/summary")
+def get_summary(
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    overview = get_overview(
+        tenant_id=tenant_id,
+        db=db,
     )
-    def get_dashboard_analytics(
-        tenant_id: str = Depends(
-            get_tenant_id
-        ),
-        db: Session = Depends(get_db),
-    ):
-        return build_dashboard_analytics(
-            db,
-            tenant_id=tenant_id,
-        )
 
+    return {
+        "total_students": overview["students"],
+        "pending_payments": overview[
+            "open_payment_receipts"
+        ],
+        "open_escalations": overview[
+            "open_escalations"
+        ],
+    }
+
+
+@router.get(
+    "/analytics",
+    response_model=DashboardAnalyticsResponse,
+)
+def get_dashboard_analytics(
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    return build_dashboard_analytics(
+        db,
+        tenant_id=tenant_id,
+    )
 
 @router.get("/escalations", response_model=EscalationsListResponse)
 def get_dashboard_escalations(
