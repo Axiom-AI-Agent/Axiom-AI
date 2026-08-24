@@ -4,7 +4,24 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models import Enrollment, Escalation, Invoice, Student, SubjectClass
 from app.models.enums import EnrollmentStatus, EscalationStatus, InvoiceStatus
+from collections import defaultdict
+from datetime import datetime, timezone
 
+
+from app.models import (
+    Enrollment,
+    Escalation,
+    Invoice,
+    Student,
+    SubjectClass,
+    STTurn,
+)
+from app.models.enums import (
+    EnrollmentStatus,
+    EscalationStatus,
+    InvoiceStatus,
+    MessageRole,
+)
 
 PAYMENT_REASON_CODES = {"payment_receipt", "enrollment_payment_review"}
 TUTOR_REASON_CODE = "talk_to_tutor"
@@ -221,4 +238,276 @@ def enrich_student(db: Session, student: Student) -> dict:
         "created_at": student.created_at,
         "updated_at": student.updated_at,
         "enrollments": enrollments,
+    }
+
+def build_dashboard_analytics(
+    db: Session,
+    *,
+    tenant_id: str,
+    estimated_minutes_per_deflection: int = 2,
+) -> dict:
+    turns = (
+        db.query(STTurn)
+        .filter(STTurn.tenant_id == tenant_id)
+        .order_by(
+            STTurn.session_id.asc(),
+            STTurn.created_at.asc(),
+        )
+        .all()
+    )
+
+    escalations = (
+        db.query(Escalation)
+        .filter(Escalation.tenant_id == tenant_id)
+        .all()
+    )
+
+    students = (
+        db.query(Student)
+        .filter(Student.tenant_id == tenant_id)
+        .all()
+    )
+
+    students_by_id = {
+        student.id: student
+        for student in students
+    }
+
+    total_messages = len(turns)
+
+    session_ids = {
+        turn.session_id
+        for turn in turns
+        if turn.session_id
+    }
+
+    total_conversations = len(session_ids)
+
+    # Current escalation table does not store session_id.
+    # Student-based proxy is used until exact session-level
+    # escalation attribution is introduced.
+    escalated_student_ids = {
+        escalation.student_id
+        for escalation in escalations
+    }
+
+    sessions_by_student: dict[str, set[str]] = defaultdict(set)
+
+    for turn in turns:
+        if turn.user_id and turn.session_id:
+            sessions_by_student[
+                turn.user_id
+            ].add(turn.session_id)
+
+    escalated_conversation_proxy = sum(
+        len(sessions_by_student.get(student_id, set()))
+        for student_id in escalated_student_ids
+    )
+
+    escalated_conversation_proxy = min(
+        escalated_conversation_proxy,
+        total_conversations,
+    )
+
+    deflected_conversations = max(
+        total_conversations
+        - escalated_conversation_proxy,
+        0,
+    )
+
+    if total_conversations > 0:
+        deflection_rate = round(
+            (
+                deflected_conversations
+                / total_conversations
+            )
+            * 100,
+            1,
+        )
+    else:
+        deflection_rate = 0.0
+
+    # Calculate user -> next assistant latency per session.
+    response_times: list[float] = []
+
+    grouped_turns: dict[str, list[STTurn]] = defaultdict(list)
+
+    for turn in turns:
+        grouped_turns[
+            turn.session_id
+        ].append(turn)
+
+    for session_turns in grouped_turns.values():
+        for index, turn in enumerate(session_turns):
+            if turn.role != MessageRole.USER:
+                continue
+
+            for next_turn in session_turns[
+                index + 1 :
+            ]:
+                if (
+                    next_turn.role
+                    == MessageRole.ASSISTANT
+                ):
+                    if (
+                        turn.created_at
+                        and next_turn.created_at
+                    ):
+                        delta = (
+                            next_turn.created_at
+                            - turn.created_at
+                        ).total_seconds()
+
+                        if delta >= 0:
+                            response_times.append(
+                                delta
+                            )
+
+                    break
+
+                if (
+                    next_turn.role
+                    == MessageRole.USER
+                ):
+                    break
+
+    average_response_seconds = (
+        round(
+            sum(response_times)
+            / len(response_times),
+            2,
+        )
+        if response_times
+        else 0.0
+    )
+
+    total_escalations = len(escalations)
+
+    open_escalations = sum(
+        1
+        for escalation in escalations
+        if escalation.status
+        == EscalationStatus.OPEN
+    )
+
+    resolved_escalations = sum(
+        1
+        for escalation in escalations
+        if escalation.status
+        == EscalationStatus.RESOLVED
+    )
+
+    category_counts: dict[str, int] = defaultdict(int)
+
+    for escalation in escalations:
+        category_counts[
+            escalation.reason_code
+        ] += 1
+
+    escalation_categories = [
+        {
+            "reason_code": reason_code,
+            "count": count,
+        }
+        for reason_code, count
+        in sorted(
+            category_counts.items(),
+            key=lambda item: item[1],
+            reverse=True,
+        )
+    ]
+
+    message_counts: dict[str, int] = defaultdict(int)
+    conversation_counts: dict[str, set[str]] = defaultdict(set)
+    escalation_counts: dict[str, int] = defaultdict(int)
+
+    for turn in turns:
+        message_counts[
+            turn.user_id
+        ] += 1
+
+        if turn.session_id:
+            conversation_counts[
+                turn.user_id
+            ].add(turn.session_id)
+
+    for escalation in escalations:
+        escalation_counts[
+            escalation.student_id
+        ] += 1
+
+    all_student_ids = set(
+        message_counts.keys()
+    ) | set(
+        escalation_counts.keys()
+    )
+
+    student_metrics = []
+
+    for student_id in all_student_ids:
+        student = students_by_id.get(
+            student_id
+        )
+
+        student_metrics.append(
+            {
+                "student_id": student_id,
+                "student_name": (
+                    student.name
+                    if student
+                    else None
+                ),
+                "messages": message_counts.get(
+                    student_id,
+                    0,
+                ),
+                "conversations": len(
+                    conversation_counts.get(
+                        student_id,
+                        set(),
+                    )
+                ),
+                "escalations": escalation_counts.get(
+                    student_id,
+                    0,
+                ),
+            }
+        )
+
+    student_metrics.sort(
+        key=lambda row: (
+            row["messages"],
+            row["conversations"],
+        ),
+        reverse=True,
+    )
+
+    estimated_minutes_saved = (
+        deflected_conversations
+        * estimated_minutes_per_deflection
+    )
+
+    return {
+        "tenant_id": tenant_id,
+        "total_conversations": total_conversations,
+        "total_messages": total_messages,
+        "deflected_conversations": (
+            deflected_conversations
+        ),
+        "deflection_rate": deflection_rate,
+        "average_response_seconds": (
+            average_response_seconds
+        ),
+        "estimated_minutes_saved": (
+            estimated_minutes_saved
+        ),
+        "total_escalations": total_escalations,
+        "open_escalations": open_escalations,
+        "resolved_escalations": (
+            resolved_escalations
+        ),
+        "escalation_categories": (
+            escalation_categories
+        ),
+        "students": student_metrics,
     }

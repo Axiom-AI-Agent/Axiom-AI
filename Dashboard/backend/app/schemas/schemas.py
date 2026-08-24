@@ -158,7 +158,38 @@ class DashboardOverviewResponse(BaseModel):
     students: int
     classes: int
 
+class EscalationCategoryMetric(BaseModel):
+    reason_code: str
+    count: int
 
+
+class StudentAnalyticsMetric(BaseModel):
+    student_id: str
+    student_name: Optional[str] = None
+    messages: int
+    conversations: int
+    escalations: int
+
+
+class DashboardAnalyticsResponse(BaseModel):
+    tenant_id: str
+
+    total_conversations: int
+    total_messages: int
+
+    deflected_conversations: int
+    deflection_rate: float
+
+    average_response_seconds: float
+    estimated_minutes_saved: int
+
+    total_escalations: int
+    open_escalations: int
+    resolved_escalations: int
+
+    escalation_categories: list[EscalationCategoryMetric]
+    students: list[StudentAnalyticsMetric]
+    
 # ---------- Invoices / Payments ----------
 class InvoiceResponse(BaseModel):
     id: str
