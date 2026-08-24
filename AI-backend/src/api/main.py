@@ -10,7 +10,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
-
+from api.rate_limit import (
+    RateLimitMiddleware,
+)
 load_dotenv(override=True)
 
 from agents.prompts import ALL_LANGFUSE_PROMPT_NAMES
@@ -95,7 +97,11 @@ app = FastAPI(
     version="0.7.0",
     lifespan=lifespan,
 )
-
+app.add_middleware(
+    RateLimitMiddleware,
+    default_limit=120,
+    window_seconds=60,
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
