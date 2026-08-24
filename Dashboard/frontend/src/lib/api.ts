@@ -737,6 +737,51 @@ export function updateTenantProfile(
   );
 }
 
+export interface EscalationCategoryMetric {
+  reason_code: string;
+  count: number;
+}
+
+export interface StudentAnalyticsMetric {
+  student_id: string;
+  student_name?: string | null;
+  messages: number;
+  conversations: number;
+  escalations: number;
+}
+
+export interface DashboardAnalytics {
+  tenant_id: string;
+
+  total_conversations: number;
+  total_messages: number;
+
+  deflected_conversations: number;
+  deflection_rate: number;
+
+  average_response_seconds: number;
+  estimated_minutes_saved: number;
+
+  total_escalations: number;
+  open_escalations: number;
+  resolved_escalations: number;
+
+  escalation_categories:
+    EscalationCategoryMetric[];
+
+  students: StudentAnalyticsMetric[];
+}
+
+export function getDashboardAnalytics(
+  tenantId?: string,
+): Promise<DashboardAnalytics> {
+  return dashboardRequest<DashboardAnalytics>(
+    "/dashboard/analytics",
+    {},
+    tenantId,
+  );
+}
+
 /* Class Documents */
 
 export interface ClassDocumentUploadResponse {
