@@ -6,7 +6,9 @@ import json
 import re
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
-
+from infrastructure.config import (
+    RETRIEVAL_ESCALATION_THRESHOLD,
+)
 from langchain_core.messages import AIMessage
 from loguru import logger
 
