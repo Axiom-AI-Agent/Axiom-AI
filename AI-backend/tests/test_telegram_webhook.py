@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from api.main import app
 from domain.enums import ChatChannel
+from services.admissions.onboarding_session_store import get_onboarding_session_store
 from services.messaging.schemas import ChatTurnResult, InboundMessage
 from services.messaging.telegram_handlers import (
     handle_contact_shared,
@@ -138,7 +139,10 @@ async def test_handle_text_calls_shared_pipeline_with_telegram_channel():
     ) as mock_pipeline, patch(
         "services.messaging.telegram_handlers.send_telegram_message",
         new_callable=AsyncMock,
-    ) as mock_send:
+    ) as mock_send, patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
+        new_callable=AsyncMock,
+    ):
         await handle_text_message(
             "tenant-demo-physics",
             555001,
@@ -175,17 +179,89 @@ async def test_handle_text_new_user_requests_contact():
 
 
 @pytest.mark.asyncio
-async def test_handle_contact_links_then_runs_pipeline():
+async def test_handle_text_pending_phone_runs_pipeline():
+    pending = {
+        "id": None,
+        "tenant_id": "tenant-demo-physics",
+        "name": None,
+        "phone": "94771234567",
+    }
+    with patch(
+        "services.messaging.telegram_handlers.resolve_student",
+        new_callable=AsyncMock,
+        return_value=pending,
+    ), patch(
+        "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
+        new_callable=AsyncMock,
+        return_value=PIPELINE_RESULT,
+    ) as mock_pipeline, patch(
+        "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
+        new_callable=AsyncMock,
+    ):
+        await handle_text_message("tenant-demo-physics", 555001, "hi")
+
+    inbound = mock_pipeline.await_args.args[-1]
+    assert inbound.phone == "94771234567"
+    assert inbound.body == "hi"
+
+
+@pytest.mark.asyncio
+async def test_handle_text_passes_enrollment_phrasing_unchanged():
+    pending = {
+        "id": None,
+        "tenant_id": "tenant-demo-physics",
+        "name": None,
+        "phone": "94771234567",
+    }
+    with patch(
+        "services.messaging.telegram_handlers.resolve_student",
+        new_callable=AsyncMock,
+        return_value=pending,
+    ), patch(
+        "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
+        new_callable=AsyncMock,
+        return_value=PIPELINE_RESULT,
+    ) as mock_pipeline, patch(
+        "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
+        new_callable=AsyncMock,
+    ):
+        await handle_text_message(
+            "tenant-demo-physics",
+            555001,
+            "can I sign up for A/L physics this year?",
+        )
+
+    inbound = mock_pipeline.await_args.args[-1]
+    assert inbound.body == "can I sign up for A/L physics this year?"
+
+
+@pytest.mark.asyncio
+async def test_handle_contact_starts_enrollment_for_new_phone():
+    pending = {
+        "id": None,
+        "tenant_id": "tenant-demo-physics",
+        "name": None,
+        "phone": "94771234567",
+    }
     with patch(
         "services.messaging.telegram_handlers.link_telegram_contact",
         new_callable=AsyncMock,
-        return_value=STUDENT,
+        return_value=pending,
     ) as mock_link, patch(
         "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
         new_callable=AsyncMock,
         return_value=PIPELINE_RESULT,
     ) as mock_pipeline, patch(
         "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
         new_callable=AsyncMock,
     ):
         await handle_contact_shared(
@@ -199,6 +275,43 @@ async def test_handle_contact_links_then_runs_pipeline():
     inbound = mock_pipeline.await_args.args[-1]
     assert inbound.channel is ChatChannel.TELEGRAM
     assert inbound.phone == "94771234567"
+    assert inbound.body == ""
+    session = get_onboarding_session_store().get(
+        tenant_id="tenant-demo-physics", phone="94771234567"
+    )
+    assert session is not None and session.active
+    get_onboarding_session_store().clear(
+        tenant_id="tenant-demo-physics", phone="94771234567"
+    )
+
+
+@pytest.mark.asyncio
+async def test_handle_contact_greets_already_enrolled_student():
+    with patch(
+        "services.messaging.telegram_handlers.link_telegram_contact",
+        new_callable=AsyncMock,
+        return_value=STUDENT,
+    ) as mock_link, patch(
+        "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
+        new_callable=AsyncMock,
+        return_value=PIPELINE_RESULT,
+    ) as mock_pipeline, patch(
+        "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
+        new_callable=AsyncMock,
+    ):
+        await handle_contact_shared(
+            "tenant-demo-physics",
+            555001,
+            {"phone_number": "+94771234567", "user_id": 77, "first_name": "Amaya"},
+            {"id": 77, "first_name": "Amaya"},
+        )
+
+    mock_link.assert_awaited_once()
+    inbound = mock_pipeline.await_args.args[-1]
+    assert inbound.body == "Hello"
 
 
 @pytest.mark.asyncio
@@ -217,6 +330,9 @@ async def test_handle_photo_passes_media_url_into_pipeline():
         return_value=PIPELINE_RESULT,
     ) as mock_pipeline, patch(
         "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
         new_callable=AsyncMock,
     ):
         await handle_photo_message(

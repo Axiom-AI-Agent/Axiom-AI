@@ -131,6 +131,16 @@ class IdentityResolver:
             )
 
         enrollments = self._lookup_enrollments(tenant_id, student["id"])
+        if not enrollments:
+            return IdentityContext(
+                tenant_id=tenant_id,
+                tenant_slug=tenant.get("slug"),
+                tenant_name=tenant.get("name"),
+                phone=phone,
+                session_id=session_id,
+                student_exists=False,
+            )
+
         class_names = self._lookup_class_names(
             tenant_id,
             [row["class_id"] for row in enrollments if row.get("class_id")],

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import uuid
-from datetime import UTC, datetime
 from typing import Any
 
 from loguru import logger
@@ -12,6 +10,8 @@ from domain.enums import ChatChannel
 from infrastructure.db.supabase_client import get_supabase_client
 from services.identity.resolver import normalize_phone
 
+_ENROLLED_STATUSES = frozenset({"active", "pending"})
+
 
 async def resolve_student(
     tenant_id: str,
@@ -19,9 +19,11 @@ async def resolve_student(
     channel_address: str,
 ) -> dict[str, Any] | None:
     """
-    Look up student_channels joined to students.
+    Look up student_channels joined to students, or a pending Telegram phone.
 
-    Returns the student row if this channel address is already linked, else None.
+    Returns the student row if this channel address is already linked, a
+    phone-only identity if the chat shared a number but is not enrolled yet,
+    else None.
     """
     channel = _parse_channel(channel_type)
     address = str(channel_address).strip()
@@ -39,23 +41,32 @@ async def resolve_student(
         .execute()
     )
     channel_rows = channel_response.data or []
-    if not channel_rows:
-        return None
+    if channel_rows:
+        student_id = channel_rows[0].get("student_id")
+        if student_id:
+            student_response = (
+                client.table("students")
+                .select("id, tenant_id, name, phone, school, district, consent_at, language_pref")
+                .eq("tenant_id", tenant_id)
+                .eq("id", student_id)
+                .limit(1)
+                .execute()
+            )
+            student_rows = student_response.data or []
+            if student_rows:
+                student = student_rows[0]
+                if _has_enrollment(tenant_id, student["id"]):
+                    return student
+                phone = student.get("phone")
+                if phone:
+                    return _pending_identity(tenant_id, str(phone))
 
-    student_id = channel_rows[0].get("student_id")
-    if not student_id:
-        return None
+    if channel is ChatChannel.TELEGRAM:
+        pending_phone = _lookup_pending_phone(tenant_id, address)
+        if pending_phone:
+            return _pending_identity(tenant_id, pending_phone)
 
-    student_response = (
-        client.table("students")
-        .select("id, tenant_id, name, phone, school, district, consent_at, language_pref")
-        .eq("tenant_id", tenant_id)
-        .eq("id", student_id)
-        .limit(1)
-        .execute()
-    )
-    student_rows = student_response.data or []
-    return student_rows[0] if student_rows else None
+    return None
 
 
 async def link_telegram_contact(
@@ -66,33 +77,65 @@ async def link_telegram_contact(
     display_name: str | None = None,
 ) -> dict[str, Any]:
     """
-    Bind a Telegram chat_id to a student identified by phone.
+    Bind a Telegram chat_id to a phone number.
 
-    Creates a stub student row when none exists yet so Admissions can continue
-    via the existing ChatPipeline (student_exists=False until onboarding completes).
+    Enrolled students are linked on student_channels immediately. Everyone else
+    is stored as a pending contact so ChatPipeline sees student_exists=False
+    and Admissions can run the normal enrollment flow. display_name is unused
+    — the student's legal name is collected during onboarding.
     """
+    del display_name
     normalized_phone = normalize_phone(phone)
     if not normalized_phone:
         raise ValueError("A phone number is required to link a Telegram contact")
 
     address = str(chat_id).strip()
-    existing_channel = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, address)
-    if existing_channel and existing_channel.get("phone") == normalized_phone:
-        return existing_channel
+    existing = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, address)
+    if existing and existing.get("id") and existing.get("phone") == normalized_phone:
+        if _has_enrollment(tenant_id, existing["id"]):
+            return existing
 
     student = _lookup_student_by_phone(tenant_id, normalized_phone)
-    if student is None:
-        student = _insert_stub_student(
+    if student and _has_enrollment(tenant_id, student["id"]):
+        _upsert_channel(
             tenant_id=tenant_id,
-            phone=normalized_phone,
-            name=(display_name or "").strip() or None,
+            student_id=student["id"],
+            channel=ChatChannel.TELEGRAM,
+            channel_address=address,
         )
+        _delete_pending(tenant_id, address)
         logger.info(
-            "Created stub student {} for Telegram contact tenant={} phone={}",
+            "Linked Telegram chat_id={} to enrolled student {} tenant={}",
+            address,
             student["id"],
             tenant_id,
-            normalized_phone,
         )
+        return student
+
+    _upsert_pending(tenant_id=tenant_id, chat_id=address, phone=normalized_phone)
+    logger.info(
+        "Stored pending Telegram contact chat_id={} tenant={} phone={}",
+        address,
+        tenant_id,
+        normalized_phone,
+    )
+    return _pending_identity(tenant_id, normalized_phone)
+
+
+async def bind_telegram_student_channel(
+    tenant_id: str,
+    chat_id: str,
+    phone: str,
+) -> dict[str, Any] | None:
+    """If Admissions created/enrolled this phone, attach student_channels."""
+    normalized_phone = normalize_phone(phone)
+    address = str(chat_id).strip()
+    if not tenant_id or not normalized_phone or not address:
+        return None
+
+    student = _lookup_student_by_phone(tenant_id, normalized_phone)
+    if student is None or not _has_enrollment(tenant_id, student["id"]):
+        return None
 
     _upsert_channel(
         tenant_id=tenant_id,
@@ -100,8 +143,9 @@ async def link_telegram_contact(
         channel=ChatChannel.TELEGRAM,
         channel_address=address,
     )
+    _delete_pending(tenant_id, address)
     logger.info(
-        "Linked Telegram chat_id={} to student {} tenant={}",
+        "Bound Telegram chat_id={} to student {} tenant={} after enrollment",
         address,
         student["id"],
         tenant_id,
@@ -114,6 +158,15 @@ def _parse_channel(channel_type: str) -> ChatChannel:
         return ChatChannel(channel_type)
     except ValueError as exc:
         raise ValueError(f"Unsupported channel_type: {channel_type}") from exc
+
+
+def _pending_identity(tenant_id: str, phone: str) -> dict[str, Any]:
+    return {
+        "id": None,
+        "tenant_id": tenant_id,
+        "name": None,
+        "phone": phone,
+    }
 
 
 def _lookup_student_by_phone(tenant_id: str, phone: str) -> dict[str, Any] | None:
@@ -130,22 +183,52 @@ def _lookup_student_by_phone(tenant_id: str, phone: str) -> dict[str, Any] | Non
     return rows[0] if rows else None
 
 
-def _insert_stub_student(*, tenant_id: str, phone: str, name: str | None) -> dict[str, Any]:
-    student_id = f"stu-{uuid.uuid4().hex[:12]}"
-    now = datetime.now(UTC).isoformat()
-    payload: dict[str, Any] = {
-        "id": student_id,
-        "tenant_id": tenant_id,
-        "phone": phone,
-        "updated_at": now,
-    }
-    if name:
-        payload["name"] = name
-
+def _has_enrollment(tenant_id: str, student_id: str) -> bool:
     client = get_supabase_client()
-    response = client.table("students").insert(payload).execute()
+    response = (
+        client.table("enrollments")
+        .select("id, status")
+        .eq("tenant_id", tenant_id)
+        .eq("student_id", student_id)
+        .execute()
+    )
+    return any(
+        row.get("status") in _ENROLLED_STATUSES for row in (response.data or [])
+    )
+
+
+def _lookup_pending_phone(tenant_id: str, chat_id: str) -> str | None:
+    client = get_supabase_client()
+    response = (
+        client.table("telegram_pending_contacts")
+        .select("phone")
+        .eq("tenant_id", tenant_id)
+        .eq("chat_id", chat_id)
+        .limit(1)
+        .execute()
+    )
     rows = response.data or []
-    return rows[0] if rows else payload
+    phone = rows[0].get("phone") if rows else None
+    return str(phone) if phone else None
+
+
+def _upsert_pending(*, tenant_id: str, chat_id: str, phone: str) -> None:
+    client = get_supabase_client()
+    client.table("telegram_pending_contacts").upsert(
+        {
+            "tenant_id": tenant_id,
+            "chat_id": chat_id,
+            "phone": phone,
+        },
+        on_conflict="tenant_id,chat_id",
+    ).execute()
+
+
+def _delete_pending(tenant_id: str, chat_id: str) -> None:
+    client = get_supabase_client()
+    client.table("telegram_pending_contacts").delete().eq("tenant_id", tenant_id).eq(
+        "chat_id", chat_id
+    ).execute()
 
 
 def _upsert_channel(

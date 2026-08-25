@@ -7,7 +7,12 @@ from typing import Any
 from loguru import logger
 
 from domain.enums import ChatChannel
-from services.identity.student_resolver import link_telegram_contact, resolve_student
+from services.admissions.onboarding_session_store import get_onboarding_session_store
+from services.identity.student_resolver import (
+    bind_telegram_student_channel,
+    link_telegram_contact,
+    resolve_student,
+)
 from services.messaging.pipeline import ChatPipeline
 from services.messaging.schemas import ChatTurnResult, InboundMessage
 from services.messaging.telegram_client import (
@@ -34,7 +39,7 @@ async def handle_text_message(
     update_id: int | None = None,
 ) -> None:
     student = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
-    if student is None:
+    if not student or not student.get("phone"):
         await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
         return
 
@@ -70,11 +75,15 @@ async def handle_contact_shared(
         phone=phone,
         display_name=display_name,
     )
+    already_enrolled = bool(student.get("id"))
+    phone_norm = student.get("phone") or ""
+    if not already_enrolled and phone_norm:
+        _ensure_onboarding_session(tenant_id, phone_norm)
     await _run_pipeline_and_reply(
         tenant_id=tenant_id,
         chat_id=chat_id,
         student=student,
-        body="Hello",
+        body="Hello" if already_enrolled else "",
         update_id=update_id,
     )
 
@@ -88,7 +97,7 @@ async def handle_photo_message(
     update_id: int | None = None,
 ) -> None:
     student = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
-    if student is None:
+    if not student or not student.get("phone"):
         await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
         return
 
@@ -143,7 +152,15 @@ async def _run_pipeline_and_reply(
     )
     if result.reply:
         await send_telegram_message(tenant_id, chat_id, result.reply)
+    await bind_telegram_student_channel(tenant_id, str(chat_id), phone)
     return result
+
+
+def _ensure_onboarding_session(tenant_id: str, phone: str) -> None:
+    """Sharing a phone is a registration step, not a classified user query."""
+    store = get_onboarding_session_store()
+    if store.get(tenant_id=tenant_id, phone=phone) is None:
+        store.start(tenant_id=tenant_id, phone=phone)
 
 
 def _largest_photo_file_id(photo: list[dict[str, Any]]) -> str | None:

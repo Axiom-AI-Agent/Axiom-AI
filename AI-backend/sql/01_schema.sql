@@ -158,6 +158,18 @@ CREATE TABLE IF NOT EXISTS student_channels (
 CREATE INDEX IF NOT EXISTS idx_student_channels_lookup
     ON student_channels (tenant_id, channel, channel_address);
 
+-- Phone shared on Telegram before Admissions creates the student row.
+CREATE TABLE IF NOT EXISTS telegram_pending_contacts (
+    tenant_id   TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    chat_id     TEXT NOT NULL,
+    phone       TEXT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (tenant_id, chat_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_telegram_pending_phone
+    ON telegram_pending_contacts (tenant_id, phone);
+
 -- ---------------------------------------------------------------------------
 -- SUBJECT_CLASS + ENROLLMENT
 -- ---------------------------------------------------------------------------

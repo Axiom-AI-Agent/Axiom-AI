@@ -131,12 +131,14 @@ class AdmissionsAgent:
             )
             return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
 
-        answer = self.flow.already_registered_message(
-            student=student,
-            class_row=await self._class_for_enrollment(tenant_id, ob_state.slots.class_id),
+        # Known phone, no class yet — collect enrollment like a new student.
+        return await self._handle_new_student_onboarding(
+            tenant_id=tenant_id,
             tenant_name=tenant_name,
+            phone=phone,
+            user_message=user_message,
+            tool_log=tool_log,
         )
-        return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
 
     async def _handle_info_inquiry(
         self,

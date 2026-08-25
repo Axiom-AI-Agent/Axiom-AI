@@ -3,6 +3,13 @@
 -- Apply via scripts/init_supabase.py (lexical order after 01_schema / 02_*).
 
 DO $$ BEGIN
+    ALTER TYPE chat_channel ADD VALUE IF NOT EXISTS 'telegram';
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+    WHEN undefined_object THEN NULL;
+END $$;
+
+DO $$ BEGIN
     ALTER TABLE tenants ADD COLUMN IF NOT EXISTS bot_token TEXT;
 EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
