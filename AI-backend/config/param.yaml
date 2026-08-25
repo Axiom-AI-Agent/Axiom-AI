@@ -42,6 +42,7 @@ chunking:
 retrieval:
   top_k: 4
   similarity_threshold: 0.35
+  escalation_threshold: 0.45
 
 paths:
   data_dir: data

@@ -305,6 +305,7 @@ class AgentOrchestrator:
             state,
             drive=self.mcp_drive,
             rag=self.mcp_rag,
+            crm=self.mcp_crm,
         )
 
     @observe(name="node_payment_check_agent")
