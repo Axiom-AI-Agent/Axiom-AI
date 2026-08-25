@@ -227,3 +227,34 @@ def test_dashboard_staff_send_returns_turn(mock_persistence_cls, mock_notify, cl
     assert body["delivered"] is True
     assert body["turn"]["sender"] == "staff"
     mock_notify.assert_called_once()
+
+@patch(
+    "api.routers.dashboard.chat.notify_student",
+    return_value=False,
+)
+def test_dashboard_staff_send_returns_502_when_delivery_fails(
+    mock_notify,
+    client,
+):
+    response = client.post(
+        "/dashboard/chat/send",
+        json={
+            "tenant_id":
+                "tenant-demo-physics",
+            "phone":
+                "94771234567",
+            "message":
+                "Staff reply here",
+        },
+    )
+
+    assert (
+        response.status_code == 502
+    )
+
+    assert (
+        "delivery failed"
+        in response.json()[
+            "detail"
+        ].lower()
+    )

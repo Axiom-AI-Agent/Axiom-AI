@@ -11,7 +11,10 @@ from loguru import logger
 from agents.nodes.crm_client import CrmClient, DirectCrmClient
 from agents.prompts.agent_prompts import build_escalation_ack_reply
 from agents.state import AgentState
-from domain.escalation_reasons import TALK_TO_TUTOR
+from domain.escalation_reasons import (
+    LOW_RAG_CONFIDENCE,
+    TALK_TO_TUTOR,
+)
 
 
 @dataclass
@@ -47,23 +50,58 @@ class EscalationAgent:
                 answer="I'll connect you with a tutor shortly. Please try again if this persists.",
             )
 
-        payload = await self.crm.create_escalation(
-            tenant_id=tenant_id,
-            student_id=student_id,
-            reason_code=TALK_TO_TUTOR,
-            student_message=user_message or None,
+        reason_code = (
+            state.get(
+                "pending_escalation_reason"
+            )
+            or TALK_TO_TUTOR
+        )
+
+        escalation_message = (
+            state.get(
+                "pending_escalation_message"
+            )
+            or user_message
+        )
+
+
+        payload = (
+            await self.crm.create_escalation(
+                tenant_id=tenant_id,
+                student_id=student_id,
+                reason_code=reason_code,
+                student_message=(
+                    escalation_message
+                    or None
+                ),
+            )
         )
         tool_log.append(f"create_escalation: {json.dumps(payload)[:400]}")
 
         if not payload.get("ok"):
-            error = payload.get("error", "Could not open escalation.")
+            error = payload.get(
+                "error",
+                "Could not open escalation.",
+            )
+
             return EscalationAgentResult(
                 answer=f"Sorry — {error}",
                 tool_output="\n".join(tool_log),
             )
 
+        if reason_code == LOW_RAG_CONFIDENCE:
+            answer = (
+                "Done — I've sent your question "
+                f"to {tenant_name} for review. "
+                "A tutor can follow up with you."
+            )
+        else:
+            answer = build_escalation_ack_reply(
+                tenant_name=tenant_name
+            )
+
         return EscalationAgentResult(
-            answer=build_escalation_ack_reply(tenant_name=tenant_name),
+            answer=answer,
             tool_output="\n".join(tool_log),
         )
 

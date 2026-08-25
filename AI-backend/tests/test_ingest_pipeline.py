@@ -10,10 +10,54 @@ from services.ingest_service.chunkers import fixed_chunk, parent_child_chunk
 from services.ingest_service.pipeline import load_tenant_docs
 
 
-def test_load_tenant_docs_demo_physics():
+def test_load_tenant_docs_demo_physics(
+    tmp_path,
+):
+    (
+        tmp_path
+        / "lesson_5_velocity.md"
+    ).write_text(
+        (
+            "# Lesson 5 Velocity\n\n"
+            "Velocity is the rate of "
+            "change of displacement."
+        ),
+        encoding="utf-8",
+    )
+
+    (
+        tmp_path
+        / "lesson_6_acceleration.md"
+    ).write_text(
+        (
+            "# Lesson 6 Acceleration\n\n"
+            "Acceleration is the rate "
+            "of change of velocity."
+        ),
+        encoding="utf-8",
+    )
+
     docs = load_tenant_docs(
-        tenant_id="tenant-demo-physics",
-        tenant_slug="demo-physics",
+        tenant_id=(
+            "tenant-demo-physics"
+        ),
+        tenant_slug=(
+            "demo-physics"
+        ),
+        kb_path=tmp_path,
+    )
+
+    assert len(docs) >= 2
+
+    assert any(
+        (
+            "velocity"
+            in d["title"].lower()
+            or
+            "velocity"
+            in d["content"].lower()
+        )
+        for d in docs
     )
     assert len(docs) >= 2
     assert any("velocity" in d["title"].lower() or "velocity" in d["content"].lower() for d in docs)

@@ -33,7 +33,6 @@ class EscalationActionResponse(BaseModel):
     student_notified: bool = False
     notification_message: Optional[str] = None
 
-
 async def notify_student(
     *,
     tenant_id: str,
@@ -42,33 +41,61 @@ async def notify_student(
     intent: str = "staff_notification",
 ) -> bool:
     resolver = IdentityResolver()
-    persistence = MessagePersistence()
-    messaging = TwilioMessagingClient()
+    persistence = (
+        MessagePersistence()
+    )
+    messaging = (
+        TwilioMessagingClient()
+    )
+
     try:
-        ctx = resolver.resolve_direct(tenant_id=tenant_id, phone=phone)
+        ctx = (
+            resolver.resolve_direct(
+                tenant_id=tenant_id,
+                phone=phone,
+            )
+        )
     except Exception:
+        return False
+
+    result = (
+        messaging.send_whatsapp(
+            to_number=phone,
+            body=message,
+        )
+    )
+
+    delivered = (
+        result.status
+        in {
+            "sent",
+            "dry_run",
+        }
+    )
+
+    if not delivered:
         return False
 
     if intent == "staff_reply":
         persistence.log_staff_reply(
             ctx,
             body=message,
-            channel=ChatChannel.HTTP_DEV,
+            channel=(
+                ChatChannel.HTTP_DEV
+            ),
         )
     else:
         persistence.log_outbound(
             ctx,
             body=message,
             intent=intent,
-            channel=ChatChannel.HTTP_DEV,
+            channel=(
+                ChatChannel.HTTP_DEV
+            ),
         )
-    result = messaging.send_whatsapp(
-        to_number=phone,
-        body=message,
-    )
-    return result.status in {"sent", "dry_run"}
 
-
+    return True
+    
 def _enrich_escalations(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     if not rows:
         return []
