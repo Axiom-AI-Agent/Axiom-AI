@@ -212,20 +212,5 @@
   "210": "DASHBOARD_API_BASE",
   "211": "frontend/tailwind.config.js",
   "212": "Axiom AI Backend (README)",
-  "213": "MCP Adapters",
-  "214": "RateLimitMiddleware",
-  "215": "tenant_scope.py",
-  "216": "validate",
-  "217": "FakeCrm",
-  "218": "Phase 5 — Escalations + staff chat",
-  "219": "._assert_tenant",
-  "220": "FakeCrm",
-  "221": "get_default_embeddings",
-  "222": "log.py",
-  "223": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
-  "224": "register_telegram_webhook.py",
-  "225": "main",
-  "226": "_load_env",
-  "227": "main",
-  "228": "admissions_db_client.py"
+  "213": "MCP Adapters"
 }
