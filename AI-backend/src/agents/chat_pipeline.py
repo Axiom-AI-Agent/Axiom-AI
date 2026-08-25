@@ -99,36 +99,36 @@ async def run_chat_turn(
         if pending_escalation_message
         else "none"
     )
-if (
-    pending_escalation_message
-    and confirmation == "no"
-):
-    timings["total_ms"] = int(
-        (
-            time.perf_counter()
-            - t_total
+    if (
+        pending_escalation_message
+        and confirmation == "no"
+    ):
+        timings["total_ms"] = int(
+            (
+                time.perf_counter()
+                - t_total
+            )
+            * 1000
         )
-        * 1000
-    )
 
-    return ChatResult(
-        answer=(
-            "No problem — I won't send it "
-            "to the tutor. You can ask me "
-            "something else anytime."
-        ),
-        verdict="proceed",
-        route="direct",
-        routes=["direct"],
-        session_id=ctx.session_id,
-        latency_ms=timings[
-            "total_ms"
-        ],
-        timings=timings,
-        trace_id=(
-            get_current_trace_id()
-        ),
-    )
+        return ChatResult(
+            answer=(
+                "No problem — I won't send it "
+                "to the tutor. You can ask me "
+                "something else anytime."
+            ),
+            verdict="proceed",
+            route="direct",
+            routes=["direct"],
+            session_id=ctx.session_id,
+            latency_ms=timings[
+                "total_ms"
+            ],
+            timings=timings,
+            trace_id=(
+                get_current_trace_id()
+            ),
+        )
     tenant_name = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
 
     turn_metadata: dict[str, Any] = {
