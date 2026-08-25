@@ -36,6 +36,7 @@ from api.routers.students import router as students_router
 from api.routers.tools.drive import router as drive_tools_router
 from api.routers.tools.ingest import router as ingest_tools_router
 from api.routers.tools.rag import router as rag_tools_router
+from api.webhooks.telegram import router as telegram_webhook_router
 from api.webhooks.twilio import router as twilio_webhook_router
 from infrastructure.config import validate
 from infrastructure.log import setup_logging
@@ -123,6 +124,7 @@ app.include_router(rag_tools_router)
 app.include_router(drive_tools_router)
 app.include_router(ingest_tools_router)
 app.include_router(twilio_webhook_router)
+app.include_router(telegram_webhook_router)
 
 
 @app.get("/")
@@ -150,5 +152,6 @@ async def root() -> dict:
         "drive_search": "/tools/drive/search",
         "ingest_upload": "/tools/ingest/upload",
         "webhook": "/webhooks/twilio",
+        "telegram_webhook": "/webhooks/telegram/{tenant_id}",
         "docs": "/docs",
     }

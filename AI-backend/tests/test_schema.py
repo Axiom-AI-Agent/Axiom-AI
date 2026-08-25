@@ -12,6 +12,7 @@ EXPECTED_TABLES = (
     "audit_logs",
     "parent_guardians",
     "students",
+    "student_channels",
     "subject_classes",
     "enrollments",
     "invoices",

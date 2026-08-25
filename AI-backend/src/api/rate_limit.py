@@ -47,6 +47,8 @@ class RateLimitMiddleware(
     ) -> int:
         if path.startswith(
             "/webhooks/twilio"
+        ) or path.startswith(
+            "/webhooks/telegram"
         ):
             return 180
 

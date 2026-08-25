@@ -52,10 +52,12 @@ CREATE TABLE IF NOT EXISTS tenants (
     name                TEXT NOT NULL,
     slug                TEXT NOT NULL UNIQUE,
     status              tenant_status NOT NULL DEFAULT 'active',
-    whatsapp_number     TEXT,
-    drive_folder_id     TEXT,
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    whatsapp_number         TEXT,
+    drive_folder_id         TEXT,
+    bot_token               TEXT,
+    telegram_bot_username   TEXT,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Backfill renamed columns when upgrading an existing tenants table
@@ -65,6 +67,14 @@ EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 DO $$ BEGIN
     ALTER TABLE tenants ADD COLUMN IF NOT EXISTS drive_folder_id TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE tenants ADD COLUMN IF NOT EXISTS bot_token TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE tenants ADD COLUMN IF NOT EXISTS telegram_bot_username TEXT;
 EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 -- ---------------------------------------------------------------------------
@@ -131,6 +141,22 @@ EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE INDEX IF NOT EXISTS idx_students_tenant_phone ON students(tenant_id, phone);
 CREATE INDEX IF NOT EXISTS idx_students_parent ON students(parent_id);
+
+-- Channel delivery addresses (Telegram chat_id, WhatsApp number, etc.)
+CREATE TABLE IF NOT EXISTS student_channels (
+    id                  TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    tenant_id           TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    student_id          TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    channel             chat_channel NOT NULL,
+    channel_address     TEXT NOT NULL,
+    is_primary          BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (tenant_id, channel, channel_address),
+    UNIQUE (student_id, channel)
+);
+
+CREATE INDEX IF NOT EXISTS idx_student_channels_lookup
+    ON student_channels (tenant_id, channel, channel_address);
 
 -- ---------------------------------------------------------------------------
 -- SUBJECT_CLASS + ENROLLMENT

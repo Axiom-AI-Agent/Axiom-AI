@@ -47,6 +47,7 @@ erDiagram
     staff_users ||--o{ audit_logs : performs
     tenants ||--o{ parent_guardians : has
     parent_guardians ||--o{ students : parent_of
+    students ||--o{ student_channels : reachable_on
     tenants ||--o{ subject_classes : offers
     students ||--o{ enrollments : has
     subject_classes ||--o{ enrollments : includes
@@ -68,7 +69,8 @@ erDiagram
 | STAFF_USER | `staff_users` | Dashboard staff (admin, marker, viewer) |
 | AUDIT_LOG | `audit_logs` | Staff action audit trail |
 | PARENT_GUARDIAN | `parent_guardians` | Financial sponsor / contact |
-| STUDENT | `students` | WhatsApp-identified learner |
+| STUDENT | `students` | Phone-identified learner |
+| student_channel | `student_channels` | Telegram chat_id / WhatsApp number per student |
 | SUBJECT_CLASS | `subject_classes` | Fee-bearing class offering |
 | ENROLLMENT | `enrollments` | Student ↔ class membership |
 | INVOICE | `invoices` | Billing period and amount due |
@@ -125,6 +127,8 @@ Root organization / tuition-agency record.
 | `status` | `tenant_status` | NOT NULL, default `active` | Account state |
 | `whatsapp_number` | TEXT | | Twilio WhatsApp sender (e.g. `whatsapp:+14155238886`) |
 | `drive_folder_id` | TEXT | | Google Drive root folder for resources |
+| `bot_token` | TEXT | | Telegram Bot API token (per-tenant, not an env var) |
+| `telegram_bot_username` | TEXT | | Bot username without `@` (e.g. `MrPereraTutorBot`) |
 | `created_at` | TIMESTAMPTZ | NOT NULL | Row created |
 | `updated_at` | TIMESTAMPTZ | NOT NULL | Row updated |
 
@@ -199,6 +203,29 @@ Learner identified primarily by WhatsApp phone within a tenant.
 
 **Unique:** `(tenant_id, phone)`  
 **Indexes:** `idx_students_tenant_phone`, `idx_students_parent`
+
+Phone number (`phone`) is the durable student identifier. Telegram `chat_id` is stored on `student_channels`, not on this table.
+
+---
+
+### `student_channels`
+
+Channel-specific delivery address for a student (Telegram chat, WhatsApp number, Demo UI).
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| `id` | TEXT | PK | Channel row ID |
+| `tenant_id` | TEXT | FK → `tenants`, NOT NULL | Tenant scope |
+| `student_id` | TEXT | FK → `students`, NOT NULL | Linked student |
+| `channel` | `chat_channel` | NOT NULL | `telegram`, `twilio_whatsapp`, or `http_dev` |
+| `channel_address` | TEXT | NOT NULL | Telegram `chat_id`, WhatsApp number, etc. |
+| `is_primary` | BOOLEAN | NOT NULL, default `true` | Preferred channel for outbound |
+| `created_at` | TIMESTAMPTZ | NOT NULL | Row created |
+
+**Unique:** `(tenant_id, channel, channel_address)`, `(student_id, channel)`  
+**Index:** `idx_student_channels_lookup (tenant_id, channel, channel_address)`
+
+**Migration:** `sql/03_telegram_channel.sql`
 
 ---
 
@@ -415,6 +442,7 @@ Short-term memory — individual conversation turns within a session.
 tenants
  ├── staff_users ── audit_logs
  ├── parent_guardians ── students
+ │                        ├── student_channels
  │                        ├── enrollments ── subject_classes
  │                        ├── invoices ── bank_slip_uploads
  │                        ├── message_logs
@@ -436,6 +464,7 @@ tenants
 | `sql/00_drop_legacy.sql` | Drops v1 tables before v2 migration |
 | `sql/01_schema.sql` | Extensions, ENUMs, tables, indexes |
 | `sql/02_seed_demo.sql` | Demo tenants and sample rows for hackathon |
+| `sql/03_telegram_channel.sql` | Tenant bot token columns + `student_channels` |
 
 Files are applied in lexical order by `scripts/init_supabase.py`.
 
@@ -468,7 +497,7 @@ make test   # includes tests/test_schema.py when SUPABASE_DB_URL is set
 ```
 
 Schema tests assert:
-- All 15 expected tables exist
+- All 16 expected tables exist
 - Legacy v1 tables are removed
 - Demo seed rows are present
 
