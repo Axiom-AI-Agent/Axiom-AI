@@ -32,11 +32,11 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE staff_role AS ENUM ('admin', 'marker', 'viewer');
+    CREATE TYPE staff_role AS ENUM ('admin', 'tutor', 'marker', 'viewer');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE fee_cycle AS ENUM ('monthly', 'termly', 'annual');
+    CREATE TYPE fee_cycle AS ENUM ('monthly', 'per_class', 'termly', 'one_time', 'annual');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Legacy enum kept for API compatibility (bank-slip review workflow)

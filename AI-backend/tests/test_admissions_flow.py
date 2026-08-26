@@ -106,6 +106,70 @@ def test_confirm_yes_not_treated_as_class_selection():
     assert not state.ambiguous_classes
 
 
+def _awaiting_confirmation_state(flow: OnboardingFlow):
+    state = flow.start_collection()
+    state.slots.name = "Test"
+    state.slots.school = "School"
+    state.slots.district = "Colombo"
+    state.slots.class_id = "class-al"
+    state.awaiting_confirmation = True
+    state.next_step = "confirm"
+    return state
+
+
+def _assert_collection_restarted(state) -> None:
+    assert state.restarted is True
+    assert state.awaiting_confirmation is False
+    assert state.next_step == "name"
+    assert state.slots.name is None
+    assert state.slots.school is None
+    assert state.slots.district is None
+    assert state.slots.class_id is None
+    assert state.slots.confirmed is False
+    assert state.complete is False
+
+
+def test_confirm_reject_change_number_restarts_collection():
+    flow = OnboardingFlow()
+    state = _awaiting_confirmation_state(flow)
+    state = flow.apply_message(state, "no I need to change the number")
+    _assert_collection_restarted(state)
+
+
+def test_confirm_plain_no_restarts_collection():
+    flow = OnboardingFlow()
+    state = _awaiting_confirmation_state(flow)
+    state = flow.apply_message(state, "no")
+    _assert_collection_restarted(state)
+
+
+def test_confirm_sinhala_no_restarts_collection():
+    flow = OnboardingFlow()
+    state = _awaiting_confirmation_state(flow)
+    state = flow.apply_message(state, "නෑ")
+    _assert_collection_restarted(state)
+
+
+def test_confirm_reject_wins_over_ok_overlap():
+    flow = OnboardingFlow()
+    state = _awaiting_confirmation_state(flow)
+    state = flow.apply_message(state, "no it's not ok")
+    _assert_collection_restarted(state)
+
+
+def test_confirm_unclear_hmm_keeps_review():
+    flow = OnboardingFlow()
+    state = _awaiting_confirmation_state(flow)
+    state = flow.apply_message(state, "hmm")
+    assert state.awaiting_confirmation is True
+    assert state.next_step == "confirm"
+    assert state.restarted is False
+    assert state.slots.name == "Test"
+    assert state.slots.school == "School"
+    assert state.slots.district == "Colombo"
+    assert state.slots.class_id == "class-al"
+
+
 def test_extract_name_from_my_name_is():
     flow = OnboardingFlow()
     state = flow.start_collection()
@@ -140,6 +204,30 @@ def test_class_catalog_request_on_class_step():
     assert "**" not in msg
     assert "LKR 5,000/month" in msg
     assert flow._looks_like_class_catalog_request("what are all the available classes")
+
+
+def test_review_and_welcome_messages_have_no_markdown_bold():
+    flow = OnboardingFlow()
+    state = flow.start_collection()
+    state.slots.name = "Mirco Fernando"
+    state.slots.school = "Royal College"
+    state.slots.district = "Colombo"
+    class_row = {"name": "A/L Physics 2026", "fee_amount": 5000}
+    review = flow.review_confirmation_message(
+        slots=state.slots,
+        class_row=class_row,
+        tenant_name="Demo Physics Academy",
+        phone="+94770000000",
+    )
+    welcome = flow.enrollment_welcome_message(
+        slots=state.slots,
+        class_row=class_row,
+        tenant_name="Demo Physics Academy",
+    )
+    assert "**" not in review
+    assert "**" not in welcome
+    assert "Full name: Mirco Fernando" in review
+    assert "A/L Physics 2026" in welcome
 
 
 def test_pending_enrollment_state():

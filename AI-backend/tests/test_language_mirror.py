@@ -18,8 +18,11 @@ from services.identity.resolver import IdentityResolver
 from services.language import (
     detect_script_language,
     language_policy_block,
+    looks_like_singlish,
     normalize_language_pref,
+    resolve_canned_language,
     resolve_reply_language,
+    retrieval_query,
     stt_language_hint,
     t,
 )
@@ -96,6 +99,39 @@ def test_canned_templates_have_en_si_ta():
     assert t("payment_ack", "ta", tenant_name="Demo") != t(
         "payment_ack", "en", tenant_name="Demo"
     )
+
+
+def test_singlish_canned_language_and_drive_list():
+    from agents.prompts.agent_prompts import build_resource_drive_list_reply
+
+    message = "Mata zener diode aka gena kiyala dennako"
+    assert looks_like_singlish(message)
+    assert resolve_canned_language(message=message, language_pref="en") == "si_latn"
+    reply = build_resource_drive_list_reply(
+        files=[{"name": "2026-AL-Physics-Past-Paper.pdf"}],
+        folder="papers",
+        language="si_latn",
+    )
+    assert "2026-AL-Physics-Past-Paper.pdf" in reply
+    assert "Here are the available" not in reply
+    assert "reply karanna" in reply.lower()
+
+
+def test_english_not_classified_as_singlish():
+    assert not looks_like_singlish("Can I get last week's physics paper?")
+    assert resolve_canned_language(
+        message="Can I get last week's physics paper?",
+        language_pref="en",
+    ) == "en"
+
+
+def test_retrieval_query_strips_singlish_keeps_english():
+    assert (
+        retrieval_query("Mata zener diode aka gena kiyala dennako")
+        == "zener diode"
+    )
+    assert retrieval_query("Mata velocity aka gena kiyala dennako") == "velocity"
+    assert retrieval_query("Explain to me about velocity") == "Explain to me about velocity"
 
 
 def test_format_student_profile_includes_language():

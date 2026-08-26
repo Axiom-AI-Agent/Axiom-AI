@@ -15,8 +15,8 @@ openai:
 
 google:
   chat:
-    general: gemini-2.0-flash
-    merge: gemini-2.0-flash
+    general: gemini-3.6-flash
+    merge: gemini-3.6-flash
 
 groq:
   chat:

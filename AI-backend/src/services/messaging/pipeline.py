@@ -15,6 +15,7 @@ from services.identity.resolver import IdentityResolver
 from services.language import resolve_reply_language, stt_language_hint, t
 from services.media.stt_service import _get_twilio_auth, _is_audio_url, transcribe_audio
 from services.messaging.persistence import MessagePersistence
+from services.messaging.plaintext import strip_markdown_markers
 from services.messaging.schemas import ChatTurnResult, InboundMessage, TwilioInboundMessage
 from services.messaging.twilio_client import TwilioMessagingClient
 
@@ -132,8 +133,12 @@ class ChatPipeline:
                         language_pref=ctx.language_pref,
                     )
                     return t("voice_fail", lang)
+            elif not ctx.payments_enabled:
+                return (
+                    "Payment submissions are currently disabled for this "
+                    "institute. Please contact the tutor for assistance."
+                )
             else:
-                # Non-voice audio file (MP3, WAV, etc.) — not supported
                 lang = resolve_reply_language(
                     message=inbound.body or "",
                     language_pref=ctx.language_pref,
@@ -154,7 +159,7 @@ class ChatPipeline:
         if inbound.num_media > 0 and inbound.media_url:
             pass  # payment receipt handled by payment agent when pending enrollment exists
 
-        return reply
+        return strip_markdown_markers(reply)
 
     async def _run_agent_turn(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
         orchestrator = await get_orchestrator()

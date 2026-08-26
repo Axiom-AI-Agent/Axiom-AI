@@ -25,11 +25,10 @@ from agents.prompts.agent_prompts import (
     get_resource_not_enrolled_reply,
 )
 from agents.state import AgentState
-from domain.escalation_reasons import LOW_RAG_CONFIDENCE
 from infrastructure.config import (
     RETRIEVAL_ESCALATION_THRESHOLD,
 )
-from services.language import t
+from services.language import resolve_canned_language, t
 
 ResourceSubPath = Literal["drive", "rag"]
 
@@ -45,6 +44,17 @@ _DRIVE_PATTERNS = (
     r"download",
     r"get me",
     r"can i get",
+    r"\bewanna\b",
+    r"\bevanna\b",
+    r"send karanna",
+    r"file eka",
+    r"tute eka",
+    r"paper eka",
+    r"පේපර්",
+    r"ටියුට්",
+    r"පෙළපොත්",
+    r"பாடத்தாள",
+    r"அனுப்பு",
 )
 _RAG_PATTERNS = (
     r"\bexplain\b",
@@ -57,6 +67,19 @@ _RAG_PATTERNS = (
     r"help me with",
     r"what is",
     r"what are",
+    r"tell me about",
+    r"kiyala\s+denn",
+    r"\bkiyanna\b",
+    r"\bkiyapan\b",
+    r"explain karanna",
+    r"විස්තර",
+    r"කියලා",
+    r"කියන්න",
+    r"මොකක්ද",
+    r"விளக்கு",
+    r"சொல்லி",
+    r"என்ன",
+    r"விவரம்",
 )
 
 
@@ -106,7 +129,7 @@ def classify_resource_subpath(message: str) -> ResourceSubPath:
         return "rag"
     if "?" in text:
         return "rag"
-    return "drive"
+    return "rag"
 
 
 def _infer_drive_folder(message: str) -> str:
@@ -248,19 +271,23 @@ class ResourceAgent:
         tenant_name = state.get("tenant_name") or "your tuition centre"
         sub_path = classify_resource_subpath(user_message)
         enrolled_class_ids = list(state.get("enrolled_class_ids") or [])
+        language = resolve_canned_language(
+            message=user_message,
+            language_pref=state.get("language_pref"),
+        )
 
         if not state.get("is_enrolled"):
             return ResourceAgentResult(
-                answer=get_resource_not_enrolled_reply(tenant_name=tenant_name),
+                answer=get_resource_not_enrolled_reply(
+                    tenant_name=tenant_name,
+                    language=language,
+                ),
                 sub_path=sub_path,
             )
 
         if not enrolled_class_ids:
             return ResourceAgentResult(
-                answer=(
-                    "I couldn't find an active class enrollment for your account. "
-                    f"Please contact {tenant_name} to confirm your enrollment."
-                ),
+                answer=t("resource_no_enrollment", language, tenant_name=tenant_name),
                 sub_path=sub_path,
             )
 
@@ -287,12 +314,14 @@ class ResourceAgent:
                     files=picks,
                     folder=folder,
                     tenant_name=tenant_name,
+                    language=language,
                 )
             answer = build_resource_drive_list_reply(
                 files=files,
                 folder=folder,
                 tenant_name=tenant_name,
                 error=result.get("error"),
+                language=language,
             )
             return ResourceAgentResult(
                 answer=answer,
@@ -303,7 +332,7 @@ class ResourceAgent:
             tenant_id=tenant_id,
             query=user_message,
             class_ids=enrolled_class_ids,
-            language=state.get("language_pref") or "en",
+            language=language,
         )
 
         tool_log.append(
@@ -341,44 +370,22 @@ class ResourceAgent:
         )
 
         if low_confidence:
-            student_id = (
-                state.get("user_id")
-                or state.get("student_id")
-                or ""
-            )
-
             tool_log.append(
                 "rag_confidence: "
                 f"docs={num_docs}, "
                 f"best_score={best_score:.3f}, "
                 f"threshold="
-                f"{RETRIEVAL_ESCALATION_THRESHOLD}"
+                f"{RETRIEVAL_ESCALATION_THRESHOLD}, "
+                "low=True"
             )
 
-            if tenant_id and student_id:
-                escalation = (
-                    await self.crm.create_escalation(
-                        tenant_id=tenant_id,
-                        student_id=student_id,
-                        reason_code=(
-                            LOW_RAG_CONFIDENCE
-                        ),
-                        student_message=(
-                            user_message
-                            or None
-                        ),
-                    )
-                )
-
-                tool_log.append(
-                    "create_escalation: "
-                    f"ok={escalation.get('ok')}"
-                )
-
             return ResourceAgentResult(
-                answer=t(
-                    "rag_low_confidence_escalated",
-                    state.get("language_pref") or "en",
+                answer=(
+                    "I couldn't find enough reliable "
+                    "information in your tutor's notes "
+                    "to answer that confidently. "
+                    "Would you like me to send this "
+                    "question to your tutor?"
                 ),
                 tool_output="\n".join(
                     tool_log
@@ -393,6 +400,7 @@ class ResourceAgent:
             ),
             citations=citations,
             error=result.get("error"),
+            language=language,
         )
 
         return ResourceAgentResult(

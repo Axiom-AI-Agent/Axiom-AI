@@ -64,7 +64,7 @@ class IdentityResolver:
                 continue
             response = (
                 client.table("tenants")
-                .select("id, slug, name, whatsapp_number, status")
+                .select("id, slug, name, whatsapp_number, status, payments_enabled")
                 .eq("whatsapp_number", candidate)
                 .limit(1)
                 .execute()
@@ -81,7 +81,7 @@ class IdentityResolver:
         )
         response = (
             client.table("tenants")
-            .select("id, slug, name, whatsapp_number, status")
+            .select("id, slug, name, whatsapp_number, status, payments_enabled")
             .eq("id", fallback)
             .limit(1)
             .execute()
@@ -96,7 +96,7 @@ class IdentityResolver:
         client = get_supabase_client()
         response = (
             client.table("tenants")
-            .select("id, slug, name, status")
+            .select("id, slug, name, status, payments_enabled")
             .eq("id", tenant_id)
             .limit(1)
             .execute()
@@ -120,6 +120,7 @@ class IdentityResolver:
     ) -> IdentityContext:
         tenant_id = tenant["id"]
         session_id = build_session_id(tenant_id, phone)
+        payments_enabled = bool(tenant.get("payments_enabled", True))
         language_pref = normalize_language_pref(
             student.get("language_pref") if student else None
         )
@@ -132,6 +133,7 @@ class IdentityResolver:
                 phone=phone,
                 session_id=session_id,
                 student_exists=False,
+                payments_enabled=payments_enabled,
                 language_pref=language_pref,
             )
 
@@ -144,6 +146,7 @@ class IdentityResolver:
                 phone=phone,
                 session_id=session_id,
                 student_exists=False,
+                payments_enabled=payments_enabled,
                 language_pref=language_pref,
             )
 
@@ -163,7 +166,8 @@ class IdentityResolver:
             student_id=student["id"],
             phone=phone,
             session_id=session_id,
-            human_mode=bool(student.get("human_mode")),
+            human_mode=bool(student.get("human_mode", False)),
+            payments_enabled=payments_enabled,
             student_exists=True,
             student_name=student.get("name"),
             is_enrolled=bool(enrolled_rows),

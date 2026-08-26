@@ -14,6 +14,28 @@ _CONFIRM_YES = re.compile(
     r"|ஆம்|ஆமாம்|சரி",
     re.IGNORECASE,
 )
+_CONFIRM_NO = re.compile(
+    r"\b("
+    r"no|nope|nah|cancel|wrong|change|incorrect|mistake|"
+    r"start over|start again|not right"
+    r")\b"
+    r"|නෑ|එපා"
+    r"|இல்லை|வேண்டாம்",
+    re.IGNORECASE,
+)
+_EDIT_FIELD_PATTERN = re.compile(
+    r"^\s*(?:change|edit|update|correct)\s+"
+    r"(name|school|district|class|course)\s+"
+    r"(?:to\s+)?(.+?)\s*$",
+    re.IGNORECASE,
+)
+_RESTART_PATTERN = re.compile(
+    r"\b("
+    r"start over|restart|begin again|"
+    r"redo|reset"
+    r")\b",
+    re.IGNORECASE,
+)
 _GRADE_AL = re.compile(r"\b(a/?l|advanced level|al)\b", re.IGNORECASE)
 _GRADE_OL = re.compile(r"\b(o/?l|ordinary level|ol)\b", re.IGNORECASE)
 _NAME_PREFIX = re.compile(
@@ -127,6 +149,7 @@ class OnboardingState:
     pending_payment: bool = False
     awaiting_review: bool = False
     awaiting_confirmation: bool = False
+    restarted: bool = False
     ambiguous_classes: list[dict[str, Any]] = field(default_factory=list)
 
 
@@ -196,6 +219,10 @@ class OnboardingFlow:
             return state
 
         if state.awaiting_confirmation:
+            if self._looks_like_reject(text):
+                reset = self.start_collection()
+                reset.restarted = True
+                return reset
             if self._looks_like_confirm(text):
                 state.slots.confirmed = True
                 state.complete = True
@@ -221,6 +248,60 @@ class OnboardingFlow:
             state.next_step = self._first_missing_step(state.slots)
 
         return state
+
+    def apply_confirmation_edit(
+        self,
+        state: OnboardingState,
+        message: str,
+        *,
+        classes: list[dict[str, Any]] | None = None,
+    ) -> tuple[OnboardingState, bool]:
+        text = message.strip()
+        if not text:
+            return state, False
+
+        if _RESTART_PATTERN.search(text):
+            return OnboardingState(next_step="name"), True
+
+        match = _EDIT_FIELD_PATTERN.match(text)
+        if not match:
+            return state, False
+
+        field = match.group(1).lower()
+        value = match.group(2).strip()
+        state.slots.confirmed = False
+        state.complete = False
+
+        if field == "name":
+            state.slots.name = self._title_name(value)
+        elif field == "school":
+            state.slots.school = value.title()
+        elif field == "district":
+            state.slots.district = value.title()
+        elif field in {"class", "course"}:
+            if not classes:
+                return state, False
+            numbered = self._match_class_by_number(value, classes)
+            if numbered:
+                state.slots.class_id = numbered["id"]
+                state.ambiguous_classes = []
+            else:
+                class_match = self._match_class(value, classes)
+                if isinstance(class_match, list):
+                    state.ambiguous_classes = class_match
+                    state.slots.class_id = None
+                    state.awaiting_confirmation = False
+                    state.next_step = "class"
+                    return state, True
+                if class_match:
+                    state.slots.class_id = class_match["id"]
+                    state.ambiguous_classes = []
+                else:
+                    return state, False
+
+        state.awaiting_confirmation = True
+        state.next_step = "confirm"
+        return state, True
 
     def _apply_collection_message(
         self,
@@ -473,7 +554,12 @@ class OnboardingFlow:
         return bool(slots.name and slots.school and slots.district and slots.class_id)
 
     def _looks_like_confirm(self, text: str) -> bool:
+        if self._looks_like_reject(text):
+            return False
         return bool(_CONFIRM_YES.search(text.strip()))
+
+    def _looks_like_reject(self, text: str) -> bool:
+        return bool(_CONFIRM_NO.search(text.strip()))
 
     def _looks_like_class_catalog_request(self, text: str) -> bool:
         return bool(_CLASS_CATALOG.search(text.strip()))

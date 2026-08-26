@@ -33,7 +33,7 @@ def onboarding_router_context_hint(*, tenant_id: str, phone: str, student_exists
     if session and session.awaiting_confirmation:
         return (
             "[ONBOARDING AWAITING CONFIRMATION — user YES/confirm completes enrollment "
-            "— always in_scope, route to admissions]"
+            "— NO/change restarts collection — always in_scope, route to admissions]"
         )
     step = (session.next_step if session else None) or "name"
     return f"[ONBOARDING IN PROGRESS — collecting: {step} — route to admissions]"
