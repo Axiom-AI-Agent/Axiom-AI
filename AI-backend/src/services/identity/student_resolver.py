@@ -9,6 +9,7 @@ from loguru import logger
 from domain.enums import ChatChannel
 from infrastructure.db.supabase_client import get_supabase_client
 from services.identity.resolver import normalize_phone
+from services.identity.telegram_pending_store import get_telegram_pending_store
 
 _ENROLLED_STATUSES = frozenset({"active", "pending"})
 
@@ -80,9 +81,9 @@ async def link_telegram_contact(
     Bind a Telegram chat_id to a phone number.
 
     Enrolled students are linked on student_channels immediately. Everyone else
-    is stored as a pending contact so ChatPipeline sees student_exists=False
-    and Admissions can run the normal enrollment flow. display_name is unused
-    — the student's legal name is collected during onboarding.
+    is remembered in process memory (24h sliding TTL) so ChatPipeline sees
+    student_exists=False and Admissions can run the normal enrollment flow.
+    display_name is unused — the student's legal name is collected during onboarding.
     """
     del display_name
     normalized_phone = normalize_phone(phone)
@@ -198,37 +199,15 @@ def _has_enrollment(tenant_id: str, student_id: str) -> bool:
 
 
 def _lookup_pending_phone(tenant_id: str, chat_id: str) -> str | None:
-    client = get_supabase_client()
-    response = (
-        client.table("telegram_pending_contacts")
-        .select("phone")
-        .eq("tenant_id", tenant_id)
-        .eq("chat_id", chat_id)
-        .limit(1)
-        .execute()
-    )
-    rows = response.data or []
-    phone = rows[0].get("phone") if rows else None
-    return str(phone) if phone else None
+    return get_telegram_pending_store().get(tenant_id=tenant_id, chat_id=chat_id)
 
 
 def _upsert_pending(*, tenant_id: str, chat_id: str, phone: str) -> None:
-    client = get_supabase_client()
-    client.table("telegram_pending_contacts").upsert(
-        {
-            "tenant_id": tenant_id,
-            "chat_id": chat_id,
-            "phone": phone,
-        },
-        on_conflict="tenant_id,chat_id",
-    ).execute()
+    get_telegram_pending_store().put(tenant_id=tenant_id, chat_id=chat_id, phone=phone)
 
 
 def _delete_pending(tenant_id: str, chat_id: str) -> None:
-    client = get_supabase_client()
-    client.table("telegram_pending_contacts").delete().eq("tenant_id", tenant_id).eq(
-        "chat_id", chat_id
-    ).execute()
+    get_telegram_pending_store().delete(tenant_id=tenant_id, chat_id=chat_id)
 
 
 def _upsert_channel(

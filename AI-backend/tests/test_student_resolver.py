@@ -12,6 +12,7 @@ from services.identity.student_resolver import (
     link_telegram_contact,
     resolve_student,
 )
+from services.identity.telegram_pending_store import get_telegram_pending_store
 
 STUDENT = {
     "id": "stu-physics-001",
@@ -63,6 +64,14 @@ def _client(tables: dict[str, _Query]) -> MagicMock:
     return client
 
 
+@pytest.fixture(autouse=True)
+def clear_pending_store():
+    store = get_telegram_pending_store()
+    store.clear()
+    yield
+    store.clear()
+
+
 @pytest.mark.asyncio
 async def test_resolve_student_returns_linked_row():
     tables = {
@@ -85,7 +94,6 @@ async def test_resolve_student_returns_linked_row():
 async def test_resolve_student_returns_none_for_new_chat():
     tables = {
         "student_channels": _Query([]),
-        "telegram_pending_contacts": _Query([]),
         "students": _Query([]),
     }
     with patch("services.identity.student_resolver.get_supabase_client", return_value=_client(tables)):
@@ -95,9 +103,13 @@ async def test_resolve_student_returns_none_for_new_chat():
 
 @pytest.mark.asyncio
 async def test_resolve_student_returns_pending_phone():
+    get_telegram_pending_store().put(
+        tenant_id="tenant-demo-physics",
+        chat_id="555002",
+        phone="94770001111",
+    )
     tables = {
         "student_channels": _Query([]),
-        "telegram_pending_contacts": _Query([{"phone": "94770001111"}]),
     }
     with patch("services.identity.student_resolver.get_supabase_client", return_value=_client(tables)):
         student = await resolve_student("tenant-demo-physics", "telegram", "555002")
@@ -122,11 +134,14 @@ async def test_resolve_student_unenrolled_linked_row_is_pending():
 
 @pytest.mark.asyncio
 async def test_link_telegram_contact_reuses_enrolled_student():
+    get_telegram_pending_store().put(
+        tenant_id="tenant-demo-physics",
+        chat_id="555001",
+        phone="94771234567",
+    )
     channel_query = _Query([])
-    pending_query = _Query([])
     tables = {
         "student_channels": channel_query,
-        "telegram_pending_contacts": pending_query,
         "students": _Query([STUDENT]),
         "enrollments": _Query([{"id": "enr-1", "status": "active"}]),
     }
@@ -142,15 +157,16 @@ async def test_link_telegram_contact_reuses_enrolled_student():
     assert channel_query.upserted["channel_address"] == "555001"
     assert channel_query.upserted["channel"] == "telegram"
     assert channel_query.on_conflict == "student_id,channel"
-    assert pending_query.deleted is True
+    assert (
+        get_telegram_pending_store().get(tenant_id="tenant-demo-physics", chat_id="555001")
+        is None
+    )
 
 
 @pytest.mark.asyncio
 async def test_link_telegram_contact_stores_pending_when_unknown_phone():
-    pending_query = _Query([])
     tables = {
         "student_channels": _Query([]),
-        "telegram_pending_contacts": pending_query,
         "students": _Query([]),
         "enrollments": _Query([]),
     }
@@ -165,16 +181,17 @@ async def test_link_telegram_contact_stores_pending_when_unknown_phone():
     assert student["id"] is None
     assert student["phone"] == "94770001111"
     assert student.get("name") is None
-    assert pending_query.upserted["phone"] == "94770001111"
-    assert pending_query.upserted["chat_id"] == "555002"
-    assert pending_query.on_conflict == "tenant_id,chat_id"
+    assert tables["student_channels"].upserted is None
+    assert (
+        get_telegram_pending_store().get(tenant_id="tenant-demo-physics", chat_id="555002")
+        == "94770001111"
+    )
 
 
 @pytest.mark.asyncio
 async def test_link_telegram_contact_does_not_link_unenrolled_stub():
     tables = {
         "student_channels": _Query([]),
-        "telegram_pending_contacts": _Query([]),
         "students": _Query([{**STUDENT, "name": "Mirco"}]),
         "enrollments": _Query([]),
     }
@@ -189,18 +206,24 @@ async def test_link_telegram_contact_does_not_link_unenrolled_stub():
     assert student["id"] is None
     assert student["phone"] == "94771234567"
     assert tables["student_channels"].upserted is None
-    assert tables["telegram_pending_contacts"].upserted["phone"] == "94771234567"
+    assert (
+        get_telegram_pending_store().get(tenant_id="tenant-demo-physics", chat_id="555003")
+        == "94771234567"
+    )
 
 
 @pytest.mark.asyncio
 async def test_bind_telegram_student_channel_after_enrollment():
+    get_telegram_pending_store().put(
+        tenant_id="tenant-demo-physics",
+        chat_id="555001",
+        phone="94771234567",
+    )
     channel_query = _Query([])
-    pending_query = _Query([])
     tables = {
         "students": _Query([STUDENT]),
         "enrollments": _Query([{"id": "enr-1", "status": "pending"}]),
         "student_channels": channel_query,
-        "telegram_pending_contacts": pending_query,
     }
     with patch("services.identity.student_resolver.get_supabase_client", return_value=_client(tables)):
         student = await bind_telegram_student_channel(
@@ -211,4 +234,7 @@ async def test_bind_telegram_student_channel_after_enrollment():
 
     assert student["id"] == "stu-physics-001"
     assert channel_query.upserted["student_id"] == "stu-physics-001"
-    assert pending_query.deleted is True
+    assert (
+        get_telegram_pending_store().get(tenant_id="tenant-demo-physics", chat_id="555001")
+        is None
+    )
