@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   BookOpen,
   CreditCard,
+  Megaphone,
   MessageSquare,
   RefreshCw,
   UserCheck,
@@ -174,6 +175,13 @@ export default function OverviewPage() {
             className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
           >
             Staff messages
+          </Link>
+          <Link
+            href="/dashboard/classes"
+            className="inline-flex items-center gap-2 rounded-lg border border-emerald-600 bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500 transition-colors shadow-sm font-medium"
+          >
+            <Megaphone className="h-4 w-4" />
+            Broadcast to class
           </Link>
           <Link
             href="/dashboard/ingest"

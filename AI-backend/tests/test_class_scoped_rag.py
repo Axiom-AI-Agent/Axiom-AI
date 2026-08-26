@@ -32,6 +32,9 @@ class FakeDrive:
     async def drive_search(self, **kwargs) -> dict[str, Any]:
         return {"ok": True, "files": []}
 
+    async def drive_list(self, **kwargs) -> dict[str, Any]:
+        return {"ok": True, "files": []}
+
 
 @pytest.mark.asyncio
 async def test_resource_agent_passes_enrolled_class_ids_to_rag():

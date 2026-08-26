@@ -32,6 +32,8 @@ LANGFUSE_PROMPT_NAMES = {
     "resource_stub": "axiom/resource-stub",
     "resource_rag": "axiom/resource_rag",
     "resource_drive": "axiom/resource_drive",
+    "resource_drive_list": "axiom/resource_drive_list",
+    "resource_drive_pick": "axiom/resource_drive_pick",
     "payment_stub": "axiom/payment-stub",
     "payment_ack": "axiom/payment_ack",
     "payment_missing_media": "axiom/payment_missing_media",
@@ -93,7 +95,7 @@ Return JSON with a "routes" array (1–3 items). Each item must have:
 Route definitions:
   • admissions    — enrollment, joining a class, registration, onboarding, new student,
                     OR institute info (available classes, fees, centre details, staff/tutor)
-  • resource      — past papers, textbooks, syllabus, lesson notes, explain a topic
+  • resource      — tutes, past papers, textbooks, syllabus, PDFs, lesson notes, explain a topic
   • payment_check — fees, bank slip, payment receipt, payment status
   • escalation    — speak to tutor/human, complaint, urgent help needing staff
   • direct        — greetings, thanks, chitchat, "who are you/this", simple in-scope Qs (no tools)
@@ -145,7 +147,9 @@ INTENT MAP (route field)
   Who is the tutor / staff / contact number            → admissions (action search — CRM lookup)
   Name / school / district / class selection replies   → admissions (if onboarding active)
   YES / confirm / I agree during enrollment review     → admissions
-  Past papers / model papers / textbooks / syllabus    → resource
+  Tutes / past papers / model papers / textbooks / syllabus / PDFs → resource
+  File list or "send me the paper" / download requests → resource
+  Numbered follow-up after a file list ("2", "number 3") → resource
   Explain lesson / help me understand / tutor notes    → resource
   Fee / payment / bank slip / receipt / "I paid"       → payment_check
   Speak to tutor / human / complaint / urgent          → escalation
@@ -185,8 +189,9 @@ PARAM SCHEMAS (null if unknown — never guess)
   direct params:      {{}} (usually empty)
 
 RESOURCE SUB-ROUTING HINT
-  • File/download requests ("send past paper", "PDF", "textbook") → resource/search, folder papers
+  • File/download requests (tutes, papers, PDFs, textbooks, syllabus) → resource/search
   • Explanation requests ("explain photosynthesis", "what did sir teach") → resource/search, query = user message
+  • Classify by intent, not a fixed phrase. Any request to get or list class files is resource.
 
 ROUTING EXAMPLES:
 
@@ -222,6 +227,12 @@ ROUTING EXAMPLES:
 
   "Do you have 2023 Physics past papers?"
     → resource {{action: "search", params: {{query: "2023 Physics past papers", subject: "Physics", folder: "papers"}}}}
+
+  "any tutes?" / "send me the papers" / "I need the syllabus PDF"
+    → resource {{action: "search", params: {{folder: "papers"}}}}
+
+  "2" (memory shows the assistant listed numbered Drive files)
+    → resource {{action: "search", params: {{}}}}
 
   "Can you explain the mole concept from last week's notes?"
     → resource {{action: "search", params: {{query: "mole concept", folder: "notes"}}}}
@@ -350,6 +361,32 @@ Here are the files I found for "{query}":
 
 {file_list}
 """
+
+_RESOURCE_DRIVE_LIST_FALLBACK = """\
+Here are the available {folder_label}:
+
+{file_list}
+
+Reply with the number of the file you want.
+"""
+
+_RESOURCE_DRIVE_LIST_RANGE_FALLBACK = """\
+That number is not on the list. Reply with a number from 1 to {count}:
+
+{file_list}
+"""
+
+_RESOURCE_DRIVE_PICK_FALLBACK = """\
+Here's the file you picked:
+
+{filename}
+{link}
+"""
+
+_RESOURCE_DRIVE_EMPTY_FALLBACK = (
+    "I couldn't find any {folder_label} in Drive right now. "
+    "Please check with {tenant_name}."
+)
 
 _RESOURCE_RAG_ERROR_FALLBACK = (
     "Sorry — I couldn't search the tutor notes right now. "
@@ -509,6 +546,70 @@ def build_resource_rag_reply(
     )
 
 
+def _drive_folder_label(folder: str | None) -> str:
+    key = (folder or "papers").strip().lower()
+    labels = {
+        "papers": "papers and tutes",
+        "textbooks": "textbooks",
+        "syllabus": "syllabus files",
+    }
+    return labels.get(key, "files")
+
+
+def _numbered_drive_names(files: list[dict]) -> str:
+    lines = []
+    for index, item in enumerate(files, start=1):
+        name = str(item.get("name") or "file").strip() or "file"
+        lines.append(f"{index}. {name}")
+    return "\n".join(lines)
+
+
+def build_resource_drive_list_reply(
+    *,
+    files: list[dict],
+    folder: str = "papers",
+    tenant_name: str = "your tuition centre",
+    error: str | None = None,
+    empty_message: str | None = None,
+    out_of_range: bool = False,
+) -> str:
+    label = _drive_folder_label(folder)
+    if error:
+        return _RESOURCE_DRIVE_ERROR_FALLBACK
+    if not files:
+        if empty_message:
+            return empty_message
+        return _RESOURCE_DRIVE_EMPTY_FALLBACK.format(
+            folder_label=label,
+            tenant_name=tenant_name,
+        )
+    file_list = _numbered_drive_names(files)
+    if out_of_range:
+        return _RESOURCE_DRIVE_LIST_RANGE_FALLBACK.format(count=len(files), file_list=file_list)
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["resource_drive_list"],
+        fallback=_RESOURCE_DRIVE_LIST_FALLBACK,
+        folder_label=label,
+        file_list=file_list,
+        tenant_name=tenant_name,
+    )
+
+
+def build_resource_drive_pick_reply(
+    *,
+    name: str,
+    link: str,
+    tenant_name: str = "your tuition centre",
+) -> str:
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["resource_drive_pick"],
+        fallback=_RESOURCE_DRIVE_PICK_FALLBACK,
+        filename=name,
+        link=link.strip() or "(link unavailable)",
+        tenant_name=tenant_name,
+    )
+
+
 def build_resource_drive_reply(
     *,
     files: list[dict],
@@ -517,23 +618,12 @@ def build_resource_drive_reply(
     error: str | None = None,
     empty_message: str | None = None,
 ) -> str:
-    if error:
-        return _RESOURCE_DRIVE_ERROR_FALLBACK
-    if not files:
-        return empty_message or f"I couldn't find any files matching '{query}'. Try a different search term."
-    lines = []
-    for f in files:
-        name = f.get("name", "file")
-        link = f.get("link") or "(link unavailable)"
-        folder = f.get("folder", "papers")
-        lines.append(f"• {name} ({folder})\n  {link}")
-    file_list = "\n".join(lines)
-    return fetch_prompt(
-        LANGFUSE_PROMPT_NAMES["resource_drive"],
-        fallback=_RESOURCE_DRIVE_FALLBACK,
-        query=query,
-        file_list=file_list,
+    del query
+    return build_resource_drive_list_reply(
+        files=files,
         tenant_name=tenant_name,
+        error=error,
+        empty_message=empty_message,
     )
 
 

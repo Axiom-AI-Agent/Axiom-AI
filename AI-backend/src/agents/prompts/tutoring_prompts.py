@@ -17,6 +17,8 @@ LOCAL_PROMPTS: dict[str, str | list[dict[str, str]]] = {
     ap.LANGFUSE_PROMPT_NAMES["resource_stub"]: ap._RESOURCE_STUB_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["resource_rag"]: ap._RESOURCE_RAG_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["resource_drive"]: ap._RESOURCE_DRIVE_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_drive_list"]: ap._RESOURCE_DRIVE_LIST_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["resource_drive_pick"]: ap._RESOURCE_DRIVE_PICK_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["payment_stub"]: ap._PAYMENT_STUB_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["payment_ack"]: ap._PAYMENT_ACK_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["payment_missing_media"]: ap._PAYMENT_MISSING_MEDIA_FALLBACK.strip(),
