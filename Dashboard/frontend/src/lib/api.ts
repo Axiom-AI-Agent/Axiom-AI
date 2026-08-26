@@ -510,6 +510,7 @@ export interface Student {
   created_at: string;
   updated_at?: string;
   enrollments?: EnrollmentSummary[];
+  human_mode?: boolean;
 }
 
 export interface StudentProfile {
@@ -517,6 +518,22 @@ export interface StudentProfile {
   enrollments: EnrollmentSummary[];
 }
 
+export function updateStudentHumanMode(
+  studentId: string,
+  humanMode: boolean,
+  tenantId?: string,
+): Promise<Student> {
+  return dashboardRequest<Student>(
+    `/students/${studentId}/human-mode`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        human_mode: humanMode,
+      }),
+    },
+    tenantId,
+  );
+}
 export interface CreateStudentPayload {
   tenant_id?: string;
   name?: string;
@@ -917,6 +934,7 @@ export interface TenantProfile {
   status: string;
   whatsapp_number?: string | null;
   drive_folder_id?: string | null;
+  payments_enabled: boolean;
   created_at: string;
   updated_at?: string | null;
 }
@@ -927,6 +945,7 @@ export interface UpdateTenantPayload {
   whatsapp_number?: string | null;
   drive_folder_id?: string | null;
   status?: "active" | "suspended";
+  payments_enabled?: boolean;
 }
 
 export function listTenants(): Promise<TenantSummary[]> {
