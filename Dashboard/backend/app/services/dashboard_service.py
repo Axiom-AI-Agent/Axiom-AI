@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session, joinedload
 
@@ -20,6 +20,21 @@ from app.models.enums import (
 
 PAYMENT_REASON_CODES = {"payment_receipt", "enrollment_payment_review"}
 TUTOR_REASON_CODE = "talk_to_tutor"
+
+
+def analytics_start_date(period: str) -> datetime:
+    now = datetime.now(timezone.utc)
+
+    if period == "today":
+        return now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    if period == "7d":
+        return now - timedelta(days=7)
+
+    if period == "month":
+        return now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    raise ValueError("Invalid analytics period")
 
 
 def is_payment_reason(reason_code: str) -> bool:
@@ -240,13 +255,18 @@ def build_dashboard_analytics(
     db: Session,
     *,
     tenant_id: str,
+    period: str = "7d",
     estimated_minutes_per_deflection: int = 2,
 ) -> dict:
+    start_date = analytics_start_date(period)
+
     turns = (
         db.query(STTurn)
-        .filter(STTurn.tenant_id == tenant_id)
+        .filter(
+            STTurn.tenant_id == tenant_id,
+            STTurn.created_at >= start_date,
+        )
         .order_by(
-            STTurn.session_id.asc(),
             STTurn.created_at.asc(),
         )
         .all()
@@ -254,7 +274,10 @@ def build_dashboard_analytics(
 
     escalations = (
         db.query(Escalation)
-        .filter(Escalation.tenant_id == tenant_id)
+        .filter(
+            Escalation.tenant_id == tenant_id,
+            Escalation.created_at >= start_date,
+        )
         .all()
     )
 
@@ -485,6 +508,7 @@ def build_dashboard_analytics(
 
     return {
         "tenant_id": tenant_id,
+        "period": period,
         "total_conversations": total_conversations,
         "total_messages": total_messages,
         "deflected_conversations": (
@@ -512,8 +536,10 @@ def build_class_analytics(
     db: Session,
     *,
     tenant_id: str,
+    period: str = "7d",
     estimated_minutes_per_deflection: int = 2,
 ) -> dict:
+    start_date = analytics_start_date(period)
     classes = (
         db.query(SubjectClass)
         .filter(
@@ -537,7 +563,8 @@ def build_class_analytics(
     turns = (
         db.query(STTurn)
         .filter(
-            STTurn.tenant_id == tenant_id
+            STTurn.tenant_id == tenant_id,
+            STTurn.created_at >= start_date,
         )
         .order_by(
             STTurn.session_id.asc(),
@@ -549,7 +576,8 @@ def build_class_analytics(
     escalations = (
         db.query(Escalation)
         .filter(
-            Escalation.tenant_id == tenant_id
+            Escalation.tenant_id == tenant_id,
+            Escalation.created_at >= start_date,
         )
         .all()
     )
@@ -813,6 +841,7 @@ def build_class_analytics(
 
     return {
         "tenant_id": tenant_id,
+        "period": period,
         "attribution_mode":
             "enrollment_membership",
         "classes": results,

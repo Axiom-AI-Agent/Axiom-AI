@@ -6,9 +6,14 @@ from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.deps.tenant import get_tenant_id
-from app.models import SubjectClass
+from app.models import Enrollment, Student, SubjectClass
 from app.models.enums import FeeCycle
-from app.schemas.schemas import ClassCreate, ClassResponse, ClassUpdate
+from app.schemas.schemas import (
+    ClassCreate,
+    ClassHumanModeUpdate,
+    ClassResponse,
+    ClassUpdate,
+)
 
 router = APIRouter(prefix="/classes", tags=["Classes"])
 
@@ -17,9 +22,10 @@ def _parse_fee_cycle(value: str) -> FeeCycle:
     normalized = value.lower().replace("-", "_")
     mapping = {
         "monthly": FeeCycle.MONTHLY,
+        "per_class": FeeCycle.PER_CLASS,
         "termly": FeeCycle.TERMLY,
+        "one_time": FeeCycle.ONE_TIME,
         "annual": FeeCycle.ANNUAL,
-        "one_time": FeeCycle.ANNUAL,
     }
 
     if normalized not in mapping:
@@ -119,6 +125,59 @@ def update_class(
     db.commit()
     db.refresh(subject_class)
     return subject_class
+
+
+@router.patch("/{class_id}/human-mode")
+def update_class_human_mode(
+    class_id: str,
+    payload: ClassHumanModeUpdate,
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    subject_class = (
+        db.query(SubjectClass)
+        .filter(
+            SubjectClass.id == class_id,
+            SubjectClass.tenant_id == tenant_id,
+        )
+        .first()
+    )
+
+    if subject_class is None:
+        raise HTTPException(status_code=404, detail="Class not found")
+
+    enrollments = (
+        db.query(Enrollment)
+        .filter(
+            Enrollment.tenant_id == tenant_id,
+            Enrollment.class_id == class_id,
+        )
+        .all()
+    )
+
+    student_ids = {row.student_id for row in enrollments}
+
+    if student_ids:
+        (
+            db.query(Student)
+            .filter(
+                Student.tenant_id == tenant_id,
+                Student.id.in_(student_ids),
+            )
+            .update(
+                {Student.human_mode: payload.human_mode},
+                synchronize_session=False,
+            )
+        )
+
+    db.commit()
+
+    return {
+        "ok": True,
+        "class_id": class_id,
+        "human_mode": payload.human_mode,
+        "students_updated": len(student_ids),
+    }
 
 
 @router.delete("/{class_id}", status_code=204)
