@@ -795,6 +795,47 @@ export interface ClassDocumentUploadResponse {
   document_title: string | null;
   source_filename: string | null;
 }
+export interface ClassAnalyticsMetric {
+  class_id: string;
+  class_name?: string | null;
+  subject: string;
+  grade?: string | null;
+
+  enrolled_students: number;
+  active_students: number;
+  pending_students: number;
+
+  total_messages: number;
+  total_conversations: number;
+
+  deflected_conversations: number;
+  deflection_rate: number;
+
+  average_response_seconds: number;
+  estimated_minutes_saved: number;
+
+  total_escalations: number;
+  open_escalations: number;
+  resolved_escalations: number;
+}
+
+export interface ClassAnalyticsComparison {
+  tenant_id: string;
+  attribution_mode: string;
+  classes: ClassAnalyticsMetric[];
+}
+
+export function getClassAnalytics(
+  tenantId?: string,
+): Promise<ClassAnalyticsComparison> {
+  return dashboardRequest<
+    ClassAnalyticsComparison
+  >(
+    "/dashboard/analytics/classes",
+    {},
+    tenantId,
+  );
+}
 
 export async function uploadClassDocument(
   classId: string,
@@ -843,3 +884,5 @@ export async function uploadClassDocument(
 
   return response.json() as Promise<ClassDocumentUploadResponse>;
 }
+
+

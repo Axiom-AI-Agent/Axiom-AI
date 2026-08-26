@@ -42,6 +42,11 @@ const mainNavItems: NavItem[] = [
     icon: <BarChart3 className="h-5 w-5" />,
   },
   {
+  href: "/dashboard/analytics/classes",
+  label: "Class Analytics",
+  icon: <BarChart3 className="h-5 w-5" />,
+  },  
+  {
     href: "/dashboard/inbox",
     label: "Inbox",
     icon: <Inbox className="h-5 w-5" />,
