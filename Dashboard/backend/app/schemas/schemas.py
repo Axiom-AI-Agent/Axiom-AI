@@ -86,11 +86,13 @@ class StudentUpdate(BaseModel):
 class StudentResponse(StudentBase):
     id: str
     tenant_id: str
+    human_mode: bool = False
     created_at: datetime
     updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
 
 
 class StudentDetailResponse(StudentResponse):
@@ -101,7 +103,8 @@ class StudentsListResponse(BaseModel):
     tenant_id: str
     students: list[StudentDetailResponse]
 
-
+class StudentHumanModeUpdate(BaseModel):
+    human_mode: bool
 # ---------- Escalations ----------
 class EscalationCreate(BaseModel):
     tenant_id: str = DEMO_TENANT_ID
