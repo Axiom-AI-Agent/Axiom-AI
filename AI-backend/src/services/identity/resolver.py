@@ -63,7 +63,7 @@ class IdentityResolver:
                 continue
             response = (
                 client.table("tenants")
-                .select("id, slug, name, whatsapp_number, status")
+                .select("id, slug, name, whatsapp_number, status, payments_enabled")
                 .eq("whatsapp_number", candidate)
                 .limit(1)
                 .execute()
@@ -80,7 +80,7 @@ class IdentityResolver:
         )
         response = (
             client.table("tenants")
-            .select("id, slug, name, whatsapp_number, status")
+            .select("id, slug, name, whatsapp_number, status, payments_enabled")
             .eq("id", fallback)
             .limit(1)
             .execute()
@@ -95,7 +95,7 @@ class IdentityResolver:
         client = get_supabase_client()
         response = (
             client.table("tenants")
-            .select("id, slug, name, status")
+            .select("id, slug, name, status, payments_enabled")
             .eq("id", tenant_id)
             .limit(1)
             .execute()
@@ -127,6 +127,12 @@ class IdentityResolver:
                 tenant_name=tenant.get("name"),
                 phone=phone,
                 session_id=session_id,
+                payments_enabled=bool(
+                    tenant.get(
+                        "payments_enabled",
+                        True,
+                    )
+                ),
                 student_exists=False,
             )
 
@@ -138,9 +144,14 @@ class IdentityResolver:
                 tenant_name=tenant.get("name"),
                 phone=phone,
                 session_id=session_id,
+                payments_enabled=bool(
+                    tenant.get(
+                        "payments_enabled",
+                        True,
+                    )
+                ),
                 student_exists=False,
             )
-
         class_names = self._lookup_class_names(
             tenant_id,
             [row["class_id"] for row in enrollments if row.get("class_id")],
@@ -157,6 +168,21 @@ class IdentityResolver:
             student_id=student["id"],
             phone=phone,
             session_id=session_id,
+
+            human_mode=bool(
+                student.get(
+                    "human_mode",
+                    False,
+                )
+            ),
+
+            payments_enabled=bool(
+                tenant.get(
+                    "payments_enabled",
+                    True,
+                )
+            ),
+
             student_exists=True,
             student_name=student.get("name"),
             is_enrolled=bool(enrolled_rows),
@@ -181,7 +207,7 @@ class IdentityResolver:
         client = get_supabase_client()
         response = (
             client.table("students")
-            .select("id, name, phone")
+            .select("id, name, phone, human_mode")
             .eq("tenant_id", tenant_id)
             .eq("phone", phone)
             .limit(1)
