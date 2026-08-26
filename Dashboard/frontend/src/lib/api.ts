@@ -458,6 +458,7 @@ export interface Student {
   created_at: string;
   updated_at?: string;
   enrollments?: EnrollmentSummary[];
+  human_mode?: boolean;
 }
 
 export interface StudentProfile {
@@ -465,6 +466,22 @@ export interface StudentProfile {
   enrollments: EnrollmentSummary[];
 }
 
+export function updateStudentHumanMode(
+  studentId: string,
+  humanMode: boolean,
+  tenantId?: string,
+): Promise<Student> {
+  return dashboardRequest<Student>(
+    `/students/${studentId}/human-mode`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        human_mode: humanMode,
+      }),
+    },
+    tenantId,
+  );
+}
 export interface CreateStudentPayload {
   tenant_id?: string;
   name?: string;
