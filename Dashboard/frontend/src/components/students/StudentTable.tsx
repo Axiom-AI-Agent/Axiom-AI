@@ -105,23 +105,21 @@ export default function StudentTable({
                   </Link>
                   <button
                     type="button"
-                    onClick={() =>
-                      onToggleHumanMode(student)
-                    }
+                    onClick={() => onToggleHumanMode(student)}
                     title={
                       student.human_mode
                         ? "AI replies are disabled for this student"
                         : "AI replies are enabled for this student"
                     }
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                    className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
                       student.human_mode
-                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-300"
-                        : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+                        ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20"
+                        : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
                     }`}
                   >
                     {student.human_mode
-                      ? "AI Off · Human Mode"
-                      : "AI On"}
+                      ? "Human mode"
+                      : "AI active"}
                   </button>
                   <button
                     type="button"

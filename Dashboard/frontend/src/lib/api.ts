@@ -718,6 +718,7 @@ export interface TenantProfile {
   status: string;
   whatsapp_number?: string | null;
   drive_folder_id?: string | null;
+  payments_enabled: boolean;
   created_at: string;
   updated_at?: string | null;
 }
@@ -728,6 +729,7 @@ export interface UpdateTenantPayload {
   whatsapp_number?: string | null;
   drive_folder_id?: string | null;
   status?: "active" | "suspended";
+  payments_enabled?: boolean;
 }
 
 export function listTenants(): Promise<TenantSummary[]> {
