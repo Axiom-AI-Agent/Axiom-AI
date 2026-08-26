@@ -953,9 +953,105 @@ export function updateTenantProfile(
   );
 }
 
+export interface EscalationCategoryMetric {
+  reason_code: string;
+  count: number;
+}
+
+export interface StudentAnalyticsMetric {
+  student_id: string;
+  student_name?: string | null;
+  messages: number;
+  conversations: number;
+  escalations: number;
+}
+
+export interface DashboardAnalytics {
+  tenant_id: string;
+
+  total_conversations: number;
+  total_messages: number;
+
+  deflected_conversations: number;
+  deflection_rate: number;
+
+  average_response_seconds: number;
+  estimated_minutes_saved: number;
+
+  total_escalations: number;
+  open_escalations: number;
+  resolved_escalations: number;
+
+  escalation_categories:
+    EscalationCategoryMetric[];
+
+  students: StudentAnalyticsMetric[];
+}
+
+export function getDashboardAnalytics(
+  tenantId?: string,
+): Promise<DashboardAnalytics> {
+  return dashboardRequest<DashboardAnalytics>(
+    "/dashboard/analytics",
+    {},
+    tenantId,
+  );
+}
+
 /* Class Documents */
 
-export type ClassDocumentUploadResponse = IngestUploadResult;
+export interface ClassDocumentUploadResponse {
+  ok: boolean;
+  tenant_id: string;
+  strategy: string;
+  documents: number;
+  chunks_upserted: number;
+  collection: string;
+  points_count: number | null;
+  document_title: string | null;
+  source_filename: string | null;
+}
+export interface ClassAnalyticsMetric {
+  class_id: string;
+  class_name?: string | null;
+  subject: string;
+  grade?: string | null;
+
+  enrolled_students: number;
+  active_students: number;
+  pending_students: number;
+
+  total_messages: number;
+  total_conversations: number;
+
+  deflected_conversations: number;
+  deflection_rate: number;
+
+  average_response_seconds: number;
+  estimated_minutes_saved: number;
+
+  total_escalations: number;
+  open_escalations: number;
+  resolved_escalations: number;
+}
+
+export interface ClassAnalyticsComparison {
+  tenant_id: string;
+  attribution_mode: string;
+  classes: ClassAnalyticsMetric[];
+}
+
+export function getClassAnalytics(
+  tenantId?: string,
+): Promise<ClassAnalyticsComparison> {
+  return dashboardRequest<
+    ClassAnalyticsComparison
+  >(
+    "/dashboard/analytics/classes",
+    {},
+    tenantId,
+  );
+}
 
 export function uploadClassDocument(
   classId: string,
@@ -966,3 +1062,5 @@ export function uploadClassDocument(
 ): Promise<ClassDocumentUploadResponse> {
   return uploadDocument({ classId, file, title, lesson }, tenantId);
 }
+
+

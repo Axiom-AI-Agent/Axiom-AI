@@ -158,7 +158,38 @@ class DashboardOverviewResponse(BaseModel):
     students: int
     classes: int
 
+class EscalationCategoryMetric(BaseModel):
+    reason_code: str
+    count: int
 
+
+class StudentAnalyticsMetric(BaseModel):
+    student_id: str
+    student_name: Optional[str] = None
+    messages: int
+    conversations: int
+    escalations: int
+
+
+class DashboardAnalyticsResponse(BaseModel):
+    tenant_id: str
+
+    total_conversations: int
+    total_messages: int
+
+    deflected_conversations: int
+    deflection_rate: float
+
+    average_response_seconds: float
+    estimated_minutes_saved: int
+
+    total_escalations: int
+    open_escalations: int
+    resolved_escalations: int
+
+    escalation_categories: list[EscalationCategoryMetric]
+    students: list[StudentAnalyticsMetric]
+    
 # ---------- Invoices / Payments ----------
 class InvoiceResponse(BaseModel):
     id: str
@@ -240,3 +271,31 @@ class TenantUpdate(BaseModel):
     whatsapp_number: Optional[str] = None
     drive_folder_id: Optional[str] = None
     status: Optional[str] = Field(default=None, pattern="^(active|suspended)$")
+class ClassAnalyticsMetric(BaseModel):
+    class_id: str
+    class_name: Optional[str] = None
+    subject: str
+    grade: Optional[str] = None
+
+    enrolled_students: int
+    active_students: int
+    pending_students: int
+
+    total_messages: int
+    total_conversations: int
+
+    deflected_conversations: int
+    deflection_rate: float
+
+    average_response_seconds: float
+    estimated_minutes_saved: int
+
+    total_escalations: int
+    open_escalations: int
+    resolved_escalations: int
+
+
+class ClassAnalyticsComparisonResponse(BaseModel):
+    tenant_id: str
+    attribution_mode: str
+    classes: list[ClassAnalyticsMetric]

@@ -8,6 +8,8 @@ from app.deps.tenant import get_tenant_id
 from app.models import Enrollment, Escalation, MessageLog, Student, SubjectClass
 from app.models.enums import EnrollmentStatus, EscalationStatus
 from app.schemas.schemas import (
+    ClassAnalyticsComparisonResponse,
+    DashboardAnalyticsResponse,
     DashboardOverviewResponse,
     EscalationActionResponse,
     EscalationsListResponse,
@@ -16,6 +18,8 @@ from app.schemas.schemas import (
 from app.services.dashboard_service import (
     PAYMENT_REASON_CODES,
     TUTOR_REASON_CODE,
+    build_class_analytics,
+    build_dashboard_analytics,
     enrich_escalation,
     list_escalations,
     reject_payment_escalation_record,
@@ -96,14 +100,34 @@ def get_summary(
     tenant_id: str = Depends(get_tenant_id),
     db: Session = Depends(get_db),
 ):
-    overview = get_overview(tenant_id=tenant_id, db=db)
+    overview = get_overview(
+        tenant_id=tenant_id,
+        db=db,
+    )
+
     return {
         "total_students": overview["students"],
-        "pending_payments": overview["open_payment_receipts"],
-        "open_escalations": overview["open_escalations"],
-        "active_classes": overview["classes"],
+        "pending_payments": overview[
+            "open_payment_receipts"
+        ],
+        "open_escalations": overview[
+            "open_escalations"
+        ],
     }
 
+
+@router.get(
+    "/analytics",
+    response_model=DashboardAnalyticsResponse,
+)
+def get_dashboard_analytics(
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    return build_dashboard_analytics(
+        db,
+        tenant_id=tenant_id,
+    )
 
 @router.get("/escalations", response_model=EscalationsListResponse)
 def get_dashboard_escalations(
@@ -221,3 +245,22 @@ def get_dashboard_chat_logs(
         }
         for log in logs
     ]
+
+@router.get(
+    "/analytics/classes",
+    response_model=(
+        ClassAnalyticsComparisonResponse
+    ),
+)
+def get_class_analytics(
+    tenant_id: str = Depends(
+        get_tenant_id
+    ),
+    db: Session = Depends(
+        get_db
+    ),
+):
+    return build_class_analytics(
+        db,
+        tenant_id=tenant_id,
+    )
