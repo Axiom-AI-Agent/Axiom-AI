@@ -225,7 +225,8 @@ def _content_type_supported(content_type: str | None) -> bool:
     if not content_type:
         return False
     main = content_type.split(";")[0].strip().lower()
-    return main == "audio/ogg"
+    # Telegram returns application/octet-stream, WhatsApp returns audio/ogg
+    return main in {"audio/ogg", "application/octet-stream"}
 
 
 def _get_twilio_auth() -> tuple[str, str] | None:
