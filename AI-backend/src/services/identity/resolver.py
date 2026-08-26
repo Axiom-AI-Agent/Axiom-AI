@@ -119,6 +119,7 @@ class IdentityResolver:
     ) -> IdentityContext:
         tenant_id = tenant["id"]
         session_id = build_session_id(tenant_id, phone)
+        payments_enabled = bool(tenant.get("payments_enabled", True))
 
         if not student:
             return IdentityContext(
@@ -134,6 +135,7 @@ class IdentityResolver:
                     )
                 ),
                 student_exists=False,
+                payments_enabled=payments_enabled,
             )
 
         enrollments = self._lookup_enrollments(tenant_id, student["id"])
@@ -151,6 +153,7 @@ class IdentityResolver:
                     )
                 ),
                 student_exists=False,
+                payments_enabled=payments_enabled,
             )
         class_names = self._lookup_class_names(
             tenant_id,
@@ -168,21 +171,6 @@ class IdentityResolver:
             student_id=student["id"],
             phone=phone,
             session_id=session_id,
-
-            human_mode=bool(
-                student.get(
-                    "human_mode",
-                    False,
-                )
-            ),
-
-            payments_enabled=bool(
-                tenant.get(
-                    "payments_enabled",
-                    True,
-                )
-            ),
-
             student_exists=True,
             student_name=student.get("name"),
             is_enrolled=bool(enrolled_rows),

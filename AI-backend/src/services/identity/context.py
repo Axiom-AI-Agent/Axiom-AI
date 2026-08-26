@@ -16,6 +16,7 @@ class IdentityContext:
     session_id: str
     student_id: str | None = None
     human_mode: bool = False
+    payments_enabled: bool = True
     student_exists: bool = False
     student_name: str | None = None
     is_enrolled: bool = False

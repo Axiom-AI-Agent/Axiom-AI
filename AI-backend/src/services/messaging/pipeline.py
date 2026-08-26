@@ -130,11 +130,10 @@ class ChatPipeline:
                         "Sorry, I couldn't understand that voice message. "
                         "Could you please try again?"
                     )
-            else:
-                # Non-voice audio file (MP3, WAV, etc.) — not supported
+            elif not ctx.payments_enabled:
                 return (
-                    "Sorry, I can only process voice notes (not audio files). "
-                    "Please record a voice message instead."
+                    "Payment submissions are currently disabled for this "
+                    "institute. Please contact the tutor for assistance."
                 )
 
         try:

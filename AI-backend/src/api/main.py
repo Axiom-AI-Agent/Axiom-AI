@@ -30,6 +30,7 @@ from api.routers.dashboard.broadcast import router as dashboard_broadcast_router
 from api.routers.dashboard.chat import router as dashboard_chat_router
 from api.routers.dashboard.chat_logs import router as dashboard_chat_logs_router
 from api.routers.dashboard.escalations import router as dashboard_escalations_router
+from api.routers.dashboard.faqs import router as dashboard_faqs_router
 from api.routers.dashboard.overview import router as dashboard_overview_router
 from api.routers.escalations import router as escalations_router
 from api.routers.health import router as health_router
@@ -122,6 +123,7 @@ app.include_router(dashboard_chat_router, prefix="/dashboard")
 app.include_router(dashboard_chat_logs_router, prefix="/dashboard")
 app.include_router(dashboard_overview_router, prefix="/dashboard")
 app.include_router(dashboard_broadcast_router, prefix="/dashboard")
+app.include_router(dashboard_faqs_router, prefix="/dashboard")
 app.include_router(rag_tools_router)
 app.include_router(drive_tools_router)
 app.include_router(ingest_tools_router)
@@ -152,6 +154,7 @@ async def root() -> dict:
         "dashboard_chat_logs": "/dashboard/chat-logs",
         "dashboard_class_broadcast": "/dashboard/classes/{id}/broadcast",
         "dashboard_class_broadcast_recipients": "/dashboard/classes/{id}/broadcast-recipients",
+        "dashboard_faqs_analyze": "/dashboard/faqs/analyze",
         "rag_search": "/tools/rag/search",
         "drive_search": "/tools/drive/search",
         "ingest_upload": "/tools/ingest/upload",
