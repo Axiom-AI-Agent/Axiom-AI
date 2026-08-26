@@ -31,6 +31,17 @@ def test_trace_context_tags_and_metadata():
     assert ctx.metadata()["tenant_id"] == "tenant-demo-physics"
 
 
+def test_trace_context_tags_telegram_channel():
+    ctx = TraceContext(
+        tenant_id="tenant-demo-physics",
+        tenant_slug="demo-physics",
+        channel="telegram",
+    )
+    assert "channel:telegram" in ctx.tags()
+    assert ctx.metadata()["channel"] == "telegram"
+    assert ctx.metadata()["tenant_id"] == "tenant-demo-physics"
+
+
 def test_trace_context_noop_when_langfuse_disabled():
     ctx = TraceContext(tenant_id="tenant-demo-physics")
     with trace_context(ctx):

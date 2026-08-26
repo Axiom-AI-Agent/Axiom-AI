@@ -36,6 +36,8 @@ class AgentState(TypedDict, total=False):
     verdict: Optional[str]
 
     route_decisions: Optional[list[dict]]
+    pending_escalation_reason: Optional[str]
+    pending_escalation_message: Optional[str]
     agent_outputs: Annotated[list[dict], operator.add]
 
     final_answer: Optional[str]

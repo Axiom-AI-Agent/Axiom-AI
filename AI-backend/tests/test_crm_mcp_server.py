@@ -126,6 +126,43 @@ def test_get_tenant_info_returns_profile(mock_db):
     assert len(payload["staff"]) == 1
 
 
+def test_commit_onboarding_completes_unenrolled_profile(mock_db):
+    mock_db.create_invoice_for_class.return_value = {"id": "inv-1", "status": "pending"}
+    tool = CrmTool(db=mock_db)
+    raw = tool.commit_onboarding(
+        tenant_id="tenant-a",
+        phone="94770000001",
+        name="Amaya Perera",
+        school="Royal College",
+        district="Colombo",
+        class_id="class-1",
+    )
+    payload = json.loads(raw)
+    assert payload["ok"] is True
+    mock_db.update_student.assert_called_once()
+    mock_db.create_student.assert_not_called()
+    mock_db.create_enrollment.assert_called_once()
+
+
+def test_commit_onboarding_rejects_already_enrolled(mock_db):
+    mock_db.list_enrollments.return_value = [
+        {"id": "enr-1", "status": "pending", "class_id": "class-1"}
+    ]
+    tool = CrmTool(db=mock_db)
+    raw = tool.commit_onboarding(
+        tenant_id="tenant-a",
+        phone="94770000001",
+        name="Amaya Perera",
+        school="Royal College",
+        district="Colombo",
+        class_id="class-1",
+    )
+    payload = json.loads(raw)
+    assert payload["ok"] is False
+    assert "already exists" in payload["error"].lower()
+    mock_db.create_enrollment.assert_not_called()
+
+
 def test_list_staff_scoped_to_tenant(mock_db):
     mock_db.list_staff.return_value = [{"id": "s1", "name": "Demo Physics Admin", "role": "admin"}]
     tool = CrmTool(db=mock_db)

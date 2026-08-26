@@ -87,11 +87,17 @@ def get_role_config(role: str) -> tuple[str, str]:
     return model, provider
 
 
+def _get_bool(d: dict[str, Any], *keys: str, default: bool) -> bool:
+    value = _get_nested(d, *keys, default=default)
+    return value if isinstance(value, bool) else default
+
+
 ROUTER_MODEL, ROUTER_PROVIDER = get_role_config("router")
 GUARDRAIL_MODEL, GUARDRAIL_PROVIDER = get_role_config("guardrail")
 EXTRACTOR_MODEL, EXTRACTOR_PROVIDER = get_role_config("extractor")
 CHAT_MODEL, CHAT_PROVIDER = get_role_config("chat")
 MERGE_MODEL, MERGE_PROVIDER = get_role_config("merge")
+OCR_MODEL, OCR_PROVIDER = get_role_config("ocr")
 FAST_CHAT_MODEL = EXTRACTOR_MODEL
 FAST_CHAT_PROVIDER = EXTRACTOR_PROVIDER
 
@@ -131,6 +137,34 @@ PARENT_CHUNK_SIZE = int(_get_nested(_PARAMS, "chunking", "parent_child", "parent
 CHILD_CHUNK_SIZE = int(_get_nested(_PARAMS, "chunking", "parent_child", "child_size", default=250))
 CHILD_CHUNK_OVERLAP = int(_get_nested(_PARAMS, "chunking", "parent_child", "child_overlap", default=50))
 EMBEDDING_BATCH_SIZE = int(_get_nested(_PARAMS, "embedding", "batch_size", default=100))
+
+CHUNK_RESPECT_MARKDOWN_HEADERS = _get_bool(
+    _PARAMS, "chunking", "respect_markdown_headers", default=True
+)
+CHUNK_CONTEXTUALIZE_CHILDREN = _get_bool(
+    _PARAMS, "chunking", "contextualize_children", default=True
+)
+CHUNK_TOKEN_ENCODING = _get_str(_PARAMS, "chunking", "token_encoding", default="cl100k_base")
+
+# Per-format upload ceilings (MB). PDF is highest because scanned notes are large.
+INGEST_MAX_UPLOAD_MB: dict[str, int] = {
+    "pdf": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "pdf", default=50)),
+    "docx": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "docx", default=25)),
+    "markdown": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "markdown", default=5)),
+}
+
+INGEST_OCR_ENABLED = _get_bool(_PARAMS, "ingest", "ocr", "enabled", default=True)
+INGEST_OCR_MIN_CHARS = int(
+    _get_nested(_PARAMS, "ingest", "ocr", "min_chars_per_page", default=100)
+)
+INGEST_OCR_MIN_ALPHA_RATIO = float(
+    _get_nested(_PARAMS, "ingest", "ocr", "min_alpha_ratio", default=0.5)
+)
+INGEST_OCR_MAX_PAGES = int(_get_nested(_PARAMS, "ingest", "ocr", "max_pages_per_doc", default=50))
+INGEST_OCR_DPI = int(_get_nested(_PARAMS, "ingest", "ocr", "dpi", default=200))
+INGEST_DOCX_PROMOTE_BOLD_HEADINGS = _get_bool(
+    _PARAMS, "ingest", "docx", "promote_bold_headings", default=True
+)
 
 GOOGLE_SERVICE_ACCOUNT_JSON = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "")
 DRIVE_MOCK = os.getenv("DRIVE_MOCK", "false").lower() in ("1", "true", "yes", "on")

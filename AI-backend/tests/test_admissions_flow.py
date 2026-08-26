@@ -137,6 +137,8 @@ def test_class_catalog_request_on_class_step():
     )
     assert "A/L Physics 2026" in msg
     assert "O/L Physics 2026" in msg
+    assert "**" not in msg
+    assert "LKR 5,000/month" in msg
     assert flow._looks_like_class_catalog_request("what are all the available classes")
 
 

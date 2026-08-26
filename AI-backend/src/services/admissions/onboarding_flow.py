@@ -92,6 +92,16 @@ _NON_NAME_WORDS = frozenset(
 )
 
 
+def _format_lkr_amount(amount: Any) -> str:
+    try:
+        value = float(amount)
+    except (TypeError, ValueError):
+        return str(amount)
+    if value == int(value):
+        return f"{int(value):,}"
+    return f"{value:,.2f}"
+
+
 @dataclass
 class OnboardingSlots:
     name: str | None = None
@@ -260,7 +270,7 @@ class OnboardingFlow:
             )
         prompts = {
             "name": (
-                f"Hi! Welcome to **{tenant_name}** — I'll help you get enrolled. "
+                f"Hi! Welcome to {tenant_name} — I'll help you get enrolled. "
                 f"What's your full name?"
             ),
             "school": (
@@ -284,16 +294,16 @@ class OnboardingFlow:
             header = intro
         elif first:
             header = (
-                f"Thanks, {first}! At **{tenant_name}** we currently offer these classes:"
+                f"Thanks, {first}! At {tenant_name} we currently offer these classes:"
             )
         else:
-            header = f"Here are the classes available at **{tenant_name}**:"
+            header = f"Here are the classes available at {tenant_name}:"
 
         lines = [header, ""]
         lines.extend(self._format_class_lines(classes))
         lines.append("")
         lines.append(
-            "Reply with the **class name** or **number** when you're ready to pick one."
+            "Reply with the class name or number when you're ready to pick one."
         )
         return "\n".join(lines)
 
@@ -304,8 +314,8 @@ class OnboardingFlow:
         for idx, cls in enumerate(classes, start=1):
             label = cls.get("name") or f"{cls.get('grade', '')} {cls.get('subject', '')}".strip()
             fee = cls.get("fee_amount")
-            fee_line = f" — LKR {fee}/month" if fee is not None else ""
-            lines.append(f"{idx}. **{label}**{fee_line}")
+            fee_line = f" — LKR {_format_lkr_amount(fee)}/month" if fee is not None else ""
+            lines.append(f"{idx}. {label}{fee_line}")
         return lines
 
     def review_confirmation_message(
@@ -341,7 +351,7 @@ class OnboardingFlow:
             "",
             *self._format_class_lines(classes),
             "",
-            "Reply with the **number** or **full class name**.",
+            "Reply with the number or full class name.",
         ]
         return "\n".join(lines)
 

@@ -1,38 +1,93 @@
-"""Pytest bootstrap — load project .env before tests (matches api.main and scripts)."""
+"""Shared pytest bootstrap."""
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
-from fastapi.testclient import TestClient
 
-from api.main import app
-from api.tenant_scope import TenantScope, require_active_tenant
 
-load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=True)
+PROJECT_ROOT = (
+    Path(__file__)
+    .resolve()
+    .parents[1]
+)
+
+
+load_dotenv(
+    PROJECT_ROOT / ".env",
+    override=False,
+)
+
+
+# Unit/integration tests instantiate the
+# LangChain OpenAI-compatible clients, but
+# they must never need a real credential.
+if not os.getenv("OPENAI_API_KEY"):
+    os.environ[
+        "OPENAI_API_KEY"
+    ] = "test-key-not-used"
+
+
+# Keep test runtime deterministic.
+os.environ.setdefault(
+    "AGENT_USE_MCP",
+    "false",
+)
+
+os.environ.setdefault(
+    "ALLOW_INPROCESS_TOOLS",
+    "true",
+)
+
+
+# IMPORTANT:
+# Import FastAPI only AFTER test environment
+# variables have been configured.
+from fastapi.testclient import (  # noqa: E402
+    TestClient,
+)
+
+from api.main import app  # noqa: E402
+from api.tenant_scope import (  # noqa: E402
+    TenantScope,
+    require_active_tenant,
+)
 
 
 @pytest.fixture
 def active_tenant_scope() -> TenantScope:
     return TenantScope(
-        tenant_id="tenant-demo-physics",
+        tenant_id=(
+            "tenant-demo-physics"
+        ),
         slug="demo-physics",
-        name="Demo Physics Academy",
+        name=(
+            "Demo Physics Academy"
+        ),
     )
 
 
 @pytest.fixture
-def client(active_tenant_scope):
-    app.dependency_overrides[require_active_tenant] = lambda: active_tenant_scope
+def client(
+    active_tenant_scope,
+):
+    app.dependency_overrides[
+        require_active_tenant
+    ] = (
+        lambda:
+            active_tenant_scope
+    )
+
     with TestClient(app) as c:
         yield c
+
     app.dependency_overrides.clear()
 
 
 @pytest.fixture
 def client_no_tenant_override():
-    """HTTP client without tenant dependency override (for auth rejection tests)."""
     with TestClient(app) as c:
         yield c

@@ -5,7 +5,13 @@
 #   2. runtime — copies venv + src/ + config/, runs uvicorn with MCP stdio
 #      subprocesses (same Python as the API process).
 #
-# No Playwright / torch / local ML weights — lean runtime image.
+# No Playwright / torch — lean runtime image.
+#
+# Ingest adds ~190 MB: pymupdf (110 MB, includes the ONNX layout/table weights
+# used by pymupdf4llm) + onnxruntime (80 MB). Weights ship inside the wheels, so
+# there is no download at startup and no network dependency at inference. Scanned
+# pages go to the Gemini vision API rather than a local OCR engine, which is what
+# keeps torch and the multi-GB Docling model set out of this image.
 # =============================================================================
 
 # syntax=docker/dockerfile:1

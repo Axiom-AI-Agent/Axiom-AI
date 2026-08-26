@@ -256,6 +256,16 @@ async def send_staff_message(
         message=message,
         intent="staff_reply",
     )
+    
+    if not notified:
+        raise HTTPException(
+            status_code=502,
+            detail=(
+                "WhatsApp delivery failed. "
+                "The message was not marked "
+                "as sent."
+            ),
+        )
 
     turn: Optional[ChatTurnRecord] = None
     if notified:

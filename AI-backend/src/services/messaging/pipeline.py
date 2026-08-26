@@ -14,6 +14,7 @@ from services.identity.context import IdentityContext
 from services.identity.resolver import IdentityResolver
 from services.messaging.persistence import MessagePersistence
 from services.messaging.schemas import ChatTurnResult, InboundMessage, TwilioInboundMessage
+from services.media.stt_service import _get_twilio_auth, _is_audio_url, transcribe_audio
 from services.messaging.twilio_client import TwilioMessagingClient
 
 
@@ -110,6 +111,31 @@ class ChatPipeline:
             )
 
     async def _build_reply(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
+        # Media attached — check if it's a voice note or unsupported audio
+        if inbound.num_media > 0 and inbound.media_url:
+            if _is_audio_url(inbound.media_url):
+                # Voice note: transcribe before agent processing
+                auth = _get_twilio_auth() if inbound.channel == ChatChannel.TWILIO_WHATSAPP else None
+                transcript = await transcribe_audio(
+                    inbound.media_url,
+                    message_sid=inbound.external_id,
+                    sender_id=ctx.student_id or ctx.phone,
+                    auth=auth,
+                )
+                if transcript:
+                    inbound.body = transcript
+                else:
+                    return (
+                        "Sorry, I couldn't understand that voice message. "
+                        "Could you please try again?"
+                    )
+            else:
+                # Non-voice audio file (MP3, WAV, etc.) — not supported
+                return (
+                    "Sorry, I can only process voice notes (not audio files). "
+                    "Please record a voice message instead."
+                )
+
         try:
             reply = await self._run_agent_turn(ctx, inbound)
         except Exception as exc:

@@ -40,13 +40,8 @@ class TenantQdrantRetriever(BaseRetriever):
             class_ids=self.class_ids,
         )
         docs: list[Document] = []
-        seen_parents: set[str] = set()
         for hit in hits:
             parent_id = hit.get("parent_id")
-            if parent_id and parent_id in seen_parents:
-                continue
-            if parent_id:
-                seen_parents.add(parent_id)
             page_content = hit.get("parent_text") or hit.get("chunk_text", "")
             docs.append(
                 Document(
@@ -59,6 +54,10 @@ class TenantQdrantRetriever(BaseRetriever):
                         "tenant_id": self.tenant_id,
                         "child_text": hit.get("chunk_text", ""),
                         "parent_id": parent_id or "",
+                        "heading_path": hit.get("heading_path", ""),
+                        "page_number": hit.get("page_number"),
+                        "source_type": hit.get("source_type", ""),
+                        "document_id": hit.get("document_id", ""),
                     },
                 )
             )
@@ -123,12 +122,21 @@ class RAGService:
         citations = []
         for doc in evidence:
             meta = doc.metadata or {}
+            label_parts = [meta.get("title", "")]
+            if meta.get("heading_path"):
+                label_parts.append(meta["heading_path"])
+            if meta.get("page_number") is not None:
+                label_parts.append(f"p. {meta['page_number']}")
             citations.append(
                 {
                     "title": meta.get("title", ""),
                     "lesson": meta.get("lesson", ""),
                     "score": meta.get("score", 0.0),
                     "url": meta.get("url", ""),
+                    "heading_path": meta.get("heading_path", ""),
+                    "page_number": meta.get("page_number"),
+                    "source_type": meta.get("source_type", ""),
+                    "label": " · ".join(p for p in label_parts if p),
                 }
             )
         return {
