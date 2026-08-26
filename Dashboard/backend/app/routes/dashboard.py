@@ -13,6 +13,8 @@ from app.schemas.schemas import (
     EscalationActionResponse,
     EscalationsListResponse,
     MessageLogResponse,
+    ClassAnalyticsComparisonResponse,
+    build_class_analytics
 )
 from app.services.dashboard_service import (
     PAYMENT_REASON_CODES,
@@ -243,3 +245,22 @@ def get_dashboard_chat_logs(
         }
         for log in logs
     ]
+
+@router.get(
+    "/analytics/classes",
+    response_model=(
+        ClassAnalyticsComparisonResponse
+    ),
+)
+def get_class_analytics(
+    tenant_id: str = Depends(
+        get_tenant_id
+    ),
+    db: Session = Depends(
+        get_db
+    ),
+):
+    return build_class_analytics(
+        db,
+        tenant_id=tenant_id,
+    )
