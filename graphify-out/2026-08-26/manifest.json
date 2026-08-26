@@ -725,8 +725,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/infrastructure/db/qdrant_client.py": {
-    "mtime": 1787748173.9662929,
-    "ast_hash": "0095d636f75c5b04cc37d2b35f5b1b09",
+    "mtime": 1787753495.9325566,
+    "ast_hash": "1a4b6da8ad51c5790c6dbc803dd165cb",
     "semantic_hash": ""
   },
   "AI-backend/src/infrastructure/db/supabase_client.py": {
@@ -985,8 +985,8 @@
     "semantic_hash": ""
   },
   "AI-backend/tests/test_class_scoped_rag.py": {
-    "mtime": 1787751732.49399,
-    "ast_hash": "b4b106d726e8380650cd9b0e7a0d25c3",
+    "mtime": 1787753644.9617612,
+    "ast_hash": "18ccc6aa87b33237039ddd2e60bbbdde",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_config.py": {

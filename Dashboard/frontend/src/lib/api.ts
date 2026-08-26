@@ -1000,17 +1000,8 @@ export function getDashboardAnalytics(
 
 /* Class Documents */
 
-export interface ClassDocumentUploadResponse {
-  ok: boolean;
-  tenant_id: string;
-  strategy: string;
-  documents: number;
-  chunks_upserted: number;
-  collection: string;
-  points_count: number | null;
-  document_title: string | null;
-  source_filename: string | null;
-}
+export type ClassDocumentUploadResponse = IngestUploadResult;
+
 export interface ClassAnalyticsMetric {
   class_id: string;
   class_name?: string | null;
