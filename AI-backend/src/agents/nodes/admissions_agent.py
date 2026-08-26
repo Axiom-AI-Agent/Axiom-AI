@@ -246,7 +246,10 @@ class AdmissionsAgent:
                 tool_log=tool_log,
             )
 
-        if self.flow._looks_like_off_topic_during_onboarding(user_message):
+        if (
+            self.flow._looks_like_off_topic_during_onboarding(user_message)
+            and not (ob_state.awaiting_confirmation and self.flow._looks_like_reject(user_message))
+        ):
             answer = self.flow.prompt_for_step(
                 ob_state.next_step,
                 tenant_name=tenant_name,
@@ -271,6 +274,13 @@ class AdmissionsAgent:
 
         session = OnboardingSession.from_state(ob_state)
         self.session_store.save(tenant_id=tenant_id, phone=phone, session=session)
+
+        if ob_state.restarted:
+            tool_log.append("onboarding_session: restarted")
+            return AdmissionsAgentResult(
+                answer=self.flow._t("onboarding_restart"),
+                tool_output="\n".join(tool_log),
+            )
 
         if ob_state.awaiting_confirmation:
             class_row = next(

@@ -14,6 +14,15 @@ _CONFIRM_YES = re.compile(
     r"|ஆம்|ஆமாம்|சரி",
     re.IGNORECASE,
 )
+_CONFIRM_NO = re.compile(
+    r"\b("
+    r"no|nope|nah|cancel|wrong|change|incorrect|mistake|"
+    r"start over|start again|not right"
+    r")\b"
+    r"|නෑ|එපා"
+    r"|இல்லை|வேண்டாம்",
+    re.IGNORECASE,
+)
 _GRADE_AL = re.compile(r"\b(a/?l|advanced level|al)\b", re.IGNORECASE)
 _GRADE_OL = re.compile(r"\b(o/?l|ordinary level|ol)\b", re.IGNORECASE)
 _NAME_PREFIX = re.compile(
@@ -127,6 +136,7 @@ class OnboardingState:
     pending_payment: bool = False
     awaiting_review: bool = False
     awaiting_confirmation: bool = False
+    restarted: bool = False
     ambiguous_classes: list[dict[str, Any]] = field(default_factory=list)
 
 
@@ -196,6 +206,10 @@ class OnboardingFlow:
             return state
 
         if state.awaiting_confirmation:
+            if self._looks_like_reject(text):
+                reset = self.start_collection()
+                reset.restarted = True
+                return reset
             if self._looks_like_confirm(text):
                 state.slots.confirmed = True
                 state.complete = True
@@ -473,7 +487,12 @@ class OnboardingFlow:
         return bool(slots.name and slots.school and slots.district and slots.class_id)
 
     def _looks_like_confirm(self, text: str) -> bool:
+        if self._looks_like_reject(text):
+            return False
         return bool(_CONFIRM_YES.search(text.strip()))
+
+    def _looks_like_reject(self, text: str) -> bool:
+        return bool(_CONFIRM_NO.search(text.strip()))
 
     def _looks_like_class_catalog_request(self, text: str) -> bool:
         return bool(_CLASS_CATALOG.search(text.strip()))

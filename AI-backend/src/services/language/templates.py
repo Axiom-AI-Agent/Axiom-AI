@@ -56,6 +56,11 @@ STRINGS: dict[str, dict[str, str]] = {
         "si": "ආයුබෝවන්! {tenant_name} වෙත සාදරයෙන් පිළිගනිමු — ලියාපදිංචි වෙන්න උදව් කරනවා. ඔබේ සම්පූර්ණ නම කුමක්ද?",
         "ta": "வணக்கம்! {tenant_name}க்கு வரவேற்கிறோம் — சேர்க்கைக்கு உதவுவேன். உங்கள் முழுப் பெயர் என்ன?",
     },
+    "onboarding_restart": {
+        "en": "No problem — let's start over. What's your full name?",
+        "si": "කමක් නෑ — ආයෙත් පටන් ගමු. ඔබේ සම්පූර්ණ නම කුමක්ද?",
+        "ta": "பரவாயில்லை — மீண்டும் தொடங்குவோம். உங்கள் முழுப் பெயர் என்ன?",
+    },
     "onboarding_ask_school": {
         "en": "Nice to meet you{name_suffix}! Which school do you go to?",
         "si": "හමුවීම සතුටක්{name_suffix}! ඔබ යන පාසල කුමක්ද?",

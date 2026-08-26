@@ -169,6 +169,36 @@ async def test_admissions_agent_commits_only_after_yes():
 
 
 @pytest.mark.asyncio
+async def test_admissions_agent_reject_confirmation_restarts_collection():
+    crm = FakeCrmClient()
+    agent = AdmissionsAgent(crm=crm)
+    store = get_onboarding_session_store()
+    session = store.start(tenant_id="tenant-demo-physics", phone="94771111001")
+    session.slots.name = "Kavindu Fernando"
+    session.slots.school = "Royal College Colombo"
+    session.slots.district = "Colombo"
+    session.slots.class_id = "class-physics-al-2026"
+    session.awaiting_confirmation = True
+    session.next_step = "confirm"
+    store.save(tenant_id="tenant-demo-physics", phone="94771111001", session=session)
+
+    result = await agent.run(_state(message="no I need to change the number"))
+    assert crm.committed is False
+    assert "no problem" in result.answer.lower()
+    assert "start over" in result.answer.lower()
+    assert "welcome to" not in result.answer.lower()
+    session = store.get(tenant_id="tenant-demo-physics", phone="94771111001")
+    assert session is not None
+    assert session.active is True
+    assert session.awaiting_confirmation is False
+    assert session.next_step == "name"
+    assert session.slots.name is None
+    assert session.slots.school is None
+    assert session.slots.district is None
+    assert session.slots.class_id is None
+
+
+@pytest.mark.asyncio
 async def test_admissions_agent_name_reply_advances_to_school():
     crm = FakeCrmClient()
     agent = AdmissionsAgent(crm=crm)
