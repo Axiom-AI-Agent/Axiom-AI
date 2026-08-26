@@ -1,11 +1,7 @@
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session, joinedload
-
-from app.models import Enrollment, Escalation, Invoice, Student, SubjectClass
-from app.models.enums import EnrollmentStatus, EscalationStatus, InvoiceStatus
-from collections import defaultdict
-from datetime import datetime, timezone
 
 from app.models import (
     Enrollment,

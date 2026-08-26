@@ -8,17 +8,17 @@ from app.deps.tenant import get_tenant_id
 from app.models import Enrollment, Escalation, MessageLog, Student, SubjectClass
 from app.models.enums import EnrollmentStatus, EscalationStatus
 from app.schemas.schemas import (
+    ClassAnalyticsComparisonResponse,
     DashboardAnalyticsResponse,
     DashboardOverviewResponse,
     EscalationActionResponse,
     EscalationsListResponse,
     MessageLogResponse,
-    ClassAnalyticsComparisonResponse,
-    build_class_analytics
 )
 from app.services.dashboard_service import (
     PAYMENT_REASON_CODES,
     TUTOR_REASON_CODE,
+    build_class_analytics,
     build_dashboard_analytics,
     enrich_escalation,
     list_escalations,
