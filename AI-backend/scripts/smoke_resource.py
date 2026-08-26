@@ -75,6 +75,12 @@ async def smoke_resource_agent() -> None:
                 "files": [{"name": "paper.pdf", "link": "https://x", "folder": "papers"}],
             }
 
+        async def drive_list(self, **kwargs):
+            return {
+                "ok": True,
+                "files": [{"name": "paper.pdf", "link": "https://x", "folder": "papers"}],
+            }
+
     class _Rag:
         async def kb_search(self, **kwargs):
             return {
@@ -88,6 +94,10 @@ async def smoke_resource_agent() -> None:
     drive_result = await agent.run(
         {
             "tenant_id": "tenant-demo-physics",
+            "is_enrolled": True,
+            "enrolled_class_ids": ["class-physics-al-2026"],
+            "session_id": "smoke-session",
+            "user_id": "stu-smoke",
             "messages": [HumanMessage(content="Can I get the physics paper?")],
         }
     )
@@ -97,6 +107,8 @@ async def smoke_resource_agent() -> None:
     rag_result = await agent.run(
         {
             "tenant_id": "tenant-demo-physics",
+            "is_enrolled": True,
+            "enrolled_class_ids": ["class-physics-al-2026"],
             "messages": [HumanMessage(content="Explain velocity in lesson 5")],
         }
     )

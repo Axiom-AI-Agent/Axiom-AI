@@ -22,10 +22,18 @@ class FakeDrive:
     async def drive_search(self, *, tenant_id: str, query: str, folder: str | None = "papers"):
         return {"ok": True, "files": [{"name": "paper.pdf", "link": "https://example.com"}]}
 
+    async def drive_list(self, *, tenant_id: str, folder: str = "papers"):
+        return {"ok": True, "files": [{"name": "paper.pdf", "link": "https://example.com", "folder": folder}]}
+
 
 class FakeRag:
     async def kb_search(self, *, tenant_id: str, query: str, class_ids: list[str] | None = None):
-        return {"ok": True, "answer": "Velocity is speed with direction.", "citations": []}
+        return {
+            "ok": True,
+            "answer": "Velocity is speed with direction.",
+            "citations": [{"title": "Lesson 5", "score": 0.88}],
+            "num_docs": 1,
+        }
 
 
 def test_format_student_profile_enrolled():

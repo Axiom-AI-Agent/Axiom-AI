@@ -24,6 +24,9 @@ from infrastructure.db.ingest_ids import point_id_for_chunk, point_id_for_parent
 # Fetch extra hits before parent dedup so dense PDF pages still return diverse results.
 RETRIEVAL_OVERFETCH_FACTOR = 3
 
+# Qdrant Cloud requires a keyword index on every payload field used in a filter.
+_KEYWORD_INDEX_FIELDS = ("class_id", "document_id", "strategy")
+
 _parent_dummy_vector: list[float] | None = None
 
 
@@ -87,56 +90,51 @@ def ensure_collection(
         collection_name=collection_name,
         vectors_config=VectorParams(size=vector_size, distance=distance, on_disk=True),
     )
-    client.create_payload_index(
-        collection_name=collection_name,
-        field_name="class_id",
-        field_schema="keyword",
-    )
-    client.create_payload_index(
-        collection_name=collection_name,
-        field_name="document_id",
-        field_schema="keyword",
-    )
+    for field_name in _KEYWORD_INDEX_FIELDS:
+        client.create_payload_index(
+            collection_name=collection_name,
+            field_name=field_name,
+            field_schema="keyword",
+        )
     logger.info("Created Qdrant collection {} with payload indexes", collection_name)
     return collection_name
 
 
+def _ensure_keyword_index(*, tenant_id: str, field_name: str) -> None:
+    """Create a keyword payload index on an existing collection (idempotent)."""
+    collection_name = qdrant_collection_for_tenant(tenant_id)
+    client = get_qdrant_client()
+    if collection_name not in [c.name for c in client.get_collections().collections]:
+        return
+    try:
+        client.create_payload_index(
+            collection_name=collection_name,
+            field_name=field_name,
+            field_schema="keyword",
+        )
+    except Exception as exc:
+        logger.debug("{} index on {} (may already exist): {}", field_name, collection_name, exc)
+
+
 def ensure_payload_indexes(*, tenant_id: str) -> None:
     """Create keyword indexes used by retrieval filters and document deletion."""
-    ensure_class_id_index(tenant_id=tenant_id)
-    ensure_document_id_index(tenant_id=tenant_id)
+    for field_name in _KEYWORD_INDEX_FIELDS:
+        _ensure_keyword_index(tenant_id=tenant_id, field_name=field_name)
 
 
 def ensure_document_id_index(*, tenant_id: str) -> None:
     """Keyword index on document_id for idempotent delete-before-upsert."""
-    collection_name = qdrant_collection_for_tenant(tenant_id)
-    client = get_qdrant_client()
-    if collection_name not in [c.name for c in client.get_collections().collections]:
-        return
-    try:
-        client.create_payload_index(
-            collection_name=collection_name,
-            field_name="document_id",
-            field_schema="keyword",
-        )
-    except Exception as exc:
-        logger.debug("document_id index on {} (may already exist): {}", collection_name, exc)
+    _ensure_keyword_index(tenant_id=tenant_id, field_name="document_id")
 
 
 def ensure_class_id_index(*, tenant_id: str) -> None:
     """Create class_id payload index on existing collections (idempotent)."""
-    collection_name = qdrant_collection_for_tenant(tenant_id)
-    client = get_qdrant_client()
-    if collection_name not in [c.name for c in client.get_collections().collections]:
-        return
-    try:
-        client.create_payload_index(
-            collection_name=collection_name,
-            field_name="class_id",
-            field_schema="keyword",
-        )
-    except Exception as exc:
-        logger.debug("class_id index on {} (may already exist): {}", collection_name, exc)
+    _ensure_keyword_index(tenant_id=tenant_id, field_name="class_id")
+
+
+def ensure_strategy_index(*, tenant_id: str) -> None:
+    """Keyword index on strategy so retrieval can exclude parent-context points."""
+    _ensure_keyword_index(tenant_id=tenant_id, field_name="strategy")
 
 
 def delete_collection(*, tenant_id: str) -> None:
@@ -318,6 +316,7 @@ def search_chunks(
 ) -> list[dict[str, Any]]:
     collection_name = qdrant_collection_for_tenant(tenant_id)
     client = get_qdrant_client()
+    ensure_strategy_index(tenant_id=tenant_id)
     if class_ids:
         ensure_class_id_index(tenant_id=tenant_id)
     query_filter = _search_filter(class_ids=class_ids)

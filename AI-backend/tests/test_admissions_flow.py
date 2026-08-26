@@ -142,6 +142,30 @@ def test_class_catalog_request_on_class_step():
     assert flow._looks_like_class_catalog_request("what are all the available classes")
 
 
+def test_review_and_welcome_messages_have_no_markdown_bold():
+    flow = OnboardingFlow()
+    state = flow.start_collection()
+    state.slots.name = "Mirco Fernando"
+    state.slots.school = "Royal College"
+    state.slots.district = "Colombo"
+    class_row = {"name": "A/L Physics 2026", "fee_amount": 5000}
+    review = flow.review_confirmation_message(
+        slots=state.slots,
+        class_row=class_row,
+        tenant_name="Demo Physics Academy",
+        phone="+94770000000",
+    )
+    welcome = flow.enrollment_welcome_message(
+        slots=state.slots,
+        class_row=class_row,
+        tenant_name="Demo Physics Academy",
+    )
+    assert "**" not in review
+    assert "**" not in welcome
+    assert "Full name: Mirco Fernando" in review
+    assert "A/L Physics 2026" in welcome
+
+
 def test_pending_enrollment_state():
     flow = OnboardingFlow()
     state = flow.load_from_student(

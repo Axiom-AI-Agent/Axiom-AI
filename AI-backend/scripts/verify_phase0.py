@@ -78,7 +78,7 @@ def main() -> None:
         config_body = live.get("config_body", {})
         config_ok = (
             config_body.get("chat_model") == "gpt-4o-mini"
-            and config_body.get("merge_model") == "gemini-2.0-flash"
+            and config_body.get("merge_model") == "gemini-3.6-flash"
         )
         print("  /config     ", "PASS" if config_ok else "FAIL", json.dumps(config_body))
 

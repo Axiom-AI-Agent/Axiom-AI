@@ -13,6 +13,7 @@ from infrastructure.observability import flush
 from services.identity.context import IdentityContext
 from services.identity.resolver import IdentityResolver
 from services.messaging.persistence import MessagePersistence
+from services.messaging.plaintext import strip_markdown_markers
 from services.messaging.schemas import ChatTurnResult, InboundMessage, TwilioInboundMessage
 from services.media.stt_service import _get_twilio_auth, _is_audio_url, transcribe_audio
 from services.messaging.twilio_client import TwilioMessagingClient
@@ -149,7 +150,7 @@ class ChatPipeline:
         if inbound.num_media > 0 and inbound.media_url:
             pass  # payment receipt handled by payment agent when pending enrollment exists
 
-        return reply
+        return strip_markdown_markers(reply)
 
     async def _run_agent_turn(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
         orchestrator = await get_orchestrator()

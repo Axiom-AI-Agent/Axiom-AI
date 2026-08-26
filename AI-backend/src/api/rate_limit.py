@@ -57,6 +57,14 @@ class RateLimitMiddleware(
         ):
             return 30
 
+        if (
+            "/broadcast" in path
+            and not path.endswith(
+                "/broadcast-recipients"
+            )
+        ):
+            return 10
+
         if path.startswith("/chat"):
             return 60
 
