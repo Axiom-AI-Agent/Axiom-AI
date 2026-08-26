@@ -7,6 +7,7 @@ from app.routes import (
     classes,
     payments,
     students,
+    staff,
     message_logs,
     escalations,
     escalation_websocket,
@@ -46,6 +47,7 @@ app.include_router(auth.router)
 app.include_router(classes.router)
 app.include_router(payments.router)
 app.include_router(students.router)
+app.include_router(staff.router)
 app.include_router(message_logs.router)
 app.include_router(escalations.router)
 app.include_router(invoices.router)

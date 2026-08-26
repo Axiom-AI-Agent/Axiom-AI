@@ -46,13 +46,16 @@ class ChatChannel(str, Enum):
 
 class StaffRole(str, Enum):
     ADMIN = "admin"
+    TUTOR = "tutor"
     MARKER = "marker"
     VIEWER = "viewer"
 
 
 class FeeCycle(str, Enum):
     MONTHLY = "monthly"
+    PER_CLASS = "per_class"
     TERMLY = "termly"
+    ONE_TIME = "one_time"
     ANNUAL = "annual"
 
 

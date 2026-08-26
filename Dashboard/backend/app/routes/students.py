@@ -1,7 +1,9 @@
 import uuid
+from io import BytesIO
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from openpyxl import load_workbook
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -66,6 +68,114 @@ def get_student_by_phone(
         raise HTTPException(status_code=404, detail="Student not found")
 
     return enrich_student(db, student)
+
+
+@router.post("/import")
+async def import_students(
+    file: UploadFile = File(...),
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    if not (file.filename and file.filename.lower().endswith(".xlsx")):
+        raise HTTPException(
+            status_code=422,
+            detail="Only .xlsx files are supported.",
+        )
+
+    content = await file.read()
+
+    workbook = load_workbook(
+        BytesIO(content),
+        read_only=True,
+        data_only=True,
+    )
+
+    sheet = workbook.active
+    rows = list(sheet.iter_rows(values_only=True))
+
+    if not rows:
+        raise HTTPException(status_code=422, detail="Excel file is empty.")
+
+    headers = [str(value or "").strip().lower() for value in rows[0]]
+    required = {"name", "phone"}
+
+    if not required.issubset(set(headers)):
+        raise HTTPException(
+            status_code=422,
+            detail="Excel must include name and phone columns.",
+        )
+
+    created = 0
+    skipped = 0
+    errors = []
+
+    for row_number, values in enumerate(rows[1:], start=2):
+        data = dict(zip(headers, values))
+
+        name = str(data.get("name") or "").strip()
+        phone = str(data.get("phone") or "").strip()
+
+        if not phone:
+            errors.append({"row": row_number, "reason": "Missing phone"})
+            continue
+
+        existing = (
+            db.query(Student)
+            .filter(
+                Student.tenant_id == tenant_id,
+                Student.phone == phone,
+            )
+            .first()
+        )
+
+        if existing:
+            skipped += 1
+            continue
+
+        student = Student(
+            id=str(uuid.uuid4()),
+            tenant_id=tenant_id,
+            name=name or None,
+            phone=phone,
+            district=(str(data.get("district") or "").strip() or None),
+            language_pref=(str(data.get("language_pref") or "en").strip() or "en"),
+        )
+
+        db.add(student)
+        db.flush()
+
+        class_id = str(data.get("class_id") or "").strip()
+
+        if class_id:
+            subject_class = (
+                db.query(SubjectClass)
+                .filter(
+                    SubjectClass.id == class_id,
+                    SubjectClass.tenant_id == tenant_id,
+                )
+                .first()
+            )
+
+            if subject_class:
+                db.add(
+                    Enrollment(
+                        id=str(uuid.uuid4()),
+                        tenant_id=tenant_id,
+                        student_id=student.id,
+                        class_id=class_id,
+                        status=EnrollmentStatus.PENDING,
+                    )
+                )
+
+        created += 1
+
+    db.commit()
+
+    return {
+        "created": created,
+        "skipped": skipped,
+        "errors": errors,
+    }
 
 
 @router.get("/{student_id}", response_model=StudentDetailResponse)
