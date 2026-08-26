@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Enum
+from sqlalchemy import Boolean, Column, DateTime, Enum, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -31,6 +31,12 @@ class Tenant(Base):
     # Configuration
     whatsapp_number = Column(String, nullable=True)
     drive_folder_id = Column(String, nullable=True)
+    payments_enabled = Column(
+        Boolean,
+        nullable=False,
+        default=True,
+        server_default="true",
+    )
 
     # Timestamps
     created_at = Column(

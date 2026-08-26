@@ -15,6 +15,7 @@ interface StudentTableProps {
   onEdit: (student: Student) => void;
   onEnroll: (student: Student) => void;
   onDelete: (studentId: string) => void;
+  onToggleHumanMode: (student: Student) => void;
 }
 
 export default function StudentTable({
@@ -22,6 +23,7 @@ export default function StudentTable({
   onEdit,
   onEnroll,
   onDelete,
+  onToggleHumanMode,
 }: StudentTableProps) {
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
@@ -101,7 +103,24 @@ export default function StudentTable({
                     <MessageSquare className="h-3.5 w-3.5" />
                     Chat
                   </Link>
-
+                  <button
+                    type="button"
+                    onClick={() => onToggleHumanMode(student)}
+                    title={
+                      student.human_mode
+                        ? "AI replies are disabled for this student"
+                        : "AI replies are enabled for this student"
+                    }
+                    className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
+                      student.human_mode
+                        ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20"
+                        : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
+                    }`}
+                  >
+                    {student.human_mode
+                      ? "Human mode"
+                      : "AI active"}
+                  </button>
                   <button
                     type="button"
                     onClick={() => onEnroll(student)}

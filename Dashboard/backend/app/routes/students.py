@@ -17,6 +17,7 @@ from app.schemas.schemas import (
     StudentResponse,
     StudentUpdate,
     StudentsListResponse,
+    StudentHumanModeUpdate,
 )
 from app.services.dashboard_service import enrich_student, student_enrollment_summaries
 
@@ -178,6 +179,49 @@ def update_student(
         ) from error
 
     return enrich_student(db, student)
+
+
+@router.patch(
+    "/{student_id}/human-mode",
+    response_model=StudentDetailResponse,
+)
+def update_student_human_mode(
+    student_id: str,
+    payload: StudentHumanModeUpdate,
+    tenant_id: str = Depends(
+        get_tenant_id
+    ),
+    db: Session = Depends(
+        get_db
+    ),
+):
+    student = (
+        db.query(Student)
+        .filter(
+            Student.id == student_id,
+            Student.tenant_id
+            == tenant_id,
+        )
+        .first()
+    )
+
+    if student is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Student not found",
+        )
+
+    student.human_mode = (
+        payload.human_mode
+    )
+
+    db.commit()
+    db.refresh(student)
+
+    return enrich_student(
+        db,
+        student,
+    )
 
 
 @router.delete("/{student_id}", status_code=204)

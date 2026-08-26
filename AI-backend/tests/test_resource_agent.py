@@ -46,6 +46,7 @@ class FakeRag:
         tenant_id: str,
         query: str,
         class_ids: list[str] | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         return {
             "ok": True,
@@ -128,6 +129,7 @@ class FakeLowConfidenceRag:
         query: str,
         class_ids: list[str]
         | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         return {
             "ok": True,

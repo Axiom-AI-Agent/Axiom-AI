@@ -1,10 +1,11 @@
 from sqlalchemy import (
+    Boolean,
     Column,
-    String,
     DateTime,
     ForeignKey,
-    UniqueConstraint,
     Index,
+    String,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -65,6 +66,13 @@ class Student(Base):
         String,
         nullable=False,
         server_default="en",
+    )
+
+    human_mode = Column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
     )
 
     # Timestamps

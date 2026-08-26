@@ -76,7 +76,13 @@ def update_tenant_profile(
 
     if payload.status is not None:
         tenant.status = TenantStatus(payload.status)  # type: ignore[assignment]
-
+    if (
+        payload.payments_enabled
+        is not None
+    ):
+        tenant.payments_enabled = (
+            payload.payments_enabled
+        )
     db.commit()
     db.refresh(tenant)
 

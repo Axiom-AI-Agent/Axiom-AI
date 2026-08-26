@@ -67,6 +67,7 @@ class CrmClient(Protocol):
         school: str,
         district: str,
         class_id: str,
+        language_pref: str | None = None,
     ) -> dict[str, Any]: ...
 
     async def create_escalation(

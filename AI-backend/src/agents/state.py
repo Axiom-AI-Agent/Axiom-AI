@@ -27,6 +27,7 @@ class AgentState(TypedDict, total=False):
     is_enrolled: bool
     enrolled_class_ids: list[str]
     student_profile_context: str
+    language_pref: str
 
     media_url: Optional[str]
 

@@ -12,6 +12,7 @@ from agents.nodes.crm_client import CrmClient, DirectCrmClient
 from agents.prompts.agent_prompts import build_payment_ack_reply, build_payment_missing_media_reply
 from agents.state import AgentState
 from domain.escalation_reasons import PAYMENT_RECEIPT
+from services.language import t
 
 
 @dataclass
@@ -40,17 +41,21 @@ class PaymentAgent:
         tenant_name = state.get("tenant_name") or "our tuition centre"
         student_id = state.get("user_id") or state.get("student_id") or ""
         media_url = state.get("media_url")
+        language = state.get("language_pref") or "en"
         user_message = _last_user_text(state)
         tool_log: list[str] = []
 
         if not tenant_id or not student_id:
             return PaymentAgentResult(
-                answer="I need your profile to process a payment receipt. Please try again.",
+                answer=t("payment_need_profile", language),
             )
 
         if not media_url:
             return PaymentAgentResult(
-                answer=build_payment_missing_media_reply(tenant_name=tenant_name),
+                answer=build_payment_missing_media_reply(
+                    tenant_name=tenant_name,
+                    language=language,
+                ),
             )
 
         payload = await self.crm.create_escalation(
@@ -70,7 +75,7 @@ class PaymentAgent:
             )
 
         return PaymentAgentResult(
-            answer=build_payment_ack_reply(tenant_name=tenant_name),
+            answer=build_payment_ack_reply(tenant_name=tenant_name, language=language),
             tool_output="\n".join(tool_log),
         )
 
