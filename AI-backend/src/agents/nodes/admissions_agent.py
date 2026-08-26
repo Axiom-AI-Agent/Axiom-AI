@@ -236,15 +236,48 @@ class AdmissionsAgent:
         classes = await self.crm.list_classes(tenant_id=tenant_id)
         tool_log.append(f"list_classes: {len(classes)} classes")
 
-        if ob_state.awaiting_confirmation and self.flow._looks_like_confirm(user_message):
-            return await self._commit_onboarding(
-                tenant_id=tenant_id,
-                tenant_name=tenant_name,
-                phone=phone,
-                ob_state=ob_state,
+        if ob_state.awaiting_confirmation:
+            ob_state, edited = self.flow.apply_confirmation_edit(
+                ob_state,
+                user_message,
                 classes=classes,
-                tool_log=tool_log,
             )
+            if edited:
+                session = OnboardingSession.from_state(ob_state)
+                self.session_store.save(tenant_id=tenant_id, phone=phone, session=session)
+                if ob_state.ambiguous_classes:
+                    answer = self.flow.disambiguation_prompt(ob_state.ambiguous_classes)
+                    return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
+                if not ob_state.awaiting_confirmation:
+                    answer = self.flow.prompt_for_step(
+                        ob_state.next_step,
+                        tenant_name=tenant_name,
+                        phone=phone,
+                        student_name=ob_state.slots.name,
+                        classes=classes if ob_state.next_step == "class" else None,
+                    )
+                    return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
+                class_row = next(
+                    (c for c in classes if c.get("id") == ob_state.slots.class_id),
+                    None,
+                )
+                answer = self.flow.review_confirmation_message(
+                    slots=ob_state.slots,
+                    class_row=class_row,
+                    tenant_name=tenant_name,
+                    phone=phone,
+                )
+                return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
+
+            if self.flow._looks_like_confirm(user_message):
+                return await self._commit_onboarding(
+                    tenant_id=tenant_id,
+                    tenant_name=tenant_name,
+                    phone=phone,
+                    ob_state=ob_state,
+                    classes=classes,
+                    tool_log=tool_log,
+                )
 
         if (
             self.flow._looks_like_off_topic_during_onboarding(user_message)

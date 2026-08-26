@@ -25,7 +25,6 @@ from agents.prompts.agent_prompts import (
     get_resource_not_enrolled_reply,
 )
 from agents.state import AgentState
-from domain.escalation_reasons import LOW_RAG_CONFIDENCE
 from infrastructure.config import (
     RETRIEVAL_ESCALATION_THRESHOLD,
 )
@@ -371,44 +370,22 @@ class ResourceAgent:
         )
 
         if low_confidence:
-            student_id = (
-                state.get("user_id")
-                or state.get("student_id")
-                or ""
-            )
-
             tool_log.append(
                 "rag_confidence: "
                 f"docs={num_docs}, "
                 f"best_score={best_score:.3f}, "
                 f"threshold="
-                f"{RETRIEVAL_ESCALATION_THRESHOLD}"
+                f"{RETRIEVAL_ESCALATION_THRESHOLD}, "
+                "low=True"
             )
 
-            if tenant_id and student_id:
-                escalation = (
-                    await self.crm.create_escalation(
-                        tenant_id=tenant_id,
-                        student_id=student_id,
-                        reason_code=(
-                            LOW_RAG_CONFIDENCE
-                        ),
-                        student_message=(
-                            user_message
-                            or None
-                        ),
-                    )
-                )
-
-                tool_log.append(
-                    "create_escalation: "
-                    f"ok={escalation.get('ok')}"
-                )
-
             return ResourceAgentResult(
-                answer=t(
-                    "rag_low_confidence_escalated",
-                    language,
+                answer=(
+                    "I couldn't find enough reliable "
+                    "information in your tutor's notes "
+                    "to answer that confidently. "
+                    "Would you like me to send this "
+                    "question to your tutor?"
                 ),
                 tool_output="\n".join(
                     tool_log

@@ -133,8 +133,12 @@ class ChatPipeline:
                         language_pref=ctx.language_pref,
                     )
                     return t("voice_fail", lang)
+            elif not ctx.payments_enabled:
+                return (
+                    "Payment submissions are currently disabled for this "
+                    "institute. Please contact the tutor for assistance."
+                )
             else:
-                # Non-voice audio file (MP3, WAV, etc.) — not supported
                 lang = resolve_reply_language(
                     message=inbound.body or "",
                     language_pref=ctx.language_pref,

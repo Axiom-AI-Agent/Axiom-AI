@@ -187,42 +187,24 @@ class FakeLowConfidenceRag:
         }
 
 
-class FakeCrm:
-    def __init__(self):
-        self.calls = []
-
-    async def create_escalation(
-        self,
-        **kwargs,
-    ):
-        self.calls.append(kwargs)
-
-        return {
-            "ok": True,
-            "escalation": {
-                "id": "esc-low-rag-1",
-            },
-        }
-
-
 @pytest.mark.asyncio
-async def test_resource_agent_escalates_low_confidence_rag():
-    crm = FakeCrm()
-
+async def test_resource_agent_asks_before_low_confidence_handoff():
     agent = ResourceAgent(
         drive=FakeDrive(),
         rag=FakeLowConfidenceRag(),
-        crm=crm,
     )
 
     state = {
         "tenant_id":
             "tenant-demo-physics",
-        "student_id": "stu-1",
-        "user_id": "stu-1",
+        "student_id":
+            "stu-1",
+        "user_id":
+            "stu-1",
         "tenant_name":
             "Demo Physics",
-        "is_enrolled": True,
+        "is_enrolled":
+            True,
         "enrolled_class_ids": [
             "class-physics-al-2026",
         ],
@@ -240,16 +222,29 @@ async def test_resource_agent_escalates_low_confidence_rag():
         state
     )
 
-    assert crm.calls
+    assert result.sub_path == "rag"
 
     assert (
-        crm.calls[0][
-            "reason_code"
-        ]
-        == "low_rag_confidence"
+        "couldn't find enough reliable"
+        in result.answer.lower()
+    )
+
+    assert (
+        "would you like me to send"
+        in result.answer.lower()
     )
 
     assert (
         "tutor"
         in result.answer.lower()
+    )
+
+    assert (
+        "rag_confidence:"
+        in result.tool_output
+    )
+
+    assert (
+        "low=True"
+        in result.tool_output
     )
