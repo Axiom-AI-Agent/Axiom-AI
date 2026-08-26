@@ -141,6 +141,33 @@ class DashboardChatSendResponse(BaseModel):
     turn: Optional[ChatTurnRecord] = None
 
 
+class ClassBroadcastRequest(BaseModel):
+    tenant_id: str
+    message: str = Field(min_length=1, max_length=4000)
+
+
+class ClassBroadcastRecipient(BaseModel):
+    student_id: str
+    name: str
+
+
+class ClassBroadcastRecipientsResponse(BaseModel):
+    class_id: str
+    class_name: str
+    enrolled: int
+    reachable: int
+    skipped_no_telegram: int
+    reachable_names: list[str] = Field(default_factory=list)
+
+
+class ClassBroadcastResponse(BaseModel):
+    class_id: str
+    sent: int
+    failed: int
+    skipped_no_telegram: int
+    failures: list[ClassBroadcastRecipient] = Field(default_factory=list)
+
+
 class RAGSearchRequest(BaseModel):
     tenant_id: str
     query: str = Field(min_length=1)
