@@ -1,5 +1,6 @@
 export type StaffRole =
   | "admin"
+  | "tutor"
   | "marker"
   | "viewer";
 
@@ -36,6 +37,7 @@ export interface StaffRegistration {
 export interface RegisterOrganizationPayload {
   institution_name: string;
   whatsapp_number?: string | null;
+  drive_folder_id?: string | null;
 
   admin: {
     name: string;

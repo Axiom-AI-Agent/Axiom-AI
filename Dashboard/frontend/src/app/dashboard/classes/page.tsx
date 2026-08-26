@@ -34,6 +34,7 @@ import {
   ingestSizeError,
   sendClassBroadcast,
   SubjectClass,
+  updateClassHumanMode,
   uploadClassDocument,
   updateClass,
 } from "@/lib/api";
@@ -231,6 +232,40 @@ export default function ClassesPage() {
     } catch (requestError) {
       console.error(requestError);
       showToast("Could not delete the class.", "error");
+    }
+  }
+
+  async function toggleClassHumanMode(
+    classId: string,
+    humanMode: boolean,
+  ) {
+    const action = humanMode
+      ? "Disable AI for every enrolled student in this class?"
+      : "Enable AI for every enrolled student in this class?";
+
+    if (!window.confirm(action)) {
+      return;
+    }
+
+    try {
+      const result = await updateClassHumanMode(
+        classId,
+        humanMode,
+        tenantId,
+      );
+
+      showToast(
+        humanMode
+          ? `Human mode enabled for ${result.students_updated} student(s).`
+          : `AI re-enabled for ${result.students_updated} student(s).`,
+        "success",
+      );
+    } catch (requestError) {
+      console.error(requestError);
+      showToast(
+        "Could not update class AI mode.",
+        "error",
+      );
     }
   }
 
@@ -460,8 +495,9 @@ export default function ClassesPage() {
               className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             >
               <option value="monthly">Monthly</option>
+              <option value="per_class">Per class</option>
               <option value="termly">Termly</option>
-              <option value="annual">Annual</option>
+              <option value="one_time">One-time</option>
             </select>
           </label>
 
@@ -534,6 +570,30 @@ export default function ClassesPage() {
               </button>
 
               <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassHumanMode(
+                      subjectClass.id,
+                      true,
+                    )
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-amber-500/40 px-3 py-1.5 text-sm text-amber-700 hover:bg-amber-500/10 dark:text-amber-300"
+                >
+                  Disable AI for class
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassHumanMode(
+                      subjectClass.id,
+                      false,
+                    )
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/40 px-3 py-1.5 text-sm text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300"
+                >
+                  Enable AI for class
+                </button>
                 <button
                   type="button"
                   onClick={() => triggerFileInput(subjectClass.id)}
