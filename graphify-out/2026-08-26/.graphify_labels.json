@@ -226,5 +226,22 @@
   "224": "register_telegram_webhook.py",
   "225": "smoke_mcp_memory.py",
   "226": "8. Implementation phases",
-  "229": ".resolve_escalation"
+  "227": "InMemorySttCache",
+  "228": "Testing",
+  "229": ".resolve_escalation",
+  "230": "TwilioMessagingClient",
+  "231": "._assert_tenant",
+  "232": "_page_lacks_text",
+  "233": "Phase 3 — Admissions Agent",
+  "234": "smoke_resource.py",
+  "235": "_call_gemini",
+  "236": "_download_with_retry",
+  "237": "send_chat_message",
+  "238": "get_stt_metrics",
+  "239": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+  "240": "_one_turn",
+  "241": "preload_agent_runtime",
+  "242": "debug_google_auth.py",
+  "243": "_load_env",
+  "244": "mock_db"
 }

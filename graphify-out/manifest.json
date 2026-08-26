@@ -520,8 +520,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/agents/prompts/agent_prompts.py": {
-    "mtime": 1787751813.7167847,
-    "ast_hash": "b55356fdd49c9f0d5a60d6d78d5853ab",
+    "mtime": 1787756922.0327203,
+    "ast_hash": "85568d2f2874489eedd2a3214e636311",
     "semantic_hash": ""
   },
   "AI-backend/src/agents/prompts/tutoring_prompts.py": {
@@ -830,13 +830,13 @@
     "semantic_hash": ""
   },
   "AI-backend/src/services/admissions/institute_info.py": {
-    "mtime": 1787731087.9306989,
-    "ast_hash": "0822a89e4396cd74dcd20570a431ec12",
+    "mtime": 1787756911.962381,
+    "ast_hash": "aae39dc09e58a4bb86999f75a04bcb5a",
     "semantic_hash": ""
   },
   "AI-backend/src/services/admissions/onboarding_flow.py": {
-    "mtime": 1787731078.1918201,
-    "ast_hash": "09c70d49e16eaac2fb830795fabe9cbd",
+    "mtime": 1787756920.260426,
+    "ast_hash": "84b748fe451dfa43d0622a26f4eadc8e",
     "semantic_hash": ""
   },
   "AI-backend/src/services/admissions/onboarding_route.py": {
@@ -910,8 +910,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/pipeline.py": {
-    "mtime": 1787748137.8167353,
-    "ast_hash": "44e8b76cddadd90ae9e44487876c947f",
+    "mtime": 1787756901.756982,
+    "ast_hash": "33d6c3ecb1e67c7d2933b039bb532291",
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/schemas.py": {
@@ -920,8 +920,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/twilio_client.py": {
-    "mtime": 1786118664.9201221,
-    "ast_hash": "c10de51ec26d890099ed440c88670289",
+    "mtime": 1787756900.5429978,
+    "ast_hash": "7a5f0d12e8fc318c88aa6e9f5733985d",
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/validator.py": {
@@ -975,8 +975,8 @@
     "semantic_hash": ""
   },
   "AI-backend/tests/test_admissions_flow.py": {
-    "mtime": 1787731088.374663,
-    "ast_hash": "8849b0bbcfbdf2de46b559a74acdf112",
+    "mtime": 1787756943.9694498,
+    "ast_hash": "cfeba75a5e5601443422451694e212dd",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_chat.py": {
@@ -1680,8 +1680,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/telegram_client.py": {
-    "mtime": 1787731707.0809002,
-    "ast_hash": "00403a142fa8b7ead6fe3fda709fd622",
+    "mtime": 1787756898.6618164,
+    "ast_hash": "fca96a36d7718a319438aa5f9daf2085",
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/telegram_handlers.py": {
@@ -1700,8 +1700,8 @@
     "semantic_hash": ""
   },
   "AI-backend/tests/test_telegram_client.py": {
-    "mtime": 1787731874.064001,
-    "ast_hash": "58b9c0e3073364b83ab4d2fee9245804",
+    "mtime": 1787756935.0480456,
+    "ast_hash": "b1854978e3646384e2796544b6bbd6b4",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_telegram_webhook.py": {
@@ -1862,6 +1862,16 @@
   "AI-backend/tests/test_stt_service.py": {
     "mtime": 1787756346.9554577,
     "ast_hash": "d37552a3b5e3e4f1b71ddebe39b5b55f",
+    "semantic_hash": ""
+  },
+  "AI-backend/src/services/messaging/plaintext.py": {
+    "mtime": 1787756896.9580781,
+    "ast_hash": "d83843ae5546202ec93bb5f59b510a60",
+    "semantic_hash": ""
+  },
+  "AI-backend/tests/test_plaintext.py": {
+    "mtime": 1787756934.6361487,
+    "ast_hash": "efeb7e23f258f85b94175bf2ea5c1b07",
     "semantic_hash": ""
   }
 }

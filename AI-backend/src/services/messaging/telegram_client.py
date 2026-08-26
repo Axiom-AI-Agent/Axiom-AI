@@ -10,6 +10,7 @@ from typing import Any
 import httpx
 from loguru import logger
 
+from services.messaging.plaintext import strip_markdown_markers
 from services.tenant_config import get_bot_token_for_tenant
 
 _TELEGRAM_API = "https://api.telegram.org"
@@ -31,9 +32,10 @@ def telegram_file_url(bot_token: str, file_path: str) -> str:
 
 
 def _truncate_text(text: str) -> str:
-    if len(text) <= _MAX_MESSAGE_LENGTH:
-        return text
-    return text[: _MAX_MESSAGE_LENGTH - 1] + "…"
+    cleaned = strip_markdown_markers(text or "")
+    if len(cleaned) <= _MAX_MESSAGE_LENGTH:
+        return cleaned
+    return cleaned[: _MAX_MESSAGE_LENGTH - 1] + "…"
 
 
 async def send_telegram_message(tenant_id: str, chat_id: int, text: str) -> dict[str, Any]:

@@ -11,6 +11,7 @@ from infrastructure.config import (
     TWILIO_WHATSAPP_FROM,
 )
 from services.identity.resolver import normalize_whatsapp_address
+from services.messaging.plaintext import strip_markdown_markers
 from services.messaging.schemas import TwilioSendResult
 
 
@@ -40,6 +41,7 @@ class TwilioMessagingClient:
     ) -> TwilioSendResult:
         sender = from_number or self.from_number
         recipient = normalize_whatsapp_address(to_number)
+        body = strip_markdown_markers(body)
 
         if self.dry_run:
             logger.info(

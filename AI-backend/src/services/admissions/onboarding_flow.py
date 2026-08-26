@@ -336,13 +336,13 @@ class OnboardingFlow:
         contact = phone or "your WhatsApp number"
         return (
             f"Please review your enrollment details for {tenant_name}:\n\n"
-            f"• **Full name:** {slots.name}\n"
-            f"• **Contact number:** {contact}\n"
-            f"• **School:** {slots.school}\n"
-            f"• **District:** {slots.district}\n"
-            f"• **Course:** {class_label}{fee_line}\n\n"
+            f"• Full name: {slots.name}\n"
+            f"• Contact number: {contact}\n"
+            f"• School: {slots.school}\n"
+            f"• District: {slots.district}\n"
+            f"• Course: {class_label}{fee_line}\n\n"
             f"By confirming, you agree to our data policy.\n"
-            f"Shall I confirm your enrollment? Reply **YES** to proceed."
+            f"Shall I confirm your enrollment? Reply YES to proceed."
         )
 
     def disambiguation_prompt(self, classes: list[dict[str, Any]]) -> str:
@@ -368,11 +368,11 @@ class OnboardingFlow:
             or "your selected class"
         )
         return (
-            f"Welcome to {tenant_name}! Thank you for your enrollment in **{class_label}**.\n\n"
+            f"Welcome to {tenant_name}! Thank you for your enrollment in {class_label}.\n\n"
             f"Our staff will review your request and get back to you soon. "
             f"Please proceed with the payment to continue your enrollment — "
-            f"send a photo of your **payment receipt / bank slip** on WhatsApp.\n\n"
-            f"We also have **tutes** and **past papers** for your class. "
+            f"send a photo of your payment receipt / bank slip on WhatsApp.\n\n"
+            f"We also have tutes and past papers for your class. "
             f"If you'd like them now, just ask me (e.g. “send me a past paper”) — "
             f"or you can collect them physically from the class."
         )
@@ -392,9 +392,9 @@ class OnboardingFlow:
         fee = (class_row or {}).get("fee_amount")
         fee_line = f"\nClass fee: LKR {fee}/month." if fee is not None else ""
         return (
-            f"Thanks, {slots.name}! Your application for **{class_label}** at "
+            f"Thanks, {slots.name}! Your application for {class_label} at "
             f"{tenant_name} is almost complete.{fee_line}\n\n"
-            f"Please send a photo of your **payment receipt / bank slip** on WhatsApp "
+            f"Please send a photo of your payment receipt / bank slip on WhatsApp "
             f"to confirm your enrollment."
         )
 
@@ -426,7 +426,7 @@ class OnboardingFlow:
         )
         return (
             f"Great news, {name}! 🎉\n"
-            f"You are **successfully enrolled** in {class_label} at {tenant_name}.\n"
+            f"You are successfully enrolled in {class_label} at {tenant_name}.\n"
             f"Welcome — class details and fee info will follow shortly."
         )
 
@@ -458,9 +458,9 @@ class OnboardingFlow:
 
     def not_registered_status_message(self, *, tenant_name: str) -> str:
         return (
-            f"I don't have you registered at **{tenant_name}** yet, "
+            f"I don't have you registered at {tenant_name} yet, "
             f"so you're not enrolled in a class.\n\n"
-            f"If you'd like to join, just say **I'd like to enroll** and I'll help you get started."
+            f"If you'd like to join, just say I'd like to enroll and I'll help you get started."
         )
 
     def _first_missing_step(self, slots: OnboardingSlots) -> str | None:

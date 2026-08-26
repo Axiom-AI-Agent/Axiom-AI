@@ -239,9 +239,5 @@
   "237": "send_chat_message",
   "238": "get_stt_metrics",
   "239": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
-  "240": "_one_turn",
-  "241": "preload_agent_runtime",
-  "242": "debug_google_auth.py",
-  "243": "_load_env",
-  "244": "mock_db"
+  "242": "debug_google_auth.py"
 }

@@ -118,7 +118,7 @@ def format_tenant_info(
 
     class_count = len(classes)
     class_line = (
-        f"We currently offer **{class_count}** class{'es' if class_count != 1 else ''}."
+        f"We currently offer {class_count} class{'es' if class_count != 1 else ''}."
         if class_count
         else "Class listings are being updated — please ask again shortly."
     )
@@ -129,9 +129,9 @@ def format_tenant_info(
         team_line = f"\nOur team includes: {', '.join(staff_names)}."
 
     return (
-        f"**{name}** is a tuition centre on WhatsApp.{contact_line}\n\n"
+        f"{name} is a tuition centre on WhatsApp.{contact_line}\n\n"
         f"{class_line}{team_line}\n\n"
-        f"Ask me **what classes are available** or **class fees** for more detail."
+        f"Ask me what classes are available or class fees for more detail."
     )
 
 
@@ -142,13 +142,13 @@ def format_staff_list(*, staff: list[dict[str, Any]], tenant_name: str) -> str:
             f"Please contact the office on WhatsApp for help."
         )
 
-    lines = [f"Here's the team at **{tenant_name}**:", ""]
+    lines = [f"Here's the team at {tenant_name}:", ""]
     for member in staff:
         name = member.get("name") or "Staff member"
         role = str(member.get("role") or "staff").replace("_", " ").title()
-        lines.append(f"• **{name}** — {role}")
+        lines.append(f"• {name} — {role}")
     lines.append("")
-    lines.append("For urgent academic help, say **speak to a tutor**.")
+    lines.append("For urgent academic help, say speak to a tutor.")
     return "\n".join(lines)
 
 

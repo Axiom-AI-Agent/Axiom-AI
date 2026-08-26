@@ -67,6 +67,24 @@ async def test_send_telegram_message_uses_tenant_token():
 
 
 @pytest.mark.asyncio
+async def test_send_telegram_message_strips_markdown_bold():
+    response = _json_response({"ok": True, "result": {"message_id": 1}})
+    cm, client = _async_client(response)
+    with patch(
+        "services.messaging.telegram_client.get_bot_token_for_tenant",
+        new_callable=AsyncMock,
+        return_value="111:AAA",
+    ), patch("services.messaging.telegram_client.httpx.AsyncClient", return_value=cm):
+        await send_telegram_message(
+            "tenant-demo-physics",
+            42,
+            "Reply **YES** to proceed.",
+        )
+
+    assert client.post.await_args.kwargs["json"]["text"] == "Reply YES to proceed."
+
+
+@pytest.mark.asyncio
 async def test_send_contact_request_includes_keyboard():
     response = _json_response({"ok": True})
     cm, client = _async_client(response)
