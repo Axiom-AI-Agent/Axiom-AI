@@ -180,5 +180,56 @@ class IngestUploadResponse(BaseModel):
     chunks_upserted: int
     collection: str
     points_count: Optional[int] = None
+    document_id: Optional[str] = None
     document_title: Optional[str] = None
     source_filename: Optional[str] = None
+    source_type: Optional[str] = None
+    page_count: Optional[int] = None
+    ocr_pages: int = 0
+    skipped: bool = False
+    chunks_deleted: int = 0
+    warnings: list[str] = Field(default_factory=list)
+    status: Optional[str] = None
+    async_: bool = Field(False, serialization_alias="async")
+    error: Optional[str] = None
+
+
+class KbDocumentRecord(BaseModel):
+    id: str
+    tenant_id: str
+    class_id: str
+    document_id: str
+    filename: str
+    title: Optional[str] = None
+    lesson: Optional[str] = None
+    source_type: str
+    byte_size: int
+    page_count: Optional[int] = None
+    ocr_pages: int = 0
+    chunks_upserted: Optional[int] = None
+    status: str
+    error: Optional[str] = None
+    warnings: list[str] = Field(default_factory=list)
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class IngestDocumentListResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    documents: list[KbDocumentRecord] = Field(default_factory=list)
+
+
+class IngestDocumentResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    document: KbDocumentRecord
+
+
+class IngestDocumentDeleteResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    document_id: str
+    chunks_deleted: int
+    registry_deleted: bool
+    points_count: Optional[int] = None

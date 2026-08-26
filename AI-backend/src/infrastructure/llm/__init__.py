@@ -7,6 +7,7 @@ from infrastructure.llm.llm_provider import (
     get_fast_chat_llm,
     get_guardrail_llm,
     get_merge_llm,
+    get_ocr_llm,
     get_router_llm,
 )
 
@@ -17,5 +18,6 @@ __all__ = [
     "get_chat_llm",
     "get_fast_chat_llm",
     "get_merge_llm",
+    "get_ocr_llm",
     "get_default_embeddings",
 ]

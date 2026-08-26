@@ -93,4 +93,13 @@ def assert_session_for_tenant(session_id: str, tenant: TenantScope) -> None:
         )
 
 
+def assert_form_tenant(form_tenant_id: str, tenant: TenantScope) -> None:
+    """Reject multipart/form uploads whose tenant_id does not match the resolved scope."""
+    if form_tenant_id.strip() != tenant.tenant_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Form tenant_id does not match tenant scope",
+        )
+
+
 DashboardTenant = Annotated[TenantScope, Depends(require_active_tenant)]

@@ -589,11 +589,123 @@ export interface IngestUploadResult {
   chunks_upserted: number;
   collection: string;
   points_count?: number;
+  document_id?: string;
   document_title?: string;
   source_filename?: string;
+  source_type?: string;
+  page_count?: number | null;
+  ocr_pages?: number;
+  skipped?: boolean;
+  chunks_deleted?: number;
+  warnings?: string[];
+  status?: string;
+  async?: boolean;
+  error?: string | null;
 }
 
-export function uploadDocument(
+export interface IngestDocumentResult {
+  ok: boolean;
+  tenant_id: string;
+  document: KbDocumentRecord;
+}
+
+export interface KbDocumentRecord {
+  id: string;
+  tenant_id: string;
+  class_id: string;
+  document_id: string;
+  filename: string;
+  title?: string | null;
+  lesson?: string | null;
+  source_type: string;
+  byte_size: number;
+  page_count?: number | null;
+  ocr_pages?: number;
+  chunks_upserted?: number | null;
+  status: string;
+  error?: string | null;
+  warnings?: string[];
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface IngestDocumentListResult {
+  ok: boolean;
+  tenant_id: string;
+  documents: KbDocumentRecord[];
+}
+
+/** Formats the ingest pipeline can extract. Keep in sync with the AI backend. */
+export const INGEST_ACCEPT = ".pdf,.docx,.md,.markdown,.txt";
+
+export const INGEST_MAX_MB: Record<string, number> = {
+  pdf: 50,
+  docx: 25,
+  md: 5,
+  markdown: 5,
+  txt: 5,
+};
+
+/** Client-side size guard so oversized files fail instantly instead of after an upload. */
+export function ingestSizeError(file: File): string | null {
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const limitMb = INGEST_MAX_MB[extension];
+
+  if (!limitMb) {
+    return `Unsupported file type ".${extension}". Upload a PDF, Word (.docx) or Markdown file.`;
+  }
+
+  if (file.size > limitMb * 1024 * 1024) {
+    return `${file.name} is ${Math.ceil(file.size / (1024 * 1024))} MB — the limit for .${extension} is ${limitMb} MB.`;
+  }
+
+  return null;
+}
+
+const INGEST_POLL_INTERVAL_MS = 2000;
+const INGEST_POLL_TIMEOUT_MS = 10 * 60 * 1000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+export function getIngestDocument(
+  documentId: string,
+  tenantId?: string,
+): Promise<IngestDocumentResult> {
+  const tenant = tenantId ?? getTenantId();
+  return aiRequest<IngestDocumentResult>(
+    `/tools/ingest/documents/${encodeURIComponent(documentId)}?tenant_id=${encodeURIComponent(tenant)}`,
+    {},
+    tenant,
+  );
+}
+
+export async function pollIngestDocument(
+  documentId: string,
+  tenantId?: string,
+  onStatus?: (document: KbDocumentRecord) => void,
+): Promise<KbDocumentRecord> {
+  const tenant = tenantId ?? getTenantId();
+  const deadline = Date.now() + INGEST_POLL_TIMEOUT_MS;
+
+  while (Date.now() < deadline) {
+    const { document } = await getIngestDocument(documentId, tenant);
+    onStatus?.(document);
+
+    if (document.status === "ready" || document.status === "failed") {
+      return document;
+    }
+
+    await sleep(INGEST_POLL_INTERVAL_MS);
+  }
+
+  throw new Error("Document ingest timed out while waiting for completion.");
+}
+
+export async function uploadDocument(
   payload: {
     classId: string;
     file: File;
@@ -601,6 +713,7 @@ export function uploadDocument(
     lesson?: string;
   },
   tenantId?: string,
+  onStatus?: (document: KbDocumentRecord) => void,
 ): Promise<IngestUploadResult> {
   const tenant = tenantId ?? getTenantId();
   const formData = new FormData();
@@ -617,12 +730,63 @@ export function uploadDocument(
     formData.append("lesson", payload.lesson);
   }
 
-  return aiRequest<IngestUploadResult>(
+  const initial = await aiRequest<IngestUploadResult>(
     "/tools/ingest/upload",
     {
       method: "POST",
       body: formData,
     },
+    tenant,
+  );
+
+  if (initial.skipped || !initial.async || !initial.document_id) {
+    return initial;
+  }
+
+  const document = await pollIngestDocument(initial.document_id, tenant, onStatus);
+
+  if (document.status === "failed") {
+    throw new Error(document.error ?? "Document ingest failed.");
+  }
+
+  return {
+    ...initial,
+    status: document.status,
+    chunks_upserted: document.chunks_upserted ?? 0,
+    document_title: document.title ?? initial.document_title,
+    source_filename: document.filename ?? initial.source_filename,
+    source_type: document.source_type,
+    page_count: document.page_count,
+    ocr_pages: document.ocr_pages,
+    warnings: document.warnings ?? [],
+    async: false,
+  };
+}
+
+export function listIngestDocuments(
+  tenantId?: string,
+  classId?: string,
+): Promise<IngestDocumentListResult> {
+  const tenant = tenantId ?? getTenantId();
+  const params = new URLSearchParams({ tenant_id: tenant });
+  if (classId) {
+    params.set("class_id", classId);
+  }
+  return aiRequest<IngestDocumentListResult>(
+    `/tools/ingest/documents?${params.toString()}`,
+    {},
+    tenant,
+  );
+}
+
+export function deleteIngestDocument(
+  documentId: string,
+  tenantId?: string,
+): Promise<{ ok: boolean; chunks_deleted: number }> {
+  const tenant = tenantId ?? getTenantId();
+  return aiRequest(
+    `/tools/ingest/documents/${encodeURIComponent(documentId)}?tenant_id=${tenant}`,
+    { method: "DELETE" },
     tenant,
   );
 }
@@ -739,62 +903,14 @@ export function updateTenantProfile(
 
 /* Class Documents */
 
-export interface ClassDocumentUploadResponse {
-  ok: boolean;
-  tenant_id: string;
-  strategy: string;
-  documents: number;
-  chunks_upserted: number;
-  collection: string;
-  points_count: number | null;
-  document_title: string | null;
-  source_filename: string | null;
-}
+export type ClassDocumentUploadResponse = IngestUploadResult;
 
-export async function uploadClassDocument(
+export function uploadClassDocument(
   classId: string,
   tenantId: string,
   file: File,
   title?: string,
   lesson?: string,
 ): Promise<ClassDocumentUploadResponse> {
-  const formData = new FormData();
-  formData.append("tenant_id", tenantId);
-  formData.append("class_id", classId);
-  formData.append("file", file);
-
-  if (title) {
-    formData.append("title", title);
-  }
-
-  if (lesson) {
-    formData.append("lesson", lesson);
-  }
-
-  const response = await fetch(
-    `${AI_API_URL}/tools/ingest/upload`,
-    {
-      method: "POST",
-      body: formData,
-      cache: "no-store",
-    },
-  );
-
-  if (!response.ok) {
-    let details: unknown;
-
-    try {
-      details = await response.json();
-    } catch {
-      details = await response.text();
-    }
-
-    throw new ApiError(
-      `Upload failed: ${response.status} ${response.statusText}`,
-      response.status,
-      details,
-    );
-  }
-
-  return response.json() as Promise<ClassDocumentUploadResponse>;
+  return uploadDocument({ classId, file, title, lesson }, tenantId);
 }
