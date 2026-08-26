@@ -162,7 +162,10 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         response = (
             client.table("tenants")
-            .select("id, name, slug, status, whatsapp_number, drive_folder_id, created_at")
+            .select(
+                "id, name, slug, status, whatsapp_number, drive_folder_id, "
+                "payments_enabled, created_at"
+            )
             .eq("id", tenant_id)
             .limit(1)
             .execute()

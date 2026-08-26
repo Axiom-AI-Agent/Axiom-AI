@@ -293,6 +293,16 @@ class CrmTool:
         pending = self.db.get_pending_enrollment(tenant_id=tenant_id, student_id=student_id)
         linked_enrollment = enrollment_id or (pending["id"] if pending else None)
 
+        if is_payment_reason(reason_code):
+            tenant = self.db.get_tenant(tenant_id=tenant_id)
+            if tenant is not None and tenant.get("payments_enabled") is False:
+                return json.dumps(
+                    {
+                        "ok": False,
+                        "error": "Payment submissions are currently disabled",
+                    }
+                )
+
         if is_payment_reason(reason_code) and pending is None and linked_enrollment is None:
             return json.dumps(
                 {

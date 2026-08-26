@@ -181,8 +181,6 @@ def update_student(
     return enrich_student(db, student)
 
 
-@router.delete("/{student_id}", status_code=204)
-
 @router.patch(
     "/{student_id}/human-mode",
     response_model=StudentDetailResponse,
@@ -225,6 +223,8 @@ def update_student_human_mode(
         student,
     )
 
+
+@router.delete("/{student_id}", status_code=204)
 def delete_student(
     student_id: str,
     tenant_id: str = Depends(get_tenant_id),
