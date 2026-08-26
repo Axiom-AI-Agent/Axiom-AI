@@ -195,6 +195,5 @@
   "193": "services/__init__.py",
   "194": "services/prompts/__init__.py",
   "195": "rag_service/__init__.py",
-  "196": "tests/__init__.py",
-  "197": "crm_tool.py"
+  "196": "tests/__init__.py"
 }

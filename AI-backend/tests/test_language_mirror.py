@@ -22,6 +22,7 @@ from services.language import (
     normalize_language_pref,
     resolve_canned_language,
     resolve_reply_language,
+    retrieval_query,
     stt_language_hint,
     t,
 )
@@ -122,6 +123,15 @@ def test_english_not_classified_as_singlish():
         message="Can I get last week's physics paper?",
         language_pref="en",
     ) == "en"
+
+
+def test_retrieval_query_strips_singlish_keeps_english():
+    assert (
+        retrieval_query("Mata zener diode aka gena kiyala dennako")
+        == "zener diode"
+    )
+    assert retrieval_query("Mata velocity aka gena kiyala dennako") == "velocity"
+    assert retrieval_query("Explain to me about velocity") == "Explain to me about velocity"
 
 
 def test_format_student_profile_includes_language():

@@ -15,6 +15,7 @@ from loguru import logger
 from infrastructure.config import RETRIEVAL_SIMILARITY_THRESHOLD, RETRIEVAL_TOP_K
 from infrastructure.db.qdrant_client import search_chunks
 from infrastructure.utils import format_docs
+from services.language.detect import retrieval_query
 from services.rag_service.rag_templates import RAG_TEMPLATE
 
 
@@ -99,7 +100,10 @@ class RAGService:
 
     def generate(self, query: str) -> dict[str, Any]:
         start = time.time()
-        evidence = self.retriever.invoke(query)
+        search_query = retrieval_query(query)
+        if search_query != query:
+            logger.debug("RAG retrieval query {!r} ← {!r}", search_query, query)
+        evidence = self.retriever.invoke(search_query)
         if not evidence:
             return {
                 "answer": "",

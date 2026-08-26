@@ -85,6 +85,13 @@ _TANGLISH_WEAK = frozenset(
         "enna",
     }
 )
+_RETRIEVAL_DROP = (
+    _SINGLISH_STRONG
+    | _SINGLISH_WEAK
+    | _TANGLISH_STRONG
+    | _TANGLISH_WEAK
+    | frozenset({"gana", "ganeh", "denne", "kyla"})
+)
 
 
 def normalize_language_pref(value: str | None) -> str:
@@ -178,6 +185,30 @@ def resolve_canned_language(*, message: str = "", language_pref: str | None = No
     if looks_like_singlish(message):
         return "si_latn"
     return normalize_language_pref(language_pref)
+
+
+def retrieval_query(text: str) -> str:
+    """English-biased search string for tutor notes; keep the original as the LLM question.
+
+    Singlish/Tanglish particles (mata, kiyala, eka, …) dilute OpenAI embeddings against
+    English lesson notes. Native-script questions keep any Latin terms (velocity, diode).
+    Plain English is left unchanged.
+    """
+    stripped = (text or "").strip()
+    if not stripped:
+        return stripped
+    mixed = bool(
+        detect_script_language(stripped)
+        or looks_like_singlish(stripped)
+        or looks_like_tanglish(stripped)
+    )
+    if not mixed:
+        return stripped
+    latin = re.findall(r"[A-Za-z][A-Za-z0-9+\-./]*", stripped)
+    kept = [word for word in latin if word.lower() not in _RETRIEVAL_DROP]
+    if not kept:
+        return stripped
+    return " ".join(kept)
 
 
 def stt_language_hint(language: str | None) -> str | None:

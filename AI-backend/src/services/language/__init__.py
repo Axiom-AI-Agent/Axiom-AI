@@ -11,6 +11,7 @@ from services.language.detect import (
     normalize_language_pref,
     resolve_canned_language,
     resolve_reply_language,
+    retrieval_query,
     stt_language_hint,
     with_language_policy,
 )
@@ -30,4 +31,5 @@ __all__ = [
     "looks_like_tanglish",
     "normalize_canned_language",
     "resolve_canned_language",
+    "retrieval_query",
 ]
