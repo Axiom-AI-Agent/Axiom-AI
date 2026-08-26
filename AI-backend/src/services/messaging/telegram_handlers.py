@@ -118,10 +118,33 @@ async def handle_photo_message(
     )
 
 
-async def handle_voice_message(tenant_id: str, chat_id: int, voice: dict[str, Any]) -> None:
-    """Voice transcription is not in this codebase yet — acknowledge without dropping."""
-    del voice  # file is unused until STT lands
-    await send_telegram_message(tenant_id, chat_id, _VOICE_UNSUPPORTED)
+async def handle_voice_message(
+    tenant_id: str,
+    chat_id: int,
+    voice: dict[str, Any],
+    *,
+    update_id: int | None = None,
+) -> None:
+    """Download Telegram voice note, transcribe via STT, and process through pipeline."""
+    student = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
+    if not student or not student.get("phone"):
+        await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
+        return
+
+    file_id = voice.get("file_id")
+    if not file_id:
+        logger.warning("Telegram voice update missing file_id tenant={} chat_id={}", tenant_id, chat_id)
+        return
+
+    media_url = await resolve_telegram_file_url(tenant_id, str(file_id))
+    await _run_pipeline_and_reply(
+        tenant_id=tenant_id,
+        chat_id=chat_id,
+        student=student,
+        body="",
+        media_url=media_url,
+        update_id=update_id,
+    )
 
 
 async def ensure_tenant_bot(tenant_id: str) -> None:
