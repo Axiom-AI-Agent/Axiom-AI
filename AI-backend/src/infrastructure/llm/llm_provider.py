@@ -17,8 +17,6 @@ from infrastructure.config import (
     GUARDRAIL_PROVIDER,
     MERGE_MODEL,
     MERGE_PROVIDER,
-    OCR_MODEL,
-    OCR_PROVIDER,
     OPENROUTER_BASE_URL,
     ROUTER_MODEL,
     ROUTER_PROVIDER,
@@ -128,13 +126,3 @@ def get_chat_llm(**kwargs: Any) -> BaseChatModel:
 def get_merge_llm(**kwargs: Any) -> BaseChatModel:
     """Merge / synthesis model — Google Gemini."""
     return _build_llm(MERGE_MODEL, MERGE_PROVIDER, temperature=0.2, **kwargs)
-
-
-def get_ocr_llm(**kwargs: Any) -> BaseChatModel:
-    """Vision model for transcribing scanned pages during ingest.
-
-    Needs a larger output budget than the chat roles: a dense page of tutor notes
-    can transcribe to several thousand tokens of markdown.
-    """
-    kwargs.setdefault("max_tokens", 8192)
-    return _build_llm(OCR_MODEL, OCR_PROVIDER, temperature=0, **kwargs)

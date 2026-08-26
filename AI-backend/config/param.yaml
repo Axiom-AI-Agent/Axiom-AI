@@ -24,10 +24,6 @@ llm:
     extractor:
       provider: openai
       tier: general
-    # Vision transcription for scanned PDF pages (see ingest.ocr below).
-    ocr:
-      provider: google
-      tier: ocr
 
 embedding:
   provider: openai
@@ -53,14 +49,6 @@ ingest:
     pdf: 50
     docx: 25
     markdown: 5
-  ocr:
-    # Scanned/image-only pages are transcribed by the `ocr` LLM role. Only pages
-    # that fail the text-yield check below are sent — never the whole document.
-    enabled: true
-    min_chars_per_page: 100
-    min_alpha_ratio: 0.5
-    max_pages_per_doc: 50
-    dpi: 200
   docx:
     # Word files exported from Google Docs often carry no Heading styles at all;
     # recover section boundaries from standalone bold paragraphs.

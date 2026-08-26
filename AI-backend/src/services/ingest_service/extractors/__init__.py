@@ -33,7 +33,6 @@ def extract_document(
     content: bytes,
     *,
     filename: str = "",
-    enable_ocr: bool | None = None,
 ) -> ExtractedDoc:
     """Sniff the format of ``content`` and extract it to markdown.
 
@@ -49,7 +48,7 @@ def extract_document(
         )
 
     if source_type == "pdf":
-        return extract_pdf(content, filename=filename, enable_ocr=enable_ocr)
+        return extract_pdf(content, filename=filename)
     if source_type == "docx":
         return extract_docx(content, filename=filename)
     return extract_markdown(content, filename=filename)
