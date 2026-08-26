@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager, suppress
 from typing import Any
 
 import httpx
@@ -12,6 +15,8 @@ from services.tenant_config import get_bot_token_for_tenant
 _TELEGRAM_API = "https://api.telegram.org"
 _HTTP_TIMEOUT = httpx.Timeout(20.0, connect=10.0)
 _DOWNLOAD_TIMEOUT = httpx.Timeout(60.0, connect=10.0)
+_CHAT_ACTION_TIMEOUT = httpx.Timeout(5.0, connect=3.0)
+_TYPING_REFRESH_SECONDS = 4.0
 _MAX_MESSAGE_LENGTH = 4096
 _CONTACT_BUTTON_TEXT = "Share my phone number"
 _DEFAULT_CONTACT_PROMPT = "To complete your registration, please share your phone number."
@@ -41,6 +46,51 @@ async def send_telegram_message(tenant_id: str, chat_id: int, text: str) -> dict
         data = response.json()
     logger.info("Sent Telegram message tenant={} chat_id={}", tenant_id, chat_id)
     return data
+
+
+async def send_telegram_chat_action(
+    tenant_id: str,
+    chat_id: int,
+    action: str = "typing",
+) -> None:
+    """Best-effort chat action (typing). Failures are logged, never raised."""
+    try:
+        bot_token = await get_bot_token_for_tenant(tenant_id)
+        payload = {"chat_id": chat_id, "action": action}
+        async with httpx.AsyncClient(timeout=_CHAT_ACTION_TIMEOUT) as client:
+            response = await client.post(
+                telegram_api_url(bot_token, "sendChatAction"),
+                json=payload,
+            )
+            _raise_telegram_error(response, tenant_id=tenant_id, method="sendChatAction")
+    except asyncio.CancelledError:
+        raise
+    except Exception as exc:
+        logger.warning(
+            "Telegram sendChatAction ignored tenant={} chat_id={} action={}: {}",
+            tenant_id,
+            chat_id,
+            action,
+            exc,
+        )
+
+
+async def _keep_telegram_typing(tenant_id: str, chat_id: int) -> None:
+    while True:
+        await send_telegram_chat_action(tenant_id, chat_id)
+        await asyncio.sleep(_TYPING_REFRESH_SECONDS)
+
+
+@asynccontextmanager
+async def telegram_typing(tenant_id: str, chat_id: int) -> AsyncIterator[None]:
+    """Show Telegram typing until the wrapped awaitable returns or raises."""
+    task = asyncio.create_task(_keep_telegram_typing(tenant_id, chat_id))
+    try:
+        yield
+    finally:
+        task.cancel()
+        with suppress(asyncio.CancelledError):
+            await task
 
 
 async def send_telegram_contact_request(

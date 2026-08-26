@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+from contextlib import asynccontextmanager
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -43,6 +45,17 @@ PIPELINE_RESULT = ChatTurnResult(
 def client():
     with TestClient(app) as c:
         yield c
+
+
+@asynccontextmanager
+async def _noop_typing(*_args, **_kwargs):
+    yield
+
+
+@pytest.fixture
+def skip_typing():
+    with patch("services.messaging.telegram_handlers.telegram_typing", _noop_typing):
+        yield
 
 
 def test_telegram_webhook_text_for_known_student(client):
@@ -127,6 +140,7 @@ def test_root_lists_telegram_webhook(client):
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("skip_typing")
 async def test_handle_text_calls_shared_pipeline_with_telegram_channel():
     with patch(
         "services.messaging.telegram_handlers.resolve_student",
@@ -179,6 +193,7 @@ async def test_handle_text_new_user_requests_contact():
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("skip_typing")
 async def test_handle_text_pending_phone_runs_pipeline():
     pending = {
         "id": None,
@@ -209,6 +224,7 @@ async def test_handle_text_pending_phone_runs_pipeline():
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("skip_typing")
 async def test_handle_text_passes_enrollment_phrasing_unchanged():
     pending = {
         "id": None,
@@ -242,6 +258,7 @@ async def test_handle_text_passes_enrollment_phrasing_unchanged():
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("skip_typing")
 async def test_handle_contact_starts_enrollment_for_new_phone():
     pending = {
         "id": None,
@@ -286,6 +303,7 @@ async def test_handle_contact_starts_enrollment_for_new_phone():
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("skip_typing")
 async def test_handle_contact_greets_already_enrolled_student():
     with patch(
         "services.messaging.telegram_handlers.link_telegram_contact",
@@ -315,6 +333,7 @@ async def test_handle_contact_greets_already_enrolled_student():
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("skip_typing")
 async def test_handle_photo_passes_media_url_into_pipeline():
     with patch(
         "services.messaging.telegram_handlers.resolve_student",
@@ -363,6 +382,105 @@ async def test_handle_voice_does_not_call_pipeline():
     mock_pipeline.assert_not_called()
     mock_send.assert_awaited_once()
     assert "Voice notes" in mock_send.await_args.args[2]
+
+
+@pytest.mark.asyncio
+async def test_handle_text_shows_typing_until_pipeline_returns():
+    started = asyncio.Event()
+
+    async def _fake_action(*_args, **_kwargs) -> None:
+        started.set()
+
+    async def _slow_pipeline(*_args, **_kwargs):
+        await asyncio.wait_for(started.wait(), timeout=2)
+        return PIPELINE_RESULT
+
+    with patch(
+        "services.messaging.telegram_handlers.resolve_student",
+        new_callable=AsyncMock,
+        return_value=STUDENT,
+    ), patch(
+        "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
+        side_effect=_slow_pipeline,
+    ), patch(
+        "services.messaging.telegram_client.send_telegram_chat_action",
+        side_effect=_fake_action,
+    ) as mock_typing, patch(
+        "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
+        new_callable=AsyncMock,
+    ):
+        await handle_text_message("tenant-demo-physics", 555001, "What time is class?")
+
+    mock_typing.assert_awaited()
+    assert mock_typing.await_args.args[:2] == ("tenant-demo-physics", 555001)
+
+
+@pytest.mark.asyncio
+async def test_handle_text_new_user_does_not_show_typing():
+    with patch(
+        "services.messaging.telegram_handlers.resolve_student",
+        new_callable=AsyncMock,
+        return_value=None,
+    ), patch(
+        "services.messaging.telegram_handlers.send_telegram_contact_request",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_client.send_telegram_chat_action",
+        new_callable=AsyncMock,
+    ) as mock_typing:
+        await handle_text_message("tenant-demo-physics", 555001, "/start")
+
+    mock_typing.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_handle_voice_does_not_show_typing():
+    with patch(
+        "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ), patch(
+        "services.messaging.telegram_client.send_telegram_chat_action",
+        new_callable=AsyncMock,
+    ) as mock_typing:
+        await handle_voice_message("tenant-demo-physics", 555001, {"file_id": "ogg-1"})
+
+    mock_typing.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_handle_text_stops_typing_when_pipeline_fails():
+    started = asyncio.Event()
+
+    async def _fake_action(*_args, **_kwargs) -> None:
+        started.set()
+
+    async def _boom(*_args, **_kwargs):
+        await asyncio.wait_for(started.wait(), timeout=2)
+        raise RuntimeError("pipeline failed")
+
+    with patch(
+        "services.messaging.telegram_handlers.resolve_student",
+        new_callable=AsyncMock,
+        return_value=STUDENT,
+    ), patch(
+        "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
+        side_effect=_boom,
+    ), patch(
+        "services.messaging.telegram_client.send_telegram_chat_action",
+        side_effect=_fake_action,
+    ), patch(
+        "services.messaging.telegram_handlers.send_telegram_message",
+        new_callable=AsyncMock,
+    ) as mock_send, patch(
+        "services.messaging.telegram_handlers.bind_telegram_student_channel",
+        new_callable=AsyncMock,
+    ), pytest.raises(RuntimeError, match="pipeline failed"):
+        await handle_text_message("tenant-demo-physics", 555001, "hi")
+
+    mock_send.assert_not_called()
 
 
 @pytest.mark.asyncio

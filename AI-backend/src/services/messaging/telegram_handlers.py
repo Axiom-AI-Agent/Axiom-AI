@@ -19,6 +19,7 @@ from services.messaging.telegram_client import (
     resolve_telegram_file_url,
     send_telegram_contact_request,
     send_telegram_message,
+    telegram_typing,
 )
 from services.tenant_config import TenantBotTokenError, get_bot_token_for_tenant
 
@@ -139,17 +140,18 @@ async def _run_pipeline_and_reply(
 ) -> ChatTurnResult:
     phone = student.get("phone") or ""
     pipeline = ChatPipeline()
-    result = await pipeline.aprocess_message(
-        InboundMessage(
-            channel=ChatChannel.TELEGRAM,
-            tenant_id=tenant_id,
-            phone=phone,
-            body=body,
-            media_url=media_url,
-            num_media=1 if media_url else 0,
-            external_id=str(update_id) if update_id is not None else str(chat_id),
+    async with telegram_typing(tenant_id, chat_id):
+        result = await pipeline.aprocess_message(
+            InboundMessage(
+                channel=ChatChannel.TELEGRAM,
+                tenant_id=tenant_id,
+                phone=phone,
+                body=body,
+                media_url=media_url,
+                num_media=1 if media_url else 0,
+                external_id=str(update_id) if update_id is not None else str(chat_id),
+            )
         )
-    )
     if result.reply:
         await send_telegram_message(tenant_id, chat_id, result.reply)
     await bind_telegram_student_channel(tenant_id, str(chat_id), phone)

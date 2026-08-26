@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
@@ -10,10 +11,12 @@ import pytest
 from services.messaging.telegram_client import (
     download_telegram_file,
     get_telegram_file_path,
+    send_telegram_chat_action,
     send_telegram_contact_request,
     send_telegram_message,
     telegram_api_url,
     telegram_file_url,
+    telegram_typing,
 )
 
 
@@ -107,6 +110,58 @@ async def test_download_telegram_file_uses_matching_token():
         content = await download_telegram_file("tenant-demo-chemistry", "photos/x.jpg")
     assert content == b"image-bytes"
     assert client.get.await_args.args[0] == telegram_file_url("222:BBB", "photos/x.jpg")
+
+
+@pytest.mark.asyncio
+async def test_send_telegram_chat_action_uses_tenant_token():
+    response = _json_response({"ok": True, "result": True})
+    cm, client = _async_client(response)
+    with patch(
+        "services.messaging.telegram_client.get_bot_token_for_tenant",
+        new_callable=AsyncMock,
+        return_value="111:AAA",
+    ), patch("services.messaging.telegram_client.httpx.AsyncClient", return_value=cm):
+        await send_telegram_chat_action("tenant-demo-physics", 42)
+
+    assert client.post.await_count == 1
+    url = client.post.await_args.args[0]
+    assert url == telegram_api_url("111:AAA", "sendChatAction")
+    assert client.post.await_args.kwargs["json"] == {"chat_id": 42, "action": "typing"}
+
+
+@pytest.mark.asyncio
+async def test_send_telegram_chat_action_does_not_raise():
+    response = _json_response({"ok": False, "description": "Forbidden"}, status_code=403)
+    cm, _client = _async_client(response)
+    with patch(
+        "services.messaging.telegram_client.get_bot_token_for_tenant",
+        new_callable=AsyncMock,
+        return_value="111:AAA",
+    ), patch("services.messaging.telegram_client.httpx.AsyncClient", return_value=cm):
+        await send_telegram_chat_action("tenant-demo-physics", 42)
+
+
+@pytest.mark.asyncio
+async def test_telegram_typing_refreshes_until_released():
+    calls: list[tuple[str, int]] = []
+    released = asyncio.Event()
+
+    async def _fake_action(tenant_id: str, chat_id: int, action: str = "typing") -> None:
+        del action
+        calls.append((tenant_id, chat_id))
+        if len(calls) >= 2:
+            released.set()
+
+    with patch(
+        "services.messaging.telegram_client.send_telegram_chat_action",
+        new_callable=AsyncMock,
+        side_effect=_fake_action,
+    ), patch("services.messaging.telegram_client._TYPING_REFRESH_SECONDS", 0):
+        async with telegram_typing("tenant-demo-physics", 42):
+            await asyncio.wait_for(released.wait(), timeout=2)
+
+    assert calls[0] == ("tenant-demo-physics", 42)
+    assert len(calls) >= 2
 
 
 @pytest.mark.asyncio

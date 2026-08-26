@@ -1685,13 +1685,13 @@
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/telegram_client.py": {
-    "mtime": 1787665354.728962,
-    "ast_hash": "6f61cbe72c62f51d7b4e8c8950056d27",
+    "mtime": 1787731707.0809002,
+    "ast_hash": "00403a142fa8b7ead6fe3fda709fd622",
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/telegram_handlers.py": {
-    "mtime": 1787667289.9093394,
-    "ast_hash": "c979044ad84140817bc0fba534a1e09e",
+    "mtime": 1787731702.7553442,
+    "ast_hash": "ee88def2b2227c3686dcf54822bfc95e",
     "semantic_hash": ""
   },
   "AI-backend/src/services/tenant_config.py": {
@@ -1705,13 +1705,13 @@
     "semantic_hash": ""
   },
   "AI-backend/tests/test_telegram_client.py": {
-    "mtime": 1787665354.7313607,
-    "ast_hash": "3d44f88f0bf4e034c04771051065bf09",
+    "mtime": 1787731874.064001,
+    "ast_hash": "58b9c0e3073364b83ab4d2fee9245804",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_telegram_webhook.py": {
-    "mtime": 1787667303.2919366,
-    "ast_hash": "2c0413a3c21919d4ccbce3b7cfd62424",
+    "mtime": 1787731927.686546,
+    "ast_hash": "584a161e399b2155380c6e8567968247",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_tenant_config.py": {
