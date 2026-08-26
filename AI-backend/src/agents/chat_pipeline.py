@@ -15,8 +15,16 @@ from langchain_core.runnables import RunnableConfig
 
 from agents.decision_bridge import map_decision_to_agent_state
 from agents.decision_graph import EmitFn, build_decision_input
+from agents.drive_file_pick import try_consume_drive_pick
+from agents.escalation_confirmation import (
+    classify_confirmation,
+    get_pending_low_confidence_question,
+)
 from agents.orchestrator import AgentOrchestrator
 from agents.tools.memory_tool import MemoryTool
+from domain.escalation_reasons import (
+    LOW_RAG_CONFIDENCE,
+)
 from infrastructure.observability import (
     get_current_trace_id,
     langfuse_turn_attributes,
@@ -24,9 +32,9 @@ from infrastructure.observability import (
     update_current_observation,
     update_current_trace,
 )
+from services.admissions.onboarding_route import apply_onboarding_patch_overrides
 from services.identity.context import IdentityContext
 from services.identity.recall_context import build_recall_context
-from services.admissions.onboarding_route import apply_onboarding_patch_overrides
 
 Verdict = Literal["proceed", "out_of_scope"]
 
@@ -75,6 +83,72 @@ async def run_chat_turn(
     timings: dict[str, int] = {}
     memory = memory_tool or MemoryTool()
     memory_context, student_profile_context = build_recall_context(ctx, memory)
+    pending_escalation_message = (
+        get_pending_low_confidence_question(
+            memory_tool=memory,
+            tenant_id=ctx.tenant_id,
+            user_id=(
+                ctx.student_id
+                or ctx.phone
+            ),
+            session_id=ctx.session_id,
+        )
+    )
+
+    drive_pick_reply = try_consume_drive_pick(
+        message=message,
+        tenant_id=ctx.tenant_id,
+        session_id=ctx.session_id,
+        user_id=ctx.memory_user_id,
+    )
+    if drive_pick_reply is not None:
+        timings["total_ms"] = int((time.perf_counter() - t_total) * 1000)
+        return ChatResult(
+            answer=drive_pick_reply,
+            verdict="proceed",
+            route="resource",
+            routes=["resource"],
+            session_id=ctx.session_id,
+            latency_ms=timings["total_ms"],
+            timings=timings,
+            trace_id=get_current_trace_id(),
+        )
+
+    confirmation = (
+        classify_confirmation(message)
+        if pending_escalation_message
+        else "none"
+    )
+    if (
+        pending_escalation_message
+        and confirmation == "no"
+    ):
+        timings["total_ms"] = int(
+            (
+                time.perf_counter()
+                - t_total
+            )
+            * 1000
+        )
+
+        return ChatResult(
+            answer=(
+                "No problem — I won't send it "
+                "to the tutor. You can ask me "
+                "something else anytime."
+            ),
+            verdict="proceed",
+            route="direct",
+            routes=["direct"],
+            session_id=ctx.session_id,
+            latency_ms=timings[
+                "total_ms"
+            ],
+            timings=timings,
+            trace_id=(
+                get_current_trace_id()
+            ),
+        )
     tenant_name = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
 
     turn_metadata: dict[str, Any] = {
@@ -137,6 +211,40 @@ async def run_chat_turn(
                     "params": {},
                     "confidence": 1.0,
                     "reasoning": "payment receipt image attached",
+                }
+            ]
+
+        if (
+            pending_escalation_message
+            and confirmation == "yes"
+        ):
+            verdict = "proceed"
+
+            patch["verdict"] = "proceed"
+
+            patch[
+                "pending_escalation_reason"
+            ] = LOW_RAG_CONFIDENCE
+
+            patch[
+                "pending_escalation_message"
+            ] = pending_escalation_message
+
+            patch["route_decisions"] = [
+                {
+                    "route": "escalation",
+                    "action":
+                        "confirmed_handoff",
+                    "params": {
+                        "reason_code":
+                            LOW_RAG_CONFIDENCE,
+                    },
+                    "confidence": 1.0,
+                    "reasoning": (
+                        "Student confirmed "
+                        "low-confidence tutor "
+                        "handoff."
+                    ),
                 }
             ]
 

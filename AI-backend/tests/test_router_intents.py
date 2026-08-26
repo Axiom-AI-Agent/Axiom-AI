@@ -25,6 +25,7 @@ def _router_with_content(content: str) -> QueryRouter:
         ("hi", "direct"),
         ("I want to join A/L Physics", "admissions"),
         ("Do you have past papers?", "resource"),
+        ("any tutes?", "resource"),
         ("I sent my bank slip", "payment_check"),
         ("Can I speak to the tutor?", "escalation"),
     ],

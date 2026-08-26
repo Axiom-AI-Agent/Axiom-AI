@@ -94,23 +94,42 @@ class CrmTool:
         class_id: str,
     ) -> str:
         """Atomic post-confirmation write: student profile + pending enrollment."""
-        if self.db.get_student(tenant_id=tenant_id, phone=phone):
-            return json.dumps({"ok": False, "error": "A student profile already exists for this number"})
-
+        existing = self.db.get_student(tenant_id=tenant_id, phone=phone)
         class_row = self.db.get_class(tenant_id=tenant_id, class_id=class_id)
         if class_row is None:
             return json.dumps({"ok": False, "error": f"Class not found: {class_id}"})
 
+        created_new_student = False
+        if existing:
+            enrollments = self.db.list_enrollments(
+                tenant_id=tenant_id, student_id=existing["id"]
+            )
+            if any(row.get("status") in {"active", "pending"} for row in enrollments):
+                return json.dumps(
+                    {"ok": False, "error": "A student profile already exists for this number"}
+                )
+
         student: dict | None = None
         try:
-            student = self.db.create_student(
-                tenant_id=tenant_id,
-                phone=phone,
-                name=name,
-                school=school,
-                district=district,
-                consent=True,
-            )
+            if existing:
+                student = self.db.update_student(
+                    tenant_id=tenant_id,
+                    student_id=existing["id"],
+                    name=name,
+                    school=school,
+                    district=district,
+                    consent=True,
+                )
+            else:
+                student = self.db.create_student(
+                    tenant_id=tenant_id,
+                    phone=phone,
+                    name=name,
+                    school=school,
+                    district=district,
+                    consent=True,
+                )
+                created_new_student = True
             enrollment = self.db.create_enrollment(
                 tenant_id=tenant_id,
                 student_id=student["id"],
@@ -124,7 +143,7 @@ class CrmTool:
             )
         except Exception as exc:
             logger.warning("commit_onboarding failed: {}", exc)
-            if student:
+            if created_new_student and student:
                 try:
                     self.db.delete_student(tenant_id=tenant_id, student_id=student["id"])
                 except Exception as rollback_exc:

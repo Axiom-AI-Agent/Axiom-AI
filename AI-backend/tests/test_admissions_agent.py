@@ -109,6 +109,24 @@ async def test_admissions_agent_prompts_for_name_on_enrollment_intent():
 
 
 @pytest.mark.asyncio
+async def test_admissions_agent_unenrolled_existing_student_starts_collection():
+    crm = FakeCrmClient()
+    crm.student = {
+        "id": "stu-stub",
+        "tenant_id": "tenant-demo-physics",
+        "phone": "94771111001",
+        "name": "Mirco",
+        "school": None,
+        "district": None,
+    }
+    agent = AdmissionsAgent(crm=crm)
+    result = await agent.run(_state(message="I want to join a class"))
+    assert "name" in result.answer.lower()
+    assert "already registered" not in result.answer.lower()
+    assert not crm.committed
+
+
+@pytest.mark.asyncio
 async def test_admissions_agent_shows_review_before_db_write():
     crm = FakeCrmClient()
     agent = AdmissionsAgent(crm=crm)

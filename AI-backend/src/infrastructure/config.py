@@ -87,6 +87,11 @@ def get_role_config(role: str) -> tuple[str, str]:
     return model, provider
 
 
+def _get_bool(d: dict[str, Any], *keys: str, default: bool) -> bool:
+    value = _get_nested(d, *keys, default=default)
+    return value if isinstance(value, bool) else default
+
+
 ROUTER_MODEL, ROUTER_PROVIDER = get_role_config("router")
 GUARDRAIL_MODEL, GUARDRAIL_PROVIDER = get_role_config("guardrail")
 EXTRACTOR_MODEL, EXTRACTOR_PROVIDER = get_role_config("extractor")
@@ -116,6 +121,14 @@ RETRIEVAL_TOP_K = int(_get_nested(_PARAMS, "retrieval", "top_k", default=4))
 RETRIEVAL_SIMILARITY_THRESHOLD = float(
     _get_nested(_PARAMS, "retrieval", "similarity_threshold", default=0.35)
 )
+RETRIEVAL_ESCALATION_THRESHOLD = float(
+    _get_nested(
+        _PARAMS,
+        "retrieval",
+        "escalation_threshold",
+        default=0.45,
+    )
+)
 
 FIXED_CHUNK_SIZE = int(_get_nested(_PARAMS, "chunking", "fixed", "chunk_size", default=800))
 FIXED_CHUNK_OVERLAP = int(_get_nested(_PARAMS, "chunking", "fixed", "chunk_overlap", default=100))
@@ -123,6 +136,25 @@ PARENT_CHUNK_SIZE = int(_get_nested(_PARAMS, "chunking", "parent_child", "parent
 CHILD_CHUNK_SIZE = int(_get_nested(_PARAMS, "chunking", "parent_child", "child_size", default=250))
 CHILD_CHUNK_OVERLAP = int(_get_nested(_PARAMS, "chunking", "parent_child", "child_overlap", default=50))
 EMBEDDING_BATCH_SIZE = int(_get_nested(_PARAMS, "embedding", "batch_size", default=100))
+
+CHUNK_RESPECT_MARKDOWN_HEADERS = _get_bool(
+    _PARAMS, "chunking", "respect_markdown_headers", default=True
+)
+CHUNK_CONTEXTUALIZE_CHILDREN = _get_bool(
+    _PARAMS, "chunking", "contextualize_children", default=True
+)
+CHUNK_TOKEN_ENCODING = _get_str(_PARAMS, "chunking", "token_encoding", default="cl100k_base")
+
+# Per-format upload ceilings (MB). PDF is highest because scanned notes are large.
+INGEST_MAX_UPLOAD_MB: dict[str, int] = {
+    "pdf": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "pdf", default=50)),
+    "docx": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "docx", default=25)),
+    "markdown": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "markdown", default=5)),
+}
+
+INGEST_DOCX_PROMOTE_BOLD_HEADINGS = _get_bool(
+    _PARAMS, "ingest", "docx", "promote_bold_headings", default=True
+)
 
 GOOGLE_SERVICE_ACCOUNT_JSON = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "")
 DRIVE_MOCK = os.getenv("DRIVE_MOCK", "false").lower() in ("1", "true", "yes", "on")

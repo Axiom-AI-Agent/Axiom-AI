@@ -42,6 +42,8 @@ def _seed_catalog() -> list[tuple[str, str, str]]:
         (ap.LANGFUSE_PROMPT_NAMES["resource_stub"], "text", ap._RESOURCE_STUB_FALLBACK.strip()),
         (ap.LANGFUSE_PROMPT_NAMES["resource_rag"], "text", _langfuse_template(ap._RESOURCE_RAG_FALLBACK)),
         (ap.LANGFUSE_PROMPT_NAMES["resource_drive"], "text", _langfuse_template(ap._RESOURCE_DRIVE_FALLBACK)),
+        (ap.LANGFUSE_PROMPT_NAMES["resource_drive_list"], "text", _langfuse_template(ap._RESOURCE_DRIVE_LIST_FALLBACK)),
+        (ap.LANGFUSE_PROMPT_NAMES["resource_drive_pick"], "text", _langfuse_template(ap._RESOURCE_DRIVE_PICK_FALLBACK)),
         (ap.LANGFUSE_PROMPT_NAMES["payment_stub"], "text", _langfuse_template(ap._PAYMENT_STUB_FALLBACK)),
         (ap.LANGFUSE_PROMPT_NAMES["payment_ack"], "text", _langfuse_template(ap._PAYMENT_ACK_FALLBACK)),
         (

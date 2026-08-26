@@ -15,6 +15,7 @@ import {
   Loader2,
   MessageSquare,
   RefreshCw,
+  Send,
   XCircle,
 } from "lucide-react";
 
@@ -31,6 +32,7 @@ import {
   getEscalations,
   rejectEscalation,
   resolveEscalation,
+  sendStaffMessage,
 } from "@/lib/api";
 
 function statusClass(status: EscalationStatus) {
@@ -62,6 +64,19 @@ function InboxContent() {
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [
+    replyDrafts,
+    setReplyDrafts,
+  ] = useState<
+    Record<string, string>
+  >({});
+
+  const [
+    sendingReplyId,
+    setSendingReplyId,
+  ] = useState<string | null>(
+    null,
+  );
 
   const statusFilter =
     (searchParams.get("status") as EscalationStatus | null) ?? undefined;
@@ -182,7 +197,78 @@ function InboxContent() {
       setActionId(null);
     }
   }
+  async function handleReply(
+    escalation: Escalation,
+  ) {
+    const phone =
+      escalation.student_phone;
 
+    const reply =
+      (
+        replyDrafts[
+          escalation.id
+        ] ?? ""
+      ).trim();
+
+    if (!phone) {
+      showToast(
+        "This student has no phone number.",
+        "error",
+      );
+
+      return;
+    }
+
+    if (!reply) {
+      return;
+    }
+
+    setSendingReplyId(
+      escalation.id,
+    );
+
+    try {
+      const result =
+        await sendStaffMessage(
+          {
+            phone,
+            message: reply,
+          },
+          tenantId,
+        );
+
+      if (!result.delivered) {
+        throw new Error(
+          "Message was not delivered.",
+        );
+      }
+
+      setReplyDrafts(
+        (current) => ({
+          ...current,
+          [escalation.id]: "",
+        }),
+      );
+
+      showToast(
+        "Reply sent to the student on WhatsApp.",
+        "success",
+      );
+    } catch (requestError) {
+      console.error(
+        requestError,
+      );
+
+      showToast(
+        "Could not send the WhatsApp reply.",
+        "error",
+      );
+    } finally {
+      setSendingReplyId(
+        null,
+      );
+    }
+  }
   function updateFilter(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -241,9 +327,12 @@ function InboxContent() {
           }
           className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white"
         >
-          <option value="">All reasons</option>
-          <option value="payment_receipt">Payment receipt</option>
-          <option value="talk_to_tutor">Talk to tutor</option>
+        <option value="">All reasons</option>
+        <option value="payment_receipt">Payment receipt</option>
+        <option value="talk_to_tutor">Talk to tutor</option>
+        <option value="low_rag_confidence">
+          Low RAG confidence
+        </option>
         </select>
       </div>
 
@@ -350,7 +439,62 @@ function InboxContent() {
                     )}
                   </div>
                 )}
+{escalation.student_phone &&
+  escalation.status !== "resolved" && (
+    <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+      <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        Reply to student
+      </p>
 
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <input
+          type="text"
+          value={replyDrafts[escalation.id] ?? ""}
+          onChange={(event) =>
+            setReplyDrafts((current) => ({
+              ...current,
+              [escalation.id]: event.target.value,
+            }))
+          }
+          onKeyDown={(event) => {
+            if (
+              event.key === "Enter" &&
+              !event.shiftKey &&
+              sendingReplyId !== escalation.id &&
+              (replyDrafts[escalation.id] ?? "").trim()
+            ) {
+              event.preventDefault();
+              void handleReply(escalation);
+            }
+          }}
+          placeholder="Type a reply to send via WhatsApp..."
+          className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+        />
+
+        <button
+          type="button"
+          disabled={
+            sendingReplyId === escalation.id ||
+            !(replyDrafts[escalation.id] ?? "").trim()
+          }
+          onClick={() => void handleReply(escalation)}
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {sendingReplyId === escalation.id ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Send className="h-4 w-4" />
+          )}
+
+          Send Reply
+        </button>
+      </div>
+
+      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+        Sends directly to {escalation.student_phone} through WhatsApp.
+      </p>
+    </div>
+  )}
                 <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
                   <div className="text-xs text-slate-500 dark:text-slate-400">
                     <p>ID: {escalation.id}</p>

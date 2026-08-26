@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 from langchain_core.messages import HumanMessage
 
 from agents.nodes.resource_agent import ResourceAgent
 from services.identity.context import IdentityContext
 from services.identity.recall_context import build_recall_context, format_student_profile
+from services.identity.resolver import IdentityResolver
 
 
 class FakeMemoryTool:
@@ -19,10 +22,18 @@ class FakeDrive:
     async def drive_search(self, *, tenant_id: str, query: str, folder: str | None = "papers"):
         return {"ok": True, "files": [{"name": "paper.pdf", "link": "https://example.com"}]}
 
+    async def drive_list(self, *, tenant_id: str, folder: str = "papers"):
+        return {"ok": True, "files": [{"name": "paper.pdf", "link": "https://example.com", "folder": folder}]}
+
 
 class FakeRag:
     async def kb_search(self, *, tenant_id: str, query: str, class_ids: list[str] | None = None):
-        return {"ok": True, "answer": "Velocity is speed with direction.", "citations": []}
+        return {
+            "ok": True,
+            "answer": "Velocity is speed with direction.",
+            "citations": [{"title": "Lesson 5", "score": 0.88}],
+            "num_docs": 1,
+        }
 
 
 def test_format_student_profile_enrolled():
@@ -56,6 +67,44 @@ def test_format_student_profile_unknown_visitor():
     profile = format_student_profile(ctx)
     assert "Unknown visitor" in profile
     assert "94770999999" in profile
+
+
+def test_identity_resolver_treats_unenrolled_row_as_visitor():
+    resolver = IdentityResolver()
+    tenant = {
+        "id": "tenant-demo-physics",
+        "slug": "demo-physics",
+        "name": "Demo Physics Academy",
+    }
+    student = {"id": "stu-stub", "name": "Mirco"}
+    with patch.object(resolver, "_lookup_enrollments", return_value=[]):
+        ctx = resolver._build_context(tenant, "94770001111", student)
+    assert ctx.student_exists is False
+    assert ctx.student_id is None
+    assert ctx.student_name is None
+    assert ctx.is_enrolled is False
+
+
+def test_identity_resolver_keeps_enrolled_student():
+    resolver = IdentityResolver()
+    tenant = {
+        "id": "tenant-demo-physics",
+        "slug": "demo-physics",
+        "name": "Demo Physics Academy",
+    }
+    student = {"id": "stu-physics-001", "name": "Amaya Perera"}
+    with (
+        patch.object(
+            resolver,
+            "_lookup_enrollments",
+            return_value=[{"class_id": "class-1", "status": "active"}],
+        ),
+        patch.object(resolver, "_lookup_class_names", return_value={"class-1": "A/L Physics"}),
+    ):
+        ctx = resolver._build_context(tenant, "94771234567", student)
+    assert ctx.student_exists is True
+    assert ctx.student_id == "stu-physics-001"
+    assert ctx.is_enrolled is True
 
 
 def test_build_recall_context_includes_profile_before_st():

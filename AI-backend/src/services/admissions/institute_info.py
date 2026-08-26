@@ -165,24 +165,24 @@ def format_class_details(
             parts = [p for p in (grade, subject) if p]
             hint = f" for {' '.join(parts)}"
         return (
-            f"I couldn't find any classes{hint} at **{tenant_name}** right now. "
-            f"Try asking **what classes are available**."
+            f"I couldn't find any classes{hint} at {tenant_name} right now. "
+            f"Try asking what classes are available."
         )
 
     if len(classes) == 1:
         cls = classes[0]
         return _format_single_class(cls, tenant_name=tenant_name, header="Here are the details:")
 
-    header = f"Here are the matching classes at **{tenant_name}**:"
+    header = f"Here are the matching classes at {tenant_name}:"
     lines = [header, ""]
     for idx, cls in enumerate(classes, start=1):
         label = cls.get("name") or f"{cls.get('grade', '')} {cls.get('subject', '')}".strip()
         fee = cls.get("fee_amount")
-        fee_line = f" — LKR {fee}/month" if fee is not None else ""
+        fee_line = f" — LKR {_format_lkr_amount(fee)}/month" if fee is not None else ""
         cycle = cls.get("fee_cycle") or "monthly"
-        lines.append(f"{idx}. **{label}**{fee_line} ({cycle})")
+        lines.append(f"{idx}. {label}{fee_line} ({cycle})")
     lines.append("")
-    lines.append("Reply with a **class name** if you'd like to enroll.")
+    lines.append("Reply with a class name if you'd like to enroll.")
     return "\n".join(lines)
 
 
@@ -197,13 +197,23 @@ def _format_single_class(
     grade = cls.get("grade") or "—"
     fee = cls.get("fee_amount")
     cycle = cls.get("fee_cycle") or "monthly"
-    fee_line = f"LKR {fee}/{cycle}" if fee is not None else "Contact office for fees"
+    fee_line = f"LKR {_format_lkr_amount(fee)}/{cycle}" if fee is not None else "Contact office for fees"
 
     return (
         f"{header}\n\n"
-        f"**{label}** at {tenant_name}\n"
+        f"{label} at {tenant_name}\n"
         f"• Subject: {subject}\n"
         f"• Grade: {grade}\n"
         f"• Fee: {fee_line}\n\n"
-        f"Say **I'd like to enroll** when you're ready to join."
+        f"Say I'd like to enroll when you're ready to join."
     )
+
+
+def _format_lkr_amount(amount: Any) -> str:
+    try:
+        value = float(amount)
+    except (TypeError, ValueError):
+        return str(amount)
+    if value == int(value):
+        return f"{int(value):,}"
+    return f"{value:,.2f}"

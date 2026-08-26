@@ -38,10 +38,26 @@ chunking:
     parent_size: 1200
     child_size: 250
     child_overlap: 50
+  # Split on markdown headings so parents are semantic sections, and prefix each
+  # child with its heading breadcrumb before embedding.
+  respect_markdown_headers: true
+  contextualize_children: true
+  token_encoding: cl100k_base
+
+ingest:
+  max_upload_mb:
+    pdf: 50
+    docx: 25
+    markdown: 5
+  docx:
+    # Word files exported from Google Docs often carry no Heading styles at all;
+    # recover section boundaries from standalone bold paragraphs.
+    promote_bold_headings: true
 
 retrieval:
   top_k: 4
   similarity_threshold: 0.35
+  escalation_threshold: 0.45
 
 paths:
   data_dir: data
