@@ -2026,8 +2026,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_seed_langfuse_prompts",
-      "community": 142,
-      "community_name": "Dashboard Module 16",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "seed_langfuse_prompts.py"
     },
     {
@@ -2037,8 +2037,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "ai_backend_scripts_seed_langfuse_prompts_langfuse_template",
-      "community": 142,
-      "community_name": "Dashboard Module 16",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "_langfuse_template()"
     },
     {
@@ -2048,8 +2048,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_scripts_seed_langfuse_prompts_seed_catalog",
-      "community": 142,
-      "community_name": "Dashboard Module 16",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "_seed_catalog()"
     },
     {
@@ -2059,8 +2059,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "ai_backend_scripts_seed_langfuse_prompts_main",
-      "community": 142,
-      "community_name": "Dashboard Module 16",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "main()"
     },
     {
@@ -2070,8 +2070,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ai_backend_scripts_seed_langfuse_prompts_rationale_28",
-      "community": 142,
-      "community_name": "Dashboard Module 16",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "convert python .format `{var}` placeholders to langfuse `{{var}}`."
     },
     {
@@ -2081,8 +2081,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_admissions",
-      "community": 227,
-      "community_name": "main",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "smoke_admissions.py"
     },
     {
@@ -2092,8 +2092,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_admissions_main",
-      "community": 227,
-      "community_name": "main",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "main()"
     },
     {
@@ -2103,8 +2103,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_chat",
-      "community": 90,
-      "community_name": "Test Suite 5",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "smoke_chat.py"
     },
     {
@@ -2125,8 +2125,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_concurrent_chat",
-      "community": 234,
-      "community_name": "_one_turn",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": "smoke_concurrent_chat.py"
     },
     {
@@ -2136,8 +2136,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_concurrent_chat_one_turn",
-      "community": 234,
-      "community_name": "_one_turn",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": "_one_turn()"
     },
     {
@@ -2147,8 +2147,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_concurrent_chat_main",
-      "community": 234,
-      "community_name": "_one_turn",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": "main()"
     },
     {
@@ -2488,8 +2488,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase6_e2e_scenario_out_of_scope",
-      "community": 41,
-      "community_name": "Chat Message Pipeline 3",
+      "community": 96,
+      "community_name": "Dashboard Module 4",
       "norm_label": "scenario_out_of_scope()"
     },
     {
@@ -2510,8 +2510,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource",
-      "community": 60,
-      "community_name": "Student Chat Deps 4",
+      "community": 68,
+      "community_name": "Chat Turn Runner",
       "norm_label": "smoke_resource.py"
     },
     {
@@ -2521,8 +2521,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_smoke_ingest_load",
-      "community": 60,
-      "community_name": "Student Chat Deps 4",
+      "community": 68,
+      "community_name": "Chat Turn Runner",
       "norm_label": "smoke_ingest_load()"
     },
     {
@@ -2532,8 +2532,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_smoke_drive_mock",
-      "community": 60,
-      "community_name": "Student Chat Deps 4",
+      "community": 68,
+      "community_name": "Chat Turn Runner",
       "norm_label": "smoke_drive_mock()"
     },
     {
@@ -2543,8 +2543,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_smoke_resource_agent",
-      "community": 60,
-      "community_name": "Student Chat Deps 4",
+      "community": 68,
+      "community_name": "Chat Turn Runner",
       "norm_label": "smoke_resource_agent()"
     },
     {
@@ -2554,8 +2554,8 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_main",
-      "community": 60,
-      "community_name": "Student Chat Deps 4",
+      "community": 68,
+      "community_name": "Chat Turn Runner",
       "norm_label": "main()"
     },
     {
@@ -2587,8 +2587,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_twilio",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "smoke_twilio.py"
     },
     {
@@ -2598,8 +2598,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_twilio_main",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "main()"
     },
     {
@@ -2642,8 +2642,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_routing_smoke",
-      "community": 233,
-      "community_name": "test_routing_smoke.py",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "test_routing_smoke.py"
     },
     {
@@ -2653,8 +2653,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_routing_smoke_routingcase",
-      "community": 233,
-      "community_name": "test_routing_smoke.py",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "routingcase"
     },
     {
@@ -2664,8 +2664,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_routing_smoke_run",
-      "community": 233,
-      "community_name": "test_routing_smoke.py",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "_run()"
     },
     {
@@ -2675,8 +2675,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_routing_smoke_primary_route",
-      "community": 233,
-      "community_name": "test_routing_smoke.py",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "_primary_route()"
     },
     {
@@ -2686,8 +2686,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_routing_smoke_main",
-      "community": 233,
-      "community_name": "test_routing_smoke.py",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "main()"
     },
     {
@@ -2763,8 +2763,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_init",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "agents/__init__.py"
     },
     {
@@ -2774,8 +2774,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_init_rationale_1",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "agent framework \u2014 decision graph + orchestrator (phase 2)."
     },
     {
@@ -2928,8 +2928,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "decision_graph.py"
     },
     {
@@ -2939,8 +2939,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_ms",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "_ms()"
     },
     {
@@ -2950,8 +2950,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_emit_from_config",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "_emit_from_config()"
     },
     {
@@ -2961,8 +2961,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_py_runnableconfig",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "runnableconfig"
     },
     {
@@ -2972,8 +2972,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_py_emitfn",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "emitfn"
     },
     {
@@ -2983,8 +2983,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_make_guardrail_node",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "make_guardrail_node()"
     },
     {
@@ -2994,8 +2994,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_make_router_node",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "make_router_node()"
     },
     {
@@ -3027,8 +3027,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_build_decision_graph",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "build_decision_graph()"
     },
     {
@@ -3049,8 +3049,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_rationale_1",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "decision langgraph \u2014 guardrail and router subgraph for axiom ai.  ported from bo"
     },
     {
@@ -3159,8 +3159,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "guardrail.py"
     },
     {
@@ -3170,8 +3170,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_build_user_prompt",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "_build_user_prompt()"
     },
     {
@@ -3181,8 +3181,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_guardrail",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "guardrail"
     },
     {
@@ -3192,8 +3192,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_guardrail_init",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": ".__init__()"
     },
     {
@@ -3203,8 +3203,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_py_any",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "any"
     },
     {
@@ -3214,8 +3214,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_guardrail_aclassify",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": ".aclassify()"
     },
     {
@@ -3225,8 +3225,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "guardrailverdict",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "guardrailverdict"
     },
     {
@@ -3236,8 +3236,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_get_guardrail",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "get_guardrail()"
     },
     {
@@ -3247,8 +3247,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_rationale_1",
-      "community": 32,
-      "community_name": "Admissions Onboarding 10",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "domain guardrail \u2014 tuition scope filter for the decision subgraph.  ported from"
     },
     {
@@ -3280,8 +3280,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "admissions_agent.py"
     },
     {
@@ -3291,8 +3291,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagentresult",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "admissionsagentresult"
     },
     {
@@ -3324,8 +3324,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagent_run",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": ".run()"
     },
     {
@@ -3335,8 +3335,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagent_handle_existing_student",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "._handle_existing_student()"
     },
     {
@@ -3346,8 +3346,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_py_any",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "any"
     },
     {
@@ -3357,8 +3357,8 @@
       "source_location": "L143",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagent_handle_info_inquiry",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "._handle_info_inquiry()"
     },
     {
@@ -3368,8 +3368,8 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagent_handle_new_student_onboarding",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "._handle_new_student_onboarding()"
     },
     {
@@ -3379,8 +3379,8 @@
       "source_location": "L322",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagent_commit_onboarding",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "._commit_onboarding()"
     },
     {
@@ -3390,8 +3390,8 @@
       "source_location": "L364",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_admissionsagent_class_for_enrollment",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "._class_for_enrollment()"
     },
     {
@@ -3401,8 +3401,8 @@
       "source_location": "L373",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_last_user_text",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "_last_user_text()"
     },
     {
@@ -3412,8 +3412,8 @@
       "source_location": "L384",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_run_admissions_agent",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "run_admissions_agent()"
     },
     {
@@ -3423,8 +3423,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_admissions_agent_rationale_1",
-      "community": 135,
-      "community_name": "MESSAGING DRY RUN",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "admissions agent node \u2014 multi-turn onboarding via crm mcp tools."
     },
     {
@@ -3599,8 +3599,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_crm_client_directcrmclient_init",
-      "community": 21,
-      "community_name": "Decision Graph",
+      "community": 2,
+      "community_name": "Demo Chat Lifecycle",
       "norm_label": ".__init__()"
     },
     {
@@ -3896,8 +3896,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "escalation_agent.py"
     },
     {
@@ -3907,8 +3907,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_escalationagentresult",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "escalationagentresult"
     },
     {
@@ -3918,8 +3918,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_last_user_text",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "_last_user_text()"
     },
     {
@@ -3929,8 +3929,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_escalationagent",
-      "community": 2,
-      "community_name": "Demo Chat Lifecycle",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "escalationagent"
     },
     {
@@ -3940,8 +3940,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_escalationagent_init",
-      "community": 2,
-      "community_name": "Demo Chat Lifecycle",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": ".__init__()"
     },
     {
@@ -3951,8 +3951,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_escalationagent_run",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": ".run()"
     },
     {
@@ -3962,8 +3962,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_run_escalation_agent",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "run_escalation_agent()"
     },
     {
@@ -3973,8 +3973,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_escalation_agent_rationale_1",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "escalation agent \u2014 talk-to-tutor requests \u2192 dashboard inbox."
     },
     {
@@ -4259,8 +4259,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpdriveclient",
-      "community": 85,
-      "community_name": "Resource Agent 2",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "mcpdriveclient"
     },
     {
@@ -4292,8 +4292,8 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpragclient",
-      "community": 85,
-      "community_name": "Resource Agent 2",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "mcpragclient"
     },
     {
@@ -4380,8 +4380,8 @@
       "source_location": "L367",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_run_resource_agent",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "run_resource_agent()"
     },
     {
@@ -4424,8 +4424,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentresponse",
-      "community": 85,
-      "community_name": "Resource Agent 2",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "agentresponse"
     },
     {
@@ -4534,8 +4534,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_mcpmemorytooladapter",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "_mcpmemorytooladapter"
     },
     {
@@ -4545,8 +4545,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_mcpmemorytooladapter_init",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".__init__()"
     },
     {
@@ -4578,8 +4578,8 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_init",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".__init__()"
     },
     {
@@ -4589,8 +4589,8 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_build_graph",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "._build_graph()"
     },
     {
@@ -4677,8 +4677,8 @@
       "source_location": "L303",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_resource_agent_node",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": ".resource_agent_node()"
     },
     {
@@ -4699,8 +4699,8 @@
       "source_location": "L316",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_escalation_agent_node",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": ".escalation_agent_node()"
     },
     {
@@ -4732,8 +4732,8 @@
       "source_location": "L368",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_to_agent_response",
-      "community": 85,
-      "community_name": "Resource Agent 2",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "._to_agent_response()"
     },
     {
@@ -4754,8 +4754,8 @@
       "source_location": "L394",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_build_agent_mcp",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "build_agent_mcp()"
     },
     {
@@ -4776,8 +4776,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_rationale_120",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "mcp memory tools \u2192 async dispatch (week 13 / bookme mcp adapter pattern)."
     },
     {
@@ -4798,8 +4798,8 @@
       "source_location": "L395",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_rationale_395",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "mcp path \u2014 memory tools via stdio server (week 13 pattern)."
     },
     {
@@ -4908,8 +4908,8 @@
       "source_location": "L470",
       "_origin": "ast",
       "id": "ai_backend_src_agents_prompts_agent_prompts_get_resource_not_enrolled_reply",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "get_resource_not_enrolled_reply()"
     },
     {
@@ -4996,8 +4996,8 @@
       "source_location": "L571",
       "_origin": "ast",
       "id": "ai_backend_src_agents_prompts_agent_prompts_build_escalation_ack_reply",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 220,
+      "community_name": "FakeCrm",
       "norm_label": "build_escalation_ack_reply()"
     },
     {
@@ -5040,8 +5040,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "router.py"
     },
     {
@@ -5051,8 +5051,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_pattern_score",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "_pattern_score()"
     },
     {
@@ -5062,8 +5062,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_heuristic_route",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "heuristic_route()"
     },
     {
@@ -5117,8 +5117,8 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_normalize_action",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "_normalize_action()"
     },
     {
@@ -5139,8 +5139,8 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_get_query_router",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "get_query_router()"
     },
     {
@@ -5150,8 +5150,8 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_router_node",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "router_node()"
     },
     {
@@ -5161,8 +5161,8 @@
       "source_location": "L208",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_last_user_text",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "_last_user_text()"
     },
     {
@@ -5304,8 +5304,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_rationale_1",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "query router \u2014 llm intent classification for tuition agents.  ported from bookme"
     },
     {
@@ -5315,8 +5315,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_rationale_84",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "deterministic routing for unambiguous tuition intents (before llm)."
     },
     {
@@ -5447,8 +5447,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_state",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "state.py"
     },
     {
@@ -5480,8 +5480,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_state_rationale_1",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "agentstate \u2014 shared langgraph state for the axiom orchestrator.  ported from boo"
     },
     {
@@ -5502,8 +5502,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool",
-      "community": 21,
-      "community_name": "Decision Graph",
+      "community": 228,
+      "community_name": "admissions_db_client.py",
       "norm_label": "crm_tool.py"
     },
     {
@@ -5700,8 +5700,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_rationale_1",
-      "community": 21,
-      "community_name": "Decision Graph",
+      "community": 228,
+      "community_name": "admissions_db_client.py",
       "norm_label": "crm business logic \u2014 called by mcp server only (week 13 pattern)."
     },
     {
@@ -5953,8 +5953,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_memory_tool_memorytool",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "memorytool"
     },
     {
@@ -5975,8 +5975,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_memory_tool_memorytool_recall_turns",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".recall_turns()"
     },
     {
@@ -5997,8 +5997,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_memory_tool_memorytool_get_procedural",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".get_procedural()"
     },
     {
@@ -6492,8 +6492,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_py_post",
-      "community": 92,
-      "community_name": "Design Double Diamond 5",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "post"
     },
     {
@@ -6503,8 +6503,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_send_chat_message",
-      "community": 92,
-      "community_name": "Design Double Diamond 5",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "send_chat_message()"
     },
     {
@@ -6514,8 +6514,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "chatrequest",
-      "community": 92,
-      "community_name": "Design Double Diamond 5",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "chatrequest"
     },
     {
@@ -6525,8 +6525,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "chatresponse",
-      "community": 92,
-      "community_name": "Design Double Diamond 5",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "chatresponse"
     },
     {
@@ -6580,8 +6580,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_rationale_20",
-      "community": 92,
-      "community_name": "Design Double Diamond 5",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "send a student message and receive an ai reply.      use this during development"
     },
     {
@@ -8637,8 +8637,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_domain_escalation_reasons",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 228,
+      "community_name": "admissions_db_client.py",
       "norm_label": "escalation_reasons.py"
     },
     {
@@ -8659,8 +8659,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_domain_escalation_reasons_rationale_1",
-      "community": 12,
-      "community_name": "Admissions Onboarding 4",
+      "community": 228,
+      "community_name": "admissions_db_client.py",
       "norm_label": "escalation reason codes for dashboard inbox filtering."
     },
     {
@@ -9495,8 +9495,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracecontext",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "tracecontext"
     },
     {
@@ -9506,8 +9506,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracecontext_tags",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": ".tags()"
     },
     {
@@ -9517,8 +9517,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracecontext_metadata",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": ".metadata()"
     },
     {
@@ -9594,8 +9594,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_reset_langfuse_state",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "reset_langfuse_state()"
     },
     {
@@ -9649,8 +9649,8 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_trace_context",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "trace_context()"
     },
     {
@@ -9693,8 +9693,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_flush",
-      "community": 41,
-      "community_name": "Chat Message Pipeline 3",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "flush()"
     },
     {
@@ -9770,8 +9770,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_49",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "langfuse trace scope for a whatsapp conversation turn."
     },
     {
@@ -9781,8 +9781,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_97",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test helper \u2014 clear cached langfuse client state."
     },
     {
@@ -9814,8 +9814,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_168",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "propagate tenant/session/user identifiers to all nested langfuse observations."
     },
     {
@@ -11255,8 +11255,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "institute_info.py"
     },
     {
@@ -11266,8 +11266,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_looks_like_institute_info",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "looks_like_institute_info()"
     },
     {
@@ -11277,8 +11277,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_classify_info_inquiry",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "classify_info_inquiry()"
     },
     {
@@ -11288,8 +11288,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "infoinquirykind",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "infoinquirykind"
     },
     {
@@ -11299,8 +11299,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_extract_class_filters",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "extract_class_filters()"
     },
     {
@@ -11310,8 +11310,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_format_tenant_info",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "format_tenant_info()"
     },
     {
@@ -11321,8 +11321,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_py_any",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "any"
     },
     {
@@ -11332,8 +11332,8 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_format_staff_list",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "format_staff_list()"
     },
     {
@@ -11343,8 +11343,8 @@
       "source_location": "L155",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_format_class_details",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "format_class_details()"
     },
     {
@@ -11354,8 +11354,8 @@
       "source_location": "L189",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_format_single_class",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "_format_single_class()"
     },
     {
@@ -11365,8 +11365,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_rationale_1",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "institute info inquiry detection and reply formatting (classes, fees, staff, cen"
     },
     {
@@ -11376,8 +11376,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_institute_info_rationale_93",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "return (subject_hint, grade_hint) parsed from a user message."
     },
     {
@@ -11409,8 +11409,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_flow_onboardingstate",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "onboardingstate"
     },
     {
@@ -11453,8 +11453,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_flow_onboardingflow_start_collection",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".start_collection()"
     },
     {
@@ -11805,8 +11805,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "onboarding_route.py"
     },
     {
@@ -11816,8 +11816,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_should_break_onboarding_lock",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "should_break_onboarding_lock()"
     },
     {
@@ -11827,8 +11827,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_is_onboarding_active",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "is_onboarding_active()"
     },
     {
@@ -11838,8 +11838,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_onboarding_router_context_hint",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "onboarding_router_context_hint()"
     },
     {
@@ -11849,8 +11849,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_apply_onboarding_patch_overrides",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "apply_onboarding_patch_overrides()"
     },
     {
@@ -11860,8 +11860,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_admissions_route_decision",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "admissions_route_decision()"
     },
     {
@@ -11871,8 +11871,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_rationale_1",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "route-lock helpers \u2014 keep mid-onboarding turns on the admissions agent."
     },
     {
@@ -11882,8 +11882,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_rationale_12",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "true when a clear specialist intent should override active onboarding."
     },
     {
@@ -11893,8 +11893,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_rationale_20",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "true when an in-memory onboarding session is collecting details."
     },
     {
@@ -11904,8 +11904,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_route_rationale_50",
-      "community": 144,
-      "community_name": "Student Chat Deps 8",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "force proceed + admissions when mid-onboarding. returns true if applied."
     },
     {
@@ -11915,8 +11915,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "onboarding_session_store.py"
     },
     {
@@ -11926,8 +11926,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsession",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "onboardingsession"
     },
     {
@@ -11937,8 +11937,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsession_to_state",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".to_state()"
     },
     {
@@ -11948,8 +11948,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsession_from_state",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".from_state()"
     },
     {
@@ -11959,8 +11959,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "onboardingsessionstore"
     },
     {
@@ -11970,8 +11970,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_init",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".__init__()"
     },
     {
@@ -11981,8 +11981,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_session_key",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".session_key()"
     },
     {
@@ -11992,8 +11992,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_get",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".get()"
     },
     {
@@ -12003,8 +12003,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_save",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".save()"
     },
     {
@@ -12014,8 +12014,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_clear",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".clear()"
     },
     {
@@ -12025,8 +12025,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_start",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".start()"
     },
     {
@@ -12036,8 +12036,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_onboardingsessionstore_is_active",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": ".is_active()"
     },
     {
@@ -12058,8 +12058,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_rationale_1",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "in-memory onboarding session store \u2014 week 13 sessionstore pattern.  onboarding s"
     },
     {
@@ -12069,8 +12069,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_rationale_16",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "ephemeral multi-turn onboarding progress for one tenant+phone pair."
     },
     {
@@ -12080,8 +12080,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_onboarding_session_store_rationale_46",
-      "community": 81,
-      "community_name": "Escalation Routes 5",
+      "community": 0,
+      "community_name": "Admissions Onboarding",
       "norm_label": "process-local store keyed by ``tenant_id:phone``."
     },
     {
@@ -12531,8 +12531,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "identityresolver"
     },
     {
@@ -12542,8 +12542,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_resolve",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": ".resolve()"
     },
     {
@@ -12553,8 +12553,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_resolve_tenant",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "._resolve_tenant()"
     },
     {
@@ -12564,8 +12564,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_py_any",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "any"
     },
     {
@@ -12575,8 +12575,8 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_resolve_direct",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": ".resolve_direct()"
     },
     {
@@ -12586,8 +12586,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_build_context",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "._build_context()"
     },
     {
@@ -12597,8 +12597,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_enrollment_status",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "._enrollment_status()"
     },
     {
@@ -12608,8 +12608,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_lookup_student",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "._lookup_student()"
     },
     {
@@ -12619,8 +12619,8 @@
       "source_location": "L193",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_lookup_enrollments",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "._lookup_enrollments()"
     },
     {
@@ -12630,8 +12630,8 @@
       "source_location": "L204",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_identityresolver_lookup_class_names",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "._lookup_class_names()"
     },
     {
@@ -12674,8 +12674,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_rationale_37",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "lookup tenant by sandbox number and student by sender phone."
     },
     {
@@ -12685,8 +12685,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_resolver_rationale_94",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 39,
+      "community_name": "Chat Message Pipeline 2",
       "norm_label": "resolve identity for http dev chat when tenant_id is known."
     },
     {
@@ -12696,19 +12696,19 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "student_resolver.py"
     },
     {
       "label": "resolve_student()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_resolve_student",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "resolve_student()"
     },
     {
@@ -12718,41 +12718,41 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_py_any",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "any"
     },
     {
       "label": "link_telegram_contact()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L72",
+      "source_location": "L73",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "link_telegram_contact()"
     },
     {
       "label": "bind_telegram_student_channel()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L125",
+      "source_location": "L126",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "bind_telegram_student_channel()"
     },
     {
       "label": "_parse_channel()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L156",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_parse_channel",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_parse_channel()"
     },
     {
@@ -12762,85 +12762,85 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_py_chatchannel",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "chatchannel"
     },
     {
       "label": "_pending_identity()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L163",
+      "source_location": "L164",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_pending_identity",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_pending_identity()"
     },
     {
       "label": "_lookup_student_by_phone()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L172",
+      "source_location": "L173",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_lookup_student_by_phone",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_lookup_student_by_phone()"
     },
     {
       "label": "_has_enrollment()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L186",
+      "source_location": "L187",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_has_enrollment",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_has_enrollment()"
     },
     {
       "label": "_lookup_pending_phone()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L200",
+      "source_location": "L201",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_lookup_pending_phone",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_lookup_pending_phone()"
     },
     {
       "label": "_upsert_pending()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L215",
+      "source_location": "L205",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_upsert_pending",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_upsert_pending()"
     },
     {
       "label": "_delete_pending()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L227",
+      "source_location": "L209",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_delete_pending",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_delete_pending()"
     },
     {
       "label": "_upsert_channel()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L234",
+      "source_location": "L213",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_upsert_channel",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "_upsert_channel()"
     },
     {
@@ -12850,42 +12850,218 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_identity_student_resolver_rationale_1",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "resolve a student from a channel address (e.g. telegram chat_id)."
     },
     {
       "label": "Look up student_channels joined to students, or a pending Telegram phone.      R",
       "file_type": "rationale",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L21",
+      "source_location": "L22",
       "_origin": "ast",
-      "id": "ai_backend_src_services_identity_student_resolver_rationale_21",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "id": "ai_backend_src_services_identity_student_resolver_rationale_22",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "look up student_channels joined to students, or a pending telegram phone.      r"
     },
     {
       "label": "Bind a Telegram chat_id to a phone number.      Enrolled students are linked on",
       "file_type": "rationale",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L79",
+      "source_location": "L80",
       "_origin": "ast",
-      "id": "ai_backend_src_services_identity_student_resolver_rationale_79",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "id": "ai_backend_src_services_identity_student_resolver_rationale_80",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "bind a telegram chat_id to a phone number.      enrolled students are linked on"
     },
     {
       "label": "If Admissions created/enrolled this phone, attach student_channels.",
       "file_type": "rationale",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L130",
+      "source_location": "L131",
       "_origin": "ast",
-      "id": "ai_backend_src_services_identity_student_resolver_rationale_130",
-      "community": 114,
-      "community_name": "Chat Message Pipeline 5",
+      "id": "ai_backend_src_services_identity_student_resolver_rationale_131",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
       "norm_label": "if admissions created/enrolled this phone, attach student_channels."
+    },
+    {
+      "label": "telegram_pending_store.py",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "telegram_pending_store.py"
+    },
+    {
+      "label": "_PendingContact",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_pendingcontact",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "_pendingcontact"
+    },
+    {
+      "label": "TelegramPendingStore",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "telegrampendingstore"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_init",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "timedelta",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "timedelta",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "timedelta"
+    },
+    {
+      "label": "._key()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_key",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "._key()"
+    },
+    {
+      "label": "._now()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_now",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "._now()"
+    },
+    {
+      "label": "datetime",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "datetime",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "datetime"
+    },
+    {
+      "label": ".get()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_get",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": ".get()"
+    },
+    {
+      "label": ".put()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L46",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_put",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": ".put()"
+    },
+    {
+      "label": ".delete()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L53",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_delete",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": ".delete()"
+    },
+    {
+      "label": ".clear()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L56",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_clear",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": ".clear()"
+    },
+    {
+      "label": "._purge_expired()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_purge_expired",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "._purge_expired()"
+    },
+    {
+      "label": "get_telegram_pending_store()",
+      "file_type": "code",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L69",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
+      "norm_label": "get_telegram_pending_store()"
+    },
+    {
+      "label": "Ephemeral Telegram chat_id \u2192 phone mapping until enrollment completes.  Not pers",
+      "file_type": "rationale",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_rationale_1",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "ephemeral telegram chat_id \u2192 phone mapping until enrollment completes.  not pers"
+    },
+    {
+      "label": "Process-local store keyed by ``tenant_id:chat_id``.",
+      "file_type": "rationale",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "ai_backend_src_services_identity_telegram_pending_store_rationale_22",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "process-local store keyed by ``tenant_id:chat_id``."
     },
     {
       "label": "ingest_service/__init__.py",
@@ -13279,8 +13455,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence",
-      "community": 29,
-      "community_name": "Drive Tooling 3",
+      "community": 90,
+      "community_name": "Test Suite 5",
       "norm_label": "persistence.py"
     },
     {
@@ -13411,8 +13587,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_rationale_1",
-      "community": 29,
-      "community_name": "Drive Tooling 3",
+      "community": 90,
+      "community_name": "Test Suite 5",
       "norm_label": "persist inbound/outbound messaging to supabase (message_logs + st_turns)."
     },
     {
@@ -13455,8 +13631,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_pipeline",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "messaging/pipeline.py"
     },
     {
@@ -13477,8 +13653,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_pipeline_chatpipeline_init",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": ".__init__()"
     },
     {
@@ -13587,8 +13763,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_pipeline_rationale_1",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "process inbound student messages and produce agent replies."
     },
     {
@@ -14104,8 +14280,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "twilio_client.py"
     },
     {
@@ -14115,8 +14291,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_twiliomessagingclient",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "twiliomessagingclient"
     },
     {
@@ -14126,8 +14302,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_twiliomessagingclient_init",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": ".__init__()"
     },
     {
@@ -14137,8 +14313,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_twiliomessagingclient_send_whatsapp",
-      "community": 24,
-      "community_name": "Agent Orchestrator",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": ".send_whatsapp()"
     },
     {
@@ -14148,8 +14324,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_rationale_1",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "send whatsapp messages via twilio rest api."
     },
     {
@@ -14159,8 +14335,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_rationale_18",
-      "community": 132,
-      "community_name": "Smoke Scripts",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "thin wrapper around twilio messages api with dry-run support."
     },
     {
@@ -14214,8 +14390,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "langfuse_prompts.py"
     },
     {
@@ -14225,8 +14401,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "promptservice"
     },
     {
@@ -14236,8 +14412,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice_init",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": ".__init__()"
     },
     {
@@ -14247,8 +14423,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice_get_text",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": ".get_text()"
     },
     {
@@ -14258,8 +14434,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_py_any",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "any"
     },
     {
@@ -14269,8 +14445,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice_get_messages",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": ".get_messages()"
     },
     {
@@ -14280,8 +14456,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice_fetch",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "._fetch()"
     },
     {
@@ -14291,8 +14467,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice_local_fallback",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "._local_fallback()"
     },
     {
@@ -14302,8 +14478,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_promptservice_substitute_variables",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "._substitute_variables()"
     },
     {
@@ -14313,8 +14489,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_rationale_1",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "langfuse prompt management with local fallback seeds."
     },
     {
@@ -14324,8 +14500,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_rationale_19",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "fetch and compile prompts from langfuse; fall back to local seeds."
     },
     {
@@ -14335,8 +14511,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "ai_backend_src_services_prompts_langfuse_prompts_rationale_69",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "support langfuse `{{var}}` and local `{var}` placeholders."
     },
     {
@@ -15336,8 +15512,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_chat_py_asyncio",
-      "community": 82,
-      "community_name": "Escalation Routes 6",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "asyncio"
     },
     {
@@ -15347,8 +15523,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "ai_backend_tests_test_chat_test_chat_pipeline_runs_agent_inside_event_loop",
-      "community": 82,
-      "community_name": "Escalation Routes 6",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "test_chat_pipeline_runs_agent_inside_event_loop()"
     },
     {
@@ -15369,8 +15545,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "ai_backend_tests_test_chat_rationale_102",
-      "community": 82,
-      "community_name": "Escalation Routes 6",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "regression: /chat must not call asyncio.run() inside fastapi's event loop."
     },
     {
@@ -15490,8 +15666,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_py_patch",
-      "community": 83,
-      "community_name": "Escalation Routes 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "patch"
     },
     {
@@ -15501,8 +15677,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_test_search_chunks_applies_class_id_filter",
-      "community": 83,
-      "community_name": "Escalation Routes 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "test_search_chunks_applies_class_id_filter()"
     },
     {
@@ -15512,8 +15688,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_test_search_chunks_skips_class_id_index_without_filter",
-      "community": 83,
-      "community_name": "Escalation Routes 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "test_search_chunks_skips_class_id_index_without_filter()"
     },
     {
@@ -15919,8 +16095,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_tests_test_decision_graph_test_decision_graph_off_topic_with_mocked_llm",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_decision_graph_off_topic_with_mocked_llm()"
     },
     {
@@ -15941,8 +16117,8 @@
       "source_location": "L100",
       "_origin": "ast",
       "id": "ai_backend_tests_test_decision_graph_test_router_parses_json_routes",
-      "community": 53,
-      "community_name": "Admissions Onboarding 11",
+      "community": 59,
+      "community_name": "Test Suite 2",
       "norm_label": "test_router_parses_json_routes()"
     },
     {
@@ -16183,8 +16359,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_recordingorchestrator_init",
-      "community": 84,
-      "community_name": "Drive Tooling 4",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".__init__()"
     },
     {
@@ -16194,8 +16370,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_recordingorchestrator_arun_state",
-      "community": 84,
-      "community_name": "Drive Tooling 4",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".arun_state()"
     },
     {
@@ -16205,8 +16381,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_py_any",
-      "community": 84,
-      "community_name": "Drive Tooling 4",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "any"
     },
     {
@@ -16480,8 +16656,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "test_health.py"
     },
     {
@@ -16491,8 +16667,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_py_fixture",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "fixture"
     },
     {
@@ -16502,8 +16678,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_client",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "client()"
     },
     {
@@ -16513,8 +16689,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_test_root",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "test_root()"
     },
     {
@@ -16524,8 +16700,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_test_health",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "test_health()"
     },
     {
@@ -16535,8 +16711,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_test_config",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "test_config()"
     },
     {
@@ -16546,8 +16722,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_test_request_id_header",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "test_request_id_header()"
     },
     {
@@ -16557,8 +16733,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_health_rationale_1",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 45,
+      "community_name": "Dashboard Module",
       "norm_label": "phase 0 health endpoint tests."
     },
     {
@@ -16568,8 +16744,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_heuristic_router.py"
     },
     {
@@ -16579,8 +16755,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router_py_parametrize",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "parametrize"
     },
     {
@@ -16590,8 +16766,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router_test_heuristic_route",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_heuristic_route()"
     },
     {
@@ -16601,8 +16777,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router_rationale_1",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "keyword heuristic router tests (no llm)."
     },
     {
@@ -16612,8 +16788,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "test_identity_recall.py"
     },
     {
@@ -16645,8 +16821,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_fakedrive",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "fakedrive"
     },
     {
@@ -16656,8 +16832,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_fakedrive_drive_search",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": ".drive_search()"
     },
     {
@@ -16667,8 +16843,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_fakerag",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "fakerag"
     },
     {
@@ -16678,8 +16854,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_fakerag_kb_search",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": ".kb_search()"
     },
     {
@@ -16711,8 +16887,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_test_identity_resolver_treats_unenrolled_row_as_visitor",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "test_identity_resolver_treats_unenrolled_row_as_visitor()"
     },
     {
@@ -16744,8 +16920,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_py_asyncio",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "asyncio"
     },
     {
@@ -16755,8 +16931,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_test_resource_agent_blocks_non_enrolled_drive",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "test_resource_agent_blocks_non_enrolled_drive()"
     },
     {
@@ -16766,8 +16942,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_test_resource_agent_blocks_non_enrolled_rag",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "test_resource_agent_blocks_non_enrolled_rag()"
     },
     {
@@ -16777,8 +16953,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_test_resource_agent_allows_pending_enrollment",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "test_resource_agent_allows_pending_enrollment()"
     },
     {
@@ -16788,8 +16964,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_rationale_1",
-      "community": 39,
-      "community_name": "Chat Message Pipeline 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "identity recall and resource enrollment gate tests."
     },
     {
@@ -16975,8 +17151,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_institute_info",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "test_institute_info.py"
     },
     {
@@ -16986,8 +17162,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "ai_backend_tests_test_institute_info_test_class_availability_is_institute_info",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "test_class_availability_is_institute_info()"
     },
     {
@@ -16997,8 +17173,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_tests_test_institute_info_test_class_fees_is_class_detail",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "test_class_fees_is_class_detail()"
     },
     {
@@ -17008,8 +17184,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "ai_backend_tests_test_institute_info_test_staff_question_is_staff",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "test_staff_question_is_staff()"
     },
     {
@@ -17019,8 +17195,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_tests_test_institute_info_test_explain_velocity_is_not_institute_info",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "test_explain_velocity_is_not_institute_info()"
     },
     {
@@ -17030,8 +17206,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_institute_info_rationale_1",
-      "community": 74,
-      "community_name": "Supabase DB Client 3",
+      "community": 1,
+      "community_name": "Admissions Onboarding 2",
       "norm_label": "institute info inquiry tests."
     },
     {
@@ -17096,8 +17272,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_observability.py"
     },
     {
@@ -17107,8 +17283,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_setup_function",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "setup_function()"
     },
     {
@@ -17118,8 +17294,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_teardown_function",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "teardown_function()"
     },
     {
@@ -17129,8 +17305,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_test_trace_context_tags_and_metadata",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_trace_context_tags_and_metadata()"
     },
     {
@@ -17140,8 +17316,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_test_trace_context_tags_telegram_channel",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_trace_context_tags_telegram_channel()"
     },
     {
@@ -17151,8 +17327,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_test_trace_context_noop_when_langfuse_disabled",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "test_trace_context_noop_when_langfuse_disabled()"
     },
     {
@@ -17195,8 +17371,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_rationale_1",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "observability helper tests."
     },
     {
@@ -17294,8 +17470,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_test_router_routes_class_availability_to_admissions",
-      "community": 80,
-      "community_name": "Admissions Onboarding 15",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_router_routes_class_availability_to_admissions()"
     },
     {
@@ -17503,8 +17679,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_prompts",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "test_prompts.py"
     },
     {
@@ -17514,8 +17690,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "ai_backend_tests_test_prompts_test_local_prompt_fallback_text",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "test_local_prompt_fallback_text()"
     },
     {
@@ -17525,8 +17701,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "ai_backend_tests_test_prompts_test_local_prompt_fallback_messages",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "test_local_prompt_fallback_messages()"
     },
     {
@@ -17536,8 +17712,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_prompts_rationale_1",
-      "community": 55,
-      "community_name": "Admissions Onboarding 12",
+      "community": 5,
+      "community_name": "RAG Ingest Pipeline 2",
       "norm_label": "prompt service tests."
     },
     {
@@ -17844,8 +18020,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict",
-      "community": 223,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "test_resource_agent_strict.py"
     },
     {
@@ -17855,8 +18031,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict_py_asyncio",
-      "community": 223,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "asyncio"
     },
     {
@@ -17866,8 +18042,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict_test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
-      "community": 223,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled()"
     },
     {
@@ -17877,8 +18053,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict_rationale_1",
-      "community": 223,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "resource agent \u2014 in-process tools blocked when allow_inprocess_tools=false."
     },
     {
@@ -17888,8 +18064,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_resource_reply_errors.py"
     },
     {
@@ -17899,8 +18075,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_build_resource_rag_reply_hides_internal_error",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 47,
+      "community_name": "CRM MCP Server",
       "norm_label": "test_build_resource_rag_reply_hides_internal_error()"
     },
     {
@@ -17910,8 +18086,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_build_resource_drive_reply_hides_internal_error",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 47,
+      "community_name": "CRM MCP Server",
       "norm_label": "test_build_resource_drive_reply_hides_internal_error()"
     },
     {
@@ -17921,8 +18097,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_kb_search_returns_generic_error_code",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_kb_search_returns_generic_error_code()"
     },
     {
@@ -17932,8 +18108,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_fakedrive",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "fakedrive"
     },
     {
@@ -17943,8 +18119,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_fakedrive_drive_search",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": ".drive_search()"
     },
     {
@@ -17954,8 +18130,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_errorrag",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "errorrag"
     },
     {
@@ -17965,8 +18141,8 @@
       "source_location": "L60",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_errorrag_kb_search",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": ".kb_search()"
     },
     {
@@ -17976,8 +18152,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_py_asyncio",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "asyncio"
     },
     {
@@ -17987,8 +18163,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_resource_agent_rag_path_hides_search_failure",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_resource_agent_rag_path_hides_search_failure()"
     },
     {
@@ -17998,8 +18174,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_rationale_1",
-      "community": 137,
-      "community_name": "Dashboard Module 12",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "user-facing resource agent reply error sanitization."
     },
     {
@@ -18281,7 +18457,7 @@
       "label": "_Query",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L24",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query",
       "community": 93,
@@ -18292,7 +18468,7 @@
       "label": ".__init__()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L25",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_init",
       "community": 93,
@@ -18303,7 +18479,7 @@
       "label": ".select()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L31",
+      "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_select",
       "community": 93,
@@ -18314,7 +18490,7 @@
       "label": ".eq()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L34",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_eq",
       "community": 93,
@@ -18325,7 +18501,7 @@
       "label": ".limit()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L37",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_limit",
       "community": 93,
@@ -18336,7 +18512,7 @@
       "label": ".insert()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L40",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_insert",
       "community": 93,
@@ -18347,7 +18523,7 @@
       "label": ".upsert()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L45",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_upsert",
       "community": 93,
@@ -18358,7 +18534,7 @@
       "label": ".delete()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L50",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_delete",
       "community": 93,
@@ -18369,7 +18545,7 @@
       "label": ".execute()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L54",
+      "source_location": "L55",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_query_execute",
       "community": 93,
@@ -18380,12 +18556,34 @@
       "label": "_client()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L60",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_client",
       "community": 93,
       "community_name": "Escalation Routes 8",
       "norm_label": "_client()"
+    },
+    {
+      "label": "fixture",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_student_resolver_py_fixture",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
+      "norm_label": "fixture"
+    },
+    {
+      "label": "clear_pending_store()",
+      "file_type": "code",
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_student_resolver_clear_pending_store",
+      "community": 93,
+      "community_name": "Escalation Routes 8",
+      "norm_label": "clear_pending_store()"
     },
     {
       "label": "asyncio",
@@ -18402,7 +18600,7 @@
       "label": "test_resolve_student_returns_linked_row()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L67",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_linked_row",
       "community": 93,
@@ -18413,7 +18611,7 @@
       "label": "test_resolve_student_returns_none_for_new_chat()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L85",
+      "source_location": "L94",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_none_for_new_chat",
       "community": 93,
@@ -18424,7 +18622,7 @@
       "label": "test_resolve_student_returns_pending_phone()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L97",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_pending_phone",
       "community": 93,
@@ -18435,7 +18633,7 @@
       "label": "test_resolve_student_unenrolled_linked_row_is_pending()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L110",
+      "source_location": "L122",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_resolve_student_unenrolled_linked_row_is_pending",
       "community": 93,
@@ -18446,7 +18644,7 @@
       "label": "test_link_telegram_contact_reuses_enrolled_student()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L124",
+      "source_location": "L136",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_reuses_enrolled_student",
       "community": 93,
@@ -18457,7 +18655,7 @@
       "label": "test_link_telegram_contact_stores_pending_when_unknown_phone()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L149",
+      "source_location": "L167",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_stores_pending_when_unknown_phone",
       "community": 93,
@@ -18468,7 +18666,7 @@
       "label": "test_link_telegram_contact_does_not_link_unenrolled_stub()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L174",
+      "source_location": "L192",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_does_not_link_unenrolled_stub",
       "community": 93,
@@ -18479,7 +18677,7 @@
       "label": "test_bind_telegram_student_channel_after_enrollment()",
       "file_type": "code",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L196",
+      "source_location": "L216",
       "_origin": "ast",
       "id": "ai_backend_tests_test_student_resolver_test_bind_telegram_student_channel_after_enrollment",
       "community": 93,
@@ -18606,6 +18804,61 @@
       "community": 145,
       "community_name": "Demo UI",
       "norm_label": "telegram bot api client tests \u2014 tenant token isolation."
+    },
+    {
+      "label": "test_telegram_pending_store.py",
+      "file_type": "code",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_telegram_pending_store",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "test_telegram_pending_store.py"
+    },
+    {
+      "label": "test_pending_store_expires_unused_mapping()",
+      "file_type": "code",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_telegram_pending_store_test_pending_store_expires_unused_mapping",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "test_pending_store_expires_unused_mapping()"
+    },
+    {
+      "label": "test_pending_store_slides_ttl_on_get()",
+      "file_type": "code",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_telegram_pending_store_test_pending_store_slides_ttl_on_get",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "test_pending_store_slides_ttl_on_get()"
+    },
+    {
+      "label": "test_pending_store_purge_drops_expired_on_put()",
+      "file_type": "code",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_telegram_pending_store_test_pending_store_purge_drops_expired_on_put",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "test_pending_store_purge_drops_expired_on_put()"
+    },
+    {
+      "label": "In-memory Telegram pending contact TTL tests.",
+      "file_type": "rationale",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "ai_backend_tests_test_telegram_pending_store_rationale_1",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
+      "norm_label": "in-memory telegram pending contact ttl tests."
     },
     {
       "label": "test_telegram_webhook.py",
@@ -19725,8 +19978,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_escalation_escalation",
-      "community": 72,
-      "community_name": "Escalation Routes 4",
+      "community": 22,
+      "community_name": "Dashboard ORM Models",
       "norm_label": "escalation"
     },
     {
@@ -19736,8 +19989,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_escalation_py_base",
-      "community": 72,
-      "community_name": "Escalation Routes 4",
+      "community": 22,
+      "community_name": "Dashboard ORM Models",
       "norm_label": "base"
     },
     {
@@ -19747,8 +20000,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_escalation_escalation_repr",
-      "community": 72,
-      "community_name": "Escalation Routes 4",
+      "community": 22,
+      "community_name": "Dashboard ORM Models",
       "norm_label": ".__repr__()"
     },
     {
@@ -19758,8 +20011,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_escalation_rationale_17",
-      "community": 72,
-      "community_name": "Escalation Routes 4",
+      "community": 22,
+      "community_name": "Dashboard ORM Models",
       "norm_label": "represents a conversation that requires manual intervention     from a staff mem"
     },
     {
@@ -19978,8 +20231,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "message_log.py"
     },
     {
@@ -19989,8 +20242,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_messagelog",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "messagelog"
     },
     {
@@ -20000,8 +20253,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_py_base",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "base"
     },
     {
@@ -20011,8 +20264,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_messagelog_repr",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": ".__repr__()"
     },
     {
@@ -20022,8 +20275,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_rationale_17",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "stores metadata about conversations between students and the ai assistant."
     },
     {
@@ -20968,8 +21221,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_message_logs",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "message_logs.py"
     },
     {
@@ -20979,8 +21232,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_message_logs_py_get",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "get"
     },
     {
@@ -20990,8 +21243,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_message_logs_get_message_logs",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "get_message_logs()"
     },
     {
@@ -21001,8 +21254,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_message_logs_py_session",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "session"
     },
     {
@@ -21012,8 +21265,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_message_logs_py_post",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "post"
     },
     {
@@ -21023,8 +21276,8 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_message_logs_create_message_log",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "create_message_log()"
     },
     {
@@ -21254,8 +21507,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "routes/tenant.py"
     },
     {
@@ -21265,8 +21518,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_normalize_slug",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "_normalize_slug()"
     },
     {
@@ -21276,8 +21529,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_py_get",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "get"
     },
     {
@@ -21287,8 +21540,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_list_tenants",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "list_tenants()"
     },
     {
@@ -21298,8 +21551,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_py_session",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "session"
     },
     {
@@ -21309,8 +21562,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_get_tenant_profile",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "get_tenant_profile()"
     },
     {
@@ -21320,8 +21573,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_py_put",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "put"
     },
     {
@@ -21331,8 +21584,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "dashboard_backend_app_routes_tenant_update_tenant_profile",
-      "community": 45,
-      "community_name": "Dashboard Module",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "update_tenant_profile()"
     },
     {
@@ -22211,8 +22464,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "message_service.py"
     },
     {
@@ -22222,8 +22475,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_log_message",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "log_message()"
     },
     {
@@ -22233,8 +22486,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_py_session",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "session"
     },
     {
@@ -22244,8 +22497,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_py_chatchannel",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "chatchannel"
     },
     {
@@ -22255,8 +22508,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "messagelog",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "messagelog"
     },
     {
@@ -22266,8 +22519,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_rationale_17",
-      "community": 35,
-      "community_name": "Invoice DB Layer",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "store a message interaction.      shared by:     - fastapi routes     - langgrap"
     },
     {
@@ -28096,8 +28349,8 @@
       "source_location": "L194",
       "_origin": "ast",
       "id": "ai_backend_docs_demo_ui_plan_8_implementation_phases",
-      "community": 232,
-      "community_name": "8. Implementation phases",
+      "community": 46,
+      "community_name": "Invoice DB Layer 3",
       "norm_label": "8. implementation phases"
     },
     {
@@ -28107,8 +28360,8 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "ai_backend_docs_demo_ui_plan_phase_a_scaffold_2h",
-      "community": 232,
-      "community_name": "8. Implementation phases",
+      "community": 46,
+      "community_name": "Invoice DB Layer 3",
       "norm_label": "phase a \u2014 scaffold (~2h)"
     },
     {
@@ -28118,8 +28371,8 @@
       "source_location": "L206",
       "_origin": "ast",
       "id": "ai_backend_docs_demo_ui_plan_phase_b_student_lifecycle_2h",
-      "community": 232,
-      "community_name": "8. Implementation phases",
+      "community": 46,
+      "community_name": "Invoice DB Layer 3",
       "norm_label": "phase b \u2014 student lifecycle (~2h)"
     },
     {
@@ -28129,8 +28382,8 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "ai_backend_docs_demo_ui_plan_phase_c_staff_console_2h",
-      "community": 232,
-      "community_name": "8. Implementation phases",
+      "community": 46,
+      "community_name": "Invoice DB Layer 3",
       "norm_label": "phase c \u2014 staff console (~2h)"
     },
     {
@@ -28140,8 +28393,8 @@
       "source_location": "L225",
       "_origin": "ast",
       "id": "ai_backend_docs_demo_ui_plan_phase_d_polish_docs_1h",
-      "community": 232,
-      "community_name": "8. Implementation phases",
+      "community": 46,
+      "community_name": "Invoice DB Layer 3",
       "norm_label": "phase d \u2014 polish & docs (~1h)"
     },
     {
@@ -28338,8 +28591,8 @@
       "source_location": "L152",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_phase_5_escalations_staff_chat",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "phase 5 \u2014 escalations + staff chat"
     },
     {
@@ -28349,8 +28602,8 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_staff_chat_dashboard_integration",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "staff chat (dashboard integration)"
     },
     {
@@ -28360,8 +28613,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_escalations_payment_talk_to_tutor",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "escalations (payment + talk-to-tutor)"
     },
     {
@@ -28371,8 +28624,8 @@
       "source_location": "L179",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_flow_1_payment_receipt_dashboard_inbox",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "flow 1 \u2014 payment receipt \u2192 dashboard inbox"
     },
     {
@@ -28382,8 +28635,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_flow_2_talk_to_tutor",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "flow 2 \u2014 talk to tutor"
     },
     {
@@ -28393,8 +28646,8 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_staff_reply",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "staff reply"
     },
     {
@@ -28404,8 +28657,8 @@
       "source_location": "L220",
       "_origin": "ast",
       "id": "ai_backend_docs_dev_chat_dashboard_overview_chat_logs",
-      "community": 221,
-      "community_name": "get_default_embeddings",
+      "community": 44,
+      "community_name": "Escalation Routes 2",
       "norm_label": "dashboard overview & chat logs"
     },
     {
@@ -28569,8 +28822,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_testing",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "testing"
     },
     {
@@ -28580,8 +28833,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_prerequisites",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "prerequisites"
     },
     {
@@ -28591,8 +28844,8 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_1_smoke_test_no_server",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "step 1 \u2014 smoke test (no server)"
     },
     {
@@ -28602,8 +28855,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_2_mcp_subprocess_axiom_drive_only",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "step 2 \u2014 mcp subprocess (`axiom-drive` only)"
     },
     {
@@ -28613,8 +28866,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_3_rest_debug_same_logic_as_mcp",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "step 3 \u2014 rest debug (same logic as mcp)"
     },
     {
@@ -28624,8 +28877,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_4_full_chat_agent_mcp",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "step 4 \u2014 full chat (agent + mcp)"
     },
     {
@@ -28635,8 +28888,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_router_disambiguation_drive_vs_rag",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 55,
+      "community_name": "Admissions Onboarding 12",
       "norm_label": "router disambiguation (drive vs rag)"
     },
     {
@@ -34122,6 +34375,18 @@
       "_origin": "ast",
       "source": "ai_backend_scripts_debug_drive_integration",
       "target": "ai_backend_scripts_debug_drive_integration_step9_search_query",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/scripts/debug_drive_integration.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_scripts_debug_drive_integration",
+      "target": "datetime",
       "confidence_score": 1.0
     },
     {
@@ -43909,6 +44174,18 @@
       "_origin": "ast",
       "source": "ai_backend_src_agents_prompts_agent_prompts",
       "target": "ai_backend_src_agents_prompts_agent_prompts_get_resource_stub_reply",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/agents/prompts/agent_prompts.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_agents_prompts_agent_prompts",
+      "target": "datetime",
       "confidence_score": 1.0
     },
     {
@@ -56525,19 +56802,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L228",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_identity_student_resolver_delete_pending",
-      "target": "ai_backend_src_infrastructure_db_supabase_client_get_supabase_client"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L187",
+      "source_location": "L188",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_has_enrollment",
@@ -56549,19 +56814,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L201",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_identity_student_resolver_lookup_pending_phone",
-      "target": "ai_backend_src_infrastructure_db_supabase_client_get_supabase_client"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_lookup_student_by_phone",
@@ -56573,7 +56826,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_resolve_student",
@@ -56585,22 +56838,10 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L241",
+      "source_location": "L220",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_upsert_channel",
-      "target": "ai_backend_src_infrastructure_db_supabase_client_get_supabase_client"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L216",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_identity_student_resolver_upsert_pending",
       "target": "ai_backend_src_infrastructure_db_supabase_client_get_supabase_client"
     },
     {
@@ -59779,6 +60020,18 @@
       "_origin": "ast",
       "source": "ai_backend_src_services_admissions_admissions_db_client",
       "target": "ai_backend_src_services_admissions_admissions_db_client_admissionsdbclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/admissions/admissions_db_client.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_admissions_admissions_db_client",
+      "target": "datetime",
       "confidence_score": 1.0
     },
     {
@@ -63583,7 +63836,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L131",
+      "source_location": "L132",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
@@ -63595,7 +63848,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L88",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64010,7 +64263,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L125",
+      "source_location": "L126",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64021,7 +64274,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L227",
+      "source_location": "L209",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64032,7 +64285,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L186",
+      "source_location": "L187",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64043,7 +64296,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64054,7 +64307,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L200",
+      "source_location": "L201",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64065,7 +64318,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L172",
+      "source_location": "L173",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64076,7 +64329,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L156",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64087,7 +64340,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L163",
+      "source_location": "L164",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64098,7 +64351,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64109,7 +64362,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L234",
+      "source_location": "L213",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64120,7 +64373,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L215",
+      "source_location": "L205",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver",
@@ -64143,7 +64396,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L93",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64154,10 +64407,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "ai_backend_src_services_identity_student_resolver_rationale_21",
+      "source": "ai_backend_src_services_identity_student_resolver_rationale_22",
       "target": "ai_backend_src_services_identity_student_resolver_resolve_student",
       "confidence_score": 1.0
     },
@@ -64166,7 +64419,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_resolve_student",
@@ -64178,7 +64431,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L65",
+      "source_location": "L66",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_resolve_student",
@@ -64190,7 +64443,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_resolve_student",
@@ -64202,7 +64455,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L62",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_resolve_student",
@@ -64214,7 +64467,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_resolve_student",
@@ -64251,7 +64504,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L74",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_linked_row",
@@ -64263,7 +64516,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L92",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_none_for_new_chat",
@@ -64275,7 +64528,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L103",
+      "source_location": "L115",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_pending_phone",
@@ -64287,7 +64540,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L117",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_unenrolled_linked_row_is_pending",
@@ -64298,7 +64551,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L125",
+      "source_location": "L126",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
@@ -64310,7 +64563,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64322,7 +64575,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L172",
+      "source_location": "L173",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_lookup_student_by_phone",
@@ -64334,7 +64587,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L163",
+      "source_location": "L164",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_pending_identity",
@@ -64346,7 +64599,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L106",
+      "source_location": "L107",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64358,7 +64611,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L95",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64370,7 +64623,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L98",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64382,7 +64635,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L122",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64394,7 +64647,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64406,7 +64659,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L115",
+      "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64419,7 +64672,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L90",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
@@ -64429,10 +64682,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L79",
+      "source_location": "L80",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "ai_backend_src_services_identity_student_resolver_rationale_79",
+      "source": "ai_backend_src_services_identity_student_resolver_rationale_80",
       "target": "ai_backend_src_services_identity_student_resolver_link_telegram_contact",
       "confidence_score": 1.0
     },
@@ -64454,7 +64707,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L182",
+      "source_location": "L199",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_does_not_link_unenrolled_stub",
@@ -64466,7 +64719,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L134",
+      "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_reuses_enrolled_student",
@@ -64478,7 +64731,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L158",
+      "source_location": "L174",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_stores_pending_when_unknown_phone",
@@ -64489,7 +64742,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
@@ -64501,7 +64754,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L137",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
@@ -64513,7 +64766,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L136",
+      "source_location": "L137",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
@@ -64525,7 +64778,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L140",
+      "source_location": "L141",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
@@ -64536,10 +64789,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L130",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "ai_backend_src_services_identity_student_resolver_rationale_130",
+      "source": "ai_backend_src_services_identity_student_resolver_rationale_131",
       "target": "ai_backend_src_services_identity_student_resolver_bind_telegram_student_channel",
       "confidence_score": 1.0
     },
@@ -64561,7 +64814,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L206",
+      "source_location": "L229",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_bind_telegram_student_channel_after_enrollment",
@@ -64572,7 +64825,7 @@
       "context": "return_type",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L156",
+      "source_location": "L157",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_parse_channel",
@@ -64585,7 +64838,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L160",
+      "source_location": "L161",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_parse_channel",
@@ -64596,12 +64849,551 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/identity/student_resolver.py",
-      "source_location": "L234",
+      "source_location": "L213",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_identity_student_resolver_upsert_channel",
       "target": "ai_backend_src_services_identity_student_resolver_py_chatchannel",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/src/services/identity/student_resolver.py",
+      "source_location": "L202",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_student_resolver_lookup_pending_phone",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/src/services/identity/student_resolver.py",
+      "source_location": "L206",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_student_resolver_upsert_pending",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/src/services/identity/student_resolver.py",
+      "source_location": "L210",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_student_resolver_delete_pending",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_pendingcontact",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_rationale_1",
+      "target": "ai_backend_src_services_identity_telegram_pending_store",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_put",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_pendingcontact",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_rationale_22",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_clear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_delete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_key",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_now",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_purge_expired",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_test_pending_store_expires_unused_mapping",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_test_pending_store_purge_drops_expired_on_put",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_test_pending_store_slides_ttl_on_get",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_init",
+      "target": "timedelta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_test_pending_store_expires_unused_mapping",
+      "target": "timedelta"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_test_pending_store_purge_drops_expired_on_put",
+      "target": "timedelta"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_test_pending_store_slides_ttl_on_get",
+      "target": "timedelta"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Dashboard/backend/app/services/auth_service.py",
+      "source_location": "L129",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dashboard_backend_app_services_auth_service_create_access_token",
+      "target": "timedelta"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_delete",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_key",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_get",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_key",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_put",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_key",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_get",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_now",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_now",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_purge_expired",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_now",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_put",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_now",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Dashboard/backend/app/schemas/auth.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dashboard_backend_app_schemas_auth",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Dashboard/backend/app/schemas/schemas.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dashboard_backend_app_schemas_schemas",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Dashboard/backend/app/services/auth_service.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dashboard_backend_app_services_auth_service",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Dashboard/backend/app/services/dashboard_service.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dashboard_backend_app_services_dashboard_service",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/src/services/identity/telegram_pending_store.py",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_put",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_telegrampendingstore_purge_expired",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_clear_pending_store",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L217",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_test_bind_telegram_student_channel_after_enrollment",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L210",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_does_not_link_unenrolled_stub",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L137",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_reuses_enrolled_student",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L186",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_stores_pending_when_unknown_phone",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_pending_phone",
+      "target": "ai_backend_src_services_identity_telegram_pending_store_get_telegram_pending_store"
     },
     {
       "relation": "contains",
@@ -72707,7 +73499,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L60",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver",
+      "target": "ai_backend_tests_test_student_resolver_clear_pending_store",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72718,7 +73521,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72729,7 +73532,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L196",
+      "source_location": "L216",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72740,7 +73543,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L174",
+      "source_location": "L192",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72751,7 +73554,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L124",
+      "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72762,7 +73565,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L149",
+      "source_location": "L167",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72773,7 +73576,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L67",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72784,7 +73587,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L85",
+      "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72795,7 +73598,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L97",
+      "source_location": "L105",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72806,7 +73609,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L110",
+      "source_location": "L122",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver",
@@ -72829,7 +73632,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L60",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_client",
@@ -72840,7 +73643,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72851,7 +73654,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72862,7 +73665,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L54",
+      "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72873,7 +73676,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72884,7 +73687,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72895,7 +73698,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72906,7 +73709,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72917,7 +73720,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_query",
@@ -72929,7 +73732,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L197",
+      "source_location": "L222",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_bind_telegram_student_channel_after_enrollment",
@@ -72941,7 +73744,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L176",
+      "source_location": "L194",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_does_not_link_unenrolled_stub",
@@ -72953,7 +73756,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L125",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_reuses_enrolled_student",
@@ -72965,7 +73768,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L150",
+      "source_location": "L169",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_stores_pending_when_unknown_phone",
@@ -72977,7 +73780,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L69",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_linked_row",
@@ -72989,22 +73792,10 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L87",
+      "source_location": "L96",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_none_for_new_chat",
-      "target": "ai_backend_tests_test_student_resolver_query",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L99",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_pending_phone",
       "target": "ai_backend_tests_test_student_resolver_query",
       "confidence_score": 1.0
     },
@@ -73016,6 +73807,18 @@
       "source_location": "L112",
       "weight": 1.0,
       "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_pending_phone",
+      "target": "ai_backend_tests_test_student_resolver_query",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L124",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_unenrolled_linked_row_is_pending",
       "target": "ai_backend_tests_test_student_resolver_query",
       "confidence_score": 1.0
@@ -73025,7 +73828,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L205",
+      "source_location": "L228",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_bind_telegram_student_channel_after_enrollment",
@@ -73037,7 +73840,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L181",
+      "source_location": "L198",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_does_not_link_unenrolled_stub",
@@ -73049,7 +73852,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L133",
+      "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_reuses_enrolled_student",
@@ -73061,7 +73864,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L157",
+      "source_location": "L173",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_link_telegram_contact_stores_pending_when_unknown_phone",
@@ -73073,7 +73876,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L73",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_linked_row",
@@ -73085,7 +73888,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L91",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_none_for_new_chat",
@@ -73097,7 +73900,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L102",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_returns_pending_phone",
@@ -73109,7 +73912,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L116",
+      "source_location": "L128",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_tests_test_student_resolver_test_resolve_student_unenrolled_linked_row_is_pending",
@@ -73120,7 +73923,19 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L195",
+      "source_location": "L67",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_student_resolver_clear_pending_store",
+      "target": "ai_backend_tests_test_student_resolver_py_fixture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_student_resolver.py",
+      "source_location": "L215",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73132,7 +73947,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L173",
+      "source_location": "L191",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73144,7 +73959,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L123",
+      "source_location": "L135",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73156,7 +73971,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L148",
+      "source_location": "L166",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73168,7 +73983,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L66",
+      "source_location": "L75",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73180,7 +73995,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L84",
+      "source_location": "L93",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73192,7 +74007,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L96",
+      "source_location": "L104",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73204,7 +74019,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/tests/test_student_resolver.py",
-      "source_location": "L109",
+      "source_location": "L121",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -73478,6 +74293,50 @@
       "_origin": "ast",
       "source": "ai_backend_tests_test_telegram_client_test_tenant_a_send_never_uses_tenant_b_token",
       "target": "ai_backend_tests_test_telegram_client_py_asyncio",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store",
+      "target": "ai_backend_tests_test_telegram_pending_store_test_pending_store_expires_unused_mapping",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store",
+      "target": "ai_backend_tests_test_telegram_pending_store_test_pending_store_purge_drops_expired_on_put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store",
+      "target": "ai_backend_tests_test_telegram_pending_store_test_pending_store_slides_ttl_on_get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "AI-backend/tests/test_telegram_pending_store.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "ai_backend_tests_test_telegram_pending_store_rationale_1",
+      "target": "ai_backend_tests_test_telegram_pending_store",
       "confidence_score": 1.0
     },
     {
@@ -93275,5 +94134,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "80796f3f6097b52e9f2eddc4f4c57cefbc5627e3"
+  "built_at_commit": "5200761e177b8b1c7977377c6f5584c4b4fdea6d"
 }

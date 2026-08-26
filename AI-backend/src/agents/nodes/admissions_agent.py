@@ -201,7 +201,7 @@ class AdmissionsAgent:
         answer = self.flow.class_catalog_message(
             classes=classes,
             tenant_name=tenant_name,
-            intro=f"Here are the classes currently available at **{tenant_name}**:",
+            intro=f"Here are the classes currently available at {tenant_name}:",
         )
         return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
 
