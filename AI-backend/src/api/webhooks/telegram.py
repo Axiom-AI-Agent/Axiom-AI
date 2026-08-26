@@ -97,7 +97,12 @@ async def _dispatch(
         return
 
     if "voice" in message:
-        await handle_voice_message(tenant_id, chat_id, message["voice"])
+        await handle_voice_message(
+            tenant_id,
+            chat_id,
+            message["voice"],
+            update_id=update_id,
+        )
         return
 
     if "text" in message:
