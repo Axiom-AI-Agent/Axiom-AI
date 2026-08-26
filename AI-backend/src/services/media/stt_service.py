@@ -72,7 +72,7 @@ MAX_RETRIES = _env_int("STT_MAX_RETRIES", 2)
 RETRY_BASE_DELAY = _env_float("STT_RETRY_BASE_DELAY", 1.0)  # seconds
 
 # Gemini model (configurable via .env)
-GEMINI_MODEL = os.getenv("STT_GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_MODEL = os.getenv("STT_GEMINI_MODEL", "gemini-3.6-flash")
 
 # Idempotency cache TTL (seconds) — keep entries for 2 hours
 _CACHE_TTL = _env_int("STT_CACHE_TTL_SECONDS", 7200)

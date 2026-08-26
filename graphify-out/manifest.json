@@ -405,8 +405,8 @@
     "semantic_hash": ""
   },
   "AI-backend/scripts/verify_phase0.py": {
-    "mtime": 1786118664.893685,
-    "ast_hash": "8c93256275e50bbc599a2f11e771930e",
+    "mtime": 1787755258.9950411,
+    "ast_hash": "549cb3abc799a6934a079f3655404e14",
     "semantic_hash": ""
   },
   "AI-backend/skills-lock.json": {
@@ -990,8 +990,8 @@
     "semantic_hash": ""
   },
   "AI-backend/tests/test_config.py": {
-    "mtime": 1786118664.9235415,
-    "ast_hash": "2094fd8c38e6df91df1ebe99b1c97e32",
+    "mtime": 1787755257.9717898,
+    "ast_hash": "06bcb5213318d67e0d1c276688faf9fc",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_crm_mcp_server.py": {
@@ -1035,8 +1035,8 @@
     "semantic_hash": ""
   },
   "AI-backend/tests/test_health.py": {
-    "mtime": 1786118664.9249935,
-    "ast_hash": "bf2ad16fa1a2f6923eb26753a49252f3",
+    "mtime": 1787755257.9717672,
+    "ast_hash": "1122865c7ded52ebc66a63e7ace836f7",
     "semantic_hash": ""
   },
   "AI-backend/tests/test_heuristic_router.py": {
@@ -1470,8 +1470,8 @@
     "semantic_hash": ""
   },
   "AI-backend/config/models.yaml": {
-    "mtime": 1787749681.9111927,
-    "ast_hash": "458207d43921c4cebf22ea67a1cc0981",
+    "mtime": 1787755257.9717789,
+    "ast_hash": "5425e7af15ee6fc00f37eb0f2c32030e",
     "semantic_hash": ""
   },
   "AI-backend/config/param.yaml": {
@@ -1825,8 +1825,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/services/media/stt_service.py": {
-    "mtime": 1787748137.816009,
-    "ast_hash": "8c0d771a3bf926f839207f2818072a1b",
+    "mtime": 1787755257.9717968,
+    "ast_hash": "3e5004fd6dc6fe8f096795610c5736e7",
     "semantic_hash": ""
   },
   "AI-backend/src/services/messaging/class_broadcast.py": {

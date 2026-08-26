@@ -35,5 +35,5 @@ def test_model_constants():
 def test_chat_and_merge_model_split():
     assert CHAT_MODEL == "gpt-4o-mini"
     assert CHAT_PROVIDER == "openai"
-    assert MERGE_MODEL == "gemini-2.0-flash"
+    assert MERGE_MODEL == "gemini-3.6-flash"
     assert MERGE_PROVIDER == "google"
