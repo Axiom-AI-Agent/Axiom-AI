@@ -6,38 +6,38 @@ import json
 import re
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
-from infrastructure.config import (
-    RETRIEVAL_ESCALATION_THRESHOLD,
-)
+
 from langchain_core.messages import AIMessage
 from loguru import logger
 
-from agents.prompts.agent_prompts import (
-    build_resource_drive_reply,
-    build_resource_rag_reply,
-    get_resource_not_enrolled_reply,
+from agents.drive_file_pick import (
+    DrivePickStore,
+    files_from_drive_payload,
+    get_drive_pick_store,
 )
-
 from agents.nodes.crm_client import (
     CrmClient,
     DirectCrmClient,
 )
-from agents.state import AgentState
-from domain.escalation_reasons import (
-    LOW_RAG_CONFIDENCE,
+from agents.prompts.agent_prompts import (
+    build_resource_drive_list_reply,
+    build_resource_rag_reply,
+    get_resource_not_enrolled_reply,
 )
-from domain.escalation_reasons import (
-    LOW_RAG_CONFIDENCE,
+from agents.state import AgentState
+from domain.escalation_reasons import LOW_RAG_CONFIDENCE
+from infrastructure.config import (
+    RETRIEVAL_ESCALATION_THRESHOLD,
 )
 
 ResourceSubPath = Literal["drive", "rag"]
 
 _DRIVE_PATTERNS = (
-    r"\bpaper\b",
-    r"\btute\b",
+    r"\bpapers?\b",
+    r"\btutes?\b",
     r"\btextbook\b",
     r"\bsyllabus\b",
-    r"\bpdf\b",
+    r"\bpdfs?\b",
     r"past paper",
     r"model paper",
     r"send me",
@@ -66,6 +66,13 @@ class DriveClient(Protocol):
         tenant_id: str,
         query: str,
         folder: str | None = "papers",
+    ) -> dict[str, Any]: ...
+
+    async def drive_list(
+        self,
+        *,
+        tenant_id: str,
+        folder: str = "papers",
     ) -> dict[str, Any]: ...
 
 
@@ -125,6 +132,15 @@ class DirectDriveClient:
         raw = self._tool.drive_search(tenant_id=tenant_id, query=query, folder=folder)
         return json.loads(raw)
 
+    async def drive_list(
+        self,
+        *,
+        tenant_id: str,
+        folder: str = "papers",
+    ) -> dict[str, Any]:
+        raw = self._tool.drive_list(tenant_id=tenant_id, folder=folder)
+        return json.loads(raw)
+
 
 class DirectRagClient:
     def __init__(self) -> None:
@@ -158,6 +174,19 @@ class McpDriveClient:
         if tool is None:
             return {"ok": False, "error": "MCP tool unavailable: drive_search"}
         raw = await tool.ainvoke({"tenant_id": tenant_id, "query": query, "folder": folder})
+        text = _mcp_text(raw)
+        return json.loads(text)
+
+    async def drive_list(
+        self,
+        *,
+        tenant_id: str,
+        folder: str = "papers",
+    ) -> dict[str, Any]:
+        tool = self._tools.get("drive_list")
+        if tool is None:
+            return {"ok": False, "error": "MCP tool unavailable: drive_list"}
+        raw = await tool.ainvoke({"tenant_id": tenant_id, "folder": folder})
         text = _mcp_text(raw)
         return json.loads(text)
 
@@ -197,10 +226,12 @@ class ResourceAgent:
         drive: DriveClient,
         rag: RagClient,
         crm: CrmClient | None = None,
+        pick_store: DrivePickStore | None = None,
     ) -> None:
         self.drive = drive
         self.rag = rag
         self.crm = crm or DirectCrmClient()
+        self.pick_store = pick_store or get_drive_pick_store()
 
     async def run(self, state: AgentState) -> ResourceAgentResult:
         tenant_id = state.get("tenant_id") or ""
@@ -228,24 +259,37 @@ class ResourceAgent:
 
         if sub_path == "drive":
             folder = _infer_drive_folder(user_message)
-            result = await self.drive.drive_search(
+            result = await self.drive.drive_list(
                 tenant_id=tenant_id,
-                query=user_message,
                 folder=folder,
             )
-            tool_log.append(f"drive_search({folder}): ok={result.get('ok')}")
-            answer = build_resource_drive_reply(
-                files=result.get("files") or [],
-                query=user_message,
+            tool_log.append(f"drive_list({folder}): ok={result.get('ok')}")
+            files = result.get("files") or []
+            picks = files_from_drive_payload(files)
+            session_id = str(state.get("session_id") or "")
+            user_id = str(
+                state.get("user_id") or state.get("student_id") or state.get("phone") or ""
+            )
+            if result.get("ok") and picks and tenant_id and session_id:
+                self.pick_store.put(
+                    tenant_id=tenant_id,
+                    session_id=session_id,
+                    user_id=user_id,
+                    files=picks,
+                    folder=folder,
+                    tenant_name=tenant_name,
+                )
+            answer = build_resource_drive_list_reply(
+                files=files,
+                folder=folder,
                 tenant_name=tenant_name,
                 error=result.get("error"),
-                empty_message=result.get("message"),
             )
             return ResourceAgentResult(
                 answer=answer,
                 tool_output="\n".join(tool_log),
                 sub_path="drive",
-                    )
+            )
         result = await self.rag.kb_search(
             tenant_id=tenant_id,
             query=user_message,

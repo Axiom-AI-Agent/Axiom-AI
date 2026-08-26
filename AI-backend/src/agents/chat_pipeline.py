@@ -15,8 +15,16 @@ from langchain_core.runnables import RunnableConfig
 
 from agents.decision_bridge import map_decision_to_agent_state
 from agents.decision_graph import EmitFn, build_decision_input
+from agents.drive_file_pick import try_consume_drive_pick
+from agents.escalation_confirmation import (
+    classify_confirmation,
+    get_pending_low_confidence_question,
+)
 from agents.orchestrator import AgentOrchestrator
 from agents.tools.memory_tool import MemoryTool
+from domain.escalation_reasons import (
+    LOW_RAG_CONFIDENCE,
+)
 from infrastructure.observability import (
     get_current_trace_id,
     langfuse_turn_attributes,
@@ -24,16 +32,9 @@ from infrastructure.observability import (
     update_current_observation,
     update_current_trace,
 )
+from services.admissions.onboarding_route import apply_onboarding_patch_overrides
 from services.identity.context import IdentityContext
 from services.identity.recall_context import build_recall_context
-from services.admissions.onboarding_route import apply_onboarding_patch_overrides
-from agents.escalation_confirmation import (
-    classify_confirmation,
-    get_pending_low_confidence_question,
-)
-from domain.escalation_reasons import (
-    LOW_RAG_CONFIDENCE,
-)
 
 Verdict = Literal["proceed", "out_of_scope"]
 
@@ -93,6 +94,25 @@ async def run_chat_turn(
             session_id=ctx.session_id,
         )
     )
+
+    drive_pick_reply = try_consume_drive_pick(
+        message=message,
+        tenant_id=ctx.tenant_id,
+        session_id=ctx.session_id,
+        user_id=ctx.memory_user_id,
+    )
+    if drive_pick_reply is not None:
+        timings["total_ms"] = int((time.perf_counter() - t_total) * 1000)
+        return ChatResult(
+            answer=drive_pick_reply,
+            verdict="proceed",
+            route="resource",
+            routes=["resource"],
+            session_id=ctx.session_id,
+            latency_ms=timings["total_ms"],
+            timings=timings,
+            trace_id=get_current_trace_id(),
+        )
 
     confirmation = (
         classify_confirmation(message)

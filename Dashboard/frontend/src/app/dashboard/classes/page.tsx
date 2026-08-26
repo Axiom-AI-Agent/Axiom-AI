@@ -328,7 +328,7 @@ export default function ClassesPage() {
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Classes</h1>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-            Create and manage tuition classes for this tenant.
+            Create classes and send Telegram broadcasts to enrolled students.
           </p>
         </div>
 
@@ -524,7 +524,16 @@ export default function ClassesPage() {
                 </div>
               </dl>
 
-              <div className="mt-5 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => void openBroadcast(subjectClass)}
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              >
+                <Megaphone className="h-4 w-4" />
+                Broadcast to Telegram
+              </button>
+
+              <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => triggerFileInput(subjectClass.id)}
@@ -539,14 +548,6 @@ export default function ClassesPage() {
                   {uploadingClassId === subjectClass.id
                     ? "Uploading..."
                     : "Upload PDF"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void openBroadcast(subjectClass)}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
-                >
-                  <Megaphone className="h-4 w-4" />
-                  Broadcast
                 </button>
                 <button
                   type="button"

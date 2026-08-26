@@ -63,6 +63,9 @@ async def smoke_drive_paper_link() -> None:
             async def drive_search(self, **kwargs):
                 return json.loads(tool.drive_search(**kwargs))
 
+            async def drive_list(self, **kwargs):
+                return json.loads(tool.drive_list(**kwargs))
+
         class _AsyncRag:
             async def kb_search(self, **kwargs):
                 return {"ok": True, "answer": "", "citations": []}
@@ -74,6 +77,8 @@ async def smoke_drive_paper_link() -> None:
                 "tenant_name": "Demo Physics Academy",
                 "is_enrolled": True,
                 "enrolled_class_ids": ["class-physics-al-2026"],
+                "session_id": "smoke-phase4",
+                "user_id": "stu-smoke",
                 "messages": [HumanMessage(content="Do you have the 2024 physics past paper?")],
             }
         )
@@ -81,8 +86,10 @@ async def smoke_drive_paper_link() -> None:
         dt.DriveTool._get_drive_root = original  # type: ignore[method-assign]
 
     assert result.sub_path == "drive", f"expected drive path, got {result.sub_path}"
-    assert "drive.google.com" in result.answer or "2024-model-paper" in result.answer, result.answer
-    print(f"[OK] Drive paper link: {result.answer[:120]}...")
+    assert "2024-model-paper" in result.answer, result.answer
+    assert "https://drive.google.com" not in result.answer
+    assert "1." in result.answer
+    print(f"[OK] Drive paper list: {result.answer[:120]}...")
 
 
 async def smoke_rag_velocity_mock() -> None:
@@ -105,6 +112,9 @@ async def smoke_rag_velocity_mock() -> None:
 
     class _AsyncDrive:
         async def drive_search(self, **kwargs):
+            return {"ok": True, "files": []}
+
+        async def drive_list(self, **kwargs):
             return {"ok": True, "files": []}
 
     agent = ResourceAgent(drive=_AsyncDrive(), rag=_AsyncRag())

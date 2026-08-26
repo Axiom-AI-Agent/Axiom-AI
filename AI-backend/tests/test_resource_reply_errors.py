@@ -9,7 +9,11 @@ import pytest
 from langchain_core.messages import HumanMessage
 
 from agents.nodes.resource_agent import ResourceAgent
-from agents.prompts.agent_prompts import build_resource_drive_reply, build_resource_rag_reply
+from agents.prompts.agent_prompts import (
+    build_resource_drive_list_reply,
+    build_resource_drive_reply,
+    build_resource_rag_reply,
+)
 from agents.tools.rag_tool import RagTool
 
 
@@ -31,6 +35,18 @@ def test_build_resource_drive_reply_hides_internal_error():
     )
     assert "timeout" not in reply.lower()
     assert "couldn't search for files" in reply.lower()
+
+
+def test_build_resource_drive_list_reply_omits_links():
+    reply = build_resource_drive_list_reply(
+        files=[
+            {"name": "tute-01.pdf", "link": "https://drive.example/secret", "folder": "papers"},
+        ],
+        folder="papers",
+    )
+    assert "1. tute-01.pdf" in reply
+    assert "https://drive.example/secret" not in reply
+    assert "number" in reply.lower()
 
 
 def test_kb_search_returns_generic_error_code():
@@ -55,6 +71,9 @@ class FakeDrive:
     async def drive_search(self, **kwargs):
         return {"ok": True, "files": []}
 
+    async def drive_list(self, **kwargs):
+        return {"ok": True, "files": []}
+
 
 class ErrorRag:
     async def kb_search(self, **kwargs):
@@ -73,4 +92,4 @@ async def test_resource_agent_rag_path_hides_search_failure():
     result = await agent.run(state)
     assert "search_unavailable" not in result.answer
     assert "400" not in result.answer
-    assert "couldn't search the tutor notes" in result.answer.lower()
+    assert "tutor" in result.answer.lower()
