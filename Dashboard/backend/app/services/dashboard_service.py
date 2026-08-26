@@ -230,6 +230,7 @@ def enrich_student(db: Session, student: Student) -> dict:
         "phone": student.phone,
         "district": student.district,
         "language_pref": student.language_pref,
+        "human_mode": bool(student.human_mode),        
         "created_at": student.created_at,
         "updated_at": student.updated_at,
         "enrollments": enrollments,

@@ -86,11 +86,13 @@ class StudentUpdate(BaseModel):
 class StudentResponse(StudentBase):
     id: str
     tenant_id: str
+    human_mode: bool = False
     created_at: datetime
     updated_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
 
 
 class StudentDetailResponse(StudentResponse):
@@ -101,7 +103,8 @@ class StudentsListResponse(BaseModel):
     tenant_id: str
     students: list[StudentDetailResponse]
 
-
+class StudentHumanModeUpdate(BaseModel):
+    human_mode: bool
 # ---------- Escalations ----------
 class EscalationCreate(BaseModel):
     tenant_id: str = DEMO_TENANT_ID
@@ -260,6 +263,7 @@ class TenantProfileResponse(BaseModel):
     drive_folder_id: Optional[str] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
+    payments_enabled: bool = True
 
     class Config:
         from_attributes = True
@@ -271,6 +275,7 @@ class TenantUpdate(BaseModel):
     whatsapp_number: Optional[str] = None
     drive_folder_id: Optional[str] = None
     status: Optional[str] = Field(default=None, pattern="^(active|suspended)$")
+    payments_enabled: Optional[bool] = None
 class ClassAnalyticsMetric(BaseModel):
     class_id: str
     class_name: Optional[str] = None
