@@ -6,6 +6,8 @@ are not classified here — the LLM mirrors those via the language policy block.
 
 from __future__ import annotations
 
+import re
+
 SUPPORTED_LANGUAGES = ("en", "si", "ta")
 
 LANGUAGE_NAMES = {
@@ -17,6 +19,72 @@ LANGUAGE_NAMES = {
 _SINHALA_ALIASES = frozenset({"si", "sin", "sinhala", "si-lk", "sin-lk"})
 _TAMIL_ALIASES = frozenset({"ta", "tam", "tamil", "ta-lk", "ta-in"})
 _ENGLISH_ALIASES = frozenset({"en", "eng", "english", "en-gb", "en-us", "en-lk"})
+_CANNED_PARENT = {"si_latn": "si", "ta_latn": "ta"}
+
+# Distinctive romanized particles. Weak tokens need a partner so English
+# "one" / "aka" alone does not flip the canned locale.
+_SINGLISH_STRONG = frozenset(
+    {
+        "kiyala",
+        "kiyanna",
+        "kiyapan",
+        "dennako",
+        "thiyanawada",
+        "thiyenawada",
+        "thiyenawa",
+        "karanna",
+        "wenna",
+        "puluwanda",
+        "mokada",
+        "mokakda",
+        "koheda",
+        "ewanna",
+        "evanna",
+        "nadda",
+    }
+)
+_SINGLISH_WEAK = frozenset(
+    {
+        "mata",
+        "mage",
+        "aka",
+        "eka",
+        "gena",
+        "denna",
+        "hari",
+        "nehe",
+        "oww",
+        "ada",
+        "heta",
+        "tike",
+        "tika",
+        "ona",
+        "oona",
+    }
+)
+_TANGLISH_STRONG = frozenset(
+    {
+        "sollu",
+        "sollunga",
+        "venum",
+        "venuma",
+        "irukka",
+        "irukku",
+        "pannunga",
+        "parunga",
+        "theriyala",
+    }
+)
+_TANGLISH_WEAK = frozenset(
+    {
+        "enakku",
+        "illa",
+        "seri",
+        "seriya",
+        "unga",
+        "enna",
+    }
+)
 
 
 def normalize_language_pref(value: str | None) -> str:
@@ -55,6 +123,60 @@ def resolve_reply_language(*, message: str = "", language_pref: str | None = Non
     detected = detect_script_language(message)
     if detected:
         return detected
+    return normalize_language_pref(language_pref)
+
+
+def _latin_tokens(text: str) -> set[str]:
+    return set(re.findall(r"[a-z]+", text.lower()))
+
+
+def looks_like_singlish(text: str) -> bool:
+    """True for romanized Sinhala mix (Singlish), not native Sinhala script."""
+    if not text or detect_script_language(text):
+        return False
+    tokens = _latin_tokens(text)
+    if tokens & _SINGLISH_STRONG:
+        return True
+    return len(tokens & _SINGLISH_WEAK) >= 2
+
+
+def looks_like_tanglish(text: str) -> bool:
+    """True for romanized Tamil mix (Tanglish), not native Tamil script."""
+    if not text or detect_script_language(text):
+        return False
+    tokens = _latin_tokens(text)
+    if tokens & _TANGLISH_STRONG:
+        return True
+    return len(tokens & _TANGLISH_WEAK) >= 2
+
+
+def normalize_canned_language(value: str | None) -> str:
+    """Like normalize_language_pref, plus si_latn / ta_latn for romanized mix."""
+    if not value:
+        return "en"
+    code = value.strip().lower().replace("-", "_")
+    if code in {"si_latn", "singlish"}:
+        return "si_latn"
+    if code in {"ta_latn", "tanglish"}:
+        return "ta_latn"
+    return normalize_language_pref(value)
+
+
+def canned_language_parent(language: str | None) -> str:
+    """si_latn → si, ta_latn → ta, otherwise the normalized pref."""
+    code = normalize_canned_language(language)
+    return _CANNED_PARENT.get(code, code)
+
+
+def resolve_canned_language(*, message: str = "", language_pref: str | None = None) -> str:
+    """Locale for canned (non-LLM) strings, including latin Singlish/Tanglish."""
+    detected = detect_script_language(message)
+    if detected:
+        return detected
+    if looks_like_tanglish(message):
+        return "ta_latn"
+    if looks_like_singlish(message):
+        return "si_latn"
     return normalize_language_pref(language_pref)
 
 

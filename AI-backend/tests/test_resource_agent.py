@@ -121,6 +121,48 @@ async def test_resource_agent_rag_path():
     assert "velocity" in result.answer.lower()
 
 
+@pytest.mark.asyncio
+async def test_resource_agent_singlish_explain_uses_rag():
+    drive = FakeDrive()
+    agent = ResourceAgent(drive=drive, rag=FakeRag())
+    result = await agent.run(
+        {
+            "tenant_id": "tenant-demo-physics",
+            "is_enrolled": True,
+            "enrolled_class_ids": ["class-physics-al-2026"],
+            "language_pref": "en",
+            "messages": [
+                HumanMessage(content="Mata zener diode aka gena kiyala dennako")
+            ],
+        }
+    )
+    assert result.sub_path == "rag"
+    assert not drive.list_calls
+    assert "velocity" in result.answer.lower()
+    assert "Here are the available" not in result.answer
+
+
+@pytest.mark.asyncio
+async def test_resource_agent_singlish_file_request_localizes_list():
+    drive = FakeDrive()
+    agent = ResourceAgent(drive=drive, rag=FakeRag(), pick_store=DrivePickStore())
+    result = await agent.run(
+        {
+            "tenant_id": "tenant-demo-physics",
+            "session_id": "sess",
+            "user_id": "stu-1",
+            "is_enrolled": True,
+            "enrolled_class_ids": ["class-physics-al-2026"],
+            "language_pref": "en",
+            "messages": [HumanMessage(content="tute eka ewanna")],
+        }
+    )
+    assert result.sub_path == "drive"
+    assert "tute-03-mechanics.pdf" in result.answer
+    assert "Here are the available" not in result.answer
+    assert "reply karanna" in result.answer.lower()
+
+
 class FakeLowConfidenceRag:
     async def kb_search(
         self,

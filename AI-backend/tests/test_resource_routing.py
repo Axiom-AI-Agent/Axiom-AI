@@ -17,6 +17,11 @@ from agents.nodes.resource_agent import classify_resource_subpath, _infer_drive_
         ("Explain Newton's laws", "rag"),
         ("Explain momentum from the uploaded notes", "rag"),
         ("What did sir say about friction?", "rag"),
+        ("Mata zener diode aka gena kiyala dennako", "rag"),
+        ("මේ පාඩම් notes ටික explain කරන්න", "rag"),
+        ("tute eka ewanna", "drive"),
+        ("paper eka evanna", "drive"),
+        ("zener diode", "rag"),
     ],
 )
 def test_classify_resource_subpath(message, expected):

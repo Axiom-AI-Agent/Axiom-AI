@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from services.language.detect import normalize_language_pref
+from services.language.detect import canned_language_parent, normalize_canned_language
 
 STRINGS: dict[str, dict[str, str]] = {
     "out_of_scope": {
@@ -354,16 +354,174 @@ STRINGS: dict[str, dict[str, str]] = {
             "to answer that confidently. I've sent this to your tutor for review."
         ),
         "si": "විශ්වාසයෙන් උත්තර දෙන්න තරම් tutor notes එකේ තොරතුරු නෑ. මේක ගුරුවරයාට review එකට යැව්වා.",
+        "si_latn": (
+            "Wishwasayen uttara denna tharam tutor notes eke thiyenne na. "
+            "Meeka guruthumyata review ekata yewwa."
+        ),
         "ta": "நம்பிக்கையுடன் பதில் சொல்ல போதிய குறிப்புகள் இல்லை. இதை ஆசிரியர் பார்வைக்கு அனுப்பினேன்.",
+        "ta_latn": "Nambikaiya pathil solla notes podhum illa. Ithai teacher kitta anuppitten.",
+    },
+    "drive_folder_papers": {
+        "en": "papers and tutes",
+        "si": "පේපර් සහ tutes",
+        "si_latn": "papers saha tutes",
+        "ta": "பாடத் தாள்களும் tutes-உம்",
+        "ta_latn": "papers and tutes",
+    },
+    "drive_folder_textbooks": {
+        "en": "textbooks",
+        "si": "පෙළපොත්",
+        "si_latn": "textbooks",
+        "ta": "பாடப்புத்தகங்கள்",
+        "ta_latn": "textbooks",
+    },
+    "drive_folder_syllabus": {
+        "en": "syllabus files",
+        "si": "විෂය නිර්දේශ ගොනු",
+        "si_latn": "syllabus files",
+        "ta": "பாடத்திட்டக் கோப்புகள்",
+        "ta_latn": "syllabus files",
+    },
+    "drive_folder_files": {
+        "en": "files",
+        "si": "ගොනු",
+        "si_latn": "files",
+        "ta": "கோப்புகள்",
+        "ta_latn": "files",
+    },
+    "drive_list": {
+        "en": (
+            "Here are the available {folder_label}:\n\n"
+            "{file_list}\n\n"
+            "Reply with the number of the file you want."
+        ),
+        "si": (
+            "තියෙන {folder_label} මෙන්න:\n\n"
+            "{file_list}\n\n"
+            "ඕනේ file එකේ අංකයෙන් reply කරන්න."
+        ),
+        "si_latn": (
+            "Thiyena {folder_label} me wage:\n\n"
+            "{file_list}\n\n"
+            "Ona file eke number eken reply karanna."
+        ),
+        "ta": (
+            "கிடைக்கும் {folder_label}:\n\n"
+            "{file_list}\n\n"
+            "வேண்டிய கோப்பின் எண்ணை அனுப்புங்கள்."
+        ),
+        "ta_latn": (
+            "Available {folder_label}:\n\n"
+            "{file_list}\n\n"
+            "Ona file number ah anuppu."
+        ),
+    },
+    "drive_list_range": {
+        "en": (
+            "That number is not on the list. Reply with a number from 1 to {count}:\n\n"
+            "{file_list}"
+        ),
+        "si": "ඒ අංකය ලැයිස්තුවේ නෑ. 1 සිට {count} දක්වා අංකයකින් reply කරන්න:\n\n{file_list}",
+        "si_latn": (
+            "Eka number eka list eke na. 1 idan {count} wenakam number eken reply karanna:\n\n"
+            "{file_list}"
+        ),
+        "ta": "அந்த எண் பட்டியலில் இல்லை. 1 முதல் {count} வரை அனுப்புங்கள்:\n\n{file_list}",
+        "ta_latn": "Andha number list la illa. 1 to {count} kuulla anuppu:\n\n{file_list}",
+    },
+    "drive_pick": {
+        "en": "Here's the file you picked:\n\n{filename}\n{link}",
+        "si": "ඔබ තෝරපු file එක:\n\n{filename}\n{link}",
+        "si_latn": "Oya select kare file eka:\n\n{filename}\n{link}",
+        "ta": "நீங்கள் தேர்ந்தெடுத்த கோப்பு:\n\n{filename}\n{link}",
+        "ta_latn": "Neenga pick panna file:\n\n{filename}\n{link}",
+    },
+    "drive_empty": {
+        "en": (
+            "I couldn't find any {folder_label} in Drive right now. "
+            "Please check with {tenant_name}."
+        ),
+        "si": "දැන් Drive එකේ {folder_label} හම්බුණේ නෑ. {tenant_name} එක්ක බලන්න.",
+        "si_latn": "Dhan Drive eke {folder_label} hambune na. {tenant_name} ekka check karanna.",
+        "ta": "இப்போது Drive-இல் {folder_label} இல்லை. {tenant_name}ஐப் பாருங்கள்.",
+        "ta_latn": "Ippo Drive la {folder_label} illa. {tenant_name} kitta check pannunga.",
+    },
+    "drive_error": {
+        "en": (
+            "Sorry — I couldn't search for files right now. "
+            "Please try again in a moment or contact your tuition centre."
+        ),
+        "si": "සමාවන්න — දැන් files search කරන්න බැරි වුණා. මොහොතකින් ආයෙත් උත්සාහ කරන්න, නැත්නම් පන්තියට කතා කරන්න.",
+        "si_latn": (
+            "Sorry — dhan files search karanna bari una. "
+            "Mohothakin ayeth try karanna, nathnam class ekata katha karanna."
+        ),
+        "ta": "மன்னிக்கவும் — இப்போது கோப்புகளைத் தேட முடியவில்லை. சற்று நேரம் கழித்து முயலுங்கள் அல்லது நிலையத்தைத் தொடர்பு கொள்ளுங்கள்.",
+        "ta_latn": "Sorry — ippo files search panna mudiyala. Konjam neram kalichu try pannunga.",
+    },
+    "resource_not_enrolled": {
+        "en": (
+            "Past papers and tutor notes are available to enrolled students only.\n\n"
+            "Reply \"join class\" or complete your enrollment at {tenant_name} to get access!"
+        ),
+        "si": (
+            "පේපර් සහ tutor notes තියෙන්නේ ලියාපදිංචි සිසුන්ට විතරයි.\n\n"
+            "\"join class\" කියලා කියන්න, නැත්නම් {tenant_name} හි ලියාපදිංචිය අවසන් කරන්න."
+        ),
+        "si_latn": (
+            "Papers saha tutor notes thiyenne enroll una studentlata witharayi.\n\n"
+            "\"join class\" kiyala kiyanna, nathnam {tenant_name} eke enrollment eka iwara karanna."
+        ),
+        "ta": (
+            "பாடத் தாள்களும் குறிப்புகளும் சேர்ந்த மாணவர்களுக்கு மட்டுமே.\n\n"
+            "\"join class\" என்று சொல்லுங்கள் அல்லது {tenant_name} சேர்க்கையை முடியுங்கள்."
+        ),
+        "ta_latn": (
+            "Papers and notes enrolled students kitta dhaan irukku.\n\n"
+            "\"join class\" nu sollunga, illati {tenant_name} enrollment finish pannunga."
+        ),
+    },
+    "resource_no_enrollment": {
+        "en": (
+            "I couldn't find an active class enrollment for your account. "
+            "Please contact {tenant_name} to confirm your enrollment."
+        ),
+        "si": "ඔබේ account එකට active පන්ති ලියාපදිංචියක් හම්බුණේ නෑ. {tenant_name} එක්ක බලන්න.",
+        "si_latn": (
+            "Oya account ekata active class enrollment ekak hambune na. "
+            "{tenant_name} ekka check karanna."
+        ),
+        "ta": "உங்கள் கணக்கில் செயலில் உள்ள வகுப்புச் சேர்க்கை இல்லை. {tenant_name}ஐத் தொடர்பு கொள்ளுங்கள்.",
+        "ta_latn": "Ungal account la active class enrollment illa. {tenant_name} kitta check pannunga.",
+    },
+    "resource_rag_header": {
+        "en": "Based on your tutor's notes:\n\n{answer}\n\nSources: {citations}",
+        "si": "ගුරුවරයාගේ notes අනුව:\n\n{answer}\n\nමූලාශ්‍ර: {citations}",
+        "si_latn": "Guru notes walata anuwa:\n\n{answer}\n\nSources: {citations}",
+        "ta": "ஆசிரியர் குறிப்புகளின்படி:\n\n{answer}\n\nஆதாரங்கள்: {citations}",
+        "ta_latn": "Teacher notes pathi:\n\n{answer}\n\nSources: {citations}",
+    },
+    "rag_search_error": {
+        "en": (
+            "Sorry — I couldn't search the tutor notes right now. "
+            "Please try again in a moment or ask your tutor directly."
+        ),
+        "si": "සමාවන්න — දැන් tutor notes search කරන්න බැරි වුණා. මොහොතකින් ආයෙත් උත්සාහ කරන්න, නැත්නම් ගුරුවරයාගෙන් අහන්න.",
+        "si_latn": (
+            "Sorry — dhan tutor notes search karanna bari una. "
+            "Mohothakin ayeth try karanna, nathnam guruthumyagen ahanna."
+        ),
+        "ta": "மன்னிக்கவும் — இப்போது குறிப்புகளைத் தேட முடியவில்லை. சற்று நேரம் கழித்து முயலுங்கள் அல்லது ஆசிரியரிடம் கேளுங்கள்.",
+        "ta_latn": "Sorry — ippo notes search panna mudiyala. Konjam neram kalichu try pannunga.",
     },
 }
 
 
 def t(key: str, language: str | None = None, **kwargs: object) -> str:
-    """Look up a canned string; fall back to English if the locale is missing."""
-    lang = normalize_language_pref(language)
+    """Look up a canned string; fall back to parent locale, then English."""
+    lang = normalize_canned_language(language)
     catalog = STRINGS.get(key) or {}
-    template = catalog.get(lang) or catalog.get("en") or key
+    template = catalog.get(lang) or catalog.get(canned_language_parent(lang)) or catalog.get("en") or key
     if not kwargs:
         return template
     return template.format(**{name: "" if value is None else value for name, value in kwargs.items()})

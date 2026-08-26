@@ -529,7 +529,17 @@ def get_admissions_stub_reply(*, tenant_name: str = "our tuition centre") -> str
     )
 
 
-def get_resource_not_enrolled_reply(*, tenant_name: str = "our tuition centre") -> str:
+def get_resource_not_enrolled_reply(
+    *,
+    tenant_name: str = "our tuition centre",
+    language: str = "en",
+) -> str:
+    from services.language.detect import normalize_canned_language
+    from services.language import t
+
+    lang = normalize_canned_language(language)
+    if lang != "en":
+        return t("resource_not_enrolled", lang, tenant_name=tenant_name)
     return fetch_prompt(
         "axiom/resource-not-enrolled",
         fallback=_RESOURCE_NOT_ENROLLED_FALLBACK,
@@ -549,11 +559,18 @@ def build_resource_rag_reply(
     answer: str,
     citations: list[dict] | None = None,
     error: str | None = None,
+    language: str = "en",
 ) -> str:
+    from services.language.detect import normalize_canned_language
+    from services.language import t
+
+    lang = normalize_canned_language(language)
     if error:
+        if lang != "en":
+            return t("rag_search_error", lang)
         return _RESOURCE_RAG_ERROR_FALLBACK
     if not answer:
-        return "I couldn't find relevant tutor notes for that. Try rephrasing or ask your tutor directly."
+        return t("rag_empty", lang)
     cite_parts = []
     for c in citations or []:
         lesson = c.get("lesson")
@@ -563,6 +580,8 @@ def build_resource_rag_reply(
         elif title:
             cite_parts.append(title)
     citations_str = ", ".join(cite_parts) if cite_parts else "tutor notes"
+    if lang != "en":
+        return t("resource_rag_header", lang, answer=answer, citations=citations_str)
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["resource_rag"],
         fallback=_RESOURCE_RAG_FALLBACK,
@@ -571,14 +590,18 @@ def build_resource_rag_reply(
     )
 
 
-def _drive_folder_label(folder: str | None) -> str:
+def _drive_folder_label(folder: str | None, *, language: str = "en") -> str:
+    from services.language.detect import normalize_canned_language
+    from services.language import t
+
     key = (folder or "papers").strip().lower()
-    labels = {
-        "papers": "papers and tutes",
-        "textbooks": "textbooks",
-        "syllabus": "syllabus files",
+    lang = normalize_canned_language(language)
+    folder_keys = {
+        "papers": "drive_folder_papers",
+        "textbooks": "drive_folder_textbooks",
+        "syllabus": "drive_folder_syllabus",
     }
-    return labels.get(key, "files")
+    return t(folder_keys.get(key, "drive_folder_files"), lang)
 
 
 def _numbered_drive_names(files: list[dict]) -> str:
@@ -597,20 +620,39 @@ def build_resource_drive_list_reply(
     error: str | None = None,
     empty_message: str | None = None,
     out_of_range: bool = False,
+    language: str = "en",
 ) -> str:
-    label = _drive_folder_label(folder)
+    from services.language.detect import normalize_canned_language
+    from services.language import t
+
+    lang = normalize_canned_language(language)
+    label = _drive_folder_label(folder, language=lang)
     if error:
+        if lang != "en":
+            return t("drive_error", lang)
         return _RESOURCE_DRIVE_ERROR_FALLBACK
     if not files:
         if empty_message:
             return empty_message
+        if lang != "en":
+            return t("drive_empty", lang, folder_label=label, tenant_name=tenant_name)
         return _RESOURCE_DRIVE_EMPTY_FALLBACK.format(
             folder_label=label,
             tenant_name=tenant_name,
         )
     file_list = _numbered_drive_names(files)
     if out_of_range:
+        if lang != "en":
+            return t("drive_list_range", lang, count=len(files), file_list=file_list)
         return _RESOURCE_DRIVE_LIST_RANGE_FALLBACK.format(count=len(files), file_list=file_list)
+    if lang != "en":
+        return t(
+            "drive_list",
+            lang,
+            folder_label=label,
+            file_list=file_list,
+            tenant_name=tenant_name,
+        )
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["resource_drive_list"],
         fallback=_RESOURCE_DRIVE_LIST_FALLBACK,
@@ -625,7 +667,20 @@ def build_resource_drive_pick_reply(
     name: str,
     link: str,
     tenant_name: str = "your tuition centre",
+    language: str = "en",
 ) -> str:
+    from services.language.detect import normalize_canned_language
+    from services.language import t
+
+    lang = normalize_canned_language(language)
+    if lang != "en":
+        return t(
+            "drive_pick",
+            lang,
+            filename=name,
+            link=link.strip() or "(link unavailable)",
+            tenant_name=tenant_name,
+        )
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["resource_drive_pick"],
         fallback=_RESOURCE_DRIVE_PICK_FALLBACK,
@@ -642,6 +697,7 @@ def build_resource_drive_reply(
     tenant_name: str = "your tuition centre",
     error: str | None = None,
     empty_message: str | None = None,
+    language: str = "en",
 ) -> str:
     del query
     return build_resource_drive_list_reply(
@@ -649,6 +705,7 @@ def build_resource_drive_reply(
         tenant_name=tenant_name,
         error=error,
         empty_message=empty_message,
+        language=language,
     )
 
 
