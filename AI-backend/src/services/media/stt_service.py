@@ -331,6 +331,38 @@ async def _download_with_retry(
 # Gemini transcription
 # ---------------------------------------------------------------------------
 
+def _extract_llm_text(response: Any) -> str:
+    """Normalize Gemini/LangChain output to a string.
+
+    Gemini 3.x returns ``AIMessage.content`` as a list of blocks, not a string.
+    Prefer ``response.text`` when present, then concatenate text blocks.
+    """
+    text = getattr(response, "text", None)
+    if isinstance(text, str) and text.strip():
+        return text.strip()
+
+    content = getattr(response, "content", response)
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, str):
+                parts.append(block)
+            elif isinstance(block, dict):
+                value = block.get("text") or block.get("content") or ""
+                if value:
+                    parts.append(str(value))
+            else:
+                value = getattr(block, "text", None)
+                if value:
+                    parts.append(str(value))
+        return "\n".join(parts).strip()
+    return str(content).strip()
+
+
 async def _call_gemini(
     audio_bytes: bytes,
     content_type: str,
@@ -363,7 +395,6 @@ async def _call_gemini(
             llm = ChatGoogleGenerativeAI(
                 model=GEMINI_MODEL,
                 google_api_key=api_key,
-                temperature=0,
                 timeout=GEMINI_TIMEOUT_SECONDS,
             )
 
@@ -383,7 +414,7 @@ async def _call_gemini(
                 ]
             )
 
-            transcript = response.content.strip()
+            transcript = _extract_llm_text(response)
 
             if not transcript:
                 logger.warning("stt: Gemini returned empty transcription")

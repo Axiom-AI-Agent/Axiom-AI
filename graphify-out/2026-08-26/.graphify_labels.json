@@ -218,6 +218,7 @@
   "216": "PaymentStatusUpdate",
   "217": "FakeCrm",
   "218": "Testing",
+  "219": "Per-institute onboarding",
   "220": "FakeCrm",
   "221": "conftest.py",
   "222": "log.py",
@@ -225,9 +226,5 @@
   "224": "register_telegram_webhook.py",
   "225": "smoke_mcp_memory.py",
   "226": "8. Implementation phases",
-  "227": "smoke_resource.py",
-  "228": "rag.py",
-  "229": ".resolve_escalation",
-  "230": "test_merge_response.py",
-  "231": "mock_db"
+  "229": ".resolve_escalation"
 }
