@@ -1883,8 +1883,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "ai_backend_scripts_debug_drive_integration_step10b_mcp",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "step10b_mcp()"
     },
     {
@@ -2125,8 +2125,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_concurrent_chat",
-      "community": 240,
-      "community_name": "_one_turn",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": "smoke_concurrent_chat.py"
     },
     {
@@ -2136,8 +2136,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_concurrent_chat_one_turn",
-      "community": 240,
-      "community_name": "_one_turn",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": "_one_turn()"
     },
     {
@@ -2147,8 +2147,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_concurrent_chat_main",
-      "community": 240,
-      "community_name": "_one_turn",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": "main()"
     },
     {
@@ -2158,8 +2158,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_langfuse_trace",
-      "community": 41,
-      "community_name": "Chat Message Pipeline 3",
+      "community": 81,
+      "community_name": "_tracing_enabled",
       "norm_label": "smoke_langfuse_trace.py"
     },
     {
@@ -2169,8 +2169,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_langfuse_trace_main",
-      "community": 41,
-      "community_name": "Chat Message Pipeline 3",
+      "community": 81,
+      "community_name": "_tracing_enabled",
       "norm_label": "main()"
     },
     {
@@ -2268,8 +2268,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "smoke_phase4_e2e.py"
     },
     {
@@ -2279,8 +2279,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_mock_drive_backend",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "_mock_drive_backend()"
     },
     {
@@ -2290,8 +2290,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_smoke_drive_paper_link",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "smoke_drive_paper_link()"
     },
     {
@@ -2301,8 +2301,8 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_smoke_rag_velocity_mock",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "smoke_rag_velocity_mock()"
     },
     {
@@ -2312,8 +2312,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_smoke_rag_velocity_live",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "smoke_rag_velocity_live()"
     },
     {
@@ -2323,8 +2323,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_main",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "main()"
     },
     {
@@ -2334,8 +2334,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_rationale_52",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "paper query \u2192 drive link (mock backend; no google credentials)."
     },
     {
@@ -2345,8 +2345,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_rationale_96",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "velocity query \u2192 cited rag answer (mocked rag service)."
     },
     {
@@ -2356,8 +2356,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_phase4_e2e_rationale_136",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 113,
+      "community_name": "RAG Ingest Pipeline 7",
       "norm_label": "velocity query against real qdrant (requires ingest + openai_api_key)."
     },
     {
@@ -2510,8 +2510,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource",
-      "community": 234,
-      "community_name": "smoke_resource.py",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "smoke_resource.py"
     },
     {
@@ -2521,8 +2521,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_smoke_ingest_load",
-      "community": 234,
-      "community_name": "smoke_resource.py",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "smoke_ingest_load()"
     },
     {
@@ -2532,8 +2532,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_smoke_drive_mock",
-      "community": 234,
-      "community_name": "smoke_resource.py",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "smoke_drive_mock()"
     },
     {
@@ -2543,8 +2543,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_smoke_resource_agent",
-      "community": 234,
-      "community_name": "smoke_resource.py",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "smoke_resource_agent()"
     },
     {
@@ -2554,8 +2554,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_resource_main",
-      "community": 234,
-      "community_name": "smoke_resource.py",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "main()"
     },
     {
@@ -2587,8 +2587,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_twilio",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "smoke_twilio.py"
     },
     {
@@ -2598,8 +2598,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ai_backend_scripts_smoke_twilio_main",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "main()"
     },
     {
@@ -2609,8 +2609,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_mcp_client",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "test_mcp_client.py"
     },
     {
@@ -2620,8 +2620,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_mcp_client_text",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "_text()"
     },
     {
@@ -2631,8 +2631,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ai_backend_scripts_test_mcp_client_main",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "main()"
     },
     {
@@ -2983,8 +2983,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_make_guardrail_node",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "make_guardrail_node()"
     },
     {
@@ -3027,8 +3027,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "ai_backend_src_agents_decision_graph_build_decision_graph",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "build_decision_graph()"
     },
     {
@@ -3412,8 +3412,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "guardrail.py"
     },
     {
@@ -3423,8 +3423,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_build_user_prompt",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "_build_user_prompt()"
     },
     {
@@ -3434,8 +3434,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_guardrail",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "guardrail"
     },
     {
@@ -3445,8 +3445,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_guardrail_init",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": ".__init__()"
     },
     {
@@ -3456,8 +3456,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_py_any",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "any"
     },
     {
@@ -3467,8 +3467,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_guardrail_aclassify",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": ".aclassify()"
     },
     {
@@ -3478,8 +3478,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "guardrailverdict",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "guardrailverdict"
     },
     {
@@ -3489,8 +3489,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_get_guardrail",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "get_guardrail()"
     },
     {
@@ -3500,8 +3500,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_guardrail_rationale_1",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "domain guardrail \u2014 tuition scope filter for the decision subgraph.  ported from"
     },
     {
@@ -4369,8 +4369,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_py_any",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": "any"
     },
     {
@@ -4468,8 +4468,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_directdriveclient_init",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": ".__init__()"
     },
     {
@@ -4479,8 +4479,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_directdriveclient_drive_search",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".drive_search()"
     },
     {
@@ -4490,8 +4490,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_directdriveclient_drive_list",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".drive_list()"
     },
     {
@@ -4512,8 +4512,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_directragclient_init",
-      "community": 7,
-      "community_name": "RAG Ingest Pipeline 3",
+      "community": 19,
+      "community_name": "API Chat Schemas",
       "norm_label": ".__init__()"
     },
     {
@@ -4523,8 +4523,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_directragclient_kb_search",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".kb_search()"
     },
     {
@@ -4545,8 +4545,8 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpdriveclient_init",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".__init__()"
     },
     {
@@ -4556,8 +4556,8 @@
       "source_location": "L166",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpdriveclient_drive_search",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".drive_search()"
     },
     {
@@ -4567,8 +4567,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpdriveclient_drive_list",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".drive_list()"
     },
     {
@@ -4589,8 +4589,8 @@
       "source_location": "L195",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpragclient_init",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".__init__()"
     },
     {
@@ -4600,8 +4600,8 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcpragclient_kb_search",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": ".kb_search()"
     },
     {
@@ -4611,8 +4611,8 @@
       "source_location": "L216",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_mcp_text",
-      "community": 19,
-      "community_name": "API Chat Schemas",
+      "community": 132,
+      "community_name": "P0 \u2014 Must finalize (MVP gate)",
       "norm_label": "_mcp_text()"
     },
     {
@@ -4622,8 +4622,8 @@
       "source_location": "L222",
       "_origin": "ast",
       "id": "ai_backend_src_agents_nodes_resource_agent_resourceagent",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "resourceagent"
     },
     {
@@ -4853,8 +4853,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "agentorchestrator"
     },
     {
@@ -4875,8 +4875,8 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_build_graph",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "._build_graph()"
     },
     {
@@ -4886,8 +4886,8 @@
       "source_location": "L215",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_entry_routing",
-      "community": 80,
-      "community_name": "test_identity_recall.py",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".entry_routing()"
     },
     {
@@ -4919,8 +4919,8 @@
       "source_location": "L249",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_supervisor_routing",
-      "community": 80,
-      "community_name": "test_identity_recall.py",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".supervisor_routing()"
     },
     {
@@ -5018,8 +5018,8 @@
       "source_location": "L368",
       "_origin": "ast",
       "id": "ai_backend_src_agents_orchestrator_agentorchestrator_to_agent_response",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "._to_agent_response()"
     },
     {
@@ -5403,8 +5403,8 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_routedecision",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "routedecision"
     },
     {
@@ -5436,8 +5436,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "ai_backend_src_agents_router_multiroutedecision_primary",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": ".primary()"
     },
     {
@@ -5689,8 +5689,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "ai_backend_src_agents_runtime_preload_agent_runtime",
-      "community": 241,
-      "community_name": "preload_agent_runtime",
+      "community": 41,
+      "community_name": "Chat Message Pipeline 3",
       "norm_label": "preload_agent_runtime()"
     },
     {
@@ -5700,8 +5700,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_runtime_py_any",
-      "community": 241,
-      "community_name": "preload_agent_runtime",
+      "community": 41,
+      "community_name": "Chat Message Pipeline 3",
       "norm_label": "any"
     },
     {
@@ -5755,8 +5755,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "ai_backend_src_agents_runtime_rationale_30",
-      "community": 241,
-      "community_name": "preload_agent_runtime",
+      "community": 41,
+      "community_name": "Chat Message Pipeline 3",
       "norm_label": "store warmed instances from fastapi lifespan (bookme ai ``main.py`` pattern)."
     },
     {
@@ -5832,8 +5832,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool",
-      "community": 21,
-      "community_name": "Decision Graph",
+      "community": 178,
+      "community_name": ".create_escalation",
       "norm_label": "crm_tool.py"
     },
     {
@@ -5865,8 +5865,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_crmtool_assert_tenant",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": "._assert_tenant()"
     },
     {
@@ -5876,8 +5876,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_crmtool_register_student",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": ".register_student()"
     },
     {
@@ -5887,8 +5887,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_crmtool_get_student",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": ".get_student()"
     },
     {
@@ -5898,8 +5898,8 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_crmtool_commit_onboarding",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": ".commit_onboarding()"
     },
     {
@@ -5953,8 +5953,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_crmtool_create_enrollment",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": ".create_enrollment()"
     },
     {
@@ -6030,8 +6030,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_rationale_1",
-      "community": 21,
-      "community_name": "Decision Graph",
+      "community": 178,
+      "community_name": ".create_escalation",
       "norm_label": "crm business logic \u2014 called by mcp server only (week 13 pattern)."
     },
     {
@@ -6041,8 +6041,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_rationale_41",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": "update student profile fields for onboarding."
     },
     {
@@ -6052,8 +6052,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_crm_tool_rationale_96",
-      "community": 231,
-      "community_name": "._assert_tenant",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": "atomic post-confirmation write: student profile + pending enrollment."
     },
     {
@@ -6129,8 +6129,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive_tool.py"
     },
     {
@@ -6140,8 +6140,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_normalize_drive_folder_id",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "_normalize_drive_folder_id()"
     },
     {
@@ -6151,8 +6151,8 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drivetool"
     },
     {
@@ -6162,8 +6162,8 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool_init",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": ".__init__()"
     },
     {
@@ -6173,8 +6173,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_py_any",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "any"
     },
     {
@@ -6184,8 +6184,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool_backend_instance",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "._backend_instance()"
     },
     {
@@ -6195,8 +6195,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool_get_drive_root",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "._get_drive_root()"
     },
     {
@@ -6206,8 +6206,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool_assert_allowed_folder",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "._assert_allowed_folder()"
     },
     {
@@ -6217,8 +6217,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool_drive_search",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": ".drive_search()"
     },
     {
@@ -6228,8 +6228,8 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_drivetool_drive_list",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": ".drive_list()"
     },
     {
@@ -6239,8 +6239,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_rationale_1",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive tool \u2014 tenant-scoped paper/textbook/syllabus search."
     },
     {
@@ -6250,8 +6250,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_rationale_17",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "strip url query junk users paste from drive share links (e.g. ``?usp=drive_link`"
     },
     {
@@ -6261,8 +6261,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_drive_tool_rationale_27",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "business logic for drive_search / drive_list \u2014 used by drive_server and rest."
     },
     {
@@ -6349,8 +6349,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_rag_tool",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 7,
+      "community_name": "RAG Ingest Pipeline 3",
       "norm_label": "rag_tool.py"
     },
     {
@@ -6426,8 +6426,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_rag_tool_ragtool_kb_ingest_status",
-      "community": 3,
-      "community_name": "RAG Ingest Pipeline",
+      "community": 7,
+      "community_name": "RAG Ingest Pipeline 3",
       "norm_label": ".kb_ingest_status()"
     },
     {
@@ -6437,8 +6437,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_agents_tools_rag_tool_rationale_1",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 7,
+      "community_name": "RAG Ingest Pipeline 3",
       "norm_label": "rag tool \u2014 tenant-scoped tutor-note q&a (plain rag, no cache)."
     },
     {
@@ -6701,8 +6701,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_api_rate_limit",
-      "community": 115,
-      "community_name": "Langfuse Runtime 6",
+      "community": 214,
+      "community_name": "RateLimitMiddleware",
       "norm_label": "rate_limit.py"
     },
     {
@@ -6822,8 +6822,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_send_chat_message",
-      "community": 237,
-      "community_name": "send_chat_message",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "send_chat_message()"
     },
     {
@@ -6833,8 +6833,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "chatrequest",
-      "community": 237,
-      "community_name": "send_chat_message",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "chatrequest"
     },
     {
@@ -6844,8 +6844,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "chatresponse",
-      "community": 237,
-      "community_name": "send_chat_message",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "chatresponse"
     },
     {
@@ -6855,8 +6855,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_py_get",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "get"
     },
     {
@@ -6866,8 +6866,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_get_chat_turns",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "get_chat_turns()"
     },
     {
@@ -6877,8 +6877,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_py_chatturnsresponse",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "chatturnsresponse"
     },
     {
@@ -6899,8 +6899,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_rationale_20",
-      "community": 237,
-      "community_name": "send_chat_message",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "send a student message and receive an ai reply.      use this during development"
     },
     {
@@ -6910,8 +6910,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_chat_rationale_61",
-      "community": 50,
-      "community_name": "Langfuse Runtime 2",
+      "community": 85,
+      "community_name": "Resource Agent 2",
       "norm_label": "fetch recent conversation turns for a student session."
     },
     {
@@ -7878,8 +7878,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "routers/students.py"
     },
     {
@@ -7889,8 +7889,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_register_student",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "register_student()"
     },
     {
@@ -7900,8 +7900,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_py_any",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "any"
     },
     {
@@ -7911,8 +7911,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_py_get",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "get"
     },
     {
@@ -7922,8 +7922,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_get_student",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "get_student()"
     },
     {
@@ -7933,8 +7933,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_rationale_1",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "student registration and lookup \u2014 dashboard + dev api."
     },
     {
@@ -7944,8 +7944,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_rationale_24",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "register or update a student profile (dashboard / manual onboarding)."
     },
     {
@@ -7955,8 +7955,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "ai_backend_src_api_routers_students_rationale_47",
-      "community": 218,
-      "community_name": "Testing",
+      "community": 42,
+      "community_name": "Dashboard ORM Models 2",
       "norm_label": "fetch student profile and enrollments by phone."
     },
     {
@@ -9209,8 +9209,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_domain_escalation_reasons",
-      "community": 80,
-      "community_name": "test_identity_recall.py",
+      "community": 178,
+      "community_name": ".create_escalation",
       "norm_label": "escalation_reasons.py"
     },
     {
@@ -9231,8 +9231,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_domain_escalation_reasons_rationale_1",
-      "community": 80,
-      "community_name": "test_identity_recall.py",
+      "community": 178,
+      "community_name": ".create_escalation",
       "norm_label": "escalation reason codes for dashboard inbox filtering."
     },
     {
@@ -9473,8 +9473,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_ingest_ids_compute_document_id",
-      "community": 128,
-      "community_name": "Dashboard API Routes 4",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "compute_document_id()"
     },
     {
@@ -9517,8 +9517,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_ingest_ids_rationale_10",
-      "community": 128,
-      "community_name": "Dashboard API Routes 4",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "content hash \u2014 same bytes always yield the same id within a tenant."
     },
     {
@@ -9682,8 +9682,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_qdrant_client_search_filter",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "_search_filter()"
     },
     {
@@ -9693,8 +9693,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "filter",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "filter"
     },
     {
@@ -9770,8 +9770,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_qdrant_client_ensure_document_id_index",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "ensure_document_id_index()"
     },
     {
@@ -9836,8 +9836,8 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_qdrant_client_delete_chunks_by_document_id",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "delete_chunks_by_document_id()"
     },
     {
@@ -9935,8 +9935,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_qdrant_client_rationale_42",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "exclude parent-context points from vector search \u2014 they are joined by id."
     },
     {
@@ -9979,8 +9979,8 @@
       "source_location": "L126",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_qdrant_client_rationale_126",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "keyword index on document_id for idempotent delete-before-upsert."
     },
     {
@@ -10012,8 +10012,8 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_db_qdrant_client_rationale_159",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "remove all qdrant points belonging to one ingested document."
     },
     {
@@ -10474,8 +10474,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracing_enabled",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "_tracing_enabled()"
     },
     {
@@ -10485,8 +10485,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracecontext",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "tracecontext"
     },
     {
@@ -10496,8 +10496,8 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracecontext_tags",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": ".tags()"
     },
     {
@@ -10507,8 +10507,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_tracecontext_metadata",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": ".metadata()"
     },
     {
@@ -10518,8 +10518,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_py_any",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "any"
     },
     {
@@ -10584,8 +10584,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_reset_langfuse_state",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "reset_langfuse_state()"
     },
     {
@@ -10639,8 +10639,8 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_trace_context",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "trace_context()"
     },
     {
@@ -10672,8 +10672,8 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_get_current_trace_id",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "get_current_trace_id()"
     },
     {
@@ -10683,8 +10683,8 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_flush",
-      "community": 41,
-      "community_name": "Chat Message Pipeline 3",
+      "community": 81,
+      "community_name": "_tracing_enabled",
       "norm_label": "flush()"
     },
     {
@@ -10716,8 +10716,8 @@
       "source_location": "L280",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_langfuse_turn_attributes",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "langfuse_turn_attributes()"
     },
     {
@@ -10727,8 +10727,8 @@
       "source_location": "L318",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_update_current_trace",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "update_current_trace()"
     },
     {
@@ -10738,8 +10738,8 @@
       "source_location": "L339",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_update_current_observation",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "update_current_observation()"
     },
     {
@@ -10760,8 +10760,8 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_49",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "langfuse trace scope for a whatsapp conversation turn."
     },
     {
@@ -10771,8 +10771,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_97",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test helper \u2014 clear cached langfuse client state."
     },
     {
@@ -10804,8 +10804,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_168",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "propagate tenant/session/user identifiers to all nested langfuse observations."
     },
     {
@@ -10826,8 +10826,8 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_213",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "opentelemetry / langfuse trace id for the active context, if any."
     },
     {
@@ -10859,8 +10859,8 @@
       "source_location": "L287",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_287",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "propagate user/session/tags to nested spans for one chat turn."
     },
     {
@@ -10870,8 +10870,8 @@
       "source_location": "L347",
       "_origin": "ast",
       "id": "ai_backend_src_infrastructure_observability_rationale_347",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 31,
+      "community_name": "Admissions Onboarding 9",
       "norm_label": "attach i/o + usage to the current span/generation."
     },
     {
@@ -11277,8 +11277,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive_server.py"
     },
     {
@@ -11288,8 +11288,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_init",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "_init()"
     },
     {
@@ -11299,8 +11299,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_py_tool",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "tool"
     },
     {
@@ -11310,8 +11310,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_drive_search",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive_search()"
     },
     {
@@ -11321,8 +11321,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_drive_list",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive_list()"
     },
     {
@@ -11332,8 +11332,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_rationale_1",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive mcp server \u2014 papers, textbooks, syllabus only."
     },
     {
@@ -11343,8 +11343,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_rationale_35",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "search tenant drive for papers, textbooks, or syllabus files. returns shareable"
     },
     {
@@ -11354,8 +11354,8 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_drive_server_rationale_41",
-      "community": 219,
-      "community_name": "Per-institute onboarding",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "list files in an allowed drive subfolder (papers, textbooks, syllabus)."
     },
     {
@@ -11365,8 +11365,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "mcp_config.py"
     },
     {
@@ -11376,8 +11376,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_mcp_subprocess_env",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "mcp_subprocess_env()"
     },
     {
@@ -11387,8 +11387,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_mcp_include_drive",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "mcp_include_drive()"
     },
     {
@@ -11398,8 +11398,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_stdio_server",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "_stdio_server()"
     },
     {
@@ -11409,8 +11409,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_build_mcp_server_config",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "build_mcp_server_config()"
     },
     {
@@ -11420,8 +11420,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_expected_mcp_tool_names",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "expected_mcp_tool_names()"
     },
     {
@@ -11431,8 +11431,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_rationale_1",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "mcp client configuration \u2014 memory + crm + rag (+ optional drive).  adapted from"
     },
     {
@@ -11442,8 +11442,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_rationale_73",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "env vars forwarded to mcp stdio child processes."
     },
     {
@@ -11453,8 +11453,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "ai_backend_src_mcp_servers_mcp_config_rationale_102",
-      "community": 66,
-      "community_name": "IdentityResolver",
+      "community": 73,
+      "community_name": "Memory MCP Path",
       "norm_label": "return config for ``multiservermcpclient`` (bookme / week 13 pattern)."
     },
     {
@@ -11937,8 +11937,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_admissions_db_client",
-      "community": 18,
-      "community_name": "Drive Tooling",
+      "community": 178,
+      "community_name": ".create_escalation",
       "norm_label": "admissions_db_client.py"
     },
     {
@@ -12234,8 +12234,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_admissions_admissions_db_client_rationale_1",
-      "community": 18,
-      "community_name": "Drive Tooling",
+      "community": 178,
+      "community_name": ".create_escalation",
       "norm_label": "supabase access for admissions crm operations."
     },
     {
@@ -13268,8 +13268,8 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "ai_backend_src_services_drive_service_drive_client_resolve_subfolder_id",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "resolve_subfolder_id()"
     },
     {
@@ -13323,8 +13323,8 @@
       "source_location": "L148",
       "_origin": "ast",
       "id": "ai_backend_src_services_drive_service_drive_client_rationale_148",
-      "community": 67,
-      "community_name": "Chat Message Pipeline 4",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "find subfolder id (papers/textbooks/syllabus) under tenant root."
     },
     {
@@ -14456,8 +14456,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "base.py"
     },
     {
@@ -14478,8 +14478,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_extractionerror",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "extractionerror"
     },
     {
@@ -14489,8 +14489,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_py_valueerror",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "valueerror"
     },
     {
@@ -14511,8 +14511,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_extracteddoc",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 60,
+      "community_name": "Student Chat Deps 4",
       "norm_label": "extracteddoc"
     },
     {
@@ -14522,8 +14522,8 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_extracteddoc_has_headings",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 60,
+      "community_name": "Student Chat Deps 4",
       "norm_label": ".has_headings()"
     },
     {
@@ -14533,8 +14533,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_rationale_1",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "shared types for document extraction.  every extractor converts source bytes int"
     },
     {
@@ -14555,8 +14555,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_rationale_40",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "raised when a document cannot be turned into usable markdown.      subclasses va"
     },
     {
@@ -14577,8 +14577,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_base_rationale_57",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 60,
+      "community_name": "Student Chat Deps 4",
       "norm_label": "normalized extraction result handed to the ingest pipeline."
     },
     {
@@ -14676,8 +14676,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_markdown",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 86,
+      "community_name": "Dashboard Module 3",
       "norm_label": "markdown.py"
     },
     {
@@ -14687,8 +14687,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_markdown_extract_markdown",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 86,
+      "community_name": "Dashboard Module 3",
       "norm_label": "extract_markdown()"
     },
     {
@@ -14698,8 +14698,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_markdown_rationale_1",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 86,
+      "community_name": "Dashboard Module 3",
       "norm_label": "markdown / plain-text passthrough."
     },
     {
@@ -14709,8 +14709,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_markdown_rationale_19",
-      "community": 69,
-      "community_name": "Langfuse Runtime 4",
+      "community": 86,
+      "community_name": "Dashboard Module 3",
       "norm_label": "decode markdown bytes, stripping yaml front matter if present."
     },
     {
@@ -14742,8 +14742,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_pdf_page_lacks_text",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "_page_lacks_text()"
     },
     {
@@ -14797,8 +14797,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_extractors_pdf_rationale_23",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "true when a page's text layer yielded too little to be real content."
     },
     {
@@ -15039,8 +15039,8 @@
       "source_location": "L488",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_pipeline_delete_document_ingest",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "delete_document_ingest()"
     },
     {
@@ -15138,8 +15138,8 @@
       "source_location": "L489",
       "_origin": "ast",
       "id": "ai_backend_src_services_ingest_service_pipeline_rationale_489",
-      "community": 111,
-      "community_name": "Test Suite 7",
+      "community": 3,
+      "community_name": "RAG Ingest Pipeline",
       "norm_label": "remove a document from qdrant and the registry."
     },
     {
@@ -15215,8 +15215,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "sttmetrics"
     },
     {
@@ -15226,8 +15226,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics_init",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".__init__()"
     },
     {
@@ -15237,8 +15237,8 @@
       "source_location": "L96",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics_record_success",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".record_success()"
     },
     {
@@ -15248,8 +15248,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics_record_failure",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".record_failure()"
     },
     {
@@ -15259,8 +15259,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics_record_cache_hit",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".record_cache_hit()"
     },
     {
@@ -15270,8 +15270,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics_record_duplicate_skipped",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".record_duplicate_skipped()"
     },
     {
@@ -15281,8 +15281,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttmetrics_to_dict",
-      "community": 238,
-      "community_name": "get_stt_metrics",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".to_dict()"
     },
     {
@@ -15292,8 +15292,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_py_any",
-      "community": 238,
-      "community_name": "get_stt_metrics",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "any"
     },
     {
@@ -15303,8 +15303,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_get_stt_metrics",
-      "community": 238,
-      "community_name": "get_stt_metrics",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "get_stt_metrics()"
     },
     {
@@ -15325,8 +15325,8 @@
       "source_location": "L156",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttcache",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "sttcache"
     },
     {
@@ -15336,8 +15336,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "abc",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "abc"
     },
     {
@@ -15347,8 +15347,8 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttcache_get",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".get()"
     },
     {
@@ -15358,8 +15358,8 @@
       "source_location": "L164",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttcache_set",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".set()"
     },
     {
@@ -15369,8 +15369,8 @@
       "source_location": "L168",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_sttcache_delete",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".delete()"
     },
     {
@@ -15380,8 +15380,8 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_inmemorysttcache",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "inmemorysttcache"
     },
     {
@@ -15391,8 +15391,8 @@
       "source_location": "L175",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_inmemorysttcache_init",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".__init__()"
     },
     {
@@ -15402,8 +15402,8 @@
       "source_location": "L180",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_inmemorysttcache_get_lock",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".get_lock()"
     },
     {
@@ -15413,8 +15413,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "lock",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "lock"
     },
     {
@@ -15424,8 +15424,8 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_inmemorysttcache_get",
-      "community": 236,
-      "community_name": "_download_with_retry",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".get()"
     },
     {
@@ -15435,8 +15435,8 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_inmemorysttcache_set",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".set()"
     },
     {
@@ -15446,8 +15446,8 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_inmemorysttcache_delete",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": ".delete()"
     },
     {
@@ -15457,8 +15457,8 @@
       "source_location": "L209",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_cache_key",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "_cache_key()"
     },
     {
@@ -15479,8 +15479,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_content_type_supported",
-      "community": 236,
-      "community_name": "_download_with_retry",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "_content_type_supported()"
     },
     {
@@ -15501,8 +15501,8 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_is_retryable",
-      "community": 235,
-      "community_name": "_call_gemini",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "_is_retryable()"
     },
     {
@@ -15512,8 +15512,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_py_exception",
-      "community": 235,
-      "community_name": "_call_gemini",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "exception"
     },
     {
@@ -15534,48 +15534,37 @@
       "source_location": "L270",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_download_with_retry",
-      "community": 236,
-      "community_name": "_download_with_retry",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "_download_with_retry()"
-    },
-    {
-      "label": "_extract_llm_text()",
-      "file_type": "code",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L334",
-      "_origin": "ast",
-      "id": "ai_backend_src_services_media_stt_service_extract_llm_text",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "_extract_llm_text()"
     },
     {
       "label": "_call_gemini()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L366",
+      "source_location": "L334",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_call_gemini",
-      "community": 235,
-      "community_name": "_call_gemini",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "_call_gemini()"
     },
     {
       "label": "transcribe_audio()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L445",
+      "source_location": "L414",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_transcribe_audio",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "transcribe_audio()"
     },
     {
       "label": "_transcribe_impl()",
       "file_type": "code",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L544",
+      "source_location": "L513",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_transcribe_impl",
       "community": 35,
@@ -15600,8 +15589,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_85",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "simple counters for transcription metrics."
     },
     {
@@ -15611,8 +15600,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_129",
-      "community": 238,
-      "community_name": "get_stt_metrics",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "return current transcription metrics. call from a /metrics endpoint."
     },
     {
@@ -15633,8 +15622,8 @@
       "source_location": "L157",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_157",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "abstract cache for idempotency. implement get/set/delete for redis/db."
     },
     {
@@ -15644,8 +15633,8 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_161",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "return cached transcript, or none if miss/expired."
     },
     {
@@ -15655,8 +15644,8 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_165",
-      "community": 113,
-      "community_name": "RAG Ingest Pipeline 7",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "store value with ttl in seconds. value=none means 'in-progress'."
     },
     {
@@ -15666,8 +15655,8 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_173",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "in-memory cache with ttl. replace with redissttcache for production."
     },
     {
@@ -15677,8 +15666,8 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_181",
-      "community": 227,
-      "community_name": "InMemorySttCache",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "get or create a per-key lock for concurrency control."
     },
     {
@@ -15699,8 +15688,8 @@
       "source_location": "L224",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_224",
-      "community": 236,
-      "community_name": "_download_with_retry",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "check if the content-type header indicates a voice note (ogg opus)."
     },
     {
@@ -15721,8 +15710,8 @@
       "source_location": "L240",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_240",
-      "community": 235,
-      "community_name": "_call_gemini",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "check if an exception is transient and worth retrying."
     },
     {
@@ -15743,50 +15732,39 @@
       "source_location": "L275",
       "_origin": "ast",
       "id": "ai_backend_src_services_media_stt_service_rationale_275",
-      "community": 236,
-      "community_name": "_download_with_retry",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "download voice note from a url with retry and content-type validation.      if a"
-    },
-    {
-      "label": "Normalize Gemini/LangChain output to a string.      Gemini 3.x returns ``AIMessa",
-      "file_type": "rationale",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L335",
-      "_origin": "ast",
-      "id": "ai_backend_src_services_media_stt_service_rationale_335",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "normalize gemini/langchain output to a string.      gemini 3.x returns ``aimessa"
     },
     {
       "label": "Send voice note to Gemini for transcription with retry.",
       "file_type": "rationale",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L372",
+      "source_location": "L340",
       "_origin": "ast",
-      "id": "ai_backend_src_services_media_stt_service_rationale_372",
-      "community": 235,
-      "community_name": "_call_gemini",
+      "id": "ai_backend_src_services_media_stt_service_rationale_340",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "send voice note to gemini for transcription with retry."
     },
     {
       "label": "Download a voice note and transcribe via Gemini.      Args:         media_url: V",
       "file_type": "rationale",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L453",
+      "source_location": "L422",
       "_origin": "ast",
-      "id": "ai_backend_src_services_media_stt_service_rationale_453",
-      "community": 105,
-      "community_name": "Admissions Onboarding 18",
+      "id": "ai_backend_src_services_media_stt_service_rationale_422",
+      "community": 35,
+      "community_name": "Invoice DB Layer",
       "norm_label": "download a voice note and transcribe via gemini.      args:         media_url: v"
     },
     {
       "label": "Core transcription logic (called within deadline wrapper).",
       "file_type": "rationale",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L552",
+      "source_location": "L521",
       "_origin": "ast",
-      "id": "ai_backend_src_services_media_stt_service_rationale_552",
+      "id": "ai_backend_src_services_media_stt_service_rationale_521",
       "community": 35,
       "community_name": "Invoice DB Layer",
       "norm_label": "core transcription logic (called within deadline wrapper)."
@@ -16106,8 +16084,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence",
-      "community": 216,
-      "community_name": "PaymentStatusUpdate",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "persistence.py"
     },
     {
@@ -16117,8 +16095,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "messagepersistence"
     },
     {
@@ -16128,8 +16106,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_log_inbound",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": ".log_inbound()"
     },
     {
@@ -16139,8 +16117,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_py_chatchannel",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "chatchannel"
     },
     {
@@ -16150,8 +16128,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_log_outbound",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": ".log_outbound()"
     },
     {
@@ -16161,8 +16139,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_log_staff_reply",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": ".log_staff_reply()"
     },
     {
@@ -16172,8 +16150,8 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_insert_message_log",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "._insert_message_log()"
     },
     {
@@ -16183,8 +16161,8 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_insert_turn",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "._insert_turn()"
     },
     {
@@ -16194,8 +16172,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_py_messagerole",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "messagerole"
     },
     {
@@ -16205,8 +16183,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_get_turns",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": ".get_turns()"
     },
     {
@@ -16227,8 +16205,8 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_messagepersistence_get_latest_turn",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": ".get_latest_turn()"
     },
     {
@@ -16238,8 +16216,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_rationale_1",
-      "community": 216,
-      "community_name": "PaymentStatusUpdate",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "persist inbound/outbound messaging to supabase (message_logs + st_turns)."
     },
     {
@@ -16249,8 +16227,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_rationale_13",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "write message_logs and st_turns rows for a conversation turn."
     },
     {
@@ -16260,8 +16238,8 @@
       "source_location": "L51",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_persistence_rationale_51",
-      "community": 226,
-      "community_name": "8. Implementation phases",
+      "community": 88,
+      "community_name": "MCP Integration 2",
       "norm_label": "persist a staff-authored message (role=system \u2192 sender=staff in dashboard ui)."
     },
     {
@@ -16282,8 +16260,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_pipeline",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 41,
+      "community_name": "Chat Message Pipeline 3",
       "norm_label": "messaging/pipeline.py"
     },
     {
@@ -16304,8 +16282,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_pipeline_chatpipeline_init",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": ".__init__()"
     },
     {
@@ -16414,8 +16392,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_pipeline_rationale_1",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 41,
+      "community_name": "Chat Message Pipeline 3",
       "norm_label": "process inbound student messages and produce agent replies."
     },
     {
@@ -16997,8 +16975,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_twiliomessagingclient",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "twiliomessagingclient"
     },
     {
@@ -17008,8 +16986,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_twiliomessagingclient_init",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": ".__init__()"
     },
     {
@@ -17019,8 +16997,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_twiliomessagingclient_send_whatsapp",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 50,
+      "community_name": "Langfuse Runtime 2",
       "norm_label": ".send_whatsapp()"
     },
     {
@@ -17041,8 +17019,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ai_backend_src_services_messaging_twilio_client_rationale_18",
-      "community": 230,
-      "community_name": "TwilioMessagingClient",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "thin wrapper around twilio messages api with dry-run support."
     },
     {
@@ -17558,8 +17536,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "conftest.py"
     },
     {
@@ -17569,8 +17547,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest_py_fixture",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "fixture"
     },
     {
@@ -17580,8 +17558,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest_active_tenant_scope",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "active_tenant_scope()"
     },
     {
@@ -17591,8 +17569,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest_client",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "client()"
     },
     {
@@ -17602,8 +17580,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest_client_no_tenant_override",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "client_no_tenant_override()"
     },
     {
@@ -17613,8 +17591,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest_rationale_1",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "shared pytest bootstrap."
     },
     {
@@ -17624,8 +17602,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_tests_conftest_rationale_46",
-      "community": 51,
-      "community_name": "Test Suite",
+      "community": 218,
+      "community_name": "Testing",
       "norm_label": "# important:"
     },
     {
@@ -17635,8 +17613,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_debug_google_auth",
-      "community": 242,
-      "community_name": "debug_google_auth.py",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "debug_google_auth.py"
     },
     {
@@ -17646,8 +17624,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "ai_backend_tests_debug_google_auth_main",
-      "community": 242,
-      "community_name": "debug_google_auth.py",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "main()"
     },
     {
@@ -17657,8 +17635,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_debug_google_auth_rationale_1",
-      "community": 242,
-      "community_name": "debug_google_auth.py",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "temp debug \u2014 google oauth only (no drive list, no mcp).  run:   pythonpath=src ."
     },
     {
@@ -18218,8 +18196,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_chat_py_asyncio",
-      "community": 82,
-      "community_name": "Escalation Routes 6",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "asyncio"
     },
     {
@@ -18229,8 +18207,8 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "ai_backend_tests_test_chat_test_chat_pipeline_runs_agent_inside_event_loop",
-      "community": 82,
-      "community_name": "Escalation Routes 6",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "test_chat_pipeline_runs_agent_inside_event_loop()"
     },
     {
@@ -18251,8 +18229,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "ai_backend_tests_test_chat_rationale_102",
-      "community": 82,
-      "community_name": "Escalation Routes 6",
+      "community": 24,
+      "community_name": "Agent Orchestrator",
       "norm_label": "regression: /chat must not call asyncio.run() inside fastapi's event loop."
     },
     {
@@ -18658,8 +18636,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "test_class_scoped_rag.py"
     },
     {
@@ -18669,8 +18647,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_trackingrag",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "trackingrag"
     },
     {
@@ -18680,8 +18658,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_trackingrag_init",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": ".__init__()"
     },
     {
@@ -18691,8 +18669,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_trackingrag_kb_search",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": ".kb_search()"
     },
     {
@@ -18702,8 +18680,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_py_any",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "any"
     },
     {
@@ -18713,8 +18691,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_fakedrive",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "fakedrive"
     },
     {
@@ -18724,8 +18702,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_fakedrive_drive_search",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": ".drive_search()"
     },
     {
@@ -18735,8 +18713,8 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_fakedrive_drive_list",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": ".drive_list()"
     },
     {
@@ -18746,8 +18724,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_py_asyncio",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "asyncio"
     },
     {
@@ -18757,8 +18735,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_test_resource_agent_passes_enrolled_class_ids_to_rag",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "test_resource_agent_passes_enrolled_class_ids_to_rag()"
     },
     {
@@ -18768,8 +18746,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_test_resource_agent_blocks_enrolled_without_class_ids",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "test_resource_agent_blocks_enrolled_without_class_ids()"
     },
     {
@@ -18812,8 +18790,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_test_kb_search_forwards_class_ids_to_rag_service",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "test_kb_search_forwards_class_ids_to_rag_service()"
     },
     {
@@ -18823,8 +18801,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_class_scoped_rag_rationale_1",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 111,
+      "community_name": "Test Suite 7",
       "norm_label": "class-scoped rag retrieval tests."
     },
     {
@@ -18911,8 +18889,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_crm_mcp_server_py_fixture",
-      "community": 244,
-      "community_name": "mock_db",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": "fixture"
     },
     {
@@ -18922,8 +18900,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "ai_backend_tests_test_crm_mcp_server_mock_db",
-      "community": 244,
-      "community_name": "mock_db",
+      "community": 21,
+      "community_name": "Decision Graph",
       "norm_label": "mock_db()"
     },
     {
@@ -19197,8 +19175,8 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "ai_backend_tests_test_decision_graph_test_decide_router_override_on_borderline_guardrail",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_decide_router_override_on_borderline_guardrail()"
     },
     {
@@ -19329,8 +19307,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_mcp_server",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_mcp_server.py"
     },
     {
@@ -19373,8 +19351,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_mcp_server_test_drive_mcp_search_returns_link",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_mcp_search_returns_link()"
     },
     {
@@ -19384,8 +19362,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_mcp_server_test_drive_mcp_list_folder",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_mcp_list_folder()"
     },
     {
@@ -19395,8 +19373,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_mcp_server_test_drive_mcp_rejects_disallowed_folder",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_mcp_rejects_disallowed_folder()"
     },
     {
@@ -19406,8 +19384,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_mcp_server_test_drive_mcp_tenant_isolation",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_mcp_tenant_isolation()"
     },
     {
@@ -19417,8 +19395,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_mcp_server_rationale_1",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive mcp server \u2014 tool surface and tenant scoping (same logic as axiom-drive st"
     },
     {
@@ -19428,8 +19406,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_tool.py"
     },
     {
@@ -19439,8 +19417,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_py_fixture",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "fixture"
     },
     {
@@ -19450,8 +19428,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_mock_backend",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "mock_backend()"
     },
     {
@@ -19461,8 +19439,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_test_drive_search_returns_matching_file",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_search_returns_matching_file()"
     },
     {
@@ -19472,8 +19450,8 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_test_drive_rejects_disallowed_folder",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_rejects_disallowed_folder()"
     },
     {
@@ -19483,8 +19461,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_test_drive_search_unknown_tenant",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_search_unknown_tenant()"
     },
     {
@@ -19494,8 +19472,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_test_drive_list_scoped_to_folder",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "test_drive_list_scoped_to_folder()"
     },
     {
@@ -19505,8 +19483,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_drive_tool_rationale_1",
-      "community": 37,
-      "community_name": "RAG Ingest Pipeline 5",
+      "community": 23,
+      "community_name": "Admissions Onboarding 7",
       "norm_label": "drive tool unit tests."
     },
     {
@@ -19538,8 +19516,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_recordingorchestrator_init",
-      "community": 84,
-      "community_name": "Drive Tooling 4",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": ".__init__()"
     },
     {
@@ -19549,8 +19527,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_recordingorchestrator_arun_state",
-      "community": 80,
-      "community_name": "test_identity_recall.py",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": ".arun_state()"
     },
     {
@@ -19560,8 +19538,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_py_any",
-      "community": 80,
-      "community_name": "test_identity_recall.py",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "any"
     },
     {
@@ -19593,8 +19571,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_mock_proceed_graph",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "_mock_proceed_graph()"
     },
     {
@@ -19659,8 +19637,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "ai_backend_tests_test_e2e_smoke_test_media_url_forces_payment_route",
-      "community": 59,
-      "community_name": "Test Suite 2",
+      "community": 84,
+      "community_name": "Drive Tooling 4",
       "norm_label": "test_media_url_forces_payment_route()"
     },
     {
@@ -19835,8 +19813,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors",
-      "community": 86,
-      "community_name": "Dashboard Module 3",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "test_extractors.py"
     },
     {
@@ -19956,8 +19934,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_testpagelackstext",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": "testpagelackstext"
     },
     {
@@ -19967,8 +19945,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_testpagelackstext_test_empty_page",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": ".test_empty_page()"
     },
     {
@@ -19978,8 +19956,8 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_testpagelackstext_test_short_page",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": ".test_short_page()"
     },
     {
@@ -19989,8 +19967,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_testpagelackstext_test_prose_page_does_not",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": ".test_prose_page_does_not()"
     },
     {
@@ -20000,8 +19978,8 @@
       "source_location": "L72",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_testpagelackstext_test_symbol_noise",
-      "community": 232,
-      "community_name": "_page_lacks_text",
+      "community": 70,
+      "community_name": "MCP Integration",
       "norm_label": ".test_symbol_noise()"
     },
     {
@@ -20154,8 +20132,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_test_title_from_filename",
-      "community": 86,
-      "community_name": "Dashboard Module 3",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "test_title_from_filename()"
     },
     {
@@ -20165,8 +20143,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_extractors_rationale_1",
-      "community": 86,
-      "community_name": "Dashboard Module 3",
+      "community": 32,
+      "community_name": "Admissions Onboarding 10",
       "norm_label": "format sniffing, docx/markdown extraction, and pdf text-layer routing."
     },
     {
@@ -20275,8 +20253,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router",
-      "community": 53,
-      "community_name": "Admissions Onboarding 11",
+      "community": 66,
+      "community_name": "IdentityResolver",
       "norm_label": "test_heuristic_router.py"
     },
     {
@@ -20286,8 +20264,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router_py_parametrize",
-      "community": 53,
-      "community_name": "Admissions Onboarding 11",
+      "community": 66,
+      "community_name": "IdentityResolver",
       "norm_label": "parametrize"
     },
     {
@@ -20297,8 +20275,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router_test_heuristic_route",
-      "community": 53,
-      "community_name": "Admissions Onboarding 11",
+      "community": 66,
+      "community_name": "IdentityResolver",
       "norm_label": "test_heuristic_route()"
     },
     {
@@ -20308,8 +20286,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_heuristic_router_rationale_1",
-      "community": 53,
-      "community_name": "Admissions Onboarding 11",
+      "community": 66,
+      "community_name": "IdentityResolver",
       "norm_label": "keyword heuristic router tests (no llm)."
     },
     {
@@ -20330,8 +20308,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_fakememorytool",
-      "community": 88,
-      "community_name": "MCP Integration 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "fakememorytool"
     },
     {
@@ -20341,8 +20319,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_fakememorytool_recall_turns",
-      "community": 88,
-      "community_name": "MCP Integration 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": ".recall_turns()"
     },
     {
@@ -20451,8 +20429,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "ai_backend_tests_test_identity_recall_test_build_recall_context_includes_profile_before_st",
-      "community": 88,
-      "community_name": "MCP Integration 2",
+      "community": 65,
+      "community_name": "Test Suite 3",
       "norm_label": "test_build_recall_context_includes_profile_before_st()"
     },
     {
@@ -20638,8 +20616,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "ai_backend_tests_test_ingest_pipeline_test_load_tenant_docs_demo_physics",
-      "community": 61,
-      "community_name": "Workshop Exploration 2",
+      "community": 60,
+      "community_name": "Student Chat Deps 4",
       "norm_label": "test_load_tenant_docs_demo_physics()"
     },
     {
@@ -21023,8 +21001,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_merge_response",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "test_merge_response.py"
     },
     {
@@ -21034,8 +21012,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_merge_response_py_asyncio",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "asyncio"
     },
     {
@@ -21045,8 +21023,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "ai_backend_tests_test_merge_response_test_merge_single_fragment_passthrough",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "test_merge_single_fragment_passthrough()"
     },
     {
@@ -21056,8 +21034,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "ai_backend_tests_test_merge_response_test_merge_multiple_fragments_uses_gemini",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "test_merge_multiple_fragments_uses_gemini()"
     },
     {
@@ -21067,8 +21045,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_merge_response_rationale_1",
-      "community": 132,
-      "community_name": "P0 \u2014 Must finalize (MVP gate)",
+      "community": 12,
+      "community_name": "Admissions Onboarding 4",
       "norm_label": "merge response node tests."
     },
     {
@@ -21078,8 +21056,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_observability.py"
     },
     {
@@ -21089,8 +21067,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_setup_function",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "setup_function()"
     },
     {
@@ -21100,8 +21078,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_teardown_function",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "teardown_function()"
     },
     {
@@ -21111,8 +21089,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_test_trace_context_tags_and_metadata",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_trace_context_tags_and_metadata()"
     },
     {
@@ -21122,8 +21100,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_test_trace_context_tags_telegram_channel",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_trace_context_tags_telegram_channel()"
     },
     {
@@ -21133,8 +21111,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_test_trace_context_noop_when_langfuse_disabled",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "test_trace_context_noop_when_langfuse_disabled()"
     },
     {
@@ -21177,8 +21155,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_observability_rationale_1",
-      "community": 81,
-      "community_name": "_tracing_enabled",
+      "community": 69,
+      "community_name": "Langfuse Runtime 4",
       "norm_label": "observability helper tests."
     },
     {
@@ -21188,8 +21166,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_onboarding_route_lock.py"
     },
     {
@@ -21199,8 +21177,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_py_fixture",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "fixture"
     },
     {
@@ -21210,8 +21188,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_clear_onboarding_sessions",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "clear_onboarding_sessions()"
     },
     {
@@ -21221,8 +21199,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_ctx",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "ctx()"
     },
     {
@@ -21232,8 +21210,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_py_asyncio",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "asyncio"
     },
     {
@@ -21243,8 +21221,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_test_active_onboarding_forces_admissions_route",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_active_onboarding_forces_admissions_route()"
     },
     {
@@ -21254,8 +21232,8 @@
       "source_location": "L99",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_test_onboarding_bypasses_guardrail_oos_on_confirm_yes",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_onboarding_bypasses_guardrail_oos_on_confirm_yes()"
     },
     {
@@ -21265,8 +21243,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_test_tutoring_question_breaks_onboarding_route_lock",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_tutoring_question_breaks_onboarding_route_lock()"
     },
     {
@@ -21276,8 +21254,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_test_router_routes_class_availability_to_admissions",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "test_router_routes_class_availability_to_admissions()"
     },
     {
@@ -21287,8 +21265,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_onboarding_route_lock_rationale_1",
-      "community": 31,
-      "community_name": "Admissions Onboarding 9",
+      "community": 53,
+      "community_name": "Admissions Onboarding 11",
       "norm_label": "onboarding route lock tests."
     },
     {
@@ -21650,8 +21628,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "test_resource_agent.py"
     },
     {
@@ -21661,8 +21639,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakedrive",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "fakedrive"
     },
     {
@@ -21672,8 +21650,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakedrive_init",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".__init__()"
     },
     {
@@ -21683,8 +21661,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakedrive_drive_search",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".drive_search()"
     },
     {
@@ -21694,8 +21672,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_py_any",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "any"
     },
     {
@@ -21705,8 +21683,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakedrive_drive_list",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".drive_list()"
     },
     {
@@ -21716,8 +21694,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakerag",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "fakerag"
     },
     {
@@ -21727,8 +21705,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakerag_kb_search",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".kb_search()"
     },
     {
@@ -21738,8 +21716,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_py_asyncio",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "asyncio"
     },
     {
@@ -21749,8 +21727,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_test_resource_agent_drive_path",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "test_resource_agent_drive_path()"
     },
     {
@@ -21760,8 +21738,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_test_resource_agent_drive_lists_tutes_without_filename_guess",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "test_resource_agent_drive_lists_tutes_without_filename_guess()"
     },
     {
@@ -21771,8 +21749,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_test_resource_agent_rag_path",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "test_resource_agent_rag_path()"
     },
     {
@@ -21782,8 +21760,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakelowconfidencerag",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "fakelowconfidencerag"
     },
     {
@@ -21793,8 +21771,8 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakelowconfidencerag_kb_search",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".kb_search()"
     },
     {
@@ -21804,8 +21782,8 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakecrm",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "fakecrm"
     },
     {
@@ -21815,8 +21793,8 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakecrm_init",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".__init__()"
     },
     {
@@ -21826,8 +21804,8 @@
       "source_location": "L150",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_fakecrm_create_escalation",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": ".create_escalation()"
     },
     {
@@ -21837,8 +21815,8 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_test_resource_agent_escalates_low_confidence_rag",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "test_resource_agent_escalates_low_confidence_rag()"
     },
     {
@@ -21848,8 +21826,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_rationale_1",
-      "community": 98,
-      "community_name": "Demo Chat Lifecycle 2",
+      "community": 67,
+      "community_name": "Chat Message Pipeline 4",
       "norm_label": "resource agent node tests (direct tool clients, no mcp)."
     },
     {
@@ -21859,8 +21837,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict",
-      "community": 239,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 19,
+      "community_name": "API Chat Schemas",
       "norm_label": "test_resource_agent_strict.py"
     },
     {
@@ -21870,8 +21848,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict_py_asyncio",
-      "community": 239,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 19,
+      "community_name": "API Chat Schemas",
       "norm_label": "asyncio"
     },
     {
@@ -21881,8 +21859,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict_test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
-      "community": 239,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 19,
+      "community_name": "API Chat Schemas",
       "norm_label": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled()"
     },
     {
@@ -21892,8 +21870,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_agent_strict_rationale_1",
-      "community": 239,
-      "community_name": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
+      "community": 19,
+      "community_name": "API Chat Schemas",
       "norm_label": "resource agent \u2014 in-process tools blocked when allow_inprocess_tools=false."
     },
     {
@@ -21903,8 +21881,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_resource_reply_errors.py"
     },
     {
@@ -21914,8 +21892,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_build_resource_rag_reply_hides_internal_error",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_build_resource_rag_reply_hides_internal_error()"
     },
     {
@@ -21925,8 +21903,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_build_resource_drive_reply_hides_internal_error",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_build_resource_drive_reply_hides_internal_error()"
     },
     {
@@ -21936,8 +21914,8 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_build_resource_drive_list_reply_omits_links",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_build_resource_drive_list_reply_omits_links()"
     },
     {
@@ -21947,8 +21925,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_kb_search_returns_generic_error_code",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_kb_search_returns_generic_error_code()"
     },
     {
@@ -21958,8 +21936,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_fakedrive",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "fakedrive"
     },
     {
@@ -21969,8 +21947,8 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_fakedrive_drive_search",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": ".drive_search()"
     },
     {
@@ -21980,8 +21958,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_fakedrive_drive_list",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": ".drive_list()"
     },
     {
@@ -21991,8 +21969,8 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_errorrag",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "errorrag"
     },
     {
@@ -22002,8 +21980,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_errorrag_kb_search",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": ".kb_search()"
     },
     {
@@ -22013,8 +21991,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_py_asyncio",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "asyncio"
     },
     {
@@ -22024,8 +22002,8 @@
       "source_location": "L84",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_test_resource_agent_rag_path_hides_search_failure",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "test_resource_agent_rag_path_hides_search_failure()"
     },
     {
@@ -22035,8 +22013,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ai_backend_tests_test_resource_reply_errors_rationale_1",
-      "community": 47,
-      "community_name": "CRM MCP Server",
+      "community": 37,
+      "community_name": "RAG Ingest Pipeline 5",
       "norm_label": "user-facing resource agent reply error sanitization."
     },
     {
@@ -22302,72 +22280,6 @@
       "community": 117,
       "community_name": "Dashboard Module 8",
       "norm_label": "validate v2 er schema tables exist in supabase when database_url is configured."
-    },
-    {
-      "label": "test_stt_service.py",
-      "file_type": "code",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "ai_backend_tests_test_stt_service",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "test_stt_service.py"
-    },
-    {
-      "label": "test_extract_llm_text_from_string_content()",
-      "file_type": "code",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L8",
-      "_origin": "ast",
-      "id": "ai_backend_tests_test_stt_service_test_extract_llm_text_from_string_content",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "test_extract_llm_text_from_string_content()"
-    },
-    {
-      "label": "test_extract_llm_text_from_content_blocks()",
-      "file_type": "code",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "ai_backend_tests_test_stt_service_test_extract_llm_text_from_content_blocks",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "test_extract_llm_text_from_content_blocks()"
-    },
-    {
-      "label": "test_extract_llm_text_prefers_text_property()",
-      "file_type": "code",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L23",
-      "_origin": "ast",
-      "id": "ai_backend_tests_test_stt_service_test_extract_llm_text_prefers_text_property",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "test_extract_llm_text_prefers_text_property()"
-    },
-    {
-      "label": "test_extract_llm_text_empty_blocks()",
-      "file_type": "code",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L31",
-      "_origin": "ast",
-      "id": "ai_backend_tests_test_stt_service_test_extract_llm_text_empty_blocks",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "test_extract_llm_text_empty_blocks()"
-    },
-    {
-      "label": "STT Gemini response parsing tests.",
-      "file_type": "rationale",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "ai_backend_tests_test_stt_service_rationale_1",
-      "community": 221,
-      "community_name": "conftest.py",
-      "norm_label": "stt gemini response parsing tests."
     },
     {
       "label": "test_student_resolver.py",
@@ -23531,8 +23443,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_database_session",
-      "community": 243,
-      "community_name": "_load_env",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "session.py"
     },
     {
@@ -23542,8 +23454,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "dashboard_backend_app_database_session_load_env",
-      "community": 243,
-      "community_name": "_load_env",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "_load_env()"
     },
     {
@@ -23564,8 +23476,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "dashboard_backend_app_database_session_rationale_10",
-      "community": 243,
-      "community_name": "_load_env",
+      "community": 61,
+      "community_name": "Workshop Exploration 2",
       "norm_label": "load env from dashboard, shared ai-backend, or repo root."
     },
     {
@@ -23817,8 +23729,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_enrollment",
-      "community": 68,
-      "community_name": "Chat Turn Runner",
+      "community": 104,
+      "community_name": "MCP Integration 3",
       "norm_label": "enrollment.py"
     },
     {
@@ -24004,8 +23916,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_escalation",
-      "community": 72,
-      "community_name": "Escalation Routes 4",
+      "community": 104,
+      "community_name": "MCP Integration 3",
       "norm_label": "escalation.py"
     },
     {
@@ -24059,8 +23971,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_invoice",
-      "community": 22,
-      "community_name": "Dashboard ORM Models",
+      "community": 104,
+      "community_name": "MCP Integration 3",
       "norm_label": "invoice.py"
     },
     {
@@ -24268,8 +24180,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "message_log.py"
     },
     {
@@ -24279,8 +24191,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_messagelog",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "messagelog"
     },
     {
@@ -24290,8 +24202,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_py_base",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "base"
     },
     {
@@ -24301,8 +24213,8 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_messagelog_repr",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": ".__repr__()"
     },
     {
@@ -24312,8 +24224,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "dashboard_backend_app_models_message_log_rationale_17",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "stores metadata about conversations between students and the ai assistant."
     },
     {
@@ -26281,8 +26193,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_dashboard_service",
-      "community": 63,
-      "community_name": "CRM MCP Server 2",
+      "community": 104,
+      "community_name": "MCP Integration 3",
       "norm_label": "dashboard_service.py"
     },
     {
@@ -26446,8 +26358,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_escalation_service",
-      "community": 72,
-      "community_name": "Escalation Routes 4",
+      "community": 104,
+      "community_name": "MCP Integration 3",
       "norm_label": "escalation_service.py"
     },
     {
@@ -26534,8 +26446,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "message_service.py"
     },
     {
@@ -26545,8 +26457,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_log_message",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "log_message()"
     },
     {
@@ -26556,8 +26468,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_py_session",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "session"
     },
     {
@@ -26567,8 +26479,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_py_chatchannel",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "chatchannel"
     },
     {
@@ -26578,8 +26490,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "messagelog",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "messagelog"
     },
     {
@@ -26589,8 +26501,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "dashboard_backend_app_services_message_service_rationale_17",
-      "community": 104,
-      "community_name": "MCP Integration 3",
+      "community": 34,
+      "community_name": "Chat Message Pipeline",
       "norm_label": "store a message interaction.      shared by:     - fastapi routes     - langgrap"
     },
     {
@@ -32342,8 +32254,8 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "ai_backend_docs_database_tables",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "tables"
     },
     {
@@ -32353,8 +32265,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "ai_backend_docs_database_tenants_org_config",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`tenants` (org_config)"
     },
     {
@@ -32364,8 +32276,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "ai_backend_docs_database_staff_users_staff_user",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`staff_users` (staff_user)"
     },
     {
@@ -32375,8 +32287,8 @@
       "source_location": "L153",
       "_origin": "ast",
       "id": "ai_backend_docs_database_audit_logs_audit_log",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`audit_logs` (audit_log)"
     },
     {
@@ -32386,8 +32298,8 @@
       "source_location": "L171",
       "_origin": "ast",
       "id": "ai_backend_docs_database_parent_guardians_parent_guardian",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`parent_guardians` (parent_guardian)"
     },
     {
@@ -32397,8 +32309,8 @@
       "source_location": "L188",
       "_origin": "ast",
       "id": "ai_backend_docs_database_students_student",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`students` (student)"
     },
     {
@@ -32408,8 +32320,8 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "ai_backend_docs_database_student_channels",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`student_channels`"
     },
     {
@@ -32419,8 +32331,8 @@
       "source_location": "L232",
       "_origin": "ast",
       "id": "ai_backend_docs_database_subject_classes_subject_class",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`subject_classes` (subject_class)"
     },
     {
@@ -32430,8 +32342,8 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "ai_backend_docs_database_enrollments_enrollment",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`enrollments` (enrollment)"
     },
     {
@@ -32441,8 +32353,8 @@
       "source_location": "L268",
       "_origin": "ast",
       "id": "ai_backend_docs_database_invoices_invoice",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`invoices` (invoice)"
     },
     {
@@ -32452,8 +32364,8 @@
       "source_location": "L287",
       "_origin": "ast",
       "id": "ai_backend_docs_database_bank_slip_uploads_bank_slip_upload",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`bank_slip_uploads` (bank_slip_upload)"
     },
     {
@@ -32463,8 +32375,8 @@
       "source_location": "L304",
       "_origin": "ast",
       "id": "ai_backend_docs_database_message_logs_message_log",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`message_logs` (message_log)"
     },
     {
@@ -32474,8 +32386,8 @@
       "source_location": "L321",
       "_origin": "ast",
       "id": "ai_backend_docs_database_escalations_escalation",
-      "community": 11,
-      "community_name": "Student Chat Deps 3",
+      "community": 105,
+      "community_name": "Admissions Onboarding 18",
       "norm_label": "`escalations` (escalation)"
     },
     {
@@ -33200,8 +33112,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_per_institute_onboarding",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 219,
+      "community_name": "Per-institute onboarding",
       "norm_label": "per-institute onboarding"
     },
     {
@@ -33211,8 +33123,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_folder_layout",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 219,
+      "community_name": "Per-institute onboarding",
       "norm_label": "folder layout"
     },
     {
@@ -33222,8 +33134,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_share_with_service_account",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 219,
+      "community_name": "Per-institute onboarding",
       "norm_label": "share with service account"
     },
     {
@@ -33233,8 +33145,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_folder_id",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 219,
+      "community_name": "Per-institute onboarding",
       "norm_label": "folder id"
     },
     {
@@ -33244,8 +33156,8 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_supabase_tenant_row",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 219,
+      "community_name": "Per-institute onboarding",
       "norm_label": "supabase tenant row"
     },
     {
@@ -33255,8 +33167,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_tutor_notes_rag_separate_step",
-      "community": 28,
-      "community_name": "Agent Orchestrator 2",
+      "community": 219,
+      "community_name": "Per-institute onboarding",
       "norm_label": "tutor notes (rag, separate step)"
     },
     {
@@ -33277,8 +33189,8 @@
       "source_location": "L149",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_testing",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "testing"
     },
     {
@@ -33288,8 +33200,8 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_prerequisites",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "prerequisites"
     },
     {
@@ -33299,8 +33211,8 @@
       "source_location": "L159",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_1_smoke_test_no_server",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "step 1 \u2014 smoke test (no server)"
     },
     {
@@ -33310,8 +33222,8 @@
       "source_location": "L169",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_2_mcp_subprocess_axiom_drive_only",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "step 2 \u2014 mcp subprocess (`axiom-drive` only)"
     },
     {
@@ -33321,8 +33233,8 @@
       "source_location": "L202",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_3_rest_debug_same_logic_as_mcp",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "step 3 \u2014 rest debug (same logic as mcp)"
     },
     {
@@ -33332,8 +33244,8 @@
       "source_location": "L223",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_step_4_full_chat_agent_mcp",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "step 4 \u2014 full chat (agent + mcp)"
     },
     {
@@ -33343,8 +33255,8 @@
       "source_location": "L246",
       "_origin": "ast",
       "id": "ai_backend_docs_drive_integration_router_disambiguation_drive_vs_rag",
-      "community": 228,
-      "community_name": "Testing",
+      "community": 28,
+      "community_name": "Agent Orchestrator 2",
       "norm_label": "router disambiguation (drive vs rag)"
     },
     {
@@ -35290,8 +35202,8 @@
       "source_location": "L806",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_phase_3_admissions_agent",
-      "community": 233,
-      "community_name": "Phase 3 \u2014 Admissions Agent",
+      "community": 127,
+      "community_name": "Dashboard Module 11",
       "norm_label": "phase 3 \u2014 admissions agent"
     },
     {
@@ -35301,8 +35213,8 @@
       "source_location": "L810",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_objective_810",
-      "community": 233,
-      "community_name": "Phase 3 \u2014 Admissions Agent",
+      "community": 127,
+      "community_name": "Dashboard Module 11",
       "norm_label": "objective"
     },
     {
@@ -35312,8 +35224,8 @@
       "source_location": "L814",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_features_814",
-      "community": 233,
-      "community_name": "Phase 3 \u2014 Admissions Agent",
+      "community": 127,
+      "community_name": "Dashboard Module 11",
       "norm_label": "features"
     },
     {
@@ -35323,8 +35235,8 @@
       "source_location": "L824",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_files_modules_824",
-      "community": 233,
-      "community_name": "Phase 3 \u2014 Admissions Agent",
+      "community": 127,
+      "community_name": "Dashboard Module 11",
       "norm_label": "files / modules"
     },
     {
@@ -35334,8 +35246,8 @@
       "source_location": "L837",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_reference_implementation_copy_do_not_invent_837",
-      "community": 233,
-      "community_name": "Phase 3 \u2014 Admissions Agent",
+      "community": 127,
+      "community_name": "Dashboard Module 11",
       "norm_label": "reference implementation (copy \u2014 do not invent)"
     },
     {
@@ -35345,8 +35257,8 @@
       "source_location": "L846",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_acceptance_criteria_846",
-      "community": 233,
-      "community_name": "Phase 3 \u2014 Admissions Agent",
+      "community": 127,
+      "community_name": "Dashboard Module 11",
       "norm_label": "acceptance criteria"
     },
     {
@@ -35433,8 +35345,8 @@
       "source_location": "L922",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_phase_5_payment_check_escalation_dashboard_apis",
-      "community": 127,
-      "community_name": "Dashboard Module 11",
+      "community": 221,
+      "community_name": "conftest.py",
       "norm_label": "phase 5 \u2014 payment check, escalation & dashboard apis"
     },
     {
@@ -35444,8 +35356,8 @@
       "source_location": "L928",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_objective_928",
-      "community": 127,
-      "community_name": "Dashboard Module 11",
+      "community": 221,
+      "community_name": "conftest.py",
       "norm_label": "objective"
     },
     {
@@ -35455,8 +35367,8 @@
       "source_location": "L932",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_features_original_plan_see_phase5_decisions_md_for_what_changed",
-      "community": 127,
-      "community_name": "Dashboard Module 11",
+      "community": 221,
+      "community_name": "conftest.py",
       "norm_label": "features *(original plan \u2014 see phase5_decisions.md for what changed)*"
     },
     {
@@ -35466,8 +35378,8 @@
       "source_location": "L947",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_files_modules_947",
-      "community": 127,
-      "community_name": "Dashboard Module 11",
+      "community": 221,
+      "community_name": "conftest.py",
       "norm_label": "files / modules"
     },
     {
@@ -35477,8 +35389,8 @@
       "source_location": "L961",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_reference_implementation_copy_do_not_invent_961",
-      "community": 127,
-      "community_name": "Dashboard Module 11",
+      "community": 221,
+      "community_name": "conftest.py",
       "norm_label": "reference implementation (copy \u2014 do not invent)"
     },
     {
@@ -35488,8 +35400,8 @@
       "source_location": "L970",
       "_origin": "ast",
       "id": "ai_backend_docs_technical_docs_ai_backend_roadmap_acceptance_criteria_970",
-      "community": 127,
-      "community_name": "Dashboard Module 11",
+      "community": 221,
+      "community_name": "conftest.py",
       "norm_label": "acceptance criteria"
     },
     {
@@ -62743,7 +62655,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L373",
+      "source_location": "L341",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_call_gemini",
@@ -75981,7 +75893,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L366",
+      "source_location": "L334",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service",
@@ -76030,17 +75942,6 @@
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service",
       "target": "ai_backend_src_services_media_stt_service_env_int",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L334",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text",
       "confidence_score": 1.0
     },
     {
@@ -76146,7 +76047,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L445",
+      "source_location": "L414",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service",
@@ -76157,7 +76058,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L544",
+      "source_location": "L513",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service",
@@ -76257,7 +76158,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L527",
+      "source_location": "L496",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76269,7 +76170,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L516",
+      "source_location": "L485",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76281,7 +76182,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L482",
+      "source_location": "L451",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76293,7 +76194,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L479",
+      "source_location": "L448",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76321,18 +76222,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_sttmetrics_to_dict",
-      "target": "ai_backend_src_services_media_stt_service_py_any",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "parameter_type",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L334",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_extract_llm_text",
       "target": "ai_backend_src_services_media_stt_service_py_any",
       "confidence_score": 1.0
     },
@@ -76375,7 +76264,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L469",
+      "source_location": "L438",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76387,7 +76276,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L554",
+      "source_location": "L523",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_impl",
@@ -76588,7 +76477,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L486",
+      "source_location": "L455",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76612,19 +76501,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L355",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_extract_llm_text",
-      "target": "ai_backend_src_services_media_stt_service_inmemorysttcache_get",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L475",
+      "source_location": "L444",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76636,7 +76513,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L519",
+      "source_location": "L488",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76648,7 +76525,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L474",
+      "source_location": "L443",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_audio",
@@ -76729,7 +76606,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L427",
+      "source_location": "L396",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_call_gemini",
@@ -76787,7 +76664,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L568",
+      "source_location": "L537",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_impl",
@@ -76810,7 +76687,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L558",
+      "source_location": "L527",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_impl",
@@ -76818,84 +76695,13 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L417",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_call_gemini",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L335",
+      "source_location": "L340",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_rationale_335",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service_test_extract_llm_text_empty_blocks",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L20",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service_test_extract_llm_text_from_content_blocks",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service_test_extract_llm_text_from_string_content",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service_test_extract_llm_text_prefers_text_property",
-      "target": "ai_backend_src_services_media_stt_service_extract_llm_text"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L372",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_rationale_372",
+      "source": "ai_backend_src_services_media_stt_service_rationale_340",
       "target": "ai_backend_src_services_media_stt_service_call_gemini",
       "confidence_score": 1.0
     },
@@ -76904,7 +76710,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L578",
+      "source_location": "L547",
       "weight": 1.0,
       "_origin": "ast",
       "source": "ai_backend_src_services_media_stt_service_transcribe_impl",
@@ -76915,10 +76721,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L453",
+      "source_location": "L422",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_rationale_453",
+      "source": "ai_backend_src_services_media_stt_service_rationale_422",
       "target": "ai_backend_src_services_media_stt_service_transcribe_audio",
       "confidence_score": 1.0
     },
@@ -76938,10 +76744,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "AI-backend/src/services/media/stt_service.py",
-      "source_location": "L552",
+      "source_location": "L521",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "ai_backend_src_services_media_stt_service_rationale_552",
+      "source": "ai_backend_src_services_media_stt_service_rationale_521",
       "target": "ai_backend_src_services_media_stt_service_transcribe_impl",
       "confidence_score": 1.0
     },
@@ -87168,61 +86974,6 @@
       "_origin": "ast",
       "source": "ai_backend_tests_test_schema_db_conn",
       "target": "ai_backend_tests_test_schema_py_fixture",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L31",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service",
-      "target": "ai_backend_tests_test_stt_service_test_extract_llm_text_empty_blocks",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service",
-      "target": "ai_backend_tests_test_stt_service_test_extract_llm_text_from_content_blocks",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service",
-      "target": "ai_backend_tests_test_stt_service_test_extract_llm_text_from_string_content",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L23",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service",
-      "target": "ai_backend_tests_test_stt_service_test_extract_llm_text_prefers_text_property",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "AI-backend/tests/test_stt_service.py",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "ai_backend_tests_test_stt_service_rationale_1",
-      "target": "ai_backend_tests_test_stt_service",
       "confidence_score": 1.0
     },
     {
@@ -109574,5 +109325,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5f1af5408cf1b1fa6568c3bfdf0183c3006243fa"
+  "built_at_commit": "12380f95b8585b3ca684a306fc92feba6998d1d6"
 }

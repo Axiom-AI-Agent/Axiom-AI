@@ -10,6 +10,7 @@ from loguru import logger
 from infrastructure.db.qdrant_client import collection_info, count_points
 from infrastructure.llm import get_default_embeddings
 from infrastructure.observability import observe
+from services.language import t
 from services.rag_service.rag_service import RAGService
 
 
@@ -40,6 +41,7 @@ class RagTool:
         tenant_id: str,
         query: str,
         class_ids: list[str] | None = None,
+        language: str = "en",
     ) -> str:
         if not tenant_id:
             return json.dumps({"ok": False, "error": "tenant_id is required"})
@@ -51,10 +53,7 @@ class RagTool:
                 return json.dumps(
                     {
                         "ok": True,
-                        "answer": (
-                            "I don't have tutor notes indexed for your class yet. "
-                            "Please ask your tutor directly or try again later."
-                        ),
+                        "answer": t("rag_not_indexed", language),
                         "citations": [],
                         "num_docs": 0,
                     }
@@ -70,15 +69,9 @@ class RagTool:
             answer = result.get("answer", "").strip()
             if not answer:
                 if class_ids:
-                    answer = (
-                        "I couldn't find tutor notes for your enrolled class(es) on that topic. "
-                        "Try rephrasing or ask your tutor in class."
-                    )
+                    answer = t("rag_empty_enrolled", language)
                 else:
-                    answer = (
-                        "I couldn't find relevant tutor notes for that question. "
-                        "Try rephrasing or ask your tutor in class."
-                    )
+                    answer = t("rag_empty", language)
             return json.dumps(
                 {
                     "ok": True,

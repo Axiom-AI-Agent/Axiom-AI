@@ -26,6 +26,7 @@ import {
   Student,
   SubjectClass,
   updateStudent,
+  updateStudentHumanMode,
 } from "@/lib/api";
 
 type ModalMode = "create" | "edit" | "enroll" | null;
@@ -235,7 +236,40 @@ export default function StudentsPage() {
       showToast("Could not delete the student.", "error");
     }
   }
+  async function handleHumanModeToggle(
+    student: Student,
+  ) {
+    try {
+      const updated =
+        await updateStudentHumanMode(
+          student.id,
+          !student.human_mode,
+          tenantId,
+        );
 
+      setStudents((current) =>
+        current.map((item) =>
+          item.id === student.id
+            ? updated
+            : item,
+        ),
+      );
+
+      showToast(
+        updated.human_mode
+          ? "AI disabled for this student."
+          : "AI responses enabled for this student.",
+        "success",
+      );
+    } catch (error) {
+      console.error(error);
+
+      showToast(
+        "Could not update AI mode.",
+        "error",
+      );
+    }
+  }
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -312,12 +346,15 @@ export default function StudentsPage() {
             : 'No students registered yet. Click "Add student" to create one.'}
         </div>
       ) : (
-        <StudentTable
-          students={filteredStudents}
-          onEdit={openEditModal}
-          onEnroll={openEnrollModal}
-          onDelete={(studentId) => void handleDelete(studentId)}
-        />
+          <StudentTable
+            students={filteredStudents}
+            onEdit={openEditModal}
+            onEnroll={openEnrollModal}
+            onDelete={(studentId) => void handleDelete(studentId)}
+            onToggleHumanMode={(student) =>
+              void handleHumanModeToggle(student)
+            }
+          />
       )}
 
       {(modalMode === "create" || modalMode === "edit") && (

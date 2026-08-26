@@ -10,6 +10,7 @@ from loguru import logger
 from infrastructure.config import DEV_TENANT_ID
 from infrastructure.db.supabase_client import get_supabase_client
 from services.identity.context import IdentityContext
+from services.language import normalize_language_pref
 
 _WHATSAPP_PREFIX = re.compile(r"^whatsapp:", re.IGNORECASE)
 _ENROLLED_STATUSES = frozenset({"active", "pending"})
@@ -120,6 +121,9 @@ class IdentityResolver:
         tenant_id = tenant["id"]
         session_id = build_session_id(tenant_id, phone)
         payments_enabled = bool(tenant.get("payments_enabled", True))
+        language_pref = normalize_language_pref(
+            student.get("language_pref") if student else None
+        )
 
         if not student:
             return IdentityContext(
@@ -128,14 +132,9 @@ class IdentityResolver:
                 tenant_name=tenant.get("name"),
                 phone=phone,
                 session_id=session_id,
-                payments_enabled=bool(
-                    tenant.get(
-                        "payments_enabled",
-                        True,
-                    )
-                ),
                 student_exists=False,
                 payments_enabled=payments_enabled,
+                language_pref=language_pref,
             )
 
         enrollments = self._lookup_enrollments(tenant_id, student["id"])
@@ -146,15 +145,11 @@ class IdentityResolver:
                 tenant_name=tenant.get("name"),
                 phone=phone,
                 session_id=session_id,
-                payments_enabled=bool(
-                    tenant.get(
-                        "payments_enabled",
-                        True,
-                    )
-                ),
                 student_exists=False,
                 payments_enabled=payments_enabled,
+                language_pref=language_pref,
             )
+
         class_names = self._lookup_class_names(
             tenant_id,
             [row["class_id"] for row in enrollments if row.get("class_id")],
@@ -171,6 +166,8 @@ class IdentityResolver:
             student_id=student["id"],
             phone=phone,
             session_id=session_id,
+            human_mode=bool(student.get("human_mode", False)),
+            payments_enabled=payments_enabled,
             student_exists=True,
             student_name=student.get("name"),
             is_enrolled=bool(enrolled_rows),
@@ -181,6 +178,7 @@ class IdentityResolver:
             enrolled_class_ids=tuple(
                 row["class_id"] for row in enrolled_rows if row.get("class_id")
             ),
+            language_pref=language_pref,
         )
 
     @staticmethod
@@ -195,7 +193,7 @@ class IdentityResolver:
         client = get_supabase_client()
         response = (
             client.table("students")
-            .select("id, name, phone, human_mode")
+            .select("id, name, phone, human_mode, language_pref")
             .eq("tenant_id", tenant_id)
             .eq("phone", phone)
             .limit(1)

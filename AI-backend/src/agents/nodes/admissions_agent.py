@@ -24,6 +24,7 @@ from services.admissions.onboarding_session_store import (
     OnboardingSession,
     get_onboarding_session_store,
 )
+from services.language import normalize_language_pref, t
 
 
 @dataclass
@@ -49,10 +50,11 @@ class AdmissionsAgent:
         phone = state.get("phone") or ""
         user_message = _last_user_text(state)
         tool_log: list[str] = []
+        self.flow.language = normalize_language_pref(state.get("language_pref"))
 
         if not tenant_id or not phone:
             return AdmissionsAgentResult(
-                answer="I need your contact details to complete registration. Please try again.",
+                answer=t("need_contact_details", self.flow.language),
             )
 
         if looks_like_institute_info(user_message):
@@ -201,7 +203,6 @@ class AdmissionsAgent:
         answer = self.flow.class_catalog_message(
             classes=classes,
             tenant_name=tenant_name,
-            intro=f"Here are the classes currently available at {tenant_name}:",
         )
         return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
 
@@ -227,10 +228,7 @@ class AdmissionsAgent:
 
         if session is None or not session.active:
             return AdmissionsAgentResult(
-                answer=(
-                    f"Thanks for your interest in {tenant_name}! "
-                    f"When you're ready to enroll, just say you'd like to join a class."
-                ),
+                answer=self.flow._t("onboarding_interest", tenant_name=tenant_name),
                 tool_output="\n".join(tool_log),
             )
 
@@ -281,7 +279,10 @@ class AdmissionsAgent:
                     tool_log=tool_log,
                 )
 
-        if self.flow._looks_like_off_topic_during_onboarding(user_message):
+        if (
+            self.flow._looks_like_off_topic_during_onboarding(user_message)
+            and not (ob_state.awaiting_confirmation and self.flow._looks_like_reject(user_message))
+        ):
             answer = self.flow.prompt_for_step(
                 ob_state.next_step,
                 tenant_name=tenant_name,
@@ -306,6 +307,13 @@ class AdmissionsAgent:
 
         session = OnboardingSession.from_state(ob_state)
         self.session_store.save(tenant_id=tenant_id, phone=phone, session=session)
+
+        if ob_state.restarted:
+            tool_log.append("onboarding_session: restarted")
+            return AdmissionsAgentResult(
+                answer=self.flow._t("onboarding_restart"),
+                tool_output="\n".join(tool_log),
+            )
 
         if ob_state.awaiting_confirmation:
             class_row = next(
@@ -365,7 +373,7 @@ class AdmissionsAgent:
         slots = ob_state.slots
         if not (slots.name and slots.school and slots.district and slots.class_id):
             return AdmissionsAgentResult(
-                answer="Some enrollment details are missing. Let's start again — what is your full name?",
+                answer=self.flow._t("missing_enrollment_details"),
                 tool_output="\n".join(tool_log),
             )
 
@@ -376,6 +384,7 @@ class AdmissionsAgent:
             school=slots.school,
             district=slots.district,
             class_id=slots.class_id,
+            language_pref=self.flow.language,
         )
         tool_log.append(f"commit_onboarding: {json.dumps(payload)[:400]}")
         self.session_store.clear(tenant_id=tenant_id, phone=phone)

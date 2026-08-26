@@ -55,3 +55,30 @@ def test_kb_ingest_status():
     assert payload["ok"] is True
     assert payload["points_count"] == 12
     assert payload["ready"] is True
+
+
+def test_rag_service_retrieves_cleaned_query_keeps_original_question():
+    from services.rag_service.rag_service import RAGService
+
+    svc = RAGService.__new__(RAGService)
+    svc.retriever = MagicMock()
+    svc.retriever.invoke.return_value = []
+    svc.llm = MagicMock()
+    result = svc.generate("Mata velocity aka gena kiyala dennako")
+    svc.retriever.invoke.assert_called_once_with("velocity")
+    svc.llm.invoke.assert_not_called()
+    assert result["num_docs"] == 0
+
+    class FakeDoc:
+        page_content = "Velocity is displacement over time."
+        metadata = {"title": "Lesson 5", "lesson": "5", "score": 0.9}
+
+    svc.retriever.invoke.return_value = [FakeDoc()]
+    svc.llm.invoke.return_value = MagicMock(content="Velocity eka displacement / time.")
+    result = svc.generate("Mata velocity aka gena kiyala dennako")
+    prompt_messages = svc.llm.invoke.call_args[0][0]
+    joined = " ".join(
+        getattr(msg, "content", str(msg)) for msg in prompt_messages
+    )
+    assert "Mata velocity aka gena kiyala dennako" in joined
+    assert result["answer"] == "Velocity eka displacement / time."

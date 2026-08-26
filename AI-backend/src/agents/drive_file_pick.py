@@ -32,6 +32,7 @@ class DrivePickSession:
     folder: str
     expires_at: datetime
     tenant_name: str = "your tuition centre"
+    language: str = "en"
 
 
 def parse_file_pick_index(message: str) -> int | None:
@@ -88,12 +89,14 @@ class DrivePickStore:
         files: list[DrivePickFile],
         folder: str,
         tenant_name: str = "your tuition centre",
+        language: str = "en",
     ) -> None:
         self._purge_expired()
         self._by_key[self._key(tenant_id=tenant_id, session_id=session_id, user_id=user_id)] = DrivePickSession(
             files=list(files),
             folder=folder,
             tenant_name=tenant_name,
+            language=language,
             expires_at=self._now() + self._ttl,
         )
 
@@ -154,6 +157,7 @@ def try_consume_drive_pick(
             files=[{"name": f.name, "folder": f.folder} for f in pending.files],
             folder=pending.folder,
             out_of_range=True,
+            language=pending.language,
         )
 
     chosen = pending.files[index - 1]
@@ -162,4 +166,5 @@ def try_consume_drive_pick(
         name=chosen.name,
         link=chosen.link,
         tenant_name=pending.tenant_name,
+        language=pending.language,
     )

@@ -6,8 +6,21 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from services.language import normalize_language_pref, t
+
 _CONFIRM_YES = re.compile(
-    r"\b(yes|yeah|yep|agree|ok|okay|confirm|i agree|sure|looks good|proceed)\b",
+    r"\b(yes|yeah|yep|agree|ok|okay|confirm|i agree|sure|looks good|proceed|oww|hari)\b"
+    r"|ඔව්|ඔව්වා|හරි|ඔව් හරි"
+    r"|ஆம்|ஆமாம்|சரி",
+    re.IGNORECASE,
+)
+_CONFIRM_NO = re.compile(
+    r"\b("
+    r"no|nope|nah|cancel|wrong|change|incorrect|mistake|"
+    r"start over|start again|not right"
+    r")\b"
+    r"|නෑ|එපා"
+    r"|இல்லை|வேண்டாம்",
     re.IGNORECASE,
 )
 _EDIT_FIELD_PATTERN = re.compile(
@@ -65,7 +78,10 @@ _ENROLLMENT_STATUS_QUERY = re.compile(
 _ENROLLMENT_INTENT = re.compile(
     r"\b(enroll|register|sign up|admission|new student)\b|"
     r"\bjoin(?:\s+(?:a|an|the))?\s*(?:class|course)?\b|"
-    r"want to join|like to join|study here",
+    r"want to join|like to join|study here|"
+    r"join karanna|enroll wenna|class eka join|"
+    r"ලියාපදිංචි|එකතු වෙ|"
+    r"பதிவு|சேர|வகுப்பில் சேர",
     re.IGNORECASE,
 )
 _OFF_TOPIC_SLOT_PATTERNS = (
@@ -133,6 +149,7 @@ class OnboardingState:
     pending_payment: bool = False
     awaiting_review: bool = False
     awaiting_confirmation: bool = False
+    restarted: bool = False
     ambiguous_classes: list[dict[str, Any]] = field(default_factory=list)
 
 
@@ -140,6 +157,12 @@ class OnboardingFlow:
     """Determine onboarding progress and extract slots from user messages."""
 
     COLLECTION_STEPS = ("name", "school", "district", "class")
+
+    def __init__(self, *, language: str = "en") -> None:
+        self.language = normalize_language_pref(language)
+
+    def _t(self, key: str, **kwargs: Any) -> str:
+        return t(key, self.language, **kwargs)
 
     def load_from_student(
         self,
@@ -196,6 +219,10 @@ class OnboardingFlow:
             return state
 
         if state.awaiting_confirmation:
+            if self._looks_like_reject(text):
+                reset = self.start_collection()
+                reset.restarted = True
+                return reset
             if self._looks_like_confirm(text):
                 state.slots.confirmed = True
                 state.complete = True
@@ -335,16 +362,11 @@ class OnboardingFlow:
                 tenant_name=tenant_name,
                 student_name=student_name,
             )
+        name_suffix = f", {first}" if first else ""
         prompts = {
-            "name": (
-                f"Hi! Welcome to {tenant_name} — I'll help you get enrolled. "
-                f"What's your full name?"
-            ),
-            "school": (
-                f"Nice to meet you{', ' + first if first else ''}! "
-                f"Which school do you go to?"
-            ),
-            "district": "Got it. Which district are you in?",
+            "name": self._t("onboarding_ask_name", tenant_name=tenant_name),
+            "school": self._t("onboarding_ask_school", name_suffix=name_suffix),
+            "district": self._t("onboarding_ask_district"),
         }
         return prompts.get(step or "name", prompts["name"])
 
@@ -360,23 +382,23 @@ class OnboardingFlow:
         if intro:
             header = intro
         elif first:
-            header = (
-                f"Thanks, {first}! At {tenant_name} we currently offer these classes:"
+            header = self._t(
+                "class_catalog_header_named",
+                first=first,
+                tenant_name=tenant_name,
             )
         else:
-            header = f"Here are the classes available at {tenant_name}:"
+            header = self._t("class_catalog_header", tenant_name=tenant_name)
 
         lines = [header, ""]
         lines.extend(self._format_class_lines(classes))
         lines.append("")
-        lines.append(
-            "Reply with the class name or number when you're ready to pick one."
-        )
+        lines.append(self._t("class_catalog_pick"))
         return "\n".join(lines)
 
     def _format_class_lines(self, classes: list[dict[str, Any]]) -> list[str]:
         if not classes:
-            return ["We don't have any open classes listed right now — please contact the office."]
+            return [self._t("class_catalog_empty")]
         lines: list[str] = []
         for idx, cls in enumerate(classes, start=1):
             label = cls.get("name") or f"{cls.get('grade', '')} {cls.get('subject', '')}".strip()
@@ -399,26 +421,26 @@ class OnboardingFlow:
             or "your selected class"
         )
         fee = (class_row or {}).get("fee_amount")
-        fee_line = f"\nClass fee: LKR {fee}/month." if fee is not None else ""
+        fee_line = self._t("fee_line", fee=fee) if fee is not None else ""
         contact = phone or "your WhatsApp number"
-        return (
-            f"Please review your enrollment details for {tenant_name}:\n\n"
-            f"• Full name: {slots.name}\n"
-            f"• Contact number: {contact}\n"
-            f"• School: {slots.school}\n"
-            f"• District: {slots.district}\n"
-            f"• Course: {class_label}{fee_line}\n\n"
-            f"By confirming, you agree to our data policy.\n"
-            f"Shall I confirm your enrollment? Reply YES to proceed."
+        return self._t(
+            "review_confirmation",
+            tenant_name=tenant_name,
+            name=slots.name,
+            contact=contact,
+            school=slots.school,
+            district=slots.district,
+            class_label=class_label,
+            fee_line=fee_line,
         )
 
     def disambiguation_prompt(self, classes: list[dict[str, Any]]) -> str:
         lines = [
-            "A few classes match what you said — which one would you like?",
+            self._t("disambiguation_header"),
             "",
             *self._format_class_lines(classes),
             "",
-            "Reply with the number or full class name.",
+            self._t("disambiguation_pick"),
         ]
         return "\n".join(lines)
 
@@ -434,14 +456,10 @@ class OnboardingFlow:
             or f"{(class_row or {}).get('grade', '')} {(class_row or {}).get('subject', '')}".strip()
             or "your selected class"
         )
-        return (
-            f"Welcome to {tenant_name}! Thank you for your enrollment in {class_label}.\n\n"
-            f"Our staff will review your request and get back to you soon. "
-            f"Please proceed with the payment to continue your enrollment — "
-            f"send a photo of your payment receipt / bank slip on WhatsApp.\n\n"
-            f"We also have tutes and past papers for your class. "
-            f"If you'd like them now, just ask me (e.g. “send me a past paper”) — "
-            f"or you can collect them physically from the class."
+        return self._t(
+            "enrollment_welcome",
+            tenant_name=tenant_name,
+            class_label=class_label,
         )
 
     def payment_pending_message(
@@ -457,26 +475,20 @@ class OnboardingFlow:
             or "your selected class"
         )
         fee = (class_row or {}).get("fee_amount")
-        fee_line = f"\nClass fee: LKR {fee}/month." if fee is not None else ""
-        return (
-            f"Thanks, {slots.name}! Your application for {class_label} at "
-            f"{tenant_name} is almost complete.{fee_line}\n\n"
-            f"Please send a photo of your payment receipt / bank slip on WhatsApp "
-            f"to confirm your enrollment."
+        fee_line = self._t("fee_line", fee=fee) if fee is not None else ""
+        return self._t(
+            "payment_pending",
+            name=slots.name,
+            class_label=class_label,
+            tenant_name=tenant_name,
+            fee_line=fee_line,
         )
 
     def receipt_received_message(self, *, tenant_name: str) -> str:
-        return (
-            f"Thanks! We received your payment receipt for {tenant_name}. "
-            f"Our team is reviewing it now — you'll get a confirmation message once "
-            f"your enrollment is approved."
-        )
+        return self._t("receipt_received", tenant_name=tenant_name)
 
     def awaiting_review_message(self, *, tenant_name: str) -> str:
-        return (
-            f"Your payment receipt is already with our team at {tenant_name}. "
-            f"We'll message you as soon as your enrollment is confirmed."
-        )
+        return self._t("awaiting_review", tenant_name=tenant_name)
 
     def enrollment_success_message(
         self,
@@ -491,10 +503,11 @@ class OnboardingFlow:
             or f"{(class_row or {}).get('grade', '')} {(class_row or {}).get('subject', '')}".strip()
             or "your class"
         )
-        return (
-            f"Great news, {name}! 🎉\n"
-            f"You are successfully enrolled in {class_label} at {tenant_name}.\n"
-            f"Welcome — class details and fee info will follow shortly."
+        return self._t(
+            "enrollment_success",
+            name=name,
+            class_label=class_label,
+            tenant_name=tenant_name,
         )
 
     def payment_rejected_message(
@@ -504,10 +517,7 @@ class OnboardingFlow:
         tenant_name: str,
     ) -> str:
         name = student.get("name") or "there"
-        return (
-            f"Hi {name}, we couldn't verify your payment receipt at {tenant_name}. "
-            f"Please send a clear photo of your bank slip again, or contact the office for help."
-        )
+        return self._t("payment_rejected", name=name, tenant_name=tenant_name)
 
     def already_registered_message(
         self,
@@ -518,17 +528,15 @@ class OnboardingFlow:
     ) -> str:
         name = student.get("name") or "there"
         class_label = (class_row or {}).get("name") or "your class"
-        return (
-            f"Hi {name}! You're already registered at {tenant_name} "
-            f"for {class_label}. How can I help you today?"
+        return self._t(
+            "already_registered",
+            name=name,
+            tenant_name=tenant_name,
+            class_label=class_label,
         )
 
     def not_registered_status_message(self, *, tenant_name: str) -> str:
-        return (
-            f"I don't have you registered at {tenant_name} yet, "
-            f"so you're not enrolled in a class.\n\n"
-            f"If you'd like to join, just say I'd like to enroll and I'll help you get started."
-        )
+        return self._t("not_registered", tenant_name=tenant_name)
 
     def _first_missing_step(self, slots: OnboardingSlots) -> str | None:
         for step in self.COLLECTION_STEPS:
@@ -546,7 +554,12 @@ class OnboardingFlow:
         return bool(slots.name and slots.school and slots.district and slots.class_id)
 
     def _looks_like_confirm(self, text: str) -> bool:
+        if self._looks_like_reject(text):
+            return False
         return bool(_CONFIRM_YES.search(text.strip()))
+
+    def _looks_like_reject(self, text: str) -> bool:
+        return bool(_CONFIRM_NO.search(text.strip()))
 
     def _looks_like_class_catalog_request(self, text: str) -> bool:
         return bool(_CLASS_CATALOG.search(text.strip()))

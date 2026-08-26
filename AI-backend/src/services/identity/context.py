@@ -23,8 +23,7 @@ class IdentityContext:
     enrollment_status: str = "none"
     active_class_names: tuple[str, ...] = ()
     enrolled_class_ids: tuple[str, ...] = ()
-    human_mode: bool = False
-    payments_enabled: bool = True
+    language_pref: str = "en"
 
     @property
     def memory_user_id(self) -> str:

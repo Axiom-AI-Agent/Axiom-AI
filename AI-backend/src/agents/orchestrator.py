@@ -271,10 +271,12 @@ class AgentOrchestrator:
         memory_context = state.get("memory_context") or ""
         tenant_name = state.get("tenant_name") or "your tuition centre"
         student_profile_context = state.get("student_profile_context") or ""
+        language_pref = state.get("language_pref") or "en"
         system_prompt = build_direct_system_prompt(
             memory_context=memory_context,
             tenant_name=tenant_name,
             student_profile_context=student_profile_context,
+            language_pref=language_pref,
         )
         messages = [
             SystemMessage(content=system_prompt),
@@ -339,7 +341,10 @@ class AgentOrchestrator:
             route = out.get("route", "unknown").upper()
             combined += f"=== {route} AGENT ===\n{out.get('answer', '')}\n\n"
 
-        system_prompt = build_merge_system_prompt(memory_context=memory_context)
+        system_prompt = build_merge_system_prompt(
+            memory_context=memory_context,
+            language_pref=state.get("language_pref") or "en",
+        )
         messages = [
             SystemMessage(content=f"{system_prompt}\n\n=== FRAGMENTS ===\n{combined}"),
             HumanMessage(content=user_message),
