@@ -5,7 +5,7 @@ from typing import Literal
 from agents.tools.memory_tool import (
     MemoryTool,
 )
-
+from services.language import t
 
 ConfirmationDecision = Literal[
     "yes",
@@ -34,6 +34,14 @@ YES_REPLIES = {
     "go ahead",
     "do it",
     "send it",
+    "oww",
+    "hari",
+    "ඔව්",
+    "ඔව්වා",
+    "හරි",
+    "ஆம்",
+    "ஆமாம்",
+    "சரி",
 }
 
 
@@ -50,6 +58,10 @@ NO_REPLIES = {
     "its okay",
     "never mind",
     "nevermind",
+    "නෑ",
+    "එපා",
+    "இல்லை",
+    "வேண்டாம்",
 }
 
 
@@ -100,14 +112,17 @@ def get_pending_low_confidence_question(
     if not pairs:
         return None
 
-    user_message, assistant_message = (
-        pairs[-1]
-    )
+    last = pairs[-1]
+    if not isinstance(last, (tuple, list)) or len(last) < 2:
+        return None
+    user_message, assistant_message = last[0], last[1]
+    if not assistant_message:
+        return None
 
     if (
-        CONFIRMATION_TEXT.lower()
-        not in
-        assistant_message.lower()
+        CONFIRMATION_TEXT.lower() not in assistant_message.lower()
+        and t("escalation_confirm", "si").lower() not in assistant_message.lower()
+        and t("escalation_confirm", "ta").lower() not in assistant_message.lower()
     ):
         return None
 

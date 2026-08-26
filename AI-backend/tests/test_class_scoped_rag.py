@@ -23,6 +23,7 @@ class TrackingRag:
         tenant_id: str,
         query: str,
         class_ids: list[str] | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         self.last_class_ids = class_ids
         return {"ok": True, "answer": "Physics only.", "citations": []}

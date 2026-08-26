@@ -29,6 +29,7 @@ from domain.escalation_reasons import LOW_RAG_CONFIDENCE
 from infrastructure.config import (
     RETRIEVAL_ESCALATION_THRESHOLD,
 )
+from services.language import t
 
 ResourceSubPath = Literal["drive", "rag"]
 
@@ -83,6 +84,7 @@ class RagClient(Protocol):
         tenant_id: str,
         query: str,
         class_ids: list[str] | None = None,
+        language: str = "en",
     ) -> dict[str, Any]: ...
 
 
@@ -154,8 +156,14 @@ class DirectRagClient:
         tenant_id: str,
         query: str,
         class_ids: list[str] | None = None,
+        language: str = "en",
     ) -> dict[str, Any]:
-        raw = self._tool.kb_search(tenant_id=tenant_id, query=query, class_ids=class_ids)
+        raw = self._tool.kb_search(
+            tenant_id=tenant_id,
+            query=query,
+            class_ids=class_ids,
+            language=language,
+        )
         return json.loads(raw)
 
 
@@ -201,6 +209,7 @@ class McpRagClient:
         tenant_id: str,
         query: str,
         class_ids: list[str] | None = None,
+        language: str = "en",
     ) -> dict[str, Any]:
         tool = self._tools.get("kb_search")
         if tool is None:
@@ -294,6 +303,7 @@ class ResourceAgent:
             tenant_id=tenant_id,
             query=user_message,
             class_ids=enrolled_class_ids,
+            language=state.get("language_pref") or "en",
         )
 
         tool_log.append(
@@ -366,12 +376,9 @@ class ResourceAgent:
                 )
 
             return ResourceAgentResult(
-                answer=(
-                    "I couldn't find enough reliable "
-                    "information in your tutor's notes "
-                    "to answer that confidently. "
-                    "I've sent this to your tutor "
-                    "for review."
+                answer=t(
+                    "rag_low_confidence_escalated",
+                    state.get("language_pref") or "en",
                 ),
                 tool_output="\n".join(
                     tool_log

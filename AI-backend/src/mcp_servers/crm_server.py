@@ -114,6 +114,7 @@ def commit_onboarding(
     school: str,
     district: str,
     class_id: str,
+    language_pref: str | None = None,
 ) -> str:
     """Create student profile and pending enrollment after explicit confirmation."""
     return _init().commit_onboarding(
@@ -123,6 +124,7 @@ def commit_onboarding(
         school=school,
         district=district,
         class_id=class_id,
+        language_pref=language_pref,
     )
 
 

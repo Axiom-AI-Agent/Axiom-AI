@@ -74,6 +74,10 @@ ONBOARDING CONTEXT (always in_scope):
 When in doubt: if it could reasonably be about this centre, tuition, classes,
 learning, or continuing enrollment → in_scope.
 
+Language does not change scope: Sinhala, Tamil, Singlish, Tanglish, and mixed
+English messages about tuition are in_scope. Do not mark a message out_of_scope
+just because it is not in English.
+
 OUT-OF-SCOPE (choose out_of_scope):
   • General world knowledge with no tuition link (capitals, presidents, trivia)
   • Coding, politics, unrelated sports/news, spam, random gibberish
@@ -110,6 +114,9 @@ Rules:
   • Do NOT invent student IDs, class IDs, or payment references — use null if missing.
   • Resource + payment in one message → TWO route objects when both intents are clear.
   • Today is {today}.
+  • Messages may be English, Sinhala, Tamil, Singlish, or Tanglish. Route by intent,
+    not by language. "class eka join karanna", "பாடம் explain பண்ணு", and Sinhala/Tamil
+    script questions use the same routes as their English equivalents.
 """
 
 _ROUTER_USER_FALLBACK = """\
@@ -471,25 +478,41 @@ def build_direct_system_prompt(
     memory_context: str = "",
     tenant_name: str = "your tuition centre",
     student_profile_context: str = "",
+    language_pref: str = "en",
 ) -> str:
-    return fetch_prompt(
+    from services.language import with_language_policy
+
+    prompt = fetch_prompt(
         LANGFUSE_PROMPT_NAMES["direct_system"],
         fallback=_DIRECT_SYSTEM_FALLBACK,
         memory_context=memory_context or "(none)",
         tenant_name=tenant_name,
         student_profile_context=student_profile_context or "(no student profile on file)",
     )
+    return with_language_policy(prompt, language_pref)
 
 
-def build_merge_system_prompt(*, memory_context: str = "") -> str:
-    return fetch_prompt(
+def build_merge_system_prompt(
+    *,
+    memory_context: str = "",
+    language_pref: str = "en",
+) -> str:
+    from services.language import with_language_policy
+
+    prompt = fetch_prompt(
         LANGFUSE_PROMPT_NAMES["merge_system"],
         fallback=_MERGE_SYSTEM_FALLBACK,
         memory_context=memory_context or "(none)",
     )
+    return with_language_policy(prompt, language_pref)
 
 
-def get_out_of_scope_reply() -> str:
+def get_out_of_scope_reply(*, language: str = "en") -> str:
+    from services.language import normalize_language_pref, t
+
+    lang = normalize_language_pref(language)
+    if lang != "en":
+        return t("out_of_scope", lang)
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["out_of_scope_reply"],
         fallback=_OUT_OF_SCOPE_REPLY_FALLBACK,
@@ -635,7 +658,16 @@ def get_payment_stub_reply(*, tenant_name: str = "our tuition centre") -> str:
     )
 
 
-def build_payment_ack_reply(*, tenant_name: str = "our tuition centre") -> str:
+def build_payment_ack_reply(
+    *,
+    tenant_name: str = "our tuition centre",
+    language: str = "en",
+) -> str:
+    from services.language import normalize_language_pref, t
+
+    lang = normalize_language_pref(language)
+    if lang != "en":
+        return t("payment_ack", lang, tenant_name=tenant_name)
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["payment_ack"],
         fallback=_PAYMENT_ACK_FALLBACK,
@@ -643,7 +675,16 @@ def build_payment_ack_reply(*, tenant_name: str = "our tuition centre") -> str:
     )
 
 
-def build_payment_missing_media_reply(*, tenant_name: str = "our tuition centre") -> str:
+def build_payment_missing_media_reply(
+    *,
+    tenant_name: str = "our tuition centre",
+    language: str = "en",
+) -> str:
+    from services.language import normalize_language_pref, t
+
+    lang = normalize_language_pref(language)
+    if lang != "en":
+        return t("payment_missing_media", lang, tenant_name=tenant_name)
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["payment_missing_media"],
         fallback=_PAYMENT_MISSING_MEDIA_FALLBACK,
@@ -658,7 +699,16 @@ def get_escalation_stub_reply() -> str:
     )
 
 
-def build_escalation_ack_reply(*, tenant_name: str = "our tuition centre") -> str:
+def build_escalation_ack_reply(
+    *,
+    tenant_name: str = "our tuition centre",
+    language: str = "en",
+) -> str:
+    from services.language import normalize_language_pref, t
+
+    lang = normalize_language_pref(language)
+    if lang != "en":
+        return t("escalation_ack", lang, tenant_name=tenant_name)
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["escalation_ack"],
         fallback=_ESCALATION_ACK_FALLBACK,

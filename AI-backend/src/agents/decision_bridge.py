@@ -14,6 +14,7 @@ from langchain_core.messages import AnyMessage
 from agents.decision_state import DecisionState
 from agents.prompts import get_out_of_scope_reply
 from agents.state import AgentState
+from services.language import normalize_language_pref
 
 
 def map_decision_to_agent_state(
@@ -32,6 +33,7 @@ def map_decision_to_agent_state(
     enrolled_class_ids: list[str] | None = None,
     student_profile_context: str = "",
     media_url: str | None = None,
+    language_pref: str = "en",
 ) -> AgentState:
     patch: dict[str, Any] = {
         "messages": messages,
@@ -47,12 +49,15 @@ def map_decision_to_agent_state(
         "enrolled_class_ids": list(enrolled_class_ids or []),
         "student_profile_context": student_profile_context,
         "media_url": media_url,
+        "language_pref": normalize_language_pref(language_pref),
         "guardrail": decision_out.get("guardrail", "in_scope"),
         "verdict": decision_out.get("verdict", "proceed"),
     }
 
     if patch["verdict"] == "out_of_scope":
-        patch["final_answer"] = decision_out.get("final_answer") or get_out_of_scope_reply()
+        patch["final_answer"] = get_out_of_scope_reply(
+            language=patch["language_pref"]
+        )
         return patch  # type: ignore[return-value]
 
     decision = decision_out.get("decision")

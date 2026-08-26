@@ -27,7 +27,7 @@ class FakeDrive:
 
 
 class FakeRag:
-    async def kb_search(self, *, tenant_id: str, query: str, class_ids: list[str] | None = None):
+    async def kb_search(self, *, tenant_id: str, query: str, class_ids: list[str] | None = None, **kwargs):
         return {
             "ok": True,
             "answer": "Velocity is speed with direction.",

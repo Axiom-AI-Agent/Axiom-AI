@@ -15,6 +15,7 @@ from domain.escalation_reasons import (
     LOW_RAG_CONFIDENCE,
     TALK_TO_TUTOR,
 )
+from services.language import t
 
 
 @dataclass
@@ -44,10 +45,11 @@ class EscalationAgent:
         student_id = state.get("user_id") or state.get("student_id") or ""
         user_message = _last_user_text(state)
         tool_log: list[str] = []
+        language = state.get("language_pref") or "en"
 
         if not tenant_id or not student_id:
             return EscalationAgentResult(
-                answer="I'll connect you with a tutor shortly. Please try again if this persists.",
+                answer=t("escalation_need_id", language),
             )
 
         reason_code = (
@@ -90,14 +92,11 @@ class EscalationAgent:
             )
 
         if reason_code == LOW_RAG_CONFIDENCE:
-            answer = (
-                "Done — I've sent your question "
-                f"to {tenant_name} for review. "
-                "A tutor can follow up with you."
-            )
+            answer = t("escalation_low_confidence", language, tenant_name=tenant_name)
         else:
             answer = build_escalation_ack_reply(
-                tenant_name=tenant_name
+                tenant_name=tenant_name,
+                language=language,
             )
 
         return EscalationAgentResult(

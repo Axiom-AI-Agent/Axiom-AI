@@ -95,6 +95,7 @@ class AdmissionsDbClient:
         school: str,
         district: str,
         consent: bool = True,
+        language_pref: str | None = None,
     ) -> dict[str, Any]:
         existing = self.get_student(tenant_id=tenant_id, phone=phone)
         if existing:
@@ -113,6 +114,8 @@ class AdmissionsDbClient:
         }
         if consent:
             payload["consent_at"] = now
+        if language_pref:
+            payload["language_pref"] = language_pref
 
         client = get_supabase_client()
         response = client.table("students").insert(payload).execute()

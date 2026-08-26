@@ -92,6 +92,7 @@ class CrmTool:
         school: str,
         district: str,
         class_id: str,
+        language_pref: str | None = None,
     ) -> str:
         """Atomic post-confirmation write: student profile + pending enrollment."""
         existing = self.db.get_student(tenant_id=tenant_id, phone=phone)
@@ -128,6 +129,7 @@ class CrmTool:
                     school=school,
                     district=district,
                     consent=True,
+                    language_pref=language_pref,
                 )
                 created_new_student = True
             enrollment = self.db.create_enrollment(

@@ -5,6 +5,7 @@ from __future__ import annotations
 from agents.tools.memory_tool import MemoryTool
 from services.admissions.onboarding_route import onboarding_router_context_hint
 from services.identity.context import IdentityContext
+from services.language import LANGUAGE_NAMES, normalize_language_pref
 
 
 def format_student_profile(ctx: IdentityContext) -> str:
@@ -25,6 +26,8 @@ def format_student_profile(ctx: IdentityContext) -> str:
             lines.append(f"Status: Pending enrollment in {classes} (payment may be awaiting approval)")
     else:
         lines.append("Status: Registered but not enrolled in a class yet")
+    lang = normalize_language_pref(ctx.language_pref)
+    lines.append(f"Preferred language: {LANGUAGE_NAMES[lang]} ({lang})")
     return "\n".join(lines)
 
 

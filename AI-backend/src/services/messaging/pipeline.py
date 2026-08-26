@@ -12,9 +12,10 @@ from domain.enums import ChatChannel
 from infrastructure.observability import flush
 from services.identity.context import IdentityContext
 from services.identity.resolver import IdentityResolver
+from services.language import resolve_reply_language, stt_language_hint, t
+from services.media.stt_service import _get_twilio_auth, _is_audio_url, transcribe_audio
 from services.messaging.persistence import MessagePersistence
 from services.messaging.schemas import ChatTurnResult, InboundMessage, TwilioInboundMessage
-from services.media.stt_service import _get_twilio_auth, _is_audio_url, transcribe_audio
 from services.messaging.twilio_client import TwilioMessagingClient
 
 
@@ -120,31 +121,35 @@ class ChatPipeline:
                     inbound.media_url,
                     message_sid=inbound.external_id,
                     sender_id=ctx.student_id or ctx.phone,
+                    language_hint=stt_language_hint(ctx.language_pref),
                     auth=auth,
                 )
                 if transcript:
                     inbound.body = transcript
                 else:
-                    return (
-                        "Sorry, I couldn't understand that voice message. "
-                        "Could you please try again?"
+                    lang = resolve_reply_language(
+                        message=inbound.body or "",
+                        language_pref=ctx.language_pref,
                     )
+                    return t("voice_fail", lang)
             else:
                 # Non-voice audio file (MP3, WAV, etc.) — not supported
-                return (
-                    "Sorry, I can only process voice notes (not audio files). "
-                    "Please record a voice message instead."
+                lang = resolve_reply_language(
+                    message=inbound.body or "",
+                    language_pref=ctx.language_pref,
                 )
+                return t("unsupported_audio", lang)
 
         try:
             reply = await self._run_agent_turn(ctx, inbound)
         except Exception as exc:
             logger.error("Agent pipeline failed: {}", exc)
             tenant_label = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
-            reply = (
-                f"Thanks for messaging {tenant_label}! We're having a brief technical issue. "
-                "Please try again in a moment."
+            lang = resolve_reply_language(
+                message=inbound.body or "",
+                language_pref=ctx.language_pref,
             )
+            reply = t("technical_issue", lang, tenant_name=tenant_label)
 
         if inbound.num_media > 0 and inbound.media_url:
             pass  # payment receipt handled by payment agent when pending enrollment exists

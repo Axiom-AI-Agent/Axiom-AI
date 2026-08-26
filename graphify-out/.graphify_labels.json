@@ -233,5 +233,15 @@
   "231": "seed_langfuse_prompts.py",
   "232": "rag.py",
   "233": "main",
-  "234": "admissions_db_client.py"
+  "234": "admissions_db_client.py",
+  "235": "validate_twilio_signature",
+  "236": "P2 — Telegram Bot integration",
+  "237": "P0 — Must finalize (MVP gate)",
+  "238": "register_student",
+  "239": "test_health.py",
+  "240": "send_chat_message",
+  "241": "get_current_staff",
+  "242": "_load_env",
+  "243": "language/__init__.py",
+  "244": ".list_recent_sessions"
 }
