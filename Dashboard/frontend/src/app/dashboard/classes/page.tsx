@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   BookOpen,
   Loader2,
+  Megaphone,
   Pencil,
   Plus,
   RefreshCw,
@@ -23,11 +24,15 @@ import {
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
 import {
+  ApiError,
+  BroadcastRecipients,
   createClass,
   deleteClass,
+  getBroadcastRecipients,
   getClasses,
   INGEST_ACCEPT,
   ingestSizeError,
+  sendClassBroadcast,
   SubjectClass,
   uploadClassDocument,
   updateClass,
@@ -62,6 +67,13 @@ export default function ClassesPage() {
   const [error, setError] = useState<string | null>(null);
   const [uploadingClassId, setUploadingClassId] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [broadcastClass, setBroadcastClass] = useState<SubjectClass | null>(null);
+  const [broadcastMessage, setBroadcastMessage] = useState("");
+  const [broadcastRecipients, setBroadcastRecipients] =
+    useState<BroadcastRecipients | null>(null);
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
+  const [broadcastSending, setBroadcastSending] = useState(false);
+  const [broadcastError, setBroadcastError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadClasses = useCallback(async () => {
@@ -219,6 +231,94 @@ export default function ClassesPage() {
     } catch (requestError) {
       console.error(requestError);
       showToast("Could not delete the class.", "error");
+    }
+  }
+
+  async function openBroadcast(subjectClass: SubjectClass) {
+    setBroadcastClass(subjectClass);
+    setBroadcastMessage("");
+    setBroadcastRecipients(null);
+    setBroadcastError(null);
+    setBroadcastLoading(true);
+
+    try {
+      setBroadcastRecipients(
+        await getBroadcastRecipients(subjectClass.id, tenantId),
+      );
+    } catch (requestError) {
+      console.error(requestError);
+      setBroadcastError(
+        requestError instanceof ApiError
+          ? requestError.message
+          : "Could not load Telegram recipients for this class.",
+      );
+    } finally {
+      setBroadcastLoading(false);
+    }
+  }
+
+  function closeBroadcast() {
+    if (broadcastSending) {
+      return;
+    }
+    setBroadcastClass(null);
+    setBroadcastMessage("");
+    setBroadcastRecipients(null);
+    setBroadcastError(null);
+  }
+
+  async function handleBroadcastSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!broadcastClass) {
+      return;
+    }
+
+    const message = broadcastMessage.trim();
+    if (!message) {
+      setBroadcastError("Enter a message to send.");
+      return;
+    }
+
+    if (!broadcastRecipients || broadcastRecipients.reachable < 1) {
+      setBroadcastError(
+        "No students in this class have linked Telegram yet. They must start the bot first.",
+      );
+      return;
+    }
+
+    setBroadcastSending(true);
+    setBroadcastError(null);
+
+    try {
+      const result = await sendClassBroadcast(
+        broadcastClass.id,
+        message,
+        tenantId,
+      );
+      const parts = [`Sent to ${result.sent} student${result.sent === 1 ? "" : "s"}`];
+      if (result.skipped_no_telegram > 0) {
+        parts.push(`${result.skipped_no_telegram} skipped (no Telegram)`);
+      }
+      if (result.failed > 0) {
+        parts.push(`${result.failed} failed`);
+      }
+      showToast(
+        `${parts.join(". ")}.`,
+        result.failed > 0 ? "error" : "success",
+      );
+      setBroadcastClass(null);
+      setBroadcastMessage("");
+      setBroadcastRecipients(null);
+      setBroadcastError(null);
+    } catch (requestError) {
+      console.error(requestError);
+      setBroadcastError(
+        requestError instanceof ApiError
+          ? requestError.message
+          : "Could not send the class broadcast.",
+      );
+    } finally {
+      setBroadcastSending(false);
     }
   }
 
@@ -442,6 +542,14 @@ export default function ClassesPage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => void openBroadcast(subjectClass)}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
+                >
+                  <Megaphone className="h-4 w-4" />
+                  Broadcast
+                </button>
+                <button
+                  type="button"
                   onClick={() => openEditForm(subjectClass)}
                   className="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
                 >
@@ -466,6 +574,120 @@ export default function ClassesPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {broadcastClass && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="presentation"
+          onClick={closeBroadcast}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="broadcast-title"
+            className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2
+                  id="broadcast-title"
+                  className="text-lg font-semibold text-slate-900 dark:text-white"
+                >
+                  Broadcast to {broadcastClass.name ?? broadcastClass.subject}
+                </h2>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                  Sends a Telegram message to students enrolled in this class who have
+                  linked the bot.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeBroadcast}
+                disabled={broadcastSending}
+                className="rounded-lg p-1 text-slate-500 hover:bg-slate-100 disabled:opacity-50 dark:hover:bg-slate-800"
+                aria-label="Close broadcast dialog"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {broadcastLoading ? (
+              <div className="flex min-h-32 items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
+              </div>
+            ) : (
+              <form onSubmit={handleBroadcastSubmit} className="mt-4 space-y-4">
+                {broadcastRecipients && (
+                  <p className="text-sm text-slate-700 dark:text-slate-300">
+                    {broadcastRecipients.reachable} of {broadcastRecipients.enrolled}{" "}
+                    enrolled student
+                    {broadcastRecipients.enrolled === 1 ? "" : "s"} will receive this
+                    {broadcastRecipients.skipped_no_telegram > 0
+                      ? ` (${broadcastRecipients.skipped_no_telegram} have not linked Telegram)`
+                      : ""}
+                    .
+                    {broadcastRecipients.reachable_names.length > 0 && (
+                      <span className="mt-1 block text-slate-500 dark:text-slate-400">
+                        {broadcastRecipients.reachable_names.join(", ")}
+                      </span>
+                    )}
+                  </p>
+                )}
+
+                <label className="block space-y-2">
+                  <span className="text-sm text-slate-700 dark:text-slate-300">
+                    Message
+                  </span>
+                  <textarea
+                    required
+                    rows={5}
+                    maxLength={4000}
+                    value={broadcastMessage}
+                    onChange={(event) => setBroadcastMessage(event.target.value)}
+                    disabled={broadcastSending}
+                    placeholder="Exam is postponed to Friday."
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                  />
+                </label>
+
+                {broadcastError && (
+                  <div className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-200">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{broadcastError}</span>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={closeBroadcast}
+                    disabled={broadcastSending}
+                    className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-800 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={
+                      broadcastSending ||
+                      broadcastLoading ||
+                      !broadcastRecipients ||
+                      broadcastRecipients.reachable < 1
+                    }
+                    className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                  >
+                    {broadcastSending && (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    )}
+                    Send to Telegram
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       )}
     </div>

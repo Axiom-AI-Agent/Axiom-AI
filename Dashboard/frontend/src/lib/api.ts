@@ -240,6 +240,58 @@ export function deleteClass(classId: string, tenantId?: string): Promise<void> {
   );
 }
 
+/* ---------- Class Telegram broadcast (AI backend) ---------- */
+
+export interface BroadcastRecipients {
+  class_id: string;
+  class_name: string;
+  enrolled: number;
+  reachable: number;
+  skipped_no_telegram: number;
+  reachable_names: string[];
+}
+
+export interface BroadcastFailure {
+  student_id: string;
+  name: string;
+}
+
+export interface BroadcastResult {
+  class_id: string;
+  sent: number;
+  failed: number;
+  skipped_no_telegram: number;
+  failures: BroadcastFailure[];
+}
+
+export function getBroadcastRecipients(
+  classId: string,
+  tenantId?: string,
+): Promise<BroadcastRecipients> {
+  return aiRequest<BroadcastRecipients>(
+    `/dashboard/classes/${encodeURIComponent(classId)}/broadcast-recipients`,
+    {},
+    tenantId,
+  );
+}
+
+export function sendClassBroadcast(
+  classId: string,
+  message: string,
+  tenantId?: string,
+): Promise<BroadcastResult> {
+  const tenant = tenantId ?? getTenantId();
+
+  return aiRequest<BroadcastResult>(
+    `/dashboard/classes/${encodeURIComponent(classId)}/broadcast`,
+    {
+      method: "POST",
+      body: JSON.stringify({ tenant_id: tenant, message }),
+    },
+    tenant,
+  );
+}
+
 /* ---------- Escalations / Inbox (Dashboard backend) ---------- */
 
 export type EscalationStatus = "open" | "assigned" | "resolved";

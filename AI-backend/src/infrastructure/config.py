@@ -97,7 +97,6 @@ GUARDRAIL_MODEL, GUARDRAIL_PROVIDER = get_role_config("guardrail")
 EXTRACTOR_MODEL, EXTRACTOR_PROVIDER = get_role_config("extractor")
 CHAT_MODEL, CHAT_PROVIDER = get_role_config("chat")
 MERGE_MODEL, MERGE_PROVIDER = get_role_config("merge")
-OCR_MODEL, OCR_PROVIDER = get_role_config("ocr")
 FAST_CHAT_MODEL = EXTRACTOR_MODEL
 FAST_CHAT_PROVIDER = EXTRACTOR_PROVIDER
 
@@ -153,15 +152,6 @@ INGEST_MAX_UPLOAD_MB: dict[str, int] = {
     "markdown": int(_get_nested(_PARAMS, "ingest", "max_upload_mb", "markdown", default=5)),
 }
 
-INGEST_OCR_ENABLED = _get_bool(_PARAMS, "ingest", "ocr", "enabled", default=True)
-INGEST_OCR_MIN_CHARS = int(
-    _get_nested(_PARAMS, "ingest", "ocr", "min_chars_per_page", default=100)
-)
-INGEST_OCR_MIN_ALPHA_RATIO = float(
-    _get_nested(_PARAMS, "ingest", "ocr", "min_alpha_ratio", default=0.5)
-)
-INGEST_OCR_MAX_PAGES = int(_get_nested(_PARAMS, "ingest", "ocr", "max_pages_per_doc", default=50))
-INGEST_OCR_DPI = int(_get_nested(_PARAMS, "ingest", "ocr", "dpi", default=200))
 INGEST_DOCX_PROMOTE_BOLD_HEADINGS = _get_bool(
     _PARAMS, "ingest", "docx", "promote_bold_headings", default=True
 )

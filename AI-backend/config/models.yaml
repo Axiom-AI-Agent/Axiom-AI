@@ -2,7 +2,7 @@ openrouter:
   chat:
     general: openai/gpt-4o-mini
     strong: openai/gpt-4o
-    merge: google/gemini-2.5-flash
+    merge: google/gemini-3.6-flash
   embedding:
     default: openai/text-embedding-3-large
     small: openai/text-embedding-3-small
@@ -17,8 +17,6 @@ google:
   chat:
     general: gemini-2.0-flash
     merge: gemini-2.0-flash
-    # Native PDF vision — used to transcribe scanned pages during ingest.
-    ocr: gemini-2.5-flash
 
 groq:
   chat:

@@ -157,8 +157,8 @@ def test_run_upload_ingest_pdf(mock_extract, mock_ingest, _upsert, mock_get, moc
         markdown="# Newton Laws\n\n" + "Newton laws notes " * 100,
         source_type="pdf",
         page_count=4,
-        ocr_page_count=1,
-        warnings=["OCR used on 1 page"],
+        ocr_page_count=0,
+        warnings=[],
     )
     mock_ingest.return_value = {
         **_fake_ingest_result(),
@@ -172,8 +172,8 @@ def test_run_upload_ingest_pdf(mock_extract, mock_ingest, _upsert, mock_get, moc
         "filename": "notes.pdf",
         "source_type": "pdf",
         "page_count": 4,
-        "ocr_pages": 1,
-        "warnings": ["OCR used on 1 page"],
+        "ocr_pages": 0,
+        "warnings": [],
     }
 
     result = run_upload_ingest(
@@ -188,8 +188,8 @@ def test_run_upload_ingest_pdf(mock_extract, mock_ingest, _upsert, mock_get, moc
     assert result["chunks_upserted"] == 5
     assert result["source_type"] == "pdf"
     assert result["page_count"] == 4
-    assert result["ocr_pages"] == 1
-    assert result["warnings"] == ["OCR used on 1 page"]
+    assert result["ocr_pages"] == 0
+    assert result["warnings"] == []
     mock_process.assert_called_once()
 
 

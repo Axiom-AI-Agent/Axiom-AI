@@ -125,14 +125,10 @@ function IngestContent() {
         },
       );
 
-      const ocrNote = result.ocr_pages
-        ? ` (${result.ocr_pages} scanned page${result.ocr_pages === 1 ? "" : "s"} transcribed)`
-        : "";
-
       const skipped = result.skipped ? " (unchanged — skipped re-ingest)" : "";
 
       showToast(
-        `${result.source_filename ?? "document"} — ${result.chunks_upserted} chunks${ocrNote}${skipped}.`,
+        `${result.source_filename ?? "document"} — ${result.chunks_upserted} chunks${skipped}.`,
         "success",
       );
 
@@ -282,9 +278,9 @@ function IngestContent() {
       <div className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 text-sm text-slate-600 dark:text-slate-400">
         <FileUp className="mt-0.5 h-5 w-5 shrink-0" />
         <p>
-          Accepts PDF (max 50 MB), Word .docx (25 MB) and Markdown (5 MB).
+          Accepts PDF with selectable text (max 50 MB), Word .docx (25 MB) and Markdown (5 MB).
           Re-uploading the same file replaces its chunks rather than duplicating them.
-          Scanned PDF pages are transcribed automatically when a vision API key is set.
+          Image-only scans are not supported — export as Word or Markdown first, or use a searchable PDF.
         </p>
       </div>
 

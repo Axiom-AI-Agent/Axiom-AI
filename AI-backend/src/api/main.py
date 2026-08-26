@@ -26,6 +26,7 @@ from agents.runtime import (
 from api.middleware import RequestContextMiddleware
 from api.routers.chat import router as chat_router
 from api.routers.classes import router as classes_router
+from api.routers.dashboard.broadcast import router as dashboard_broadcast_router
 from api.routers.dashboard.chat import router as dashboard_chat_router
 from api.routers.dashboard.chat_logs import router as dashboard_chat_logs_router
 from api.routers.dashboard.escalations import router as dashboard_escalations_router
@@ -120,6 +121,7 @@ app.include_router(dashboard_escalations_router, prefix="/dashboard")
 app.include_router(dashboard_chat_router, prefix="/dashboard")
 app.include_router(dashboard_chat_logs_router, prefix="/dashboard")
 app.include_router(dashboard_overview_router, prefix="/dashboard")
+app.include_router(dashboard_broadcast_router, prefix="/dashboard")
 app.include_router(rag_tools_router)
 app.include_router(drive_tools_router)
 app.include_router(ingest_tools_router)
@@ -148,6 +150,8 @@ async def root() -> dict:
         "dashboard_chat_thread": "/dashboard/chat/conversations/{phone}",
         "dashboard_chat_send": "/dashboard/chat/send",
         "dashboard_chat_logs": "/dashboard/chat-logs",
+        "dashboard_class_broadcast": "/dashboard/classes/{id}/broadcast",
+        "dashboard_class_broadcast_recipients": "/dashboard/classes/{id}/broadcast-recipients",
         "rag_search": "/tools/rag/search",
         "drive_search": "/tools/drive/search",
         "ingest_upload": "/tools/ingest/upload",

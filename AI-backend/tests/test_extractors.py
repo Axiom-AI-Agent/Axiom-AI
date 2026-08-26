@@ -1,4 +1,4 @@
-"""Format sniffing, DOCX/markdown extraction, and OCR page routing."""
+"""Format sniffing, DOCX/markdown extraction, and PDF text-layer routing."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from services.ingest_service.extractors import (
 )
 from services.ingest_service.extractors.base import normalize_markdown
 from services.ingest_service.extractors.docx import _promote_bold_headings
-from services.ingest_service.extractors.ocr import page_needs_ocr
+from services.ingest_service.extractors.pdf import _page_lacks_text
 
 _OLE2 = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
@@ -59,18 +59,18 @@ class TestSniffFormat:
             sniff_format(b"\x89PNG\r\n\x1a\n" + bytes(range(64)), filename="x.png")
 
 
-class TestPageNeedsOcr:
-    def test_empty_page_needs_ocr(self):
-        assert page_needs_ocr("") is True
+class TestPageLacksText:
+    def test_empty_page(self):
+        assert _page_lacks_text("") is True
 
-    def test_short_page_needs_ocr(self):
-        assert page_needs_ocr("Figure 1") is True
+    def test_short_page(self):
+        assert _page_lacks_text("Figure 1") is True
 
     def test_prose_page_does_not(self):
-        assert page_needs_ocr("Velocity is the rate of change of displacement. " * 5) is False
+        assert _page_lacks_text("Velocity is the rate of change of displacement. " * 5) is False
 
-    def test_symbol_noise_needs_ocr(self):
-        assert page_needs_ocr("|/\\-_=+*&^%$#@!" * 20) is True
+    def test_symbol_noise(self):
+        assert _page_lacks_text("|/\\-_=+*&^%$#@!" * 20) is True
 
 
 class TestNormalizeMarkdown:

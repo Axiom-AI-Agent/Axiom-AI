@@ -327,7 +327,6 @@ def process_upload_ingest(
     title: str | None = None,
     lesson: str | None = None,
     save_upload: bool = True,
-    enable_ocr: bool | None = None,
 ) -> None:
     """Background worker: extract, chunk, embed, and mark registry ready/failed."""
     document_id = compute_document_id(file_bytes)
@@ -346,7 +345,7 @@ def process_upload_ingest(
     )
 
     try:
-        extracted = extract_document(file_bytes, filename=filename, enable_ocr=enable_ocr)
+        extracted = extract_document(file_bytes, filename=filename)
     except Exception as exc:
         kb_registry.mark_failed(tenant_id=tenant_id, document_id=document_id, error=str(exc))
         logger.exception("Extract failed for {} ({})", filename, document_id)
@@ -430,7 +429,6 @@ def run_upload_ingest(
     title: str | None = None,
     lesson: str | None = None,
     save_upload: bool = True,
-    enable_ocr: bool | None = None,
     force: bool = False,
 ) -> dict[str, Any]:
     """
@@ -458,7 +456,6 @@ def run_upload_ingest(
         title=title,
         lesson=lesson,
         save_upload=save_upload,
-        enable_ocr=enable_ocr,
     )
 
     document_id = prepared["document_id"]
