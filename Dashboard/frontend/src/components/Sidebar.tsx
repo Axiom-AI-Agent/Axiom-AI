@@ -14,6 +14,7 @@ import {
   Settings,
   Users,
   X,
+  BarChart3,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -35,6 +36,16 @@ const mainNavItems: NavItem[] = [
     label: "Overview",
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
+  {
+    href: "/dashboard/analytics",
+    label: "Analytics",
+    icon: <BarChart3 className="h-5 w-5" />,
+  },
+  {
+  href: "/dashboard/analytics/classes",
+  label: "Class Analytics",
+  icon: <BarChart3 className="h-5 w-5" />,
+  },  
   {
     href: "/dashboard/inbox",
     label: "Inbox",

@@ -8,6 +8,7 @@ from app.deps.tenant import get_tenant_id
 from app.models import Enrollment, Escalation, MessageLog, Student, SubjectClass
 from app.models.enums import EnrollmentStatus, EscalationStatus
 from app.schemas.schemas import (
+    ClassAnalyticsComparisonResponse,
     DashboardAnalyticsResponse,
     DashboardOverviewResponse,
     EscalationActionResponse,
@@ -17,6 +18,7 @@ from app.schemas.schemas import (
 from app.services.dashboard_service import (
     PAYMENT_REASON_CODES,
     TUTOR_REASON_CODE,
+    build_class_analytics,
     build_dashboard_analytics,
     enrich_escalation,
     list_escalations,
@@ -243,3 +245,22 @@ def get_dashboard_chat_logs(
         }
         for log in logs
     ]
+
+@router.get(
+    "/analytics/classes",
+    response_model=(
+        ClassAnalyticsComparisonResponse
+    ),
+)
+def get_class_analytics(
+    tenant_id: str = Depends(
+        get_tenant_id
+    ),
+    db: Session = Depends(
+        get_db
+    ),
+):
+    return build_class_analytics(
+        db,
+        tenant_id=tenant_id,
+    )

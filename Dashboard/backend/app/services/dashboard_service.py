@@ -1,12 +1,7 @@
-from datetime import datetime, timezone
-
-from sqlalchemy.orm import Session, joinedload
-
-from app.models import Enrollment, Escalation, Invoice, Student, SubjectClass
-from app.models.enums import EnrollmentStatus, EscalationStatus, InvoiceStatus
 from collections import defaultdict
 from datetime import datetime, timezone
 
+from sqlalchemy.orm import Session, joinedload
 
 from app.models import (
     Enrollment,
@@ -510,4 +505,314 @@ def build_dashboard_analytics(
             escalation_categories
         ),
         "students": student_metrics,
+    }
+
+def build_class_analytics(
+    db: Session,
+    *,
+    tenant_id: str,
+    estimated_minutes_per_deflection: int = 2,
+) -> dict:
+    classes = (
+        db.query(SubjectClass)
+        .filter(
+            SubjectClass.tenant_id == tenant_id
+        )
+        .order_by(
+            SubjectClass.subject.asc(),
+            SubjectClass.name.asc(),
+        )
+        .all()
+    )
+
+    enrollments = (
+        db.query(Enrollment)
+        .filter(
+            Enrollment.tenant_id == tenant_id
+        )
+        .all()
+    )
+
+    turns = (
+        db.query(STTurn)
+        .filter(
+            STTurn.tenant_id == tenant_id
+        )
+        .order_by(
+            STTurn.session_id.asc(),
+            STTurn.created_at.asc(),
+        )
+        .all()
+    )
+
+    escalations = (
+        db.query(Escalation)
+        .filter(
+            Escalation.tenant_id == tenant_id
+        )
+        .all()
+    )
+
+    class_enrollments = defaultdict(list)
+
+    for enrollment in enrollments:
+        class_enrollments[
+            enrollment.class_id
+        ].append(enrollment)
+
+    turns_by_student = defaultdict(list)
+
+    for turn in turns:
+        turns_by_student[
+            turn.user_id
+        ].append(turn)
+
+    escalations_by_student = defaultdict(list)
+
+    for escalation in escalations:
+        escalations_by_student[
+            escalation.student_id
+        ].append(escalation)
+
+    results = []
+
+    for subject_class in classes:
+        class_rows = (
+            class_enrollments.get(
+                subject_class.id,
+                [],
+            )
+        )
+
+        student_ids = {
+            row.student_id
+            for row in class_rows
+        }
+
+        active_students = sum(
+            1
+            for row in class_rows
+            if row.status
+            == EnrollmentStatus.ACTIVE
+        )
+
+        pending_students = sum(
+            1
+            for row in class_rows
+            if row.status
+            == EnrollmentStatus.PENDING
+        )
+
+        class_turns = []
+
+        for student_id in student_ids:
+            class_turns.extend(
+                turns_by_student.get(
+                    student_id,
+                    [],
+                )
+            )
+
+        class_escalations = []
+
+        for student_id in student_ids:
+            class_escalations.extend(
+                escalations_by_student.get(
+                    student_id,
+                    [],
+                )
+            )
+
+        session_ids = {
+            turn.session_id
+            for turn in class_turns
+            if turn.session_id
+        }
+
+        total_conversations = len(
+            session_ids
+        )
+
+        total_messages = len(
+            class_turns
+        )
+
+        grouped_turns = defaultdict(list)
+
+        for turn in class_turns:
+            grouped_turns[
+                turn.session_id
+            ].append(turn)
+
+        response_times = []
+
+        for session_turns in (
+            grouped_turns.values()
+        ):
+            session_turns.sort(
+                key=lambda row:
+                    row.created_at
+            )
+
+            for index, turn in enumerate(
+                session_turns
+            ):
+                if (
+                    turn.role
+                    != MessageRole.USER
+                ):
+                    continue
+
+                for next_turn in (
+                    session_turns[
+                        index + 1 :
+                    ]
+                ):
+                    if (
+                        next_turn.role
+                        == MessageRole.ASSISTANT
+                    ):
+                        if (
+                            turn.created_at
+                            and next_turn.created_at
+                        ):
+                            seconds = (
+                                next_turn.created_at
+                                - turn.created_at
+                            ).total_seconds()
+
+                            if seconds >= 0:
+                                response_times.append(
+                                    seconds
+                                )
+
+                        break
+
+                    if (
+                        next_turn.role
+                        == MessageRole.USER
+                    ):
+                        break
+
+        average_response_seconds = (
+            round(
+                sum(response_times)
+                / len(response_times),
+                2,
+            )
+            if response_times
+            else 0.0
+        )
+
+        total_escalations = len(
+            class_escalations
+        )
+
+        open_escalations = sum(
+            1
+            for escalation
+            in class_escalations
+            if escalation.status
+            == EscalationStatus.OPEN
+        )
+
+        resolved_escalations = sum(
+            1
+            for escalation
+            in class_escalations
+            if escalation.status
+            == EscalationStatus.RESOLVED
+        )
+
+        escalated_student_ids = {
+            escalation.student_id
+            for escalation
+            in class_escalations
+        }
+
+        escalated_sessions = set()
+
+        for student_id in (
+            escalated_student_ids
+        ):
+            for turn in turns_by_student.get(
+                student_id,
+                [],
+            ):
+                if turn.session_id:
+                    escalated_sessions.add(
+                        turn.session_id
+                    )
+
+        escalated_conversation_proxy = min(
+            len(escalated_sessions),
+            total_conversations,
+        )
+
+        deflected_conversations = max(
+            total_conversations
+            - escalated_conversation_proxy,
+            0,
+        )
+
+        deflection_rate = (
+            round(
+                (
+                    deflected_conversations
+                    / total_conversations
+                )
+                * 100,
+                1,
+            )
+            if total_conversations
+            else 0.0
+        )
+
+        estimated_minutes_saved = (
+            deflected_conversations
+            * estimated_minutes_per_deflection
+        )
+
+        results.append(
+            {
+                "class_id":
+                    subject_class.id,
+                "class_name":
+                    subject_class.name,
+                "subject":
+                    subject_class.subject,
+                "grade":
+                    subject_class.grade,
+                "enrolled_students":
+                    len(student_ids),
+                "active_students":
+                    active_students,
+                "pending_students":
+                    pending_students,
+                "total_messages":
+                    total_messages,
+                "total_conversations":
+                    total_conversations,
+                "deflected_conversations":
+                    deflected_conversations,
+                "deflection_rate":
+                    deflection_rate,
+                "average_response_seconds":
+                    average_response_seconds,
+                "estimated_minutes_saved":
+                    estimated_minutes_saved,
+                "total_escalations":
+                    total_escalations,
+                "open_escalations":
+                    open_escalations,
+                "resolved_escalations":
+                    resolved_escalations,
+            }
+        )
+
+    return {
+        "tenant_id": tenant_id,
+        "attribution_mode":
+            "enrollment_membership",
+        "classes": results,
     }
