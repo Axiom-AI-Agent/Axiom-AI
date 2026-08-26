@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS tenants (
     drive_folder_id         TEXT,
     bot_token               TEXT,
     telegram_bot_username   TEXT,
+    payments_enabled        BOOLEAN NOT NULL DEFAULT TRUE,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -75,6 +76,10 @@ EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 DO $$ BEGIN
     ALTER TABLE tenants ADD COLUMN IF NOT EXISTS telegram_bot_username TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE tenants ADD COLUMN IF NOT EXISTS payments_enabled BOOLEAN NOT NULL DEFAULT TRUE;
 EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 -- ---------------------------------------------------------------------------
@@ -126,6 +131,7 @@ CREATE TABLE IF NOT EXISTS students (
     district        TEXT,
     consent_at      TIMESTAMPTZ,
     language_pref   TEXT DEFAULT 'en',
+    human_mode      BOOLEAN NOT NULL DEFAULT FALSE,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (tenant_id, phone)
@@ -137,6 +143,10 @@ EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 DO $$ BEGIN
     ALTER TABLE students ADD COLUMN IF NOT EXISTS consent_at TIMESTAMPTZ;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE students ADD COLUMN IF NOT EXISTS human_mode BOOLEAN NOT NULL DEFAULT FALSE;
 EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE INDEX IF NOT EXISTS idx_students_tenant_phone ON students(tenant_id, phone);

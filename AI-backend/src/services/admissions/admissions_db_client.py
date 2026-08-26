@@ -95,6 +95,7 @@ class AdmissionsDbClient:
         school: str,
         district: str,
         consent: bool = True,
+        language_pref: str | None = None,
     ) -> dict[str, Any]:
         existing = self.get_student(tenant_id=tenant_id, phone=phone)
         if existing:
@@ -113,6 +114,8 @@ class AdmissionsDbClient:
         }
         if consent:
             payload["consent_at"] = now
+        if language_pref:
+            payload["language_pref"] = language_pref
 
         client = get_supabase_client()
         response = client.table("students").insert(payload).execute()
@@ -162,7 +165,10 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         response = (
             client.table("tenants")
-            .select("id, name, slug, status, whatsapp_number, drive_folder_id, created_at")
+            .select(
+                "id, name, slug, status, whatsapp_number, drive_folder_id, "
+                "payments_enabled, created_at"
+            )
             .eq("id", tenant_id)
             .limit(1)
             .execute()

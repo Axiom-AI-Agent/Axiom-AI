@@ -43,6 +43,7 @@ def mock_db():
         "class_id": "class-1",
         "status": "pending",
     }
+    db.get_tenant.return_value = {"id": "tenant-a", "payments_enabled": True}
     db.get_class.return_value = {"id": "class-1", "subject": "Physics"}
     db.get_latest_invoice_for_student.return_value = {"id": "inv-1", "status": "pending"}
     db.resolve_escalation.return_value = {"id": "esc-1", "status": "resolved"}
@@ -67,6 +68,21 @@ def test_create_payment_escalation(mock_db):
     assert call_kwargs["reason_code"] == PAYMENT_RECEIPT
     assert call_kwargs["media_url"] == "https://example.com/slip.jpg"
     assert call_kwargs["enrollment_id"] == "enr-1"
+
+
+def test_create_payment_escalation_blocked_when_payments_disabled(mock_db):
+    mock_db.get_tenant.return_value = {"id": "tenant-a", "payments_enabled": False}
+    tool = CrmTool(db=mock_db)
+    raw = tool.create_escalation(
+        tenant_id="tenant-a",
+        student_id="stu-1",
+        reason_code=PAYMENT_RECEIPT,
+        media_url="https://example.com/slip.jpg",
+    )
+    payload = json.loads(raw)
+    assert payload["ok"] is False
+    assert "disabled" in payload["error"].lower()
+    mock_db.create_escalation.assert_not_called()
 
 
 def test_create_talk_to_tutor_escalation(mock_db):

@@ -50,6 +50,16 @@ _RESOURCE_PATTERNS = (
     r"help me with",
     r"how does",
     r"how do",
+    r"tute eka",
+    r"paper eka",
+    r"notes? tika",
+    r"පේපර්",
+    r"ටියුට්",
+    r"පාඩම්",
+    r"නෝට්ස්",
+    r"பேப்பர்",
+    r"பாடக்குறிப்பு",
+    r"பாடம்",
 )
 _ESCALATION_PATTERNS = (
     r"speak to (?:a |the )?(?:tutor|human|person|teacher|sir|madam)",
@@ -57,6 +67,10 @@ _ESCALATION_PATTERNS = (
     r"\bcomplaint\b",
     r"\burgent\b",
     r"need (?:a )?human",
+    r"sir ekata",
+    r"tutor ekata",
+    r"ගුරුවරය",
+    r"ஆசிரிய",
 )
 _ADMISSIONS_PATTERNS = (
     r"\benroll\b",
@@ -69,6 +83,14 @@ _ADMISSIONS_PATTERNS = (
     r"am i enrolled",
     r"enrollment status",
     r"am i registered",
+    r"join karanna",
+    r"enroll wenna",
+    r"class eka join",
+    r"ලියාපදිංචි",
+    r"එකතු වෙ",
+    r"பதிவு",
+    r"சேர",
+    r"வகுப்பில் சேர",
 )
 _PAYMENT_PATTERNS = (
     r"bank slip",
@@ -76,6 +98,14 @@ _PAYMENT_PATTERNS = (
     r"\bfee\b",
     r"\breceipt\b",
     r"paid my",
+    r"slip eka",
+    r"fee eka",
+    r"geewuwa",
+    r"ගෙවුවා",
+    r"ගාස්තු",
+    r"රිසිට්",
+    r"கட்டணம்",
+    r"ரசீது",
 )
 _DIRECT_PATTERNS = (
     r"^(hi|hello|hey|thanks|thank you|ok|okay|bye)[!.?\s]*$",

@@ -35,6 +35,7 @@ from infrastructure.observability import (
 from services.admissions.onboarding_route import apply_onboarding_patch_overrides
 from services.identity.context import IdentityContext
 from services.identity.recall_context import build_recall_context
+from services.language import resolve_reply_language, t
 
 Verdict = Literal["proceed", "out_of_scope"]
 
@@ -83,6 +84,10 @@ async def run_chat_turn(
     timings: dict[str, int] = {}
     memory = memory_tool or MemoryTool()
     memory_context, student_profile_context = build_recall_context(ctx, memory)
+    reply_language = resolve_reply_language(
+        message=message,
+        language_pref=ctx.language_pref,
+    )
     pending_escalation_message = (
         get_pending_low_confidence_question(
             memory_tool=memory,
@@ -132,11 +137,7 @@ async def run_chat_turn(
         )
 
         return ChatResult(
-            answer=(
-                "No problem — I won't send it "
-                "to the tutor. You can ask me "
-                "something else anytime."
-            ),
+            answer=t("escalation_declined", reply_language),
             verdict="proceed",
             route="direct",
             routes=["direct"],
@@ -190,6 +191,7 @@ async def run_chat_turn(
             enrolled_class_ids=list(ctx.enrolled_class_ids),
             student_profile_context=student_profile_context,
             media_url=media_url,
+            language_pref=reply_language,
         )
         verdict: Verdict = (
             "out_of_scope" if patch.get("verdict") == "out_of_scope" else "proceed"
