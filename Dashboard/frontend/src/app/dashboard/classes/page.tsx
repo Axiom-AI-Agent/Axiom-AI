@@ -26,6 +26,8 @@ import {
   createClass,
   deleteClass,
   getClasses,
+  INGEST_ACCEPT,
+  ingestSizeError,
   SubjectClass,
   uploadClassDocument,
   updateClass,
@@ -170,11 +172,26 @@ export default function ClassesPage() {
   }
 
   async function handleUpload(classId: string, file: File) {
+    const sizeError = ingestSizeError(file);
+    if (sizeError) {
+      setUploadError(sizeError);
+      return;
+    }
+
     setUploadingClassId(classId);
     setUploadError(null);
 
     try {
-      await uploadClassDocument(classId, tenantId, file);
+      const result = await uploadClassDocument(classId, tenantId, file);
+
+      showToast(
+        `Uploaded ${result.source_filename ?? file.name} — ${result.chunks_upserted} chunks ingested.`,
+        "success",
+      );
+
+      if (result.warnings?.length) {
+        setUploadError(result.warnings.join(" "));
+      }
     } catch (requestError) {
       console.error(requestError);
       setUploadError("Failed to upload document.");
@@ -262,7 +279,7 @@ export default function ClassesPage() {
       <input
         ref={fileInputRef}
         type="file"
-        accept=".pdf"
+        accept={INGEST_ACCEPT}
         className="hidden"
         onChange={(e) => {
           const classId = e.currentTarget.dataset.classId;

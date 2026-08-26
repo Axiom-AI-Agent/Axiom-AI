@@ -28,6 +28,11 @@ logs/
 # AI backend data (keep structure, ignore tenant content)
 AI-backend/data/knowledge_base/*/
 !AI-backend/data/knowledge_base/.gitkeep
+AI-backend/data/uploads/*/
+!AI-backend/data/uploads/.gitkeep
+
+# onnxruntime scratch file, written wherever the process starts
+:memory:.ses
 
 # Demo UI (Node)
 AI-backend/demo-ui-org/student-chat/node_modules/

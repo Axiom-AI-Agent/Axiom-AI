@@ -37,8 +37,13 @@ python-dotenv>=1.0.0
 pyyaml>=6.0.0
 httpx>=0.27.0
 
-# Ingest — PDF extraction + parent-child chunking
-pypdf>=5.0.0
+# Ingest — multi-format extraction (PDF/DOCX/MD) + structure-aware chunking
+# pymupdf4llm is AGPL-3.0; compatible with this project's GPL-3.0 licence.
+# A commercial relicence would need a licence from Artifex.
+pymupdf4llm==1.28.2
+mammoth==1.12.1
+markdownify==1.2.3
+tiktoken==0.13.0
 langchain-text-splitters>=0.3.0
 
 # Google Drive (Phase 4)
