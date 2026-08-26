@@ -1,15 +1,15 @@
-"""Speech-to-text service — download Twilio media and transcribe via Gemini.
+"""Speech-to-text service — download voice notes and transcribe via Gemini.
 
-Production-hardened with:
-- Content-Type validation (not just URL extension)
+Features:
+- Voice note only (.ogg/.opus) — rejects other audio formats
+- Content-Type validation from HTTP response
 - Configurable resource limits (file size, duration, timeouts)
-- Idempotency cache with abstract interface (InMemoryCache, Redis-replaceable)
+- Idempotency cache (avoids re-transcribing duplicate webhooks)
 - Concurrency locks for duplicate webhook handling
-- Actual audio duration measurement via mutagen
+- Audio duration measurement via mutagen
 - Exponential backoff retries for transient failures
 - Phone number masking in logs (no PII exposure)
 - Basic metrics counters (success/failure/latency)
-- Structured observability (MessageSid, sender, latencies)
 - Configurable Gemini model
 - Total deadline around entire operation
 """
@@ -57,28 +57,8 @@ def _env_float(name: str, default: float) -> float:
         return default
 
 
-# Audio MIME types that Gemini supports for transcription
-SUPPORTED_AUDIO_MIME_TYPES: frozenset[str] = frozenset({
-    "audio/ogg",
-    "audio/ogg; codecs=opus",
-    "audio/mpeg",
-    "audio/wav",
-    "audio/x-wav",
-    "audio/mp4",
-    "audio/x-m4a",
-    "audio/aac",
-    "audio/flac",
-})
-
-# URL extensions used for pre-download audio check (before Content-Type is known)
-AUDIO_URL_EXTENSIONS: frozenset[str] = frozenset({
-    ".ogg", ".oga", ".opus",
-    ".mp3",
-    ".wav",
-    ".m4a",
-    ".aac",
-    ".flac",
-})
+# Voice note formats only (WhatsApp/Telegram send .ogg Opus)
+VOICE_NOTE_EXTENSIONS: frozenset[str] = frozenset({".ogg", ".oga", ".opus"})
 
 # Resource limits (configurable via .env)
 MAX_AUDIO_BYTES = _env_int("STT_MAX_AUDIO_BYTES", 10 * 1024 * 1024)  # 10 MB
@@ -92,7 +72,7 @@ MAX_RETRIES = _env_int("STT_MAX_RETRIES", 2)
 RETRY_BASE_DELAY = _env_float("STT_RETRY_BASE_DELAY", 1.0)  # seconds
 
 # Gemini model (configurable via .env)
-GEMINI_MODEL = os.getenv("STT_GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("STT_GEMINI_MODEL", "gemini-2.0-flash")
 
 # Idempotency cache TTL (seconds) — keep entries for 2 hours
 _CACHE_TTL = _env_int("STT_CACHE_TTL_SECONDS", 7200)
@@ -102,7 +82,7 @@ _CACHE_TTL = _env_int("STT_CACHE_TTL_SECONDS", 7200)
 # ---------------------------------------------------------------------------
 
 class SttMetrics:
-    """Simple counters for transcription metrics. Exposed via get_metrics()."""
+    """Simple counters for transcription metrics."""
 
     def __init__(self) -> None:
         self.successes = 0
@@ -164,7 +144,6 @@ def _mask_phone(phone: str | None) -> str:
     match = _PHONE_MASK_RE.match(phone)
     if match:
         return f"{match.group(1)}****{match.group(2)}"
-    # Short numbers or unexpected format — mask middle
     if len(phone) > 6:
         return phone[:3] + "****" + phone[-3:]
     return "****"
@@ -236,20 +215,17 @@ def _cache_key(message_sid: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _is_audio_url(url: str) -> bool:
-    """Check if a URL points to an audio file based on extension (pre-download hint)."""
+    """Check if a URL points to a voice note file (.ogg/.opus) based on extension."""
     lower = url.lower().split("?")[0]
-    return any(lower.endswith(ext) for ext in AUDIO_URL_EXTENSIONS)
+    return any(lower.endswith(ext) for ext in VOICE_NOTE_EXTENSIONS)
 
 
 def _content_type_supported(content_type: str | None) -> bool:
-    """Check if the Content-Type header indicates a supported audio type."""
+    """Check if the Content-Type header indicates a voice note (OGG Opus)."""
     if not content_type:
         return False
     main = content_type.split(";")[0].strip().lower()
-    return main in {
-        "audio/ogg", "audio/mpeg", "audio/wav", "audio/x-wav",
-        "audio/mp4", "audio/x-m4a", "audio/aac", "audio/flac",
-    }
+    return main == "audio/ogg"
 
 
 def _get_twilio_auth() -> tuple[str, str] | None:
@@ -269,45 +245,14 @@ def _is_retryable(exc: Exception) -> bool:
 
 
 def _measure_audio_duration(audio_bytes: bytes, content_type: str | None) -> float | None:
-    """
-    Measure audio duration in seconds using mutagen.
-
-    Returns duration in seconds, or None if measurement fails.
-    Falls back to heuristic for unsupported formats.
-    """
+    """Measure voice note duration in seconds using mutagen. Returns None if measurement fails."""
     try:
         import io
-        import mutagen
         from mutagen.oggopus import OggOpus
-        from mutagen.mp3 import MP3
-        from mutagen.wav import WAVE
-        from mutagen.mp4 import MP4
-        from mutagen.flac import FLAC
 
         audio_file = io.BytesIO(audio_bytes)
-        ext = (content_type or "").split(";")[0].strip().lower()
-
-        if ext in ("audio/ogg", "audio/ogg; codecs=opus"):
-            ogg = OggOpus(audio_file)
-            return ogg.info.length
-        elif ext == "audio/mpeg":
-            mp3 = MP3(audio_file)
-            return mp3.info.length
-        elif ext in ("audio/wav", "audio/x-wav"):
-            wav = WAVE(audio_file)
-            return wav.info.length
-        elif ext in ("audio/mp4", "audio/x-m4a"):
-            mp4 = MP4(audio_file)
-            return mp4.info.length
-        elif ext == "audio/flac":
-            flac = FLAC(audio_file)
-            return flac.info.length
-
-        # Generic fallback
-        audio_file.seek(0)
-        probe = mutagen.File(audio_file, easy=False)
-        if probe and probe.info:
-            return probe.info.length
+        ogg = OggOpus(audio_file)
+        return ogg.info.length
 
     except ImportError:
         logger.debug("stt: mutagen not installed — skipping duration check")
@@ -315,8 +260,6 @@ def _measure_audio_duration(audio_bytes: bytes, content_type: str | None) -> flo
     except Exception as exc:
         logger.debug("stt: Duration measurement failed: {}", exc)
         return None
-
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -329,14 +272,13 @@ async def _download_with_retry(
     auth: tuple[str, str] | None = None,
 ) -> tuple[bytes, str | None] | None:
     """
-    Download media from a URL with retry and Content-Type validation.
+    Download voice note from a URL with retry and Content-Type validation.
 
     If auth is provided, uses HTTP Basic Auth (required for Twilio).
     If auth is None, downloads without auth (works for Telegram, public URLs).
 
     Returns (audio_bytes, content_type) or None on failure.
     """
-
     last_exc: Exception | None = None
 
     for attempt in range(1, MAX_RETRIES + 2):
@@ -355,19 +297,15 @@ async def _download_with_retry(
                 content = response.content
 
                 if not _content_type_supported(content_type):
-                    logger.warning("stt: Unsupported Content-Type: {}", content_type)
+                    logger.warning("stt: Not a voice note (Content-Type: {})", content_type)
                     return None
 
                 if len(content) > MAX_AUDIO_BYTES:
-                    logger.warning(
-                        "stt: Audio too large: {} bytes (max {})",
-                        len(content),
-                        MAX_AUDIO_BYTES,
-                    )
+                    logger.warning("stt: Voice note too large: {} bytes (max {})", len(content), MAX_AUDIO_BYTES)
                     return None
 
                 if len(content) == 0:
-                    logger.warning("stt: Downloaded audio is empty")
+                    logger.warning("stt: Downloaded voice note is empty")
                     return None
 
                 return content, content_type
@@ -398,7 +336,7 @@ async def _call_gemini(
     *,
     language_hint: str | None = None,
 ) -> str | None:
-    """Send audio to Gemini for transcription with retry."""
+    """Send voice note to Gemini for transcription with retry."""
     api_key = get_api_key("google")
     if not api_key:
         logger.error("stt: GOOGLE_API_KEY not configured")
@@ -407,9 +345,8 @@ async def _call_gemini(
     audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
 
     prompt = (
-        "Transcribe this audio message exactly as spoken. "
+        "Transcribe this voice message exactly as spoken. "
         "Return only the transcription text, nothing else. "
-        "Do not add any commentary, explanation, or translation. "
         "Preserve the original language of the speaker."
     )
     if language_hint:
@@ -482,19 +419,10 @@ async def transcribe_audio(
     auth: tuple[str, str] | None = None,
 ) -> str | None:
     """
-    Download audio and transcribe via Gemini.
-
-    Features:
-    - Idempotent: same message_sid returns cached result
-    - Concurrency-safe: duplicate webhooks wait or skip
-    - Retries transient failures with exponential backoff
-    - Validates Content-Type from HTTP response
-    - Enforces file size, duration, and total deadline limits
-    - Structured logging with masked PII
-    - Basic metrics (success/failure/latency)
+    Download a voice note and transcribe via Gemini.
 
     Args:
-        media_url: Media URL to download audio from.
+        media_url: Voice note URL (.ogg/.opus).
         message_sid: Unique message ID for idempotency and logging.
         sender_id: Student phone/ID for logging (masked in logs).
         language_hint: Optional language hint (e.g. "Sinhala", "Tamil").
@@ -515,24 +443,16 @@ async def transcribe_audio(
         cached = _cache.get(cache_key)
 
         if cached is not None:
-            # Either a result or an in-progress marker
             if cached == "":
-                # In-progress marker — another coroutine is processing this
                 _metrics.record_duplicate_skipped()
                 logger.info("stt: Skipping duplicate (in-progress) sid={}", sid)
                 return None
-            # Cached result
             _metrics.record_cache_hit()
-            logger.info(
-                "stt: Cache hit sid={} sender={} chars={}",
-                sid, masked_sender, len(cached),
-            )
+            logger.info("stt: Cache hit sid={} sender={} chars={}", sid, masked_sender, len(cached))
             return cached
 
-        # Acquire per-key lock to prevent concurrent transcription
         lock = await _cache.get_lock(cache_key)
         async with lock:
-            # Double-check after acquiring lock
             cached = _cache.get(cache_key)
             if cached is not None:
                 if cached == "":
@@ -540,19 +460,12 @@ async def transcribe_audio(
                     logger.info("stt: Skipping duplicate (locked) sid={}", sid)
                     return None
                 _metrics.record_cache_hit()
-                logger.info(
-                    "stt: Cache hit sid={} sender={} chars={}",
-                    sid, masked_sender, len(cached),
-                )
+                logger.info("stt: Cache hit sid={} sender={} chars={}", sid, masked_sender, len(cached))
                 return cached
 
-            # Mark in-progress (empty string = in-progress marker)
             _cache.set(cache_key, "", _CACHE_TTL)
 
-    logger.info(
-        "stt: Start sid={} sender={}",
-        sid, masked_sender,
-    )
+    logger.info("stt: Start sid={} sender={}", sid, masked_sender)
 
     try:
         async def _with_deadline() -> str | None:
@@ -565,48 +478,32 @@ async def transcribe_audio(
             )
 
         try:
-            result = await asyncio.wait_for(
-                _with_deadline(),
-                timeout=TOTAL_DEADLINE_SECONDS,
-            )
+            result = await asyncio.wait_for(_with_deadline(), timeout=TOTAL_DEADLINE_SECONDS)
         except asyncio.TimeoutError:
             elapsed_ms = int((time.monotonic() - t_start) * 1000)
             _metrics.record_failure(elapsed_ms)
-            logger.error(
-                "stt: Total deadline exceeded ({}s) sid={}",
-                TOTAL_DEADLINE_SECONDS, sid,
-            )
+            logger.error("stt: Total deadline exceeded ({}s) sid={}", TOTAL_DEADLINE_SECONDS, sid)
             if message_sid:
                 _cache.delete(_cache_key(message_sid))
             return None
 
-        # Cache result
         if message_sid:
             _cache.set(_cache_key(message_sid), result or "", _CACHE_TTL)
 
         elapsed_ms = int((time.monotonic() - t_start) * 1000)
         if result:
-            _metrics.record_success(elapsed_ms, 0, 0)  # detailed latencies logged in _transcribe_impl
-            logger.info(
-                "stt: Success sid={} sender={} chars={} elapsed={}ms",
-                sid, masked_sender, len(result), elapsed_ms,
-            )
+            _metrics.record_success(elapsed_ms, 0, 0)
+            logger.info("stt: Success sid={} sender={} chars={} elapsed={}ms", sid, masked_sender, len(result), elapsed_ms)
         else:
             _metrics.record_failure(elapsed_ms)
-            logger.warning(
-                "stt: Failed sid={} sender={} elapsed={}ms",
-                sid, masked_sender, elapsed_ms,
-            )
+            logger.warning("stt: Failed sid={} sender={} elapsed={}ms", sid, masked_sender, elapsed_ms)
 
         return result
 
     except Exception as exc:
         elapsed_ms = int((time.monotonic() - t_start) * 1000)
         _metrics.record_failure(elapsed_ms)
-        logger.error(
-            "stt: Unexpected error sid={} sender={} elapsed={}ms error={}",
-            sid, masked_sender, elapsed_ms, type(exc).__name__,
-        )
+        logger.error("stt: Unexpected error sid={} sender={} elapsed={}ms error={}", sid, masked_sender, elapsed_ms, type(exc).__name__)
         if message_sid:
             _cache.delete(_cache_key(message_sid))
         return None
@@ -635,39 +532,23 @@ async def _transcribe_impl(
     audio_bytes, content_type = download_result
     file_size = len(audio_bytes)
 
-    # Step 1.5: Measure duration
+    # Step 2: Measure duration
     duration_s = _measure_audio_duration(audio_bytes, content_type)
     if duration_s is not None and duration_s > MAX_AUDIO_DURATION_SECONDS:
-        logger.warning(
-            "stt: Audio too long: {:.1f}s (max {}s) sid={}",
-            duration_s, MAX_AUDIO_DURATION_SECONDS, sid,
-        )
+        logger.warning("stt: Voice note too long: {:.1f}s (max {}s) sid={}", duration_s, MAX_AUDIO_DURATION_SECONDS, sid)
         return None
 
     duration_label = f"{duration_s:.1f}s" if duration_s else "unknown"
-    logger.info(
-        "stt: Downloaded sid={} sender={} size={} content_type={} duration={} download_ms={}",
-        sid, masked_sender, file_size, content_type, duration_label, download_ms,
-    )
+    logger.info("stt: Downloaded sid={} sender={} size={} duration={} download_ms={}", sid, masked_sender, file_size, duration_label, download_ms)
 
-    # Step 2: Transcribe
+    # Step 3: Transcribe
     t_gemini = time.monotonic()
-    transcript = await _call_gemini(
-        audio_bytes,
-        content_type or "audio/ogg",
-        language_hint=language_hint,
-    )
+    transcript = await _call_gemini(audio_bytes, content_type or "audio/ogg", language_hint=language_hint)
     gemini_ms = int((time.monotonic() - t_gemini) * 1000)
 
     if transcript:
-        logger.info(
-            "stt: Transcribed sid={} chars={} download_ms={} gemini_ms={}",
-            sid, len(transcript), download_ms, gemini_ms,
-        )
+        logger.info("stt: Transcribed sid={} chars={} download_ms={} gemini_ms={}", sid, len(transcript), download_ms, gemini_ms)
     else:
-        logger.warning(
-            "stt: Transcription failed sid={} download_ms={} gemini_ms={}",
-            sid, download_ms, gemini_ms,
-        )
+        logger.warning("stt: Transcription failed sid={} download_ms={} gemini_ms={}", sid, download_ms, gemini_ms)
 
     return transcript
