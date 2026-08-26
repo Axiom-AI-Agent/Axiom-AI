@@ -987,6 +987,7 @@ export interface StudentAnalyticsMetric {
 
 export interface DashboardAnalytics {
   tenant_id: string;
+  period: string;
 
   total_conversations: number;
   total_messages: number;
@@ -1007,11 +1008,17 @@ export interface DashboardAnalytics {
   students: StudentAnalyticsMetric[];
 }
 
+export type AnalyticsPeriod =
+  | "today"
+  | "7d"
+  | "month";
+
 export function getDashboardAnalytics(
   tenantId?: string,
+  period: AnalyticsPeriod = "7d",
 ): Promise<DashboardAnalytics> {
   return dashboardRequest<DashboardAnalytics>(
-    "/dashboard/analytics",
+    `/dashboard/analytics?period=${period}`,
     {},
     tenantId,
   );
@@ -1047,18 +1054,161 @@ export interface ClassAnalyticsMetric {
 
 export interface ClassAnalyticsComparison {
   tenant_id: string;
+  period: string;
   attribution_mode: string;
   classes: ClassAnalyticsMetric[];
 }
 
 export function getClassAnalytics(
   tenantId?: string,
+  period: AnalyticsPeriod = "7d",
 ): Promise<ClassAnalyticsComparison> {
   return dashboardRequest<
     ClassAnalyticsComparison
   >(
-    "/dashboard/analytics/classes",
+    `/dashboard/analytics/classes?period=${period}`,
     {},
+    tenantId,
+  );
+}
+
+export function updateClassHumanMode(
+  classId: string,
+  humanMode: boolean,
+  tenantId?: string,
+): Promise<{
+  ok: boolean;
+  class_id: string;
+  human_mode: boolean;
+  students_updated: number;
+}> {
+  return dashboardRequest(
+    `/classes/${classId}/human-mode`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        human_mode: humanMode,
+      }),
+    },
+    tenantId,
+  );
+}
+
+export interface StudentImportResult {
+  created: number;
+  skipped: number;
+  errors: Array<{
+    row: number;
+    reason: string;
+  }>;
+}
+
+export function importStudentsExcel(
+  file: File,
+  tenantId?: string,
+): Promise<StudentImportResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return dashboardRequest<StudentImportResult>(
+    "/students/import",
+    {
+      method: "POST",
+      body: formData,
+    },
+    tenantId,
+  );
+}
+
+export type StaffRoleValue =
+  | "admin"
+  | "tutor"
+  | "marker"
+  | "viewer";
+
+export interface StaffMember {
+  id: string;
+  tenant_id: string;
+  name: string;
+  email: string;
+  role: StaffRoleValue;
+  is_active: boolean;
+}
+
+export interface StaffCreatePayload {
+  name: string;
+  email: string;
+  password: string;
+  role: StaffRoleValue;
+}
+
+export interface StaffUpdatePayload {
+  name?: string;
+  role?: StaffRoleValue;
+  is_active?: boolean;
+}
+
+export function getStaff(
+  tenantId?: string,
+): Promise<StaffMember[]> {
+  return dashboardRequest<StaffMember[]>(
+    "/staff",
+    {},
+    tenantId,
+  );
+}
+
+export function createStaff(
+  payload: StaffCreatePayload,
+  tenantId?: string,
+): Promise<StaffMember> {
+  return dashboardRequest<StaffMember>(
+    "/staff",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+    tenantId,
+  );
+}
+
+export function updateStaff(
+  staffId: string,
+  payload: StaffUpdatePayload,
+  tenantId?: string,
+): Promise<StaffMember> {
+  return dashboardRequest<StaffMember>(
+    `/staff/${staffId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    },
+    tenantId,
+  );
+}
+
+export interface FaqCluster {
+  question: string;
+  category: string;
+  frequency: number;
+  examples: string[];
+  suggested_answer: string;
+}
+
+export interface FaqAnalysisResult {
+  tenant_id: string;
+  analyzed_messages: number;
+  clusters: FaqCluster[];
+}
+
+export function analyzeFaqs(
+  tenantId?: string,
+  limit = 200,
+  minimumFrequency = 2,
+): Promise<FaqAnalysisResult> {
+  return aiRequest<FaqAnalysisResult>(
+    `/dashboard/faqs/analyze?limit=${limit}&minimum_frequency=${minimumFrequency}`,
+    { method: "POST" },
     tenantId,
   );
 }

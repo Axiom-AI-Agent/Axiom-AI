@@ -7,11 +7,13 @@ import { usePathname } from "next/navigation";
 import {
   BookOpen,
   FileUp,
+  HelpCircle,
   Inbox,
   LayoutDashboard,
   MessageSquare,
   ScrollText,
   Settings,
+  UserCog,
   Users,
   X,
   BarChart3,
@@ -65,6 +67,16 @@ const mainNavItems: NavItem[] = [
     href: "/dashboard/students",
     label: "Students",
     icon: <Users className="h-5 w-5" />,
+  },
+  {
+    href: "/dashboard/staff",
+    label: "Staff",
+    icon: <UserCog className="h-5 w-5" />,
+  },
+  {
+    href: "/dashboard/faqs",
+    label: "FAQ Intelligence",
+    icon: <HelpCircle className="h-5 w-5" />,
   },
   {
     href: "/dashboard/logs",

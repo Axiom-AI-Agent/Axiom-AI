@@ -19,6 +19,7 @@ import {
 
 import { useTenant } from "@/context/TenantContext";
 import {
+  AnalyticsPeriod,
   ClassAnalyticsComparison,
   getClassAnalytics,
 } from "@/lib/api";
@@ -29,6 +30,14 @@ type SortKey =
   | "total_conversations"
   | "total_escalations"
   | "average_response_seconds";
+
+const PERIOD_OPTIONS: Array<
+  [AnalyticsPeriod, string]
+> = [
+  ["today", "Today"],
+  ["7d", "Last 7 days"],
+  ["month", "This month"],
+];
 
 function formatClassTitle(
   className: string | null | undefined,
@@ -42,6 +51,9 @@ export default function ClassAnalyticsPage() {
 
   const [data, setData] =
     useState<ClassAnalyticsComparison | null>(null);
+
+  const [period, setPeriod] =
+    useState<AnalyticsPeriod>("7d");
 
   const [loading, setLoading] =
     useState(true);
@@ -62,7 +74,10 @@ export default function ClassAnalyticsPage() {
 
       try {
         const response =
-          await getClassAnalytics(tenantId);
+          await getClassAnalytics(
+            tenantId,
+            period,
+          );
 
         setData(response);
       } catch (requestError) {
@@ -77,7 +92,7 @@ export default function ClassAnalyticsPage() {
         }
       }
     },
-    [tenantId],
+    [tenantId, period],
   );
 
   useEffect(() => {
@@ -155,25 +170,40 @@ export default function ClassAnalyticsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            void loadAnalytics(false)
-          }
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </button>
-      </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex rounded-lg border border-slate-200 p-1 dark:border-slate-700">
+            {PERIOD_OPTIONS.map(
+              ([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() =>
+                    setPeriod(value)
+                  }
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium ${
+                    period === value
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {label}
+                </button>
+              ),
+            )}
+          </div>
 
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-300">
-        These metrics are currently
-        attributed using class enrollment
-        membership. A student enrolled in
-        multiple classes may contribute
-        activity to more than one class.
+          <button
+            type="button"
+            onClick={() =>
+              void loadAnalytics(false)
+            }
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {error && (

@@ -23,6 +23,7 @@ import { useTenant } from "@/context/TenantContext";
 
 import {
   DashboardAnalytics,
+  AnalyticsPeriod,
   getDashboardAnalytics,
 } from "@/lib/api";
 
@@ -36,6 +37,14 @@ function humanizeReason(
     );
 }
 
+const PERIOD_OPTIONS: Array<
+  [AnalyticsPeriod, string]
+> = [
+  ["today", "Today"],
+  ["7d", "Last 7 days"],
+  ["month", "This month"],
+];
+
 export default function AnalyticsPage() {
   const { tenantId } = useTenant();
 
@@ -45,6 +54,11 @@ export default function AnalyticsPage() {
   ] = useState<DashboardAnalytics | null>(
     null,
   );
+
+  const [
+    period,
+    setPeriod,
+  ] = useState<AnalyticsPeriod>("7d");
 
   const [
     loading,
@@ -65,6 +79,7 @@ export default function AnalyticsPage() {
         const response =
           await getDashboardAnalytics(
             tenantId,
+            period,
           );
 
         setData(response);
@@ -77,7 +92,7 @@ export default function AnalyticsPage() {
       } finally {
         setLoading(false);
       }
-    }, [tenantId]);
+    }, [tenantId, period]);
 
   useEffect(() => {
     void loadAnalytics();
@@ -149,16 +164,39 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            void loadAnalytics()
-          }
-          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex rounded-lg border border-slate-200 p-1 dark:border-slate-700">
+            {PERIOD_OPTIONS.map(
+              ([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() =>
+                    setPeriod(value)
+                  }
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium ${
+                    period === value
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  {label}
+                </button>
+              ),
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              void loadAnalytics()
+            }
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">

@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
+  FileSpreadsheet,
   Loader2,
   Plus,
   RefreshCw,
@@ -23,6 +24,7 @@ import {
   enrollStudent,
   getClasses,
   getStudents,
+  importStudentsExcel,
   Student,
   SubjectClass,
   updateStudent,
@@ -83,6 +85,8 @@ export default function StudentsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [importing, setImporting] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const filteredStudents = useMemo(
     () => students.filter((student) => matchesStudentSearch(student, searchQuery)),
@@ -270,6 +274,42 @@ export default function StudentsPage() {
       );
     }
   }
+
+  async function handleExcelImport(
+    file: File | undefined,
+  ) {
+    if (!file) {
+      return;
+    }
+
+    if (!file.name.toLowerCase().endsWith(".xlsx")) {
+      showToast("Only .xlsx files are supported.", "error");
+      return;
+    }
+
+    setImporting(true);
+
+    try {
+      const result = await importStudentsExcel(
+        file,
+        tenantId,
+      );
+
+      showToast(
+        `${result.created} created · ${result.skipped} skipped · ${result.errors.length} error${result.errors.length === 1 ? "" : "s"}`,
+        result.errors.length > 0 ? "error" : "success",
+      );
+      await loadData();
+    } catch (requestError) {
+      console.error(requestError);
+      showToast("Could not import Excel file.", "error");
+    } finally {
+      setImporting(false);
+      if (importInputRef.current) {
+        importInputRef.current.value = "";
+      }
+    }
+  }
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -292,6 +332,34 @@ export default function StudentsPage() {
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
+          </button>
+
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            className="hidden"
+            onChange={(event) =>
+              void handleExcelImport(
+                event.target.files?.[0],
+              )
+            }
+          />
+
+          <button
+            type="button"
+            onClick={() =>
+              importInputRef.current?.click()
+            }
+            disabled={importing}
+            className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 shadow-sm transition-colors disabled:opacity-50"
+          >
+            {importing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <FileSpreadsheet className="h-4 w-4" />
+            )}
+            Import Excel
           </button>
 
           <button
