@@ -70,6 +70,8 @@ Both backends must share the same values from `AI-backend/.env` (Dashboard backe
 | `DRIVE_MOCK` | AI-backend | `false` for real Drive |
 | `AGENT_USE_MCP` | AI-backend | `true` in production-like runs |
 | `DEV_TENANT_ID` | AI-backend | **Local only.** Default `tenant-demo-physics`. WhatsApp messages that fail To-number match fall back here |
+| `FRONTEND_URL` | Dashboard backend | Production dashboard origin, e.g. `https://axiom-dashboard-xi.vercel.app` (no trailing slash). Required for browser CORS. |
+| `CORS_ORIGINS` | Dashboard backend | Optional comma-separated extra origins (preview URLs, custom domains) |
 
 Frontend (`Dashboard/frontend/.env.local`):
 

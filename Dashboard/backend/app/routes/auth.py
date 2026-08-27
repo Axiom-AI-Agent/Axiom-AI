@@ -8,6 +8,7 @@ from fastapi import (
 )
 
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
@@ -66,6 +67,12 @@ def register(
         raise HTTPException(
             status_code=409,
             detail=str(error),
+        ) from error
+
+    except IntegrityError as error:
+        raise HTTPException(
+            status_code=409,
+            detail="One of the email addresses is already registered.",
         ) from error
 
     token = create_access_token(
