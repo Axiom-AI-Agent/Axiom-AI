@@ -309,15 +309,9 @@ function MessagesContent() {
                         <p className="truncate text-sm font-medium text-heading">
                           {conversation.student_name ?? conversation.phone}
                         </p>
-<<<<<<< HEAD
                         {conversation.has_open_escalation ? (
                           <span className="text-[10px] font-medium uppercase tracking-wide text-blue">
                             Attention
-=======
-                        {conversation.has_open_escalation && (
-                          <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-[10px] text-blue-300">
-                            !
->>>>>>> AI-backend-dev
                           </span>
                         ) : null}
                       </div>
@@ -376,11 +370,7 @@ function MessagesContent() {
                         href={`/dashboard/inbox?status=open&reason_code=${encodeURIComponent(
                           escalation.reason_code,
                         )}`}
-<<<<<<< HEAD
                         className="rounded-md border border-border px-2 py-1 text-xs text-blue hover:bg-hover"
-=======
-                        className="rounded-full bg-blue-500/10 px-2 py-1 text-xs text-blue-300 hover:bg-blue-500/20"
->>>>>>> AI-backend-dev
                       >
                         Open:{" "}
                         {escalation.reason_code === "low_rag_confidence"

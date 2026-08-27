@@ -146,81 +146,10 @@ export default function StudentTable({
                       Delete
                     </button>
                   </div>
-<<<<<<< HEAD
                 </td>
               </tr>
             );
           })}
-=======
-                ) : (
-                  <span className="text-sm text-slate-500 dark:text-slate-400 italic">Not enrolled</span>
-                )}
-              </td>
-
-              <td className="px-5 py-4 align-top text-sm text-slate-600 dark:text-slate-400">
-                {student.created_at
-                  ? new Date(student.created_at).toLocaleDateString()
-                  : "—"}
-              </td>
-
-              <td className="px-5 py-4 align-top">
-                <div className="flex flex-wrap justify-end gap-1.5">
-                  <Link
-                    href={`/dashboard/messages?phone=${encodeURIComponent(student.phone)}`}
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <MessageSquare className="h-3.5 w-3.5" />
-                    Chat
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => onToggleHumanMode(student)}
-                    title={
-                      student.human_mode
-                        ? "AI replies are disabled for this student"
-                        : "AI replies are enabled for this student"
-                    }
-                    className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
-                      student.human_mode
-                        ? "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
-                        : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
-                    }`}
-                  >
-                    {student.human_mode
-                      ? "Human mode"
-                      : "AI active"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onEnroll(student)}
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <UserPlus className="h-3.5 w-3.5" />
-                    Enroll
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onEdit(student)}
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onDelete(student.id)}
-                    className="inline-flex items-center gap-1 rounded-md border border-red-200 dark:border-red-500/30 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
->>>>>>> AI-backend-dev
         </tbody>
       </table>
     </div>
