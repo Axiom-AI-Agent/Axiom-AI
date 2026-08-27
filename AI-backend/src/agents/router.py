@@ -119,6 +119,7 @@ _SCHEDULE_PATTERNS = (
     r"\bclass.*today",
     r"\btomorrow.*class",
     r"\bclass.*tomorrow",
+    r"\bwhat classes\b",
     r"\bweekly\b",
     r"\bweek schedule\b",
     r"\bmy class\b",
@@ -143,6 +144,20 @@ def heuristic_route(message: str) -> MultiRouteDecision | None:
     text = message.lower().strip()
     if not text:
         return None
+
+    # Schedule queries must be checked BEFORE institute_info to avoid
+    # "class" keyword being misclassified as enrollment intent
+    if _pattern_score(text, _SCHEDULE_PATTERNS) > 0:
+        return MultiRouteDecision(
+            decisions=[
+                RouteDecision(
+                    route="resource",
+                    action="search",
+                    confidence=0.95,
+                    reasoning="schedule/timetable query",
+                )
+            ]
+        )
 
     if looks_like_institute_info(message):
         return MultiRouteDecision(
