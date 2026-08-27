@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import MetricCard from "@/components/MetricCard";
-import DashboardAgentChat from "@/components/DashboardAgentChat";
+import ChartCard from "@/components/ChartCard";
 import { useTenant } from "@/context/TenantContext";
 import { DashboardOverview, getDashboardOverview } from "@/lib/api";
 
@@ -162,7 +162,28 @@ export default function OverviewPage() {
         </Link>
       </div>
 
-      <DashboardAgentChat />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ChartCard
+          title="Escalation Breakdown"
+          type="bar"
+          labels={["Payment Receipts", "Talk to Tutor", "Other"]}
+          data={[
+            data.open_payment_receipts,
+            data.open_talk_to_tutor,
+            Math.max(0, data.open_escalations - data.open_payment_receipts - data.open_talk_to_tutor),
+          ]}
+        />
+
+        <ChartCard
+          title="Enrollment Status"
+          type="bar"
+          labels={["Active", "Pending"]}
+          data={[
+            data.students - data.pending_enrollments,
+            data.pending_enrollments,
+          ]}
+        />
+      </div>
 
       <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
         <h2 className="font-semibold text-slate-900 dark:text-white text-lg mb-4">Quick actions</h2>

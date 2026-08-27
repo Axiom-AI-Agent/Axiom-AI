@@ -1,16 +1,16 @@
 # Graph Report - Axiom-AI  (2026-08-27)
 
 ## Corpus Check
-- 390 files · ~504,451 words
+- 395 files · ~508,922 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3868 nodes · 7878 edges · 262 communities (219 shown, 43 thin omitted)
-- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 1547 edges (avg confidence: 0.68)
+- 3934 nodes · 8054 edges · 262 communities (222 shown, 40 thin omitted)
+- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 1560 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3105fdcb`
+- Built from commit: `7fa4cc6a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -249,7 +249,7 @@
 - _page_lacks_text
 - Per-institute onboarding
 - smoke_mcp_memory.py
-- escalation_reasons.py
+- test_heuristic_router.py
 - log.py
 - main
 
@@ -259,9 +259,9 @@
 3. `AgentState` - 58 edges
 4. `DayOfWeek` - 58 edges
 5. `OccurrenceStatus` - 55 edges
-6. `ScheduleStatus` - 54 edges
-7. `IdentityContext` - 54 edges
-8. `ChatChannel` - 53 edges
+6. `ChatChannel` - 54 edges
+7. `ScheduleStatus` - 54 edges
+8. `IdentityContext` - 54 edges
 9. `ScheduleService` - 53 edges
 10. `MessageRole` - 50 edges
 
@@ -280,23 +280,23 @@
 ## Import Cycles
 - None detected.
 
-## Communities (262 total, 43 thin omitted)
+## Communities (262 total, 40 thin omitted)
 
 ### Community 0 - "Admissions Onboarding"
 Cohesion: 0.12
 Nodes (33): TenantFieldDef, OnboardingFlow, Determine onboarding progress and extract slots from user messages., _assert_collection_restarted(), _awaiting_confirmation_state(), Onboarding flow unit tests., test_awaiting_review_state(), test_class_catalog_request_on_class_step() (+25 more)
 
 ### Community 1 - "Admissions Onboarding 2"
-Cohesion: 0.08
-Nodes (44): main(), AdmissionsAgent, AdmissionsAgentResult, _last_user_text(), Any, Admissions agent node — multi-turn onboarding via CRM MCP tools., classify_info_inquiry(), extract_class_filters() (+36 more)
+Cohesion: 0.06
+Nodes (53): main(), AdmissionsAgent, AdmissionsAgentResult, _last_user_text(), Any, Admissions agent node — multi-turn onboarding via CRM MCP tools., classify_info_inquiry(), extract_class_filters() (+45 more)
 
 ### Community 2 - "Demo Chat Lifecycle"
 Cohesion: 0.10
-Nodes (8): CrmClient, DirectCrmClient, McpCrmClient, Any, Protocol, Shared CRM client protocol for agent nodes (direct + MCP paths)., MCP CRM tools → async dispatch., In-process CRM path (dev/tests without MCP subprocesses).
+Nodes (9): CrmClient, DirectCrmClient, McpCrmClient, Any, Protocol, Shared CRM client protocol for agent nodes (direct + MCP paths)., MCP CRM tools → async dispatch., In-process CRM path (dev/tests without MCP subprocesses). (+1 more)
 
 ### Community 3 - "RAG Ingest Pipeline"
-Cohesion: 0.10
-Nodes (37): qdrant_collection_for_tenant(), collection_exists(), count_points(), delete_chunks_by_document_id(), delete_collection(), _dummy_vector(), ensure_class_id_index(), ensure_collection() (+29 more)
+Cohesion: 0.11
+Nodes (35): qdrant_collection_for_tenant(), collection_exists(), collection_info(), count_points(), delete_chunks_by_document_id(), delete_collection(), _dummy_vector(), ensure_class_id_index() (+27 more)
 
 ### Community 4 - "Admissions Onboarding 3"
 Cohesion: 0.06
@@ -307,12 +307,12 @@ Cohesion: 0.25
 Nodes (19): main(), build_orchestrator(), In-process MemoryTool path (dev/tests without MCP subprocesses)., get_api_key(), _build_google_llm(), _build_llm(), _build_openai_compatible_llm(), get_chat_llm() (+11 more)
 
 ### Community 6 - "Dashboard Frontend Pages"
-Cohesion: 0.06
-Nodes (58): ClassesPage(), ClassFormState, emptyForm, IngestContent(), aiRequest(), ApiError, assignEscalation(), BroadcastFailure (+50 more)
+Cohesion: 0.04
+Nodes (73): ClassFormState, emptyForm, aiRequest(), analyzeFaqs(), ApiError, assignEscalation(), BroadcastFailure, BroadcastRecipients (+65 more)
 
 ### Community 7 - "RAG Ingest Pipeline 3"
-Cohesion: 0.15
-Nodes (13): DirectRagClient, Any, RagTool, Business logic for kb_search — used by rag_server and debug REST., RAG MCP server — tool surface (same logic as axiom-rag stdio server)., test_rag_mcp_kb_ingest_status(), test_rag_mcp_kb_search_empty_collection(), test_rag_mcp_kb_search_with_citations() (+5 more)
+Cohesion: 0.14
+Nodes (16): DirectRagClient, Any, RagTool, Business logic for kb_search — used by rag_server and debug REST., RAGService, Tenant-scoped RAG: retrieve tutor notes → synthesize grounded answer., RAG MCP server — tool surface (same logic as axiom-rag stdio server)., test_rag_mcp_kb_ingest_status() (+8 more)
 
 ### Community 8 - "Student Chat Deps"
 Cohesion: 0.04
@@ -331,8 +331,8 @@ Cohesion: 0.09
 Nodes (23): Application Access Patterns, Apply schema, Axiom AI — Database Documentation, Demo Seed Data, ENUM Types, ER Diagram, ER entity → SQL table mapping, Legacy v1 Tables (removed) (+15 more)
 
 ### Community 12 - "Admissions Onboarding 4"
-Cohesion: 0.14
-Nodes (10): EscalationAgent, EscalationAgentResult, _last_user_text(), Escalation agent — talk-to-tutor requests → dashboard inbox., AgentState — shared LangGraph state for the Axiom orchestrator.  Ported from Boo, Escalation reason codes for dashboard inbox filtering., FakeCrm, asyncio (+2 more)
+Cohesion: 0.33
+Nodes (4): FakeCrm, asyncio, Escalation agent tests., test_escalation_agent_creates_talk_to_tutor_ticket()
 
 ### Community 13 - "Design Double Diamond"
 Cohesion: 0.06
@@ -340,27 +340,27 @@ Nodes (33): Agent pipeline, Axiom AI Backend — Finalize Checklist, Bot & envir
 
 ### Community 14 - "Design Double Diamond 2"
 Cohesion: 0.08
-Nodes (38): profileToForm(), SettingsFormState, SettingsPage(), defaultOnboardingFields(), DraftOnboardingField, RegisterPage(), RESERVED_FIELD_KEYS, AuthContext (+30 more)
+Nodes (39): profileToForm(), SettingsFormState, SettingsPage(), defaultOnboardingFields(), DraftOnboardingField, RegisterPage(), RESERVED_FIELD_KEYS, AuthContext (+31 more)
 
 ### Community 15 - "Admissions Onboarding 5"
-Cohesion: 0.26
-Nodes (49): ChatConversationsResponse, ChatConversationSummary, ChatRequest, ChatResponse, ChatThreadResponse, ChatTurnRecord, ChatTurnsResponse, ClassBroadcastRecipient (+41 more)
+Cohesion: 0.23
+Nodes (52): list_files(), Debug REST — Drive tool (same surface as drive_server MCP)., search(), ChatConversationsResponse, ChatConversationSummary, ChatRequest, ChatResponse, ChatThreadResponse (+44 more)
 
 ### Community 16 - "Dashboard Frontend Deps"
 Cohesion: 0.07
-Nodes (28): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+20 more)
+Nodes (29): compilerOptions, allowJs, baseUrl, esModuleInterop, incremental, isolatedModules, jsx, lib (+21 more)
 
 ### Community 17 - "Admissions Onboarding 6"
 Cohesion: 0.12
 Nodes (31): commit_onboarding(), create_enrollment(), create_escalation(), get_class_details(), get_student(), get_tenant_info(), _init(), list_classes() (+23 more)
 
 ### Community 18 - "Drive Tooling"
-Cohesion: 0.12
-Nodes (11): get_supabase_client(), list_tenants(), ping_supabase(), Any, Supabase REST client wrapper., Return a singleton Supabase client (requires service role key)., Lightweight connectivity check via tenants table., AdmissionsDbClient (+3 more)
+Cohesion: 0.11
+Nodes (12): column_available(), get_supabase_client(), list_tenants(), ping_supabase(), Any, Supabase REST client wrapper., Return a singleton Supabase client (requires service role key)., Lightweight connectivity check via tenants table. (+4 more)
 
 ### Community 19 - "API Chat Schemas"
-Cohesion: 0.10
-Nodes (22): DirectDriveClient, DirectScheduleClient, _format_day_schedule(), _format_schedule_reply(), _format_single_class(), _format_week_schedule(), _mcp_text(), McpDriveClient (+14 more)
+Cohesion: 0.08
+Nodes (24): DirectDriveClient, DirectScheduleClient, DriveClient, _format_day_schedule(), _format_schedule_reply(), _format_single_class(), _format_week_schedule(), _mcp_text() (+16 more)
 
 ### Community 20 - "Design Double Diamond 3"
 Cohesion: 0.08
@@ -371,32 +371,32 @@ Cohesion: 0.13
 Nodes (15): CrmTool, CRM business logic — called by MCP server only (Week 13 pattern)., mock_db(), fixture, CRM tool and tenant isolation tests., test_commit_onboarding_completes_unenrolled_profile(), test_commit_onboarding_rejects_already_enrolled(), test_commit_onboarding_writes_extra_fields() (+7 more)
 
 ### Community 22 - "Dashboard ORM Models"
-Cohesion: 0.05
-Nodes (33): AuditLog, Base, Records all staff actions performed within the system., BankSlipUpload, Base, Represents a bank slip uploaded by a student for invoice verification., Invoice, Base (+25 more)
+Cohesion: 0.06
+Nodes (27): AuditLog, Base, Records all staff actions performed within the system., BankSlipUpload, Base, Represents a bank slip uploaded by a student for invoice verification., MemEpisode, MemFact (+19 more)
 
 ### Community 23 - "Admissions Onboarding 7"
-Cohesion: 0.06
-Nodes (38): main(), smoke_drive_mock(), smoke_ingest_load(), smoke_resource_agent(), DriveTool, _normalize_drive_folder_id(), Any, Drive tool — tenant-scoped paper/textbook/syllabus search. (+30 more)
+Cohesion: 0.19
+Nodes (12): DriveTool, Business logic for drive_search / drive_list — used by drive_server and REST., Drive MCP server — tool surface and tenant scoping (same logic as axiom-drive st, test_drive_mcp_list_folder(), test_drive_mcp_rejects_disallowed_folder(), test_drive_mcp_search_returns_link(), test_drive_mcp_tenant_isolation(), Drive tool unit tests. (+4 more)
 
 ### Community 24 - "Agent Orchestrator"
-Cohesion: 0.13
-Nodes (16): main(), main(), ChatPipeline, Channel-agnostic chat pipeline — HTTP dev chat + Twilio webhook., Sync entry for scripts and tests without a running event loop., ChatTurnResult, InboundMessage, BaseModel (+8 more)
+Cohesion: 0.10
+Nodes (23): main(), main(), Send a student message and receive an AI reply.      Use this during development, send_chat_message(), ChatPipeline, Channel-agnostic chat pipeline — HTTP dev chat + Twilio webhook., Sync entry for scripts and tests without a running event loop., ChatTurnResult (+15 more)
 
 ### Community 25 - "Admissions Onboarding 8"
 Cohesion: 0.08
 Nodes (25): API Design, Async Routes, Async Test Client from Day 0, Chain Dependencies, CPU Intensive Tasks, Custom Base Model, Decouple BaseSettings, Dependencies (+17 more)
 
 ### Community 26 - "Drive Tooling 2"
-Cohesion: 0.08
-Nodes (33): _breadcrumb(), _contextualize(), fixed_chunk(), _is_table_line(), _page_of(), parent_child_chunk(), Any, Text chunking strategies — fixed + parent-child, markdown structure aware.  Pare (+25 more)
+Cohesion: 0.09
+Nodes (32): _breadcrumb(), _contextualize(), fixed_chunk(), _is_table_line(), _page_of(), parent_child_chunk(), Any, Text chunking strategies — fixed + parent-child, markdown structure aware.  Pare (+24 more)
 
 ### Community 27 - "Supabase DB Client"
 Cohesion: 0.08
 Nodes (23): Basic Setup, Batch Messages, Best Practices, FastAPI Caching, FastAPI Rate Limiting, FastAPI Session Management, Hash Operations, Key Expiration (TTL) (+15 more)
 
 ### Community 28 - "Agent Orchestrator 2"
-Cohesion: 0.11
-Nodes (18): 1. Google Cloud, 2. Environment, Architecture, Google Drive MCP — Integration & Testing, Multi-tenant isolation, MVP vs v2, Onboarding checklist, Phase 4 closure (+10 more)
+Cohesion: 0.08
+Nodes (24): 1. Google Cloud, 2. Environment, Architecture, Folder ID, Folder layout, Google Drive MCP — Integration & Testing, Multi-tenant isolation, MVP vs v2 (+16 more)
 
 ### Community 29 - "Drive Tooling 3"
 Cohesion: 0.09
@@ -407,16 +407,16 @@ Cohesion: 0.09
 Nodes (22): Alembic Migration Naming, Async Engine + Session, Bulk Insert, Bulk Operations, Bulk Update, Cascade Delete, Commit/Rollback Pattern, Constraint Naming (+14 more)
 
 ### Community 31 - "Admissions Onboarding 9"
-Cohesion: 0.11
-Nodes (25): ChatResult, _noop_emit(), Any, EmitFn, Single async entry for one chat turn: decision graph → orchestrator (or OOS shor, _routes_from_patch(), run_chat_turn(), classify_confirmation() (+17 more)
+Cohesion: 0.09
+Nodes (26): ChatResult, _noop_emit(), Any, EmitFn, Single async entry for one chat turn: decision graph → orchestrator (or OOS shor, _routes_from_patch(), run_chat_turn(), classify_confirmation() (+18 more)
 
 ### Community 32 - "Admissions Onboarding 10"
-Cohesion: 0.14
-Nodes (12): _looks_like_text(), SourceType, Detect upload format from content, not from the filename.  Both the filename and, Heuristic: decodable as UTF-8 and free of NUL bytes., Return the source type for ``content``, or raise ExtractionError.      ``filenam, sniff_format(), _zip_format(), _ooxml() (+4 more)
+Cohesion: 0.17
+Nodes (10): _looks_like_text(), SourceType, Detect upload format from content, not from the filename.  Both the filename and, Heuristic: decodable as UTF-8 and free of NUL bytes., Return the source type for ``content``, or raise ExtractionError.      ``filenam, sniff_format(), _zip_format(), _ooxml() (+2 more)
 
 ### Community 33 - "Resource Agent"
 Cohesion: 0.11
-Nodes (20): DashboardLayoutProps, ProtectedDashboard(), Header(), HeaderProps, mainNavItems, NavItem, settingsNavItem, Sidebar() (+12 more)
+Nodes (19): DashboardLayoutProps, ProtectedDashboard(), Header(), HeaderProps, mainNavItems, NavItem, settingsNavItem, Sidebar() (+11 more)
 
 ### Community 34 - "Chat Message Pipeline"
 Cohesion: 0.16
@@ -443,20 +443,20 @@ Cohesion: 0.18
 Nodes (12): _get_bool(), get_chat_model(), get_embedding_model(), _get_nested(), get_role_config(), _get_str(), _load_yaml(), Any (+4 more)
 
 ### Community 40 - "Invoice DB Layer 2"
-Cohesion: 0.25
-Nodes (36): ChatChannel, EnrollmentStatus, EscalationStatus, ClassAnalyticsComparisonResponse, ClassAnalyticsMetric, ClassBase, ClassCreate, ClassResponse (+28 more)
+Cohesion: 0.24
+Nodes (37): ChatChannel, EnrollmentStatus, EscalationStatus, ClassAnalyticsComparisonResponse, ClassAnalyticsMetric, ClassBase, ClassCreate, ClassHumanModeUpdate (+29 more)
 
 ### Community 41 - "Chat Message Pipeline 3"
-Cohesion: 0.15
-Nodes (19): main(), configure_agent_runtime(), get_decision_graph(), get_orchestrator(), preload_agent_runtime(), Any, Lazy-init agent stack (decision graph + orchestrator) for ChatPipeline., Store warmed instances from FastAPI lifespan (BookMe AI ``main.py`` pattern). (+11 more)
+Cohesion: 0.18
+Nodes (17): main(), configure_agent_runtime(), get_decision_graph(), get_orchestrator(), preload_agent_runtime(), Any, Lazy-init agent stack (decision graph + orchestrator) for ChatPipeline., Store warmed instances from FastAPI lifespan (BookMe AI ``main.py`` pattern). (+9 more)
 
 ### Community 42 - "Dashboard ORM Models 2"
 Cohesion: 0.25
 Nodes (16): _ingest_result(), _minimal_docx(), _post(), patch, Multi-format ingest upload endpoint tests., test_delete_ingest_document(), test_get_ingest_document(), test_ingest_upload_docx() (+8 more)
 
 ### Community 43 - "Decision Graph 2"
-Cohesion: 0.12
-Nodes (17): IdentityContext, Resolved tenant + student scope for one WhatsApp conversation., Resolved tenant scope; student_id is set only when a DB record exists., Stable recall key — student id when enrolled, otherwise phone., Past papers and RAG require pending or active enrollment., build_recall_context(), format_student_profile(), Build recall context (student profile + ST turns) before the decision graph. (+9 more)
+Cohesion: 0.09
+Nodes (22): IdentityContext, Resolved tenant + student scope for one WhatsApp conversation., Resolved tenant scope; student_id is set only when a DB record exists., Stable recall key — student id when enrolled, otherwise phone., Past papers and RAG require pending or active enrollment., build_recall_context(), format_student_profile(), Build recall context (student profile + ST turns) before the decision graph. (+14 more)
 
 ### Community 44 - "Escalation Routes 2"
 Cohesion: 0.11
@@ -475,8 +475,8 @@ Cohesion: 0.16
 Nodes (27): build_direct_system_prompt(), build_escalation_ack_reply(), build_guardrail_system_prompt(), build_merge_system_prompt(), build_payment_ack_reply(), build_payment_missing_media_reply(), build_resource_drive_list_reply(), build_resource_drive_pick_reply() (+19 more)
 
 ### Community 48 - "Escalation Routes 3"
-Cohesion: 0.13
-Nodes (24): emptyForm(), FALLBACK_DISTRICT_FIELD, matchesStudentSearch(), ModalMode, StudentsPage(), EnrollModal(), EnrollModalProps, extraFieldsFromStudent() (+16 more)
+Cohesion: 0.15
+Nodes (21): emptyForm(), FALLBACK_DISTRICT_FIELD, matchesStudentSearch(), ModalMode, StudentsPage(), EnrollModal(), EnrollModalProps, extraFieldsFromStudent() (+13 more)
 
 ### Community 49 - "Langfuse Runtime"
 Cohesion: 0.08
@@ -484,11 +484,11 @@ Nodes (25): Dashboard API Contract (Phase 5), Document ingest (knowledge base), 
 
 ### Community 50 - "Langfuse Runtime 2"
 Cohesion: 0.13
-Nodes (14): column_available(), is_undefined_column_error(), mark_column_missing(), BaseException, Tolerate schema lag when optional columns are not yet migrated., reset_missing_columns(), IdentityResolver, Any (+6 more)
+Nodes (16): IdentityResolver, Any, Resolve identity for HTTP dev chat when tenant_id is known., Lookup tenant by sandbox number and student by sender phone., FakeDrive, FakeMemoryTool, FakeRag, asyncio (+8 more)
 
 ### Community 51 - "Test Suite"
-Cohesion: 0.18
-Nodes (12): Resolve tenant from query param or X-Tenant-ID header.      Dashboard frontend s, Ensure the tenant exists and is active before any dashboard handler runs., require_active_tenant(), resolve_tenant_id(), patch, Tenant scope validation for dashboard endpoints., test_require_active_tenant_not_found(), test_require_active_tenant_suspended() (+4 more)
+Cohesion: 0.07
+Nodes (32): _chain_mock(), main(), get_broadcast_recipients(), post_class_broadcast(), DashboardTenant, get, Staff class broadcast to Telegram-linked students., Preview who would receive a Telegram class announcement. (+24 more)
 
 ### Community 52 - "Agent Orchestrator 3"
 Cohesion: 0.12
@@ -496,23 +496,23 @@ Nodes (16): Acceptance criteria mapping, Explicitly out of scope (stay V2), Hand
 
 ### Community 53 - "Admissions Onboarding 11"
 Cohesion: 0.13
-Nodes (16): _fallback_multi(), get_query_router(), heuristic_route(), _last_user_text(), _normalize_action(), _pattern_score(), Any, QueryRouter (+8 more)
+Nodes (21): _fallback_multi(), heuristic_route(), MultiRouteDecision, _normalize_action(), _pattern_score(), Any, QueryRouter, Deterministic routing for unambiguous tuition intents (before LLM). (+13 more)
 
 ### Community 54 - "Workshop Exploration"
 Cohesion: 0.23
 Nodes (15): _enrich_escalations(), EscalationActionResponse, list_escalations(), notify_student(), Any, BaseModel, DashboardTenant, get (+7 more)
 
 ### Community 55 - "Admissions Onboarding 12"
-Cohesion: 0.11
-Nodes (15): MessageLog, Base, Stores metadata about conversations between students and the AI assistant., Base, Represents a student registered under a tenant., Student, create_message_log(), get_message_logs() (+7 more)
+Cohesion: 0.09
+Nodes (30): ClassesPage(), FaqsPage(), IngestContent(), DAYS, initialForm, ScheduleFormState, SchedulesPage(), emptyForm (+22 more)
 
 ### Community 56 - "Supabase DB Client 2"
 Cohesion: 0.13
 Nodes (15): 10. Troubleshooting, 1. Prerequisites, 2. Clone and virtualenv, 3. Environment (`.env`), 4. Database, 5. Langfuse prompts, 6. RAG ingest (optional), 7. Run the API (+7 more)
 
 ### Community 57 - "Langfuse Runtime 3"
-Cohesion: 0.18
-Nodes (14): Base, Represents a tuition class offered by a tenant., SubjectClass, create_class(), delete_class(), get_class(), get_classes(), _parse_fee_cycle() (+6 more)
+Cohesion: 0.16
+Nodes (16): Base, Represents a tuition class offered by a tenant., SubjectClass, create_class(), delete_class(), get_class(), get_classes(), _parse_fee_cycle() (+8 more)
 
 ### Community 58 - "Decision Graph 3"
 Cohesion: 0.14
@@ -523,20 +523,20 @@ Cohesion: 0.15
 Nodes (17): detect_script_language(), Return si/ta when native script is present; None for Latin-only text., Script of this message wins; otherwise stored preference; otherwise English., resolve_reply_language(), parametrize, Language detection, mirroring policy, routing, and canned-string eval., test_canned_templates_have_en_si_ta(), test_detect_script_latin_is_none() (+9 more)
 
 ### Community 60 - "Student Chat Deps 4"
-Cohesion: 0.22
-Nodes (13): ExtractedDoc, Normalized extraction result handed to the ingest pipeline., _fake_ingest_result(), _minimal_docx(), patch, Ingest pipeline unit tests., The old name is kept for one release; callers should move to run_upload_ingest., test_ingest_documents_parent_child() (+5 more)
+Cohesion: 0.20
+Nodes (8): PromptService, Any, Langfuse prompt management with local fallback seeds., Fetch and compile prompts from Langfuse; fall back to local seeds., Support Langfuse `{{var}}` and local `{var}` placeholders., Prompt service tests., test_local_prompt_fallback_messages(), test_local_prompt_fallback_text()
 
 ### Community 61 - "Workshop Exploration 2"
-Cohesion: 0.12
-Nodes (27): main(), collection_info(), title_from_filename(), _attach_document_ids(), delete_document_ingest(), embed_texts(), ingest_documents(), load_tenant_docs() (+19 more)
+Cohesion: 0.20
+Nodes (15): Synchronous upload ingest (used in tests and CLI).      Dashboard uploads use :f, Deprecated alias for :func:`run_upload_ingest`, kept for one release., run_pdf_ingest(), run_upload_ingest(), _fake_ingest_result(), _minimal_docx(), patch, Ingest pipeline unit tests. (+7 more)
 
 ### Community 62 - "RAG Tooling"
 Cohesion: 0.14
 Nodes (13): Async Routes, Core Principles, Dependency Injection, Project Structure, Pydantic Validation, python-backend, Quick Patterns, Rate Limiting (+5 more)
 
 ### Community 63 - "CRM MCP Server 2"
-Cohesion: 0.17
-Nodes (25): Enrollment, Base, Represents a student's enrollment in a subject class., get_class_analytics(), get_dashboard_analytics(), get_dashboard_chat_logs(), get_dashboard_escalations(), get_overview() (+17 more)
+Cohesion: 0.16
+Nodes (28): get_class_analytics(), get_dashboard_analytics(), get_dashboard_chat_logs(), get_dashboard_escalations(), get_overview(), get_summary(), get, patch (+20 more)
 
 ### Community 64 - "Student Chat Deps 5"
 Cohesion: 0.17
@@ -544,11 +544,11 @@ Nodes (11): compilerOptions, lib, module, moduleResolution, noEmit, skipLibCheck
 
 ### Community 65 - "Test Suite 3"
 Cohesion: 0.12
-Nodes (15): _client(), _noop_typing(), asyncio, _Query, Dashboard Agent identity, tenant isolation, and webhook split tests., test_agent_query_uses_jwt_tenant_not_query_param(), test_consume_link_code_is_tenant_scoped(), test_dashboard_agent_rejects_mismatched_tool_tenant() (+7 more)
+Nodes (16): Look up staff_channels joined to an active staff_users row for this tenant., resolve_staff(), _client(), _noop_typing(), asyncio, _Query, Dashboard Agent identity, tenant isolation, and webhook split tests., test_agent_query_uses_jwt_tenant_not_query_param() (+8 more)
 
 ### Community 66 - "IdentityResolver"
 Cohesion: 0.09
-Nodes (28): run_admissions_agent(), run_escalation_agent(), run_payment_agent(), _last_user_text(), Handle Drive file requests., Handle RAG knowledge base queries., ResourceAgentResult, run_resource_agent() (+20 more)
+Nodes (29): run_admissions_agent(), EscalationAgentResult, _last_user_text(), Escalation agent — talk-to-tutor requests → dashboard inbox., run_escalation_agent(), _last_user_text(), PaymentAgent, PaymentAgentResult (+21 more)
 
 ### Community 67 - "Chat Message Pipeline 4"
 Cohesion: 0.20
@@ -556,19 +556,19 @@ Nodes (9): _build_analytics(), _build_class_analytics(), DashboardQueryTool, ext
 
 ### Community 68 - "Chat Turn Runner"
 Cohesion: 0.13
-Nodes (28): create_student(), delete_student(), enroll_student(), get_student(), get_student_by_phone(), get_students(), delete, get (+20 more)
+Nodes (23): Enrollment, Base, Represents a student's enrollment in a subject class., Base, Represents a student registered under a tenant., Student, create_student(), delete_student() (+15 more)
 
 ### Community 69 - "Langfuse Runtime 4"
-Cohesion: 0.08
-Nodes (40): main(), main(), get_chat_turns(), ChatTurnsResponse, get, Fetch recent conversation turns for a student session., _fetch_open_escalations_by_student(), _fetch_open_escalations_for_student() (+32 more)
+Cohesion: 0.18
+Nodes (9): build_drive_backend(), DriveBackend, GoogleDriveBackend, _prefer_ipv4_for_urllib3(), Any, Protocol, Google Drive client — service account, tenant-scoped folder search., Make urllib3/requests resolve A records only (AF_INET).      On dual-stack macOS (+1 more)
 
 ### Community 70 - "MCP Integration"
-Cohesion: 0.19
-Nodes (11): PageText, One page of a paginated source document., _assemble(), extract_pdf(), _page_lacks_text(), _page_marker(), PDF → markdown via pymupdf4llm (text layer only — no vision OCR)., True when a page's text layer yielded too little to be real content. (+3 more)
+Cohesion: 0.20
+Nodes (11): ExtractedDoc, PageText, Shared types for document extraction.  Every extractor converts source bytes int, One page of a paginated source document., Normalized extraction result handed to the ingest pipeline., _assemble(), extract_pdf(), _page_marker() (+3 more)
 
 ### Community 71 - "Dashboard API Routes"
-Cohesion: 0.14
-Nodes (14): get_db(), get_tenant_id(), Authenticated tenant scope for dashboard API requests., get, root(), escalation_websocket(), websocket, approve_payment() (+6 more)
+Cohesion: 0.09
+Nodes (23): get_db(), get_tenant_id(), Authenticated tenant scope for dashboard API requests., get, root(), Invoice, Base, Represents a student's invoice for a specific billing period. (+15 more)
 
 ### Community 72 - "Escalation Routes 4"
 Cohesion: 0.12
@@ -576,15 +576,15 @@ Nodes (33): Escalation, Base, Represents a conversation that requires manual int
 
 ### Community 73 - "Memory MCP Path"
 Cohesion: 0.13
-Nodes (25): _list_children(), main(), _mask_path(), _print_summary(), TEMP DEBUG — full Google Drive MCP integration protocol (Steps 1–12).  Does not, step10b_mcp(), step12_network(), step1_environment() (+17 more)
+Nodes (20): _list_children(), main(), _mask_path(), _print_summary(), TEMP DEBUG — full Google Drive MCP integration protocol (Steps 1–12).  Does not, step12_network(), step1_environment(), step2_auth() (+12 more)
 
 ### Community 74 - "ShortTermMemoryStore"
-Cohesion: 0.20
-Nodes (9): _last_user_text(), PaymentAgent, PaymentAgentResult, Payment Check agent — payment receipt → escalation inbox., FakeCrm, asyncio, Payment Check agent tests., test_payment_agent_creates_escalation_with_media() (+1 more)
+Cohesion: 0.36
+Nodes (5): FakeCrm, asyncio, Payment Check agent tests., test_payment_agent_creates_escalation_with_media(), test_payment_agent_requires_media()
 
 ### Community 75 - "Dashboard Module 2"
-Cohesion: 0.13
-Nodes (16): _format_citation_label(), format_docs(), RAG helper utilities., Format LangChain documents into a single context block., build_rag_chain(), Config, Any, RAGService (+8 more)
+Cohesion: 0.14
+Nodes (13): _format_citation_label(), format_docs(), RAG helper utilities., Format LangChain documents into a single context block., build_rag_chain(), Config, Any, Plain RAG service — Qdrant retrieval + Gemini synthesis (no CAG/CRAG). (+5 more)
 
 ### Community 76 - "Admissions Onboarding 13"
 Cohesion: 0.17
@@ -595,48 +595,48 @@ Cohesion: 0.17
 Nodes (12): 16.10 V2 Architecture Upgrades (Reference Patterns), 16.11 V2 Acceptance Themes, 16.1 Messaging & Infrastructure, 16.2 AI Agents & Orchestration, 16.3 Memory, Caching & RAG Enhancements, 16.4 Payments & Finance Automation, 16.5 Integrations & Tooling, 16.6 CRM, Dashboard & Backend APIs (Extended) (+4 more)
 
 ### Community 78 - "Langfuse Runtime 5"
-Cohesion: 0.17
-Nodes (20): download_telegram_file(), get_telegram_file_path(), _keep_telegram_typing(), Any, Response, _raise_telegram_error(), Thin Telegram Bot API client — one token per tenant, never a global token., Send a message with a one-time 'Share phone number' keyboard. (+12 more)
+Cohesion: 0.16
+Nodes (19): download_telegram_file(), get_telegram_file_path(), _keep_telegram_typing(), Any, Response, _raise_telegram_error(), Thin Telegram Bot API client — one token per tenant, never a global token., Send a message with a one-time 'Share phone number' keyboard. (+11 more)
 
 ### Community 79 - "Admissions Onboarding 14"
 Cohesion: 0.17
 Nodes (11): 11\. Data Model - Key Entities, 12\. Third-Party Integrations and Technical Constraints, 13\. Risk Register, 14\. Monetisation and SaaS Pricing Model (New), 15\. Success Metrics / KPIs (New), 17\. Future Roadmap (Beyond v1), 18\. Glossary, 1.1 The Problem in One Sentence (+3 more)
 
 ### Community 80 - "test_identity_recall.py"
-Cohesion: 0.22
-Nodes (8): classify_resource_subpath(), _infer_drive_folder(), Keyword sub-router: schedule > drive > rag., parametrize, Resource agent sub-router tests., test_classify_resource_subpath(), test_infer_drive_folder(), ResourceSubPath
+Cohesion: 0.15
+Nodes (12): classify_resource_subpath(), _infer_drive_folder(), _last_user_text(), Keyword sub-router: schedule > drive > rag., Handle Drive file requests., Handle RAG knowledge base queries., ResourceAgentResult, parametrize (+4 more)
 
 ### Community 81 - "_tracing_enabled"
-Cohesion: 0.05
-Nodes (50): _langfuse_template(), main(), Convert Python .format `{var}` placeholders to Langfuse `{{var}}`., _seed_catalog(), RAG tool — tenant-scoped tutor-note Q&A (plain RAG, no cache)., _disable_langfuse(), get_current_trace_id(), get_langfuse_client() (+42 more)
+Cohesion: 0.09
+Nodes (33): _langfuse_template(), main(), Convert Python .format `{var}` placeholders to Langfuse `{{var}}`., _seed_catalog(), RAG tool — tenant-scoped tutor-note Q&A (plain RAG, no cache)., _disable_langfuse(), get_langfuse_client(), _is_langfuse_auth_error() (+25 more)
 
 ### Community 82 - "Escalation Routes 6"
-Cohesion: 0.18
-Nodes (7): chat_result(), client(), asyncio, fixture, HTTP dev chat endpoint tests., Regression: /chat must not call asyncio.run() inside FastAPI's event loop., test_chat_pipeline_runs_agent_inside_event_loop()
+Cohesion: 0.25
+Nodes (4): chat_result(), client(), fixture, HTTP dev chat endpoint tests.
 
 ### Community 83 - "Escalation Routes 7"
 Cohesion: 0.05
-Nodes (36): Handle schedule queries via ScheduleClient., get_day_of_week(), get_tenant_now(), get_tenant_timezone(), get_tenant_today(), datetime, Schedule service — timetable CRUD, queries, and centralized timezone handling., Fetch tenant timezone from DB. Returns default if not set. (+28 more)
+Nodes (35): get_day_of_week(), Convert a date to DayOfWeek enum., mock_client(), MockSupabaseClient, asyncio, fixture, Tests for schedule CRUD, recurring schedules, exceptions, timezone, and multiple, Mock Supabase client for unit tests. (+27 more)
 
 ### Community 84 - "Drive Tooling 4"
-Cohesion: 0.22
-Nodes (10): _mock_oos_graph(), _mock_proceed_graph(), Any, asyncio, Fast E2E wiring tests (mocked LLM — BookMe / Week 13 decision_graph test pattern, Minimal stand-in — records whether orchestrator path runs (BookMe AI pattern)., _RecordingOrchestrator, test_in_scope_invokes_orchestrator() (+2 more)
+Cohesion: 0.27
+Nodes (9): _mock_oos_graph(), _mock_proceed_graph(), asyncio, Fast E2E wiring tests (mocked LLM — BookMe / Week 13 decision_graph test pattern, Minimal stand-in — records whether orchestrator path runs (BookMe AI pattern)., _RecordingOrchestrator, test_in_scope_invokes_orchestrator(), test_media_url_forces_payment_route() (+1 more)
 
 ### Community 85 - "Resource Agent 2"
-Cohesion: 0.06
-Nodes (17): mock_client(), MockSupabaseClient, MockSupabaseResponse, MockSupabaseTable, fixture, Tests for schedule CRUD, recurring schedules, exceptions, timezone, and multiple, Mock Supabase client for unit tests., Provide a mock Supabase client. (+9 more)
+Cohesion: 0.12
+Nodes (4): MockSupabaseResponse, MockSupabaseTable, Mock Supabase execute() response., Mock Supabase table with chainable query builder.
 
 ### Community 86 - "Dashboard Module 3"
-Cohesion: 0.20
-Nodes (7): MessagePersistence, ChatChannel, MessageRole, Persist inbound/outbound messaging to Supabase (message_logs + st_turns)., Return the latest turn per session_id, ordered by most recent activity., Write message_logs and st_turns rows for a conversation turn., Persist a staff-authored message (role=system → sender=staff in dashboard UI).
+Cohesion: 0.21
+Nodes (13): apply_student_extra_fields(), _flag_extra_fields(), _normalize_extra_value(), _optional_column_str(), Any, Keep extra_fields.school/district in sync without dropping other keys., Merge extra_fields and dual-write school/district columns., sync_column_backed_extra_fields() (+5 more)
 
 ### Community 87 - "Dashboard API Routes 2"
-Cohesion: 0.29
-Nodes (13): ChatChannel, EnrollmentStatus, EscalationStatus, FeeCycle, InvoiceStatus, MessageRole, PaymentStatus, Enum (+5 more)
+Cohesion: 0.17
+Nodes (18): ChatChannel, EnrollmentStatus, EscalationStatus, FeeCycle, InvoiceStatus, MessageRole, PaymentStatus, Enum (+10 more)
 
 ### Community 88 - "MCP Integration 2"
-Cohesion: 0.09
-Nodes (35): cancel_schedule(), create_exception(), create_schedule(), delete_exception(), get_schedule(), list_exceptions(), list_schedules(), DashboardTenant (+27 more)
+Cohesion: 0.08
+Nodes (39): cancel_schedule(), create_exception(), create_schedule(), delete_exception(), get_schedule(), list_exceptions(), list_schedules(), DashboardTenant (+31 more)
 
 ### Community 89 - "Test Suite 4"
 Cohesion: 0.12
@@ -659,8 +659,8 @@ Cohesion: 0.07
 Nodes (42): bind_telegram_student_channel(), _delete_pending(), _has_enrollment(), link_telegram_contact(), _lookup_pending_phone(), _lookup_student_by_phone(), _parse_channel(), _pending_identity() (+34 more)
 
 ### Community 94 - "test_twilio_webhook.py"
-Cohesion: 0.17
-Nodes (22): login(), register(), get_onboarding_fields(), get_tenant_profile(), list_tenants(), get, put, Session (+14 more)
+Cohesion: 0.19
+Nodes (24): bootstrap_demo_physics(), create_telegram_link_code(), login(), me(), delete, get, Session, register() (+16 more)
 
 ### Community 96 - "Dashboard Module 4"
 Cohesion: 0.47
@@ -671,8 +671,8 @@ Cohesion: 0.31
 Nodes (9): add_turn(), get_procedural(), _init(), tool, Memory MCP Server — exposes ST recall / add_turn / procedural lookup.  Adapted f, Fetch recent conversation turns for a tenant session., Append a conversation turn to short-term memory., Lookup tenant onboarding / workflow procedures. (+1 more)
 
 ### Community 98 - "Demo Chat Lifecycle 2"
-Cohesion: 0.05
-Nodes (58): main(), _mock_drive_backend(), Velocity query against real Qdrant (requires ingest + OPENAI_API_KEY)., Paper query → Drive link (mock backend; no Google credentials)., Velocity query → cited RAG answer (mocked RAG service)., smoke_drive_paper_link(), smoke_rag_velocity_live(), smoke_rag_velocity_mock() (+50 more)
+Cohesion: 0.06
+Nodes (51): main(), _mock_drive_backend(), Velocity query against real Qdrant (requires ingest + OPENAI_API_KEY)., Paper query → Drive link (mock backend; no Google credentials)., Velocity query → cited RAG answer (mocked RAG service)., smoke_drive_paper_link(), smoke_rag_velocity_live(), smoke_rag_velocity_mock() (+43 more)
 
 ### Community 99 - "Admissions Onboarding 16"
 Cohesion: 0.22
@@ -699,8 +699,8 @@ Cohesion: 0.18
 Nodes (13): analyze_tenant_faqs(), Any, DashboardTenant, FAQ intelligence endpoint for dashboard staff., Cluster recent student questions for one class into recurring FAQ themes., analyze_faqs(), _clean_message(), FAQCluster (+5 more)
 
 ### Community 105 - "Admissions Onboarding 18"
-Cohesion: 0.16
-Nodes (10): ExtractionError, normalize_markdown(), ValueError, Shared types for document extraction.  Every extractor converts source bytes int, Clean up extractor output so headings are usable as breadcrumbs.      Layout-der, Raised when a document cannot be turned into usable markdown.      Subclasses Va, extract_markdown(), Markdown / plain-text passthrough. (+2 more)
+Cohesion: 0.32
+Nodes (4): normalize_markdown(), Clean up extractor output so headings are usable as breadcrumbs.      Layout-der, Format sniffing, DOCX/markdown extraction, and PDF text-layer routing., TestNormalizeMarkdown
 
 ### Community 106 - "Escalation Routes 13"
 Cohesion: 0.25
@@ -711,8 +711,8 @@ Cohesion: 0.25
 Nodes (7): Build, Demo UI — WhatsApp Student Chat, Env (optional), Features, Prerequisites, Project layout, Quick start
 
 ### Community 108 - "MCP Integration 4"
-Cohesion: 0.16
-Nodes (21): handle_text_message(), client(), no_staff_on_webhook(), _noop_typing(), asyncio, fixture, Telegram webhook + ChatPipeline wiring tests., Student webhook tests must not hit staff_channels / link-code tables. (+13 more)
+Cohesion: 0.15
+Nodes (23): handle_text_message(), client(), no_staff_on_webhook(), _noop_typing(), asyncio, fixture, Telegram webhook + ChatPipeline wiring tests., Student webhook tests must not hit staff_channels / link-code tables. (+15 more)
 
 ### Community 109 - "RAG Ingest Pipeline 6"
 Cohesion: 0.15
@@ -727,8 +727,8 @@ Cohesion: 0.21
 Nodes (14): canned_language_parent(), _latin_tokens(), looks_like_singlish(), looks_like_tanglish(), Reply-language resolution for Sinhala, Tamil, English, and code-switching.  Nati, True for romanized Sinhala mix (Singlish), not native Sinhala script., True for romanized Tamil mix (Tanglish), not native Tamil script., si_latn → si, ta_latn → ta, otherwise the normalized pref. (+6 more)
 
 ### Community 112 - "Dashboard Module 6"
-Cohesion: 0.17
-Nodes (22): _dispatch(), Any, looks_like_link_code(), Show Telegram typing until the wrapped awaitable returns or raises., telegram_typing(), _contact_prompt(), _display_name(), _ensure_onboarding_session() (+14 more)
+Cohesion: 0.14
+Nodes (24): _dispatch(), Any, Request, Telegram Bot API webhook router — one bot (token) per tenant., Receive Telegram updates for a single tenant bot.      Always acknowledges with, telegram_webhook(), _contact_prompt(), _display_name() (+16 more)
 
 ### Community 113 - "RAG Ingest Pipeline 7"
 Cohesion: 0.27
@@ -736,19 +736,19 @@ Nodes (5): _cache_key(), Download a voice note and transcribe via Gemini.      A
 
 ### Community 114 - "escalation_reasons.py"
 Cohesion: 0.18
-Nodes (16): delete_document(), get_document(), list_documents(), BackgroundTasks, DashboardTenant, delete, get, Document ingest — PDF/DOCX/Markdown upload → parent-child chunk → Qdrant. (+8 more)
+Nodes (16): delete_document(), get_document(), list_documents(), BackgroundTasks, DashboardTenant, delete, get, UploadFile (+8 more)
 
 ### Community 116 - "Dashboard Module 7"
-Cohesion: 0.25
-Nodes (16): Base, Represents a staff member of a tuition institute., StaffUser, bootstrap_demo_physics(), create_telegram_link_code(), me(), delete, get (+8 more)
+Cohesion: 0.31
+Nodes (7): Base, One-time dashboard code used to bind a Telegram chat to a staff account., StaffLinkCode, create_staff_link_code(), get_telegram_link_status(), Session, unlink_telegram()
 
 ### Community 117 - "Dashboard Module 8"
 Cohesion: 0.15
 Nodes (8): db_conn(), _db_url(), fixture, Validate v2 ER schema tables exist in Supabase when DATABASE_URL is configured., school and district stay real columns; extra_fields is additive only., Demo tenants keep today's school/district extras; core fields stay out., test_every_tenant_has_school_and_district_field_definitions(), test_students_keep_school_and_district_columns()
 
 ### Community 118 - "Student Chat Deps 6"
-Cohesion: 0.09
-Nodes (25): ClassAnalyticsPage(), formatClassTitle(), SortKey, AnalyticsPage(), humanizeReason(), OverviewPage(), ChartCard(), ChartCardProps (+17 more)
+Cohesion: 0.10
+Nodes (20): ClassAnalyticsPage(), formatClassTitle(), PERIOD_OPTIONS, SortKey, AnalyticsPage(), humanizeReason(), PERIOD_OPTIONS, OverviewPage() (+12 more)
 
 ### Community 120 - "Chat Message Pipeline 6"
 Cohesion: 0.29
@@ -767,8 +767,8 @@ Cohesion: 0.15
 Nodes (13): `audit_logs` (AUDIT_LOG), `bank_slip_uploads` (BANK_SLIP_UPLOAD), `enrollments` (ENROLLMENT), `escalations` (ESCALATION), `invoices` (INVOICE), `message_logs` (MESSAGE_LOG), `parent_guardians` (PARENT_GUARDIAN), `staff_users` (STAFF_USER) (+5 more)
 
 ### Community 124 - "Dashboard Frontend Deps 2"
-Cohesion: 0.27
-Nodes (6): extract_document(), max_upload_bytes(), SourceType, Multi-format document extraction — PDF, DOCX and Markdown to markdown.  Every ex, Sniff the format of ``content`` and extract it to markdown.      Raises Extracti, TestExtractDocument
+Cohesion: 0.15
+Nodes (20): title_from_filename(), _attach_document_ids(), delete_document_ingest(), embed_texts(), ingest_documents(), load_tenant_docs(), prepare_upload_ingest(), process_upload_ingest() (+12 more)
 
 ### Community 125 - "Dashboard Module 9"
 Cohesion: 0.33
@@ -780,15 +780,15 @@ Nodes (5): Demo script — Student chat only (~5 min), Narrative, Payment approv
 
 ### Community 127 - "Dashboard Module 11"
 Cohesion: 0.17
-Nodes (12): 10. Phased Implementation Plan, Acceptance Criteria, Acceptance Criteria, Features, Features *(original plan — see PHASE5_DECISIONS.md for what changed)*, Files / Modules, Objective, Objective (+4 more)
+Nodes (12): 10. Phased Implementation Plan, Acceptance Criteria, Acceptance Criteria, Features, Features, Files / Modules, Objective, Objective (+4 more)
 
 ### Community 128 - "Dashboard API Routes 4"
 Cohesion: 0.16
 Nodes (15): compute_document_id(), point_id_for_chunk(), point_id_for_parent(), Stable document and point identity for idempotent Qdrant ingest., Content hash — same bytes always yield the same id within a tenant., Deterministic Qdrant point id so re-ingest replaces rather than duplicates., Deterministic id for a parent-context point (stored once, joined on retrieval)., patch (+7 more)
 
 ### Community 129 - "Student Chat Deps 7"
-Cohesion: 0.20
-Nodes (5): DriveClient, Protocol, RagClient, Protocol for schedule lookups — Direct or MCP., ScheduleClient
+Cohesion: 0.24
+Nodes (11): step10b_mcp(), main(), _text(), build_mcp_server_config(), expected_mcp_tool_names(), mcp_include_drive(), mcp_subprocess_env(), MCP client configuration — memory + CRM + RAG (+ optional Drive).  Adapted from (+3 more)
 
 ### Community 130 - "Decision Graph 4"
 Cohesion: 0.33
@@ -803,20 +803,20 @@ Cohesion: 0.27
 Nodes (8): Normalize student-facing chat text for WhatsApp and Telegram., Remove markdown ``**bold**`` markers so they do not show as raw asterisks., strip_markdown_markers(), Plain-text sanitizer for student-facing messages., test_empty_and_none_safe(), test_leaves_plain_text_unchanged(), test_strips_bold_markers(), test_strips_multiple_bold_spans()
 
 ### Community 133 - "preload agent runtime"
-Cohesion: 0.18
-Nodes (7): parse_twilio_form(), Parse Twilio application/x-www-form-urlencoded webhook bodies., client(), identity_ctx(), fixture, Twilio webhook endpoint tests., test_parse_twilio_form_extracts_media()
+Cohesion: 0.08
+Nodes (23): _parse_form_params(), BackgroundTasks, Request, Response, Twilio WhatsApp webhook router., Twilio WhatsApp sandbox webhook.      Returns 200 immediately and processes the, _should_validate_signature(), twilio_webhook() (+15 more)
 
 ### Community 134 - "page_needs_ocr"
-Cohesion: 0.17
-Nodes (4): OrganizationRegisterRequest, field_validator, StaffRegistration, EmailStr
+Cohesion: 0.18
+Nodes (5): AdminRegistration, OrganizationRegisterRequest, field_validator, StaffRegistration, EmailStr
 
 ### Community 135 - "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled"
 Cohesion: 0.36
 Nodes (7): _init(), kb_ingest_status(), kb_search(), tool, RAG MCP Server — tenant-scoped tutor-note Q&A., Search tutor lesson notes (Qdrant) and return a grounded answer with citations., Return Qdrant ingest status for a tenant's tutor-note collection.
 
 ### Community 136 - "Dashboard Frontend Deps 3"
-Cohesion: 0.25
-Nodes (10): assert_body_tenant(), assert_form_tenant(), assert_session_for_tenant(), Tenant scope validation for staff / dashboard endpoints., Resolved, active tenant — all dashboard queries must use this scope., Reject POST bodies whose tenant_id does not match the resolved scope., Defense-in-depth: session ids are `{tenant_id}:{phone}`., Reject multipart/form uploads whose tenant_id does not match the resolved scope. (+2 more)
+Cohesion: 0.22
+Nodes (11): get_tenant_now(), get_tenant_timezone(), get_tenant_today(), datetime, Schedule service — timetable CRUD, queries, and centralized timezone handling., Fetch tenant timezone from DB. Returns default if not set., Convert UTC datetime to tenant-local datetime. Centralized for all schedule quer, Get current time in tenant's local timezone. (+3 more)
 
 ### Community 138 - "Dashboard Frontend Deps 4"
 Cohesion: 0.40
@@ -840,15 +840,15 @@ Nodes (11): _chain_mock(), patch, Dashboard API HTTP tests (mocked Supabase + CR
 
 ### Community 143 - "useTenant"
 Cohesion: 0.29
-Nodes (9): _parse_form_params(), BackgroundTasks, Request, Response, Twilio WhatsApp webhook router., Twilio WhatsApp sandbox webhook.      Returns 200 immediately and processes the, _should_validate_signature(), twilio_webhook() (+1 more)
+Nodes (7): get_tenant_profile(), list_tenants(), get, put, Session, replace_onboarding_fields(), OnboardingFieldsPutRequest
 
 ### Community 144 - "kb_documents.py"
 Cohesion: 0.40
 Nodes (9): delete_document(), get_document(), list_documents(), mark_failed(), _now_iso(), Any, Supabase registry for ingested tutor documents., registry_available() (+1 more)
 
 ### Community 145 - "Demo UI"
-Cohesion: 0.42
-Nodes (13): _async_client(), _json_response(), asyncio, Telegram Bot API client tests — tenant token isolation., test_download_telegram_file_uses_matching_token(), test_get_telegram_file_path(), test_send_contact_request_includes_keyboard(), test_send_telegram_chat_action_does_not_raise() (+5 more)
+Cohesion: 0.33
+Nodes (16): Best-effort chat action (typing). Failures are logged, never raised., send_telegram_chat_action(), telegram_api_url(), _async_client(), _json_response(), asyncio, Telegram Bot API client tests — tenant token isolation., test_download_telegram_file_uses_matching_token() (+8 more)
 
 ### Community 146 - "Langfuse Runtime 7"
 Cohesion: 0.50
@@ -867,8 +867,8 @@ Cohesion: 0.31
 Nodes (8): active_config(), health(), get, Request, Health, readiness, and config endpoints., ready(), langfuse_configured(), HealthResponse
 
 ### Community 152 - "Phase 5 — Escalations + staff chat"
-Cohesion: 0.21
-Nodes (13): consume_staff_link_code(), normalize_link_code(), _parse_channel(), _parse_dt(), Any, ChatChannel, datetime, Resolve staff from a channel address (e.g. Telegram chat_id) and consume link co (+5 more)
+Cohesion: 0.18
+Nodes (14): consume_staff_link_code(), looks_like_link_code(), normalize_link_code(), _parse_channel(), _parse_dt(), Any, ChatChannel, datetime (+6 more)
 
 ### Community 153 - "Dashboard Module 18"
 Cohesion: 0.67
@@ -892,7 +892,7 @@ Nodes (3): 7.1 Student and Parent Stories, 7.2 Tutor and Admin Stories (CRM Focu
 
 ### Community 158 - "Admissions Onboarding 20"
 Cohesion: 0.20
-Nodes (9): mock_db(), fixture, CRM escalation create/resolve tests for Phase 5 flows., test_create_payment_escalation(), test_create_payment_escalation_blocked_when_payments_disabled(), test_create_talk_to_tutor_escalation(), test_reject_payment_escalation(), test_resolve_payment_escalation_activates_enrollment() (+1 more)
+Nodes (9): is_undefined_column_error(), mark_column_missing(), BaseException, Tolerate schema lag when optional columns are not yet migrated., reset_missing_columns(), Schema compatibility helpers for optional DB columns., setup_function(), test_detects_postgres_undefined_column() (+1 more)
 
 ### Community 160 - "Chat Message Pipeline 7"
 Cohesion: 0.31
@@ -903,8 +903,8 @@ Cohesion: 0.19
 Nodes (9): Any, Atomic post-confirmation write: student profile + pending enrollment., Update student profile fields for onboarding., coerce_extra_fields(), merge_column_backed_fields(), Any, Dual-write school/district into extra_fields; copy extra keys into columns., test_merge_copies_column_keys_from_extra_when_args_missing() (+1 more)
 
 ### Community 214 - "RateLimitMiddleware"
-Cohesion: 0.29
-Nodes (9): admissions_route_decision(), apply_onboarding_patch_overrides(), is_onboarding_active(), onboarding_router_context_hint(), Route-lock helpers — keep mid-onboarding turns on the admissions agent., True when a clear specialist intent should override active onboarding., True when an in-memory onboarding session is collecting details., Force proceed + admissions when mid-onboarding. Returns True if applied. (+1 more)
+Cohesion: 0.19
+Nodes (6): _normalize_drive_folder_id(), Any, Drive tool — tenant-scoped paper/textbook/syllabus search., Strip URL query junk users paste from Drive share links (e.g. ``?usp=drive_link`, Find subfolder ID (papers/textbooks/syllabus) under tenant root., resolve_subfolder_id()
 
 ### Community 215 - "tenant_scope.py"
 Cohesion: 0.29
@@ -915,24 +915,24 @@ Cohesion: 0.27
 Nodes (8): HTTP chat endpoints — WhatsApp-like dev interface (no Twilio required)., FeeCycle, InvoiceStatus, Enum, str, Domain status enums — mirror PostgreSQL ENUM types in sql/01_schema.sql., StaffRole, Domain types — enums and value objects.
 
 ### Community 217 - "FakeCrm"
-Cohesion: 0.33
-Nodes (7): Twilio request signature validation., validate_twilio_signature(), Twilio signature validation tests., _sign(), test_validate_twilio_signature_accepts_valid_signature(), test_validate_twilio_signature_rejects_invalid_signature(), test_validate_twilio_signature_rejects_tampered_body()
+Cohesion: 0.27
+Nodes (6): extract_document(), max_upload_bytes(), SourceType, Multi-format document extraction — PDF, DOCX and Markdown to markdown.  Every ex, Sniff the format of ``content`` and extract it to markdown.      Raises Extracti, TestExtractDocument
 
 ### Community 218 - "Testing"
 Cohesion: 0.32
 Nodes (7): get_student(), Any, get, Student registration and lookup — dashboard + dev API., Register or update a student profile (dashboard / manual onboarding)., Fetch student profile and enrollments by phone., register_student()
 
 ### Community 219 - "telegram_webhook"
-Cohesion: 0.29
-Nodes (7): PaymentStatusUpdate, Example dashboard PATCH body using domain enums., parametrize, test_enum_values(), test_payment_status_update_accepts_enum(), test_payment_status_update_rejects_invalid(), test_tenant_summary_schema()
+Cohesion: 0.20
+Nodes (9): mock_db(), fixture, CRM escalation create/resolve tests for Phase 5 flows., test_create_payment_escalation(), test_create_payment_escalation_blocked_when_payments_disabled(), test_create_talk_to_tutor_escalation(), test_reject_payment_escalation(), test_resolve_payment_escalation_activates_enrollment() (+1 more)
 
 ### Community 220 - "register_student"
 Cohesion: 0.29
-Nodes (6): get_chat_logs(), ChatTurnsResponse, DashboardTenant, get, Dashboard chat history — legacy alias under /chat-logs., Legacy path for conversation history.      Prefer `GET /dashboard/chat/conversat
+Nodes (7): PaymentStatusUpdate, Example dashboard PATCH body using domain enums., parametrize, test_enum_values(), test_payment_status_update_accepts_enum(), test_payment_status_update_rejects_invalid(), test_tenant_summary_schema()
 
 ### Community 221 - "conftest.py"
-Cohesion: 0.38
-Nodes (6): active_tenant_scope(), client(), client_no_tenant_override(), fixture, Shared pytest bootstrap., # IMPORTANT:
+Cohesion: 0.31
+Nodes (4): BaseHTTPMiddleware, Request, Response, RateLimitMiddleware
 
 ### Community 223 - "seed_langfuse_prompts.py"
 Cohesion: 0.25
@@ -948,7 +948,7 @@ Nodes (6): _llm_content_to_str(), Any, Staff dashboard Q&A agent — separate fr
 
 ### Community 227 - "decision_bridge.py"
 Cohesion: 0.09
-Nodes (35): main(), _primary_route(), RoutingCase, _run(), map_decision_to_agent_state(), Bridge decision subgraph output → orchestrator AgentState.  Ported from BookMe A, build_decision_graph(), build_decision_input() (+27 more)
+Nodes (37): main(), _primary_route(), RoutingCase, _run(), map_decision_to_agent_state(), Bridge decision subgraph output → orchestrator AgentState.  Ported from BookMe A, build_decision_graph(), build_decision_input() (+29 more)
 
 ### Community 228 - "agent.py"
 Cohesion: 0.43
@@ -971,24 +971,24 @@ Cohesion: 0.29
 Nodes (4): InMemorySttCache, In-memory cache with TTL. Replace with RedisSttCache for production., Get or create a per-key lock for concurrency control., Lock
 
 ### Community 233 - "log.py"
-Cohesion: 0.46
-Nodes (7): authenticate_staff(), build_unique_slug(), hash_password(), Session, register_organization(), slugify(), verify_password()
+Cohesion: 0.14
+Nodes (24): get_current_staff(), HTTPAuthorizationCredentials, Session, StaffRole, Base, Represents a staff member of a tuition institute., StaffUser, create_staff() (+16 more)
 
 ### Community 234 - "admissions_db_client.py"
 Cohesion: 0.33
-Nodes (6): Acceptance Criteria, Features, Files / Modules, Objective, Phase 3 — Admissions Agent, Reference Implementation (copy — do not invent)
+Nodes (7): MockDriveBackend, In-memory Drive mock for local dev and unit tests., chemistry_drive_backend(), physics_drive_backend(), fixture, mock_backend(), fixture
 
 ### Community 235 - "Escalation inbox (unified HITL queue)"
-Cohesion: 0.12
-Nodes (12): get, FastAPI application — Phase 6 integration (MCP warmup + dashboard APIs)., root(), BaseHTTPMiddleware, Request, Response, Request ID and latency headers., RequestContextMiddleware (+4 more)
+Cohesion: 0.18
+Nodes (8): get, FastAPI application — Phase 6 integration (MCP warmup + dashboard APIs)., root(), BaseHTTPMiddleware, Request, Response, Request ID and latency headers., RequestContextMiddleware
 
 ### Community 236 - "test_merge_response.py"
-Cohesion: 0.33
-Nodes (6): Folder ID, Folder layout, Per-institute onboarding, Share with service account, Supabase tenant row, Tutor notes (RAG, separate step)
+Cohesion: 0.29
+Nodes (6): ExtractionError, ValueError, Raised when a document cannot be turned into usable markdown.      Subclasses Va, extract_markdown(), Markdown / plain-text passthrough., Decode markdown bytes, stripping YAML front matter if present.
 
 ### Community 237 - "_emit_from_config"
-Cohesion: 0.50
-Nodes (4): get_current_staff(), HTTPAuthorizationCredentials, Session, decode_access_token()
+Cohesion: 0.43
+Nodes (3): _page_lacks_text(), True when a page's text layer yielded too little to be real content., TestPageLacksText
 
 ### Community 238 - "test_health.py"
 Cohesion: 0.25
@@ -1007,16 +1007,16 @@ Cohesion: 0.40
 Nodes (4): _content_type_supported(), _download_with_retry(), Check if the Content-Type header indicates a voice note (OGG Opus)., Download voice note from a URL with retry and Content-Type validation.      If a
 
 ### Community 242 - "supabase_client.py"
-Cohesion: 0.22
-Nodes (8): Request, Telegram Bot API webhook router — one bot (token) per tenant., Receive Telegram updates for a single tenant bot.      Always acknowledges with, telegram_webhook(), ensure_tenant_bot(), is_tenant_bot_error(), BaseException, Fail fast if this webhook path does not map to a configured tenant bot.
+Cohesion: 0.38
+Nodes (6): active_tenant_scope(), client(), client_no_tenant_override(), fixture, Shared pytest bootstrap., # IMPORTANT:
 
 ### Community 244 - ".list_recent_sessions"
 Cohesion: 0.67
 Nodes (3): get_stt_metrics(), Any, Return current transcription metrics. Call from a /metrics endpoint.
 
 ### Community 245 - "smoke_resource.py"
-Cohesion: 0.29
-Nodes (7): get_broadcast_recipients(), post_class_broadcast(), DashboardTenant, get, Staff class broadcast to Telegram-linked students., Preview who would receive a Telegram class announcement., Send a class announcement to Telegram-linked enrolled students.
+Cohesion: 0.33
+Nodes (6): Acceptance Criteria, Features *(original plan — see PHASE5_DECISIONS.md for what changed)*, Files / Modules, Objective, Phase 5 — Payment Check, Escalation & Dashboard APIs, Reference Implementation (copy — do not invent)
 
 ### Community 246 - ".kb_search"
 Cohesion: 0.18
@@ -1039,38 +1039,50 @@ Cohesion: 0.36
 Nodes (7): drive_list(), drive_search(), _init(), tool, Drive MCP Server — papers, textbooks, syllabus only., Search tenant Drive for papers, textbooks, or syllabus files. Returns shareable, List files in an allowed Drive subfolder (papers, textbooks, syllabus).
 
 ### Community 251 - "send_chat_message"
-Cohesion: 0.14
-Nodes (13): get_drive_tool(), get_rag_tool(), get_request_id(), Request, FastAPI dependency injection helpers., _require_startup(), list_files(), Debug REST — Drive tool (same surface as drive_server MCP). (+5 more)
+Cohesion: 0.38
+Nodes (6): get_drive_tool(), get_rag_tool(), get_request_id(), Request, FastAPI dependency injection helpers., _require_startup()
 
 ### Community 252 - "Axiom AI — Multi-Agent Backend"
-Cohesion: 0.50
-Nodes (3): asyncio, Resource agent — in-process tools blocked when ALLOW_INPROCESS_TOOLS=false., test_run_resource_agent_requires_mcp_clients_when_fallback_disabled()
+Cohesion: 0.70
+Nodes (4): main(), smoke_drive_mock(), smoke_ingest_load(), smoke_resource_agent()
 
 ### Community 253 - "get_api_key"
 Cohesion: 0.33
 Nodes (5): get_default_embeddings(), Any, OpenAI embeddings for RAG ingest and retrieval., Return configured embedding model (text-embedding-3-small by default)., OpenAIEmbeddings
 
+### Community 255 - "delete_chunks_by_document_id"
+Cohesion: 0.06
+Nodes (47): main(), main(), _one_turn(), main(), get_chat_turns(), ChatTurnsResponse, get, Fetch recent conversation turns for a student session. (+39 more)
+
+### Community 256 - "_page_lacks_text"
+Cohesion: 0.40
+Nodes (4): get, Debug REST — RAG tool (same surface as rag_server MCP)., search(), status()
+
 ### Community 257 - "Per-institute onboarding"
 Cohesion: 0.50
-Nodes (4): Send a student message and receive an AI reply.      Use this during development, send_chat_message(), ChatRequest, ChatResponse
+Nodes (4): asyncio, Merge response node tests., test_merge_multiple_fragments_uses_gemini(), test_merge_single_fragment_passthrough()
 
 ### Community 258 - "smoke_mcp_memory.py"
-Cohesion: 0.60
-Nodes (5): main(), Same business logic memory_server exposes — valid when Python < 3.10., _run_mcp_adapter_path(), _run_memory_tool_fallback(), _seed_memory()
+Cohesion: 0.15
+Nodes (13): main(), Same business logic memory_server exposes — valid when Python < 3.10., _run_mcp_adapter_path(), _run_memory_tool_fallback(), _seed_memory(), McpDriveClient, McpRagClient, AgentResponse (+5 more)
+
+### Community 259 - "test_heuristic_router.py"
+Cohesion: 0.50
+Nodes (3): parametrize, Keyword heuristic router tests (no LLM)., test_heuristic_route()
 
 ## Knowledge Gaps
-- **631 isolated node(s):** `name`, `private`, `version`, `type`, `description` (+626 more)
+- **645 isolated node(s):** `name`, `private`, `version`, `type`, `description` (+640 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **43 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **40 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ScheduleService` connect `MCP Integration 2` to `Chat Message Pipeline 7`, `Student Chat Deps 7`, `Demo Chat Lifecycle 2`, `IdentityResolver`, `RAG Ingest Pipeline 3`, `Admissions Onboarding 5`, `Drive Tooling`, `API Chat Schemas`, `Escalation Routes 7`, `Resource Agent 2`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
-- **Why does `CrmTool` connect `Decision Graph` to `Demo Chat Lifecycle`, `.resolve_escalation`, `Admissions Onboarding 6`, `.create_escalation`, `Drive Tooling`, `Workshop Exploration`, `Testing`, `Admissions Onboarding 20`?**
-  _High betweenness centrality (0.054) - this node is a cross-community bridge._
-- **Why does `_post()` connect `Dashboard ORM Models 2` to `Per-institute onboarding`, `agent.py`, `Langfuse Runtime 4`, `Chat Turn Runner`, `MCP Integration 3`, `Escalation Routes 4`, `useTenant`, `escalation_reasons.py`, `supabase_client.py`, `Dashboard Module 7`, `smoke_resource.py`, `Admissions Onboarding 12`, `MCP Integration 2`, `Langfuse Runtime 3`, `Testing`, `send_chat_message`, `test_twilio_webhook.py`?**
+- **Why does `ScheduleService` connect `MCP Integration 2` to `Chat Message Pipeline 7`, `smoke_mcp_memory.py`, `Demo Chat Lifecycle 2`, `RAG Ingest Pipeline 3`, `Dashboard Frontend Deps 3`, `Admissions Onboarding 5`, `test_identity_recall.py`, `Drive Tooling`, `API Chat Schemas`, `Escalation Routes 7`, `Resource Agent 2`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
+- **Why does `CrmTool` connect `Decision Graph` to `Demo Chat Lifecycle`, `.resolve_escalation`, `Admissions Onboarding 6`, `.create_escalation`, `Drive Tooling`, `Workshop Exploration`, `Testing`, `telegram_webhook`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Why does `_post()` connect `Dashboard ORM Models 2` to `_page_lacks_text`, `agent.py`, `preload agent runtime`, `Chat Turn Runner`, `Dashboard API Routes`, `MCP Integration 3`, `Escalation Routes 4`, `log.py`, `Admissions Onboarding 5`, `Dashboard Module 6`, `escalation_reasons.py`, `Test Suite`, `Agent Orchestrator`, `Langfuse Runtime 3`, `Testing`, `MCP Integration 2`, `test_twilio_webhook.py`, `delete_chunks_by_document_id`?**
   _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Are the 7 inferred relationships involving `OnboardingFlow` (e.g. with `main()` and `AdmissionsAgent`) actually correct?**
   _`OnboardingFlow` has 7 INFERRED edges - model-reasoned connections that need verification._

@@ -183,6 +183,8 @@ class OrganizationRegisterRequest(BaseModel):
 
     whatsapp_number: str | None = None
 
+    drive_folder_id: str | None = None
+
     admin: AdminRegistration
 
     staff_members: list[
@@ -269,7 +271,30 @@ class MeResponse(BaseModel):
     email: str
     role: StaffRoleValue
     created_at: datetime
+
     telegram_linked: bool = False
+
+
+class StaffCreate(BaseModel):
+    name: str = Field(min_length=2, max_length=100)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+    role: StaffRoleValue
+
+
+class StaffUpdate(BaseModel):
+    name: str | None = None
+    role: StaffRoleValue | None = None
+    is_active: bool | None = None
+
+
+class StaffResponse(BaseModel):
+    id: str
+    tenant_id: str
+    name: str
+    email: str
+    role: StaffRoleValue
+    is_active: bool
 
 
 class TelegramLinkCodeResponse(BaseModel):
@@ -285,3 +310,4 @@ class TelegramLinkStatusResponse(BaseModel):
     channel_address: str | None = None
     linked_at: datetime | None = None
     telegram_bot_username: str | None = None
+

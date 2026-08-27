@@ -34,6 +34,8 @@ import {
   ingestSizeError,
   sendClassBroadcast,
   SubjectClass,
+  updateClassHumanMode,
+  updateClassPaymentsEnabled,
   uploadClassDocument,
   updateClass,
 } from "@/lib/api";
@@ -231,6 +233,82 @@ export default function ClassesPage() {
     } catch (requestError) {
       console.error(requestError);
       showToast("Could not delete the class.", "error");
+    }
+  }
+
+  async function toggleClassHumanMode(
+    classId: string,
+    humanMode: boolean,
+  ) {
+    const action = humanMode
+      ? "Disable AI for every enrolled student in this class?"
+      : "Enable AI for every enrolled student in this class?";
+
+    if (!window.confirm(action)) {
+      return;
+    }
+
+    try {
+      const result = await updateClassHumanMode(
+        classId,
+        humanMode,
+        tenantId,
+      );
+
+      showToast(
+        humanMode
+          ? `Human mode enabled for ${result.students_updated} student(s).`
+          : `AI re-enabled for ${result.students_updated} student(s).`,
+        "success",
+      );
+    } catch (requestError) {
+      console.error(requestError);
+      showToast(
+        "Could not update class AI mode.",
+        "error",
+      );
+    }
+  }
+
+  async function toggleClassPayments(
+    subjectClass: SubjectClass,
+    paymentsEnabled: boolean,
+  ) {
+    const classLabel =
+      subjectClass.name ?? subjectClass.subject;
+    const action = paymentsEnabled
+      ? `Enable payment submissions for ${classLabel}?`
+      : `Disable payment submissions for ${classLabel}?`;
+
+    if (!window.confirm(action)) {
+      return;
+    }
+
+    try {
+      const updated = await updateClassPaymentsEnabled(
+        subjectClass.id,
+        paymentsEnabled,
+        tenantId,
+      );
+
+      setClasses((current) =>
+        current.map((item) =>
+          item.id === subjectClass.id ? updated : item,
+        ),
+      );
+
+      showToast(
+        paymentsEnabled
+          ? `Payment collection enabled for ${classLabel}.`
+          : `Payment collection disabled for ${classLabel}.`,
+        "success",
+      );
+    } catch (requestError) {
+      console.error(requestError);
+      showToast(
+        "Could not update class payment settings.",
+        "error",
+      );
     }
   }
 
@@ -460,8 +538,9 @@ export default function ClassesPage() {
               className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white"
             >
               <option value="monthly">Monthly</option>
+              <option value="per_class">Per class</option>
               <option value="termly">Termly</option>
-              <option value="annual">Annual</option>
+              <option value="one_time">One-time</option>
             </select>
           </label>
 
@@ -522,6 +601,22 @@ export default function ClassesPage() {
                     {subjectClass.fee_cycle}
                   </dd>
                 </div>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-slate-600 dark:text-slate-400">
+                    Payments
+                  </dt>
+                  <dd
+                    className={
+                      subjectClass.payments_enabled === false
+                        ? "text-amber-700 dark:text-amber-300"
+                        : "text-emerald-700 dark:text-emerald-300"
+                    }
+                  >
+                    {subjectClass.payments_enabled === false
+                      ? "Disabled"
+                      : "Enabled"}
+                  </dd>
+                </div>
               </dl>
 
               <button
@@ -534,6 +629,48 @@ export default function ClassesPage() {
               </button>
 
               <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassPayments(
+                      subjectClass,
+                      subjectClass.payments_enabled === false,
+                    )
+                  }
+                  className={
+                    subjectClass.payments_enabled === false
+                      ? "inline-flex items-center gap-1 rounded-lg border border-emerald-500/40 px-3 py-1.5 text-sm text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300"
+                      : "inline-flex items-center gap-1 rounded-lg border border-amber-500/40 px-3 py-1.5 text-sm text-amber-700 hover:bg-amber-500/10 dark:text-amber-300"
+                  }
+                >
+                  {subjectClass.payments_enabled === false
+                    ? "Enable payments"
+                    : "Disable payments"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassHumanMode(
+                      subjectClass.id,
+                      true,
+                    )
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-amber-500/40 px-3 py-1.5 text-sm text-amber-700 hover:bg-amber-500/10 dark:text-amber-300"
+                >
+                  Disable AI for class
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassHumanMode(
+                      subjectClass.id,
+                      false,
+                    )
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/40 px-3 py-1.5 text-sm text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300"
+                >
+                  Enable AI for class
+                </button>
                 <button
                   type="button"
                   onClick={() => triggerFileInput(subjectClass.id)}

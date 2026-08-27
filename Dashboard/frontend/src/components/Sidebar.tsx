@@ -6,12 +6,16 @@ import { usePathname } from "next/navigation";
 
 import {
   BookOpen,
+  Calendar,
   FileUp,
+  HelpCircle,
   Inbox,
   LayoutDashboard,
   MessageSquare,
+  School,
   ScrollText,
   Settings,
+  UserCog,
   Users,
   X,
   BarChart3,
@@ -42,10 +46,10 @@ const mainNavItems: NavItem[] = [
     icon: <BarChart3 className="h-5 w-5" />,
   },
   {
-  href: "/dashboard/analytics/classes",
-  label: "Class Analytics",
-  icon: <BarChart3 className="h-5 w-5" />,
-  },  
+    href: "/dashboard/analytics/classes",
+    label: "Class Analytics",
+    icon: <School className="h-5 w-5" />,
+  },
   {
     href: "/dashboard/inbox",
     label: "Inbox",
@@ -62,9 +66,24 @@ const mainNavItems: NavItem[] = [
     icon: <BookOpen className="h-5 w-5" />,
   },
   {
+    href: "/dashboard/schedules",
+    label: "Schedules",
+    icon: <Calendar className="h-5 w-5" />,
+  },
+  {
     href: "/dashboard/students",
     label: "Students",
     icon: <Users className="h-5 w-5" />,
+  },
+  {
+    href: "/dashboard/staff",
+    label: "Staff",
+    icon: <UserCog className="h-5 w-5" />,
+  },
+  {
+    href: "/dashboard/faqs",
+    label: "FAQ Intelligence",
+    icon: <HelpCircle className="h-5 w-5" />,
   },
   {
     href: "/dashboard/logs",
@@ -124,9 +143,12 @@ export default function Sidebar({
 
       <nav className="flex-1 space-y-2">
         {mainNavItems.map((item) => {
+          // Exact match for Analytics so Class Analytics is not double-highlighted.
           const active =
-            pathname === item.href ||
-            pathname?.startsWith(`${item.href}/`);
+            item.href === "/dashboard/analytics"
+              ? pathname === item.href
+              : pathname === item.href ||
+                Boolean(pathname?.startsWith(`${item.href}/`));
 
           return (
             <Link

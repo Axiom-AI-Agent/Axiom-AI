@@ -19,6 +19,7 @@ import {
 
 import { useTenant } from "@/context/TenantContext";
 import {
+  AnalyticsPeriod,
   ClassAnalyticsComparison,
   getClassAnalytics,
 } from "@/lib/api";
@@ -29,6 +30,16 @@ type SortKey =
   | "total_conversations"
   | "total_escalations"
   | "average_response_seconds";
+
+const PERIOD_OPTIONS: Array<
+  [AnalyticsPeriod, string]
+> = [
+  ["today", "Today"],
+  ["48h", "Last 48 Hours"],
+  ["7d", "Last 7 Days"],
+  ["30d", "Last 30 Days"],
+  ["90d", "Last 90 Days"],
+];
 
 function formatClassTitle(
   className: string | null | undefined,
@@ -42,6 +53,9 @@ export default function ClassAnalyticsPage() {
 
   const [data, setData] =
     useState<ClassAnalyticsComparison | null>(null);
+
+  const [period, setPeriod] =
+    useState<AnalyticsPeriod>("7d");
 
   const [loading, setLoading] =
     useState(true);
@@ -62,7 +76,10 @@ export default function ClassAnalyticsPage() {
 
       try {
         const response =
-          await getClassAnalytics(tenantId);
+          await getClassAnalytics(
+            tenantId,
+            period,
+          );
 
         setData(response);
       } catch (requestError) {
@@ -77,7 +94,7 @@ export default function ClassAnalyticsPage() {
         }
       }
     },
-    [tenantId],
+    [tenantId, period],
   );
 
   useEffect(() => {
@@ -141,7 +158,7 @@ export default function ClassAnalyticsPage() {
   }, [data]);
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -155,28 +172,35 @@ export default function ClassAnalyticsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            void loadAnalytics(false)
-          }
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <select
+            value={period}
+            onChange={(event) => setPeriod(event.target.value as AnalyticsPeriod)}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          >
+            {PERIOD_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={() =>
+              void loadAnalytics(false)
+            }
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-300">
-        These metrics are currently
-        attributed using class enrollment
-        membership. A student enrolled in
-        multiple classes may contribute
-        activity to more than one class.
-      </div>
-
-      {error && (
+      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+        {error && (
         <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-700 dark:text-red-300">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
 
@@ -453,6 +477,7 @@ export default function ClassAnalyticsPage() {
           )}
         </>
       )}
+      </div>
     </div>
   );
 }

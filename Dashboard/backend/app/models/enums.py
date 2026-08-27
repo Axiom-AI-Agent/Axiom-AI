@@ -53,7 +53,9 @@ class StaffRole(str, Enum):
 
 class FeeCycle(str, Enum):
     MONTHLY = "monthly"
+    PER_CLASS = "per_class"
     TERMLY = "termly"
+    ONE_TIME = "one_time"
     ANNUAL = "annual"
 
 

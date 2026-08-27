@@ -121,12 +121,20 @@ def get_summary(
     response_model=DashboardAnalyticsResponse,
 )
 def get_dashboard_analytics(
+    period: str = "7d",
     tenant_id: str = Depends(get_tenant_id),
     db: Session = Depends(get_db),
 ):
+    if period not in {"today", "7d", "month"}:
+        raise HTTPException(
+            status_code=422,
+            detail="period must be today, 7d, or month",
+        )
+
     return build_dashboard_analytics(
         db,
         tenant_id=tenant_id,
+        period=period,
     )
 
 @router.get("/escalations", response_model=EscalationsListResponse)
@@ -253,6 +261,7 @@ def get_dashboard_chat_logs(
     ),
 )
 def get_class_analytics(
+    period: str = "7d",
     tenant_id: str = Depends(
         get_tenant_id
     ),
@@ -260,7 +269,21 @@ def get_class_analytics(
         get_db
     ),
 ):
+    if period not in {
+        "today",
+        "7d",
+        "month",
+    }:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "period must be "
+                "today, 7d, or month"
+            ),
+        )
+
     return build_class_analytics(
         db,
         tenant_id=tenant_id,
+        period=period,
     )

@@ -21,6 +21,9 @@ import Sidebar
 import Header
   from "@/components/Header";
 
+import FloatingChat
+  from "@/components/FloatingChat";
+
 import ToastContainer
   from "@/components/ToastContainer";
 
@@ -141,6 +144,8 @@ function ProtectedDashboard({
 
 
         <ToastContainer />
+
+        <FloatingChat />
 
       </ToastProvider>
 

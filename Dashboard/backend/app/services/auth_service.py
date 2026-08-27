@@ -259,7 +259,9 @@ def register_organization(
         whatsapp_number=(
             payload.whatsapp_number
         ),
-        drive_folder_id=None,
+        drive_folder_id=(
+            payload.drive_folder_id
+        ),
     )
 
     admin = StaffUser(

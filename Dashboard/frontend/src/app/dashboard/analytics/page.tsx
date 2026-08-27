@@ -23,6 +23,7 @@ import { useTenant } from "@/context/TenantContext";
 
 import {
   DashboardAnalytics,
+  AnalyticsPeriod,
   getDashboardAnalytics,
 } from "@/lib/api";
 
@@ -36,6 +37,16 @@ function humanizeReason(
     );
 }
 
+const PERIOD_OPTIONS: Array<
+  [AnalyticsPeriod, string]
+> = [
+  ["today", "Today"],
+  ["48h", "Last 48 Hours"],
+  ["7d", "Last 7 Days"],
+  ["30d", "Last 30 Days"],
+  ["90d", "Last 90 Days"],
+];
+
 export default function AnalyticsPage() {
   const { tenantId } = useTenant();
 
@@ -45,6 +56,11 @@ export default function AnalyticsPage() {
   ] = useState<DashboardAnalytics | null>(
     null,
   );
+
+  const [
+    period,
+    setPeriod,
+  ] = useState<AnalyticsPeriod>("7d");
 
   const [
     loading,
@@ -65,6 +81,7 @@ export default function AnalyticsPage() {
         const response =
           await getDashboardAnalytics(
             tenantId,
+            period,
           );
 
         setData(response);
@@ -77,7 +94,7 @@ export default function AnalyticsPage() {
       } finally {
         setLoading(false);
       }
-    }, [tenantId]);
+    }, [tenantId, period]);
 
   useEffect(() => {
     void loadAnalytics();
@@ -136,7 +153,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -149,19 +166,34 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() =>
-            void loadAnalytics()
-          }
-          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Refresh
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <select
+            value={period}
+            onChange={(event) => setPeriod(event.target.value as AnalyticsPeriod)}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          >
+            {PERIOD_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={() =>
+              void loadAnalytics()
+            }
+            className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           title="AI Deflection Rate"
           value={`${data.deflection_rate}%`}
@@ -300,6 +332,7 @@ export default function AnalyticsPage() {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   );

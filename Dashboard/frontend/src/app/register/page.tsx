@@ -109,6 +109,11 @@ export default function RegisterPage() {
   ] = useState("");
 
   const [
+    driveFolderId,
+    setDriveFolderId,
+  ] = useState("");
+
+  const [
     adminName,
     setAdminName,
   ] = useState("");
@@ -328,6 +333,10 @@ export default function RegisterPage() {
             whatsappNumber.trim() ||
             null,
 
+          drive_folder_id:
+            driveFolderId.trim() ||
+            null,
+
           admin: {
             name:
               adminName.trim(),
@@ -495,6 +504,23 @@ export default function RegisterPage() {
                     )
                   }
                   placeholder="94771234567"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                />
+              </label>
+
+              <label className="space-y-2 sm:col-span-2">
+                <span className="text-sm text-slate-300">
+                  Google Drive Folder ID
+                </span>
+
+                <input
+                  value={driveFolderId}
+                  onChange={(event) =>
+                    setDriveFolderId(
+                      event.target.value,
+                    )
+                  }
+                  placeholder="1AbC..."
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
                 />
               </label>
@@ -711,16 +737,20 @@ export default function RegisterPage() {
                           }
                           className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
                         >
-                          <option value="viewer">
-                            Viewer
+                          <option value="admin">
+                            Admin
+                          </option>
+
+                          <option value="tutor">
+                            Tutor
                           </option>
 
                           <option value="marker">
                             Marker
                           </option>
 
-                          <option value="admin">
-                            Admin
+                          <option value="viewer">
+                            Viewer
                           </option>
                         </select>
                       </div>

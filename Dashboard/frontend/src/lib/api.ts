@@ -176,6 +176,7 @@ export interface SubjectClass {
   grade?: string | null;
   fee_amount?: string | number;
   fee_cycle?: string;
+  payments_enabled?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -187,6 +188,7 @@ export interface CreateClassPayload {
   fee_cycle: string;
   name?: string;
   grade?: string;
+  payments_enabled?: boolean;
 }
 
 export interface UpdateClassPayload {
@@ -195,6 +197,7 @@ export interface UpdateClassPayload {
   fee_cycle?: string;
   name?: string;
   grade?: string;
+  payments_enabled?: boolean;
 }
 
 export function getClasses(tenantId?: string): Promise<SubjectClass[]> {
@@ -1032,6 +1035,7 @@ export interface StudentAnalyticsMetric {
 
 export interface DashboardAnalytics {
   tenant_id: string;
+  period: string;
 
   total_conversations: number;
   total_messages: number;
@@ -1052,11 +1056,19 @@ export interface DashboardAnalytics {
   students: StudentAnalyticsMetric[];
 }
 
+export type AnalyticsPeriod =
+  | "today"
+  | "48h"
+  | "7d"
+  | "30d"
+  | "90d";
+
 export function getDashboardAnalytics(
   tenantId?: string,
+  period: AnalyticsPeriod = "7d",
 ): Promise<DashboardAnalytics> {
   return dashboardRequest<DashboardAnalytics>(
-    "/dashboard/analytics",
+    `/dashboard/analytics?period=${period}`,
     {},
     tenantId,
   );
@@ -1092,18 +1104,180 @@ export interface ClassAnalyticsMetric {
 
 export interface ClassAnalyticsComparison {
   tenant_id: string;
+  period: string;
   attribution_mode: string;
   classes: ClassAnalyticsMetric[];
 }
 
 export function getClassAnalytics(
   tenantId?: string,
+  period: AnalyticsPeriod = "7d",
 ): Promise<ClassAnalyticsComparison> {
   return dashboardRequest<
     ClassAnalyticsComparison
   >(
-    "/dashboard/analytics/classes",
+    `/dashboard/analytics/classes?period=${period}`,
     {},
+    tenantId,
+  );
+}
+
+export function updateClassHumanMode(
+  classId: string,
+  humanMode: boolean,
+  tenantId?: string,
+): Promise<{
+  ok: boolean;
+  class_id: string;
+  human_mode: boolean;
+  students_updated: number;
+}> {
+  return dashboardRequest(
+    `/classes/${classId}/human-mode`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        human_mode: humanMode,
+      }),
+    },
+    tenantId,
+  );
+}
+
+export function updateClassPaymentsEnabled(
+  classId: string,
+  paymentsEnabled: boolean,
+  tenantId?: string,
+): Promise<SubjectClass> {
+  return dashboardRequest<SubjectClass>(
+    `/classes/${classId}/payments-enabled`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        payments_enabled: paymentsEnabled,
+      }),
+    },
+    tenantId,
+  );
+}
+
+export interface StudentImportResult {
+  created: number;
+  skipped: number;
+  errors: Array<{
+    row: number;
+    reason: string;
+  }>;
+}
+
+export function importStudentsExcel(
+  file: File,
+  tenantId?: string,
+): Promise<StudentImportResult> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return dashboardRequest<StudentImportResult>(
+    "/students/import",
+    {
+      method: "POST",
+      body: formData,
+    },
+    tenantId,
+  );
+}
+
+export type StaffRoleValue =
+  | "admin"
+  | "tutor"
+  | "marker"
+  | "viewer";
+
+export interface StaffMember {
+  id: string;
+  tenant_id: string;
+  name: string;
+  email: string;
+  role: StaffRoleValue;
+  is_active: boolean;
+}
+
+export interface StaffCreatePayload {
+  name: string;
+  email: string;
+  password: string;
+  role: StaffRoleValue;
+}
+
+export interface StaffUpdatePayload {
+  name?: string;
+  role?: StaffRoleValue;
+  is_active?: boolean;
+}
+
+export function getStaff(
+  tenantId?: string,
+): Promise<StaffMember[]> {
+  return dashboardRequest<StaffMember[]>(
+    "/staff",
+    {},
+    tenantId,
+  );
+}
+
+export function createStaff(
+  payload: StaffCreatePayload,
+  tenantId?: string,
+): Promise<StaffMember> {
+  return dashboardRequest<StaffMember>(
+    "/staff",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+    tenantId,
+  );
+}
+
+export function updateStaff(
+  staffId: string,
+  payload: StaffUpdatePayload,
+  tenantId?: string,
+): Promise<StaffMember> {
+  return dashboardRequest<StaffMember>(
+    `/staff/${staffId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    },
+    tenantId,
+  );
+}
+
+export interface FaqCluster {
+  question: string;
+  category: string;
+  frequency: number;
+  examples: string[];
+  suggested_answer: string;
+}
+
+export interface FaqAnalysisResult {
+  tenant_id: string;
+  class_id?: string | null;
+  analyzed_messages: number;
+  clusters: FaqCluster[];
+}
+
+export function analyzeFaqs(
+  classId: string,
+  tenantId?: string,
+  limit = 200,
+  minimumFrequency = 2,
+): Promise<FaqAnalysisResult> {
+  return aiRequest<FaqAnalysisResult>(
+    `/dashboard/faqs/analyze?class_id=${encodeURIComponent(classId)}&limit=${limit}&minimum_frequency=${minimumFrequency}`,
+    { method: "POST" },
     tenantId,
   );
 }
@@ -1116,6 +1290,198 @@ export function uploadClassDocument(
   lesson?: string,
 ): Promise<ClassDocumentUploadResponse> {
   return uploadDocument({ classId, file, title, lesson }, tenantId);
+}
+
+/* ---------- Schedules (AI backend — /dashboard/schedules) ---------- */
+
+export interface Schedule {
+  id: string;
+  tenant_id: string;
+  class_id: string;
+  teacher_id?: string | null;
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+  room?: string | null;
+  status: string;
+  effective_from: string;
+  effective_until?: string | null;
+  created_at: string;
+  updated_at: string;
+  class_name?: string | null;
+  subject?: string | null;
+  teacher_name?: string | null;
+}
+
+export interface CreateSchedulePayload {
+  class_id: string;
+  teacher_id?: string;
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+  room?: string;
+  effective_from?: string;
+  effective_until?: string;
+}
+
+export interface UpdateSchedulePayload {
+  teacher_id?: string;
+  day_of_week?: string;
+  start_time?: string;
+  end_time?: string;
+  room?: string;
+  effective_from?: string;
+  effective_until?: string;
+  status?: string;
+}
+
+export interface ScheduleException {
+  id: string;
+  tenant_id: string;
+  schedule_id: string;
+  exception_date: string;
+  status: string;
+  new_start_time?: string | null;
+  new_end_time?: string | null;
+  new_room?: string | null;
+  new_date?: string | null;
+  notes?: string | null;
+  created_at: string;
+}
+
+interface ScheduleListResponse {
+  ok?: boolean;
+  tenant_id: string;
+  schedules: Schedule[];
+}
+
+interface ScheduleDetailResponse {
+  ok?: boolean;
+  tenant_id: string;
+  schedule: Schedule;
+}
+
+interface ExceptionListResponse {
+  ok?: boolean;
+  tenant_id: string;
+  exceptions: ScheduleException[];
+}
+
+function asScheduleList(
+  response: ScheduleListResponse | Schedule[],
+): Schedule[] {
+  return Array.isArray(response) ? response : (response.schedules ?? []);
+}
+
+function asSchedule(response: ScheduleDetailResponse | Schedule): Schedule {
+  if (response && typeof response === "object" && "schedule" in response) {
+    return response.schedule;
+  }
+  return response;
+}
+
+export function getSchedules(
+  tenantId?: string,
+  params?: { class_id?: string; teacher_id?: string; day_of_week?: string },
+): Promise<Schedule[]> {
+  const query = new URLSearchParams();
+  if (params?.class_id) query.set("class_id", params.class_id);
+  if (params?.teacher_id) query.set("teacher_id", params.teacher_id);
+  if (params?.day_of_week) query.set("day_of_week", params.day_of_week);
+  const qs = query.toString();
+  return aiRequest<ScheduleListResponse | Schedule[]>(
+    `/dashboard/schedules${qs ? `?${qs}` : ""}`,
+    {},
+    tenantId,
+  ).then(asScheduleList);
+}
+
+export function getSchedule(
+  scheduleId: string,
+  tenantId?: string,
+): Promise<Schedule> {
+  return aiRequest<ScheduleDetailResponse | Schedule>(
+    `/dashboard/schedules/${scheduleId}`,
+    {},
+    tenantId,
+  ).then(asSchedule);
+}
+
+export function createSchedule(
+  payload: CreateSchedulePayload,
+  tenantId?: string,
+): Promise<Schedule> {
+  return aiRequest<ScheduleDetailResponse | Schedule>(
+    "/dashboard/schedules",
+    { method: "POST", body: JSON.stringify(payload) },
+    tenantId,
+  ).then(asSchedule);
+}
+
+export function updateSchedule(
+  scheduleId: string,
+  payload: UpdateSchedulePayload,
+  tenantId?: string,
+): Promise<Schedule> {
+  return aiRequest<ScheduleDetailResponse | Schedule>(
+    `/dashboard/schedules/${scheduleId}`,
+    { method: "PATCH", body: JSON.stringify(payload) },
+    tenantId,
+  ).then(asSchedule);
+}
+
+export function deleteSchedule(
+  scheduleId: string,
+  tenantId?: string,
+): Promise<void> {
+  return aiRequest<void>(
+    `/dashboard/schedules/${scheduleId}`,
+    { method: "DELETE" },
+    tenantId,
+  );
+}
+
+export function getScheduleExceptions(
+  scheduleId: string,
+  tenantId?: string,
+): Promise<ScheduleException[]> {
+  return aiRequest<ExceptionListResponse | ScheduleException[]>(
+    `/dashboard/schedules/${scheduleId}/exceptions`,
+    {},
+    tenantId,
+  ).then((response) =>
+    Array.isArray(response) ? response : (response.exceptions ?? []),
+  );
+}
+
+export function createScheduleException(
+  scheduleId: string,
+  payload: {
+    exception_date: string;
+    status?: string;
+    new_start_time?: string;
+    new_end_time?: string;
+    notes?: string;
+  },
+  tenantId?: string,
+): Promise<ScheduleException> {
+  return aiRequest<ScheduleException>(
+    `/dashboard/schedules/${scheduleId}/exceptions`,
+    { method: "POST", body: JSON.stringify(payload) },
+    tenantId,
+  );
+}
+
+export function deleteScheduleException(
+  scheduleId: string,
+  exceptionId: string,
+  tenantId?: string,
+): Promise<void> {
+  return aiRequest<void>(
+    `/dashboard/schedules/${scheduleId}/exceptions/${exceptionId}`,
+    { method: "DELETE" },
+    tenantId,
+  );
 }
 
 

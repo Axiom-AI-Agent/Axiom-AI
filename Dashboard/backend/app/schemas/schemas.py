@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -10,12 +10,19 @@ from app.models.enums import ChatChannel, EscalationStatus, EnrollmentStatus
 # Hardcoded for hackathon demo — matches sql/02_seed_demo.sql
 DEMO_TENANT_ID = "tenant-demo-physics"
 
+FeeCycle = Literal[
+    "monthly",
+    "per_class",
+    "termly",
+    "one_time",
+]
+
 
 # ---------- Classes ----------
 class ClassBase(BaseModel):
     subject: str
     fee_amount: Decimal
-    fee_cycle: str = "monthly"
+    fee_cycle: FeeCycle = "monthly"
     name: Optional[str] = None
     grade: Optional[str] = None
 
@@ -27,7 +34,7 @@ class ClassCreate(ClassBase):
 class ClassUpdate(BaseModel):
     subject: Optional[str] = None
     fee_amount: Optional[Decimal] = None
-    fee_cycle: Optional[str] = None
+    fee_cycle: Optional[FeeCycle] = None
     name: Optional[str] = None
     grade: Optional[str] = None
 
@@ -35,6 +42,7 @@ class ClassUpdate(BaseModel):
 class ClassResponse(ClassBase):
     id: str
     tenant_id: str
+    fee_cycle: str = "monthly"
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -114,6 +122,10 @@ class StudentsListResponse(BaseModel):
 
 class StudentHumanModeUpdate(BaseModel):
     human_mode: bool
+
+
+class ClassHumanModeUpdate(BaseModel):
+    human_mode: bool
 # ---------- Escalations ----------
 class EscalationCreate(BaseModel):
     tenant_id: str = DEMO_TENANT_ID
@@ -185,6 +197,7 @@ class StudentAnalyticsMetric(BaseModel):
 
 class DashboardAnalyticsResponse(BaseModel):
     tenant_id: str
+    period: str
 
     total_conversations: int
     total_messages: int
@@ -312,5 +325,6 @@ class ClassAnalyticsMetric(BaseModel):
 
 class ClassAnalyticsComparisonResponse(BaseModel):
     tenant_id: str
+    period: str
     attribution_mode: str
     classes: list[ClassAnalyticsMetric]

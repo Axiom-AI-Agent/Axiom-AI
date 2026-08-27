@@ -54,6 +54,7 @@ export interface OnboardingFieldRegistration {
 export interface RegisterOrganizationPayload {
   institution_name: string;
   whatsapp_number?: string | null;
+  drive_folder_id?: string | null;
 
   admin: {
     name: string;
