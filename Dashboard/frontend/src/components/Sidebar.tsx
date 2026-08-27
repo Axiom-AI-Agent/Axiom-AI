@@ -147,17 +147,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       )}
     >
       <div className="mb-3 flex items-center justify-between px-1.5 pt-1 lg:justify-start">
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Axiom AI Logo" className="h-7 w-auto shrink-0" />
-          <div className="min-w-0">
-            <h2 className="font-display truncate text-sm font-semibold tracking-tight text-white">
-              Axiom AI
-            </h2>
-            <p className="text-[10px] tracking-wide text-white/45">
-              Staff Console
-            </p>
-          </div>
+          <img src="/logo.png" alt="Axiom AI Logo" className="h-8 w-auto shrink-0" />
+          <h2 className="font-display truncate text-base font-semibold tracking-tight text-white">
+            Axiom AI
+          </h2>
         </div>
 
         <button
