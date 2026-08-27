@@ -11,6 +11,7 @@ from app.models.enums import FeeCycle
 from app.schemas.schemas import (
     ClassCreate,
     ClassHumanModeUpdate,
+    ClassPaymentsUpdate,
     ClassResponse,
     ClassUpdate,
 )
@@ -85,6 +86,7 @@ def create_class(
         grade=class_data.grade,
         fee_amount=class_data.fee_amount,
         fee_cycle=_parse_fee_cycle(class_data.fee_cycle),
+        payments_enabled=class_data.payments_enabled,
     )
     db.add(new_class)
     db.commit()
@@ -121,6 +123,8 @@ def update_class(
         subject_class.fee_amount = class_data.fee_amount  # type: ignore[assignment]
     if class_data.fee_cycle is not None:
         subject_class.fee_cycle = _parse_fee_cycle(class_data.fee_cycle)  # type: ignore[assignment]
+    if class_data.payments_enabled is not None:
+        subject_class.payments_enabled = class_data.payments_enabled  # type: ignore[assignment]
 
     db.commit()
     db.refresh(subject_class)
@@ -178,6 +182,31 @@ def update_class_human_mode(
         "human_mode": payload.human_mode,
         "students_updated": len(student_ids),
     }
+
+
+@router.patch("/{class_id}/payments-enabled", response_model=ClassResponse)
+def update_class_payments_enabled(
+    class_id: str,
+    payload: ClassPaymentsUpdate,
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    subject_class = (
+        db.query(SubjectClass)
+        .filter(
+            SubjectClass.id == class_id,
+            SubjectClass.tenant_id == tenant_id,
+        )
+        .first()
+    )
+
+    if subject_class is None:
+        raise HTTPException(status_code=404, detail="Class not found")
+
+    subject_class.payments_enabled = payload.payments_enabled  # type: ignore[assignment]
+    db.commit()
+    db.refresh(subject_class)
+    return subject_class
 
 
 @router.delete("/{class_id}", status_code=204)

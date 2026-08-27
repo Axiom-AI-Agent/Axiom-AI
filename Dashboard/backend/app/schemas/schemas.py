@@ -25,6 +25,7 @@ class ClassBase(BaseModel):
     fee_cycle: FeeCycle = "monthly"
     name: Optional[str] = None
     grade: Optional[str] = None
+    payments_enabled: bool = True
 
 
 class ClassCreate(ClassBase):
@@ -37,12 +38,14 @@ class ClassUpdate(BaseModel):
     fee_cycle: Optional[FeeCycle] = None
     name: Optional[str] = None
     grade: Optional[str] = None
+    payments_enabled: Optional[bool] = None
 
 
 class ClassResponse(ClassBase):
     id: str
     tenant_id: str
     fee_cycle: str = "monthly"
+    payments_enabled: bool = True
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -117,6 +120,12 @@ class StudentHumanModeUpdate(BaseModel):
 
 class ClassHumanModeUpdate(BaseModel):
     human_mode: bool
+
+
+class ClassPaymentsUpdate(BaseModel):
+    payments_enabled: bool
+
+
 # ---------- Escalations ----------
 class EscalationCreate(BaseModel):
     tenant_id: str = DEMO_TENANT_ID
