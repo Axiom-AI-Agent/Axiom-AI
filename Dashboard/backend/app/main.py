@@ -17,9 +17,22 @@ from app.routes import (
 )
 from app.database.session import engine, Base
 
-import app.models  
+import app.models
+from sqlalchemy import text
 
 Base.metadata.create_all(bind=engine)
+
+# Existing DBs need this column; create_all won't alter tables.
+with engine.begin() as connection:
+    connection.execute(
+        text(
+            """
+            ALTER TABLE subject_classes
+            ADD COLUMN IF NOT EXISTS payments_enabled
+            BOOLEAN NOT NULL DEFAULT TRUE
+            """
+        )
+    )
 
 app = FastAPI(title="Axiom AI API")
 

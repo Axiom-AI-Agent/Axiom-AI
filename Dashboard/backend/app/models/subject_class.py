@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    Boolean,
     Column,
     String,
     DateTime,
@@ -53,6 +54,13 @@ class SubjectClass(Base):
         Enum(FeeCycle, name="fee_cycle", values_callable=lambda enum: [e.value for e in enum]),
         nullable=False,
         server_default="monthly",
+    )
+
+    payments_enabled = Column(
+        Boolean,
+        nullable=False,
+        default=True,
+        server_default="true",
     )
 
     # Timestamps

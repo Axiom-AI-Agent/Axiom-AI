@@ -12,6 +12,7 @@ import {
 
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
+import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import {
   createStaff,
   getStaff,
@@ -19,6 +20,16 @@ import {
   StaffRoleValue,
   updateStaff,
 } from "@/lib/api";
+import {
+  btnPrimary,
+  btnQuiet,
+  emptyState,
+  errorBanner,
+  pageHeader,
+  pageSubtitle,
+  pageTitle,
+  surfaceCard,
+} from "@/lib/ui";
 
 interface StaffFormState {
   name: string;
@@ -115,12 +126,10 @@ export default function StaffPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-heading">
-            Staff
-          </h1>
-          <p className="mt-1 text-sm text-muted">
+      <div className={pageHeader}>
+        <div className="min-w-0">
+          <h1 className={pageTitle}>Staff</h1>
+          <p className={pageSubtitle}>
             Manage administrator and tutor accounts.
           </p>
         </div>
@@ -130,7 +139,7 @@ export default function StaffPage() {
             type="button"
             onClick={() => void loadStaff()}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-fg   bg-surface dark:text-muted"
+            className={btnQuiet}
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -138,7 +147,7 @@ export default function StaffPage() {
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90"
+            className={btnPrimary}
           >
             <Plus className="h-4 w-4" />
             Add Staff
@@ -147,8 +156,8 @@ export default function StaffPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800   text-fg">
-          <AlertTriangle className="h-5 w-5" />
+        <div className={errorBanner}>
+          <AlertTriangle className="h-5 w-5 shrink-0 text-blue" />
           {error}
         </div>
       )}
@@ -158,29 +167,28 @@ export default function StaffPage() {
           <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : staff.length === 0 ? (
-        <div className="rounded-xl border border-border bg-surface p-10 text-center  bg-surface">
+        <div className={emptyState}>
           <UserCog className="mx-auto h-10 w-10 text-muted" />
           <p className="mt-3 text-muted">
             No staff members yet.
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface  bg-surface">
+        <div className={`${surfaceCard} overflow-x-auto`}>
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-border bg-surface text-muted  bg-surface dark:text-muted">
+            <thead className="border-b border-border bg-bg/50 text-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Email</th>
                 <th className="px-4 py-3 font-medium">Role</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Actions</th>
+                <th className="px-4 py-3 font-medium">Active</th>
               </tr>
             </thead>
             <tbody>
               {staff.map((member) => (
                 <tr
                   key={member.id}
-                  className="border-b border-border"
+                  className="border-b border-border last:border-0"
                 >
                   <td className="px-4 py-3 text-heading">
                     {member.name}
@@ -192,24 +200,12 @@ export default function StaffPage() {
                     {member.role}
                   </td>
                   <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        member.is_active
-                          ? "bg-sage/15 text-sage"
-                          : "bg-surface0/15 text-muted"
-                      }`}
-                    >
-                      {member.is_active ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      type="button"
-                      onClick={() => void toggleActive(member)}
-                      className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-fg hover:bg-hover  dark:text-muted hover:bg-hover"
-                    >
-                      {member.is_active ? "Deactivate" : "Activate"}
-                    </button>
+                    <ToggleSwitch
+                      label={member.is_active ? "Active" : "Inactive"}
+                      checked={member.is_active}
+                      onChange={() => void toggleActive(member)}
+                      className="min-w-[9.5rem]"
+                    />
                   </td>
                 </tr>
               ))}
