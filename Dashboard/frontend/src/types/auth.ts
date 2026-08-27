@@ -1,5 +1,6 @@
 export type StaffRole =
   | "admin"
+  | "tutor"
   | "marker"
   | "viewer";
 
@@ -10,6 +11,7 @@ export interface AuthUser {
   name: string;
   email: string;
   role: StaffRole;
+  telegram_linked?: boolean;
 }
 
 export interface CreatedStaff {

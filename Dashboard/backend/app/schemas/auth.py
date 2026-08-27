@@ -11,6 +11,7 @@ from pydantic import (
 
 StaffRoleValue = Literal[
     "admin",
+    "tutor",
     "marker",
     "viewer",
 ]
@@ -152,3 +153,19 @@ class MeResponse(BaseModel):
     email: str
     role: StaffRoleValue
     created_at: datetime
+    telegram_linked: bool = False
+
+
+class TelegramLinkCodeResponse(BaseModel):
+    code: str
+    expires_at: datetime
+    ttl_minutes: int
+    telegram_bot_username: str | None = None
+
+
+class TelegramLinkStatusResponse(BaseModel):
+    linked: bool
+    channel: str | None = None
+    channel_address: str | None = None
+    linked_at: datetime | None = None
+    telegram_bot_username: str | None = None

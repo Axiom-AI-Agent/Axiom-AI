@@ -7,13 +7,18 @@ from typing import Any
 from fastapi import APIRouter, Request
 from loguru import logger
 
+from domain.enums import ChatChannel
+from services.identity.staff_resolver import resolve_staff
+from services.messaging.telegram_client import send_telegram_message
 from services.messaging.telegram_handlers import (
     ensure_tenant_bot,
     handle_contact_shared,
     handle_photo_message,
+    handle_staff_text_message,
     handle_text_message,
     handle_voice_message,
     is_tenant_bot_error,
+    try_complete_staff_link,
 )
 
 router = APIRouter(prefix="/webhooks", tags=["Webhooks"])
@@ -76,6 +81,23 @@ async def _dispatch(
     from_user: dict[str, Any],
     update_id: int | None,
 ) -> None:
+    staff = await resolve_staff(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
+    if staff is not None:
+        if "text" in message:
+            await handle_staff_text_message(tenant_id, chat_id, message["text"], staff)
+        else:
+            await send_telegram_message(
+                tenant_id,
+                chat_id,
+                "Dashboard questions need to be sent as text.",
+            )
+        return
+
+    if "text" in message:
+        linked = await try_complete_staff_link(tenant_id, chat_id, message["text"])
+        if linked:
+            return
+
     if "contact" in message:
         await handle_contact_shared(
             tenant_id,

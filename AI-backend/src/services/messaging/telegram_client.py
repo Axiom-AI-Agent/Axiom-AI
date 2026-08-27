@@ -20,7 +20,10 @@ _CHAT_ACTION_TIMEOUT = httpx.Timeout(5.0, connect=3.0)
 _TYPING_REFRESH_SECONDS = 4.0
 _MAX_MESSAGE_LENGTH = 4096
 _CONTACT_BUTTON_TEXT = "Share my phone number"
-_DEFAULT_CONTACT_PROMPT = "To complete your registration, please share your phone number."
+_DEFAULT_CONTACT_PROMPT = (
+    "Welcome! I'm Axiom AI.\n\n"
+    "To complete your registration, please share your phone number."
+)
 
 
 def telegram_api_url(bot_token: str, method: str) -> str:
