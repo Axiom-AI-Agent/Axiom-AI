@@ -122,3 +122,72 @@ export async function getMe(): Promise<AuthUser> {
 
   return user;
 }
+
+async function authedAuthRequest<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const token = getAccessToken();
+
+  if (!token) {
+    throw new AuthApiError("Not authenticated", 401);
+  }
+
+  return authRequest<T>(path, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers as Record<string, string> | undefined),
+    },
+  });
+}
+
+export interface TelegramLinkCode {
+  code: string;
+  expires_at: string;
+  ttl_minutes: number;
+  telegram_bot_username?: string | null;
+}
+
+export interface TelegramLinkStatus {
+  linked: boolean;
+  channel?: string | null;
+  channel_address?: string | null;
+  linked_at?: string | null;
+  telegram_bot_username?: string | null;
+}
+
+export function createTelegramLinkCode(): Promise<TelegramLinkCode> {
+  return authedAuthRequest<TelegramLinkCode>("/auth/telegram/link-code", {
+    method: "POST",
+  });
+}
+
+export function getTelegramLinkStatus(): Promise<TelegramLinkStatus> {
+  return authedAuthRequest<TelegramLinkStatus>("/auth/telegram/link");
+}
+
+export async function unlinkTelegram(): Promise<void> {
+  const token = getAccessToken();
+
+  if (!token) {
+    throw new AuthApiError("Not authenticated", 401);
+  }
+
+  const response = await fetch(`${API_URL}/auth/telegram/link`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (response.status === 401) {
+    clearAuthSession();
+    throw new AuthApiError("Session expired", 401);
+  }
+
+  if (!response.ok && response.status !== 204) {
+    throw new AuthApiError("Could not unlink Telegram", response.status);
+  }
+}

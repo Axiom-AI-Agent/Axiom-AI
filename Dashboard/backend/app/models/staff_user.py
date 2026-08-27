@@ -95,6 +95,16 @@ class StaffUser(Base):
         back_populates="staff",
     )
 
+    channels = relationship(
+        "StaffChannel",
+        back_populates="staff",
+    )
+
+    link_codes = relationship(
+        "StaffLinkCode",
+        back_populates="staff",
+    )
+
     def __repr__(self):
         return (
             f"<StaffUser(id='{self.id}', "

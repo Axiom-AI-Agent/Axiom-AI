@@ -46,6 +46,7 @@ class ChatChannel(str, Enum):
 
 class StaffRole(str, Enum):
     ADMIN = "admin"
+    TUTOR = "tutor"
     MARKER = "marker"
     VIEWER = "viewer"
 

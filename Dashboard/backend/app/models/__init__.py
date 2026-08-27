@@ -1,5 +1,7 @@
 from .tenant import Tenant
 from .staff_user import StaffUser
+from .staff_channel import StaffChannel
+from .staff_link_code import StaffLinkCode
 from .audit_log import AuditLog
 from .parent_guardian import ParentGuardian
 from .student import Student
@@ -14,6 +16,8 @@ from .memory import MemProcedure, MemFact, MemEpisode, STTurn
 __all__ = [
     "Tenant",
     "StaffUser",
+    "StaffChannel",
+    "StaffLinkCode",
     "AuditLog",
     "ParentGuardian",
     "Student",

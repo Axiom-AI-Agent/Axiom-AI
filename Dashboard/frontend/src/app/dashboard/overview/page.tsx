@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import MetricCard from "@/components/MetricCard";
+import DashboardAgentChat from "@/components/DashboardAgentChat";
 import { useTenant } from "@/context/TenantContext";
 import { DashboardOverview, getDashboardOverview } from "@/lib/api";
 
@@ -160,6 +161,8 @@ export default function OverviewPage() {
           />
         </Link>
       </div>
+
+      <DashboardAgentChat />
 
       <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
         <h2 className="font-semibold text-slate-900 dark:text-white text-lg mb-4">Quick actions</h2>

@@ -37,9 +37,20 @@ os.environ.setdefault(
     "false",
 )
 
+# Keep test runtime deterministic.
+os.environ.setdefault(
+    "AGENT_USE_MCP",
+    "false",
+)
+
 os.environ.setdefault(
     "ALLOW_INPROCESS_TOOLS",
     "true",
+)
+
+os.environ.setdefault(
+    "JWT_SECRET_KEY",
+    "test-jwt-secret",
 )
 
 

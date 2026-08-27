@@ -59,11 +59,31 @@ async def get_bot_token_for_tenant(tenant_id: str) -> str:
     return token
 
 
+_FALLBACK_BOT_NAME = "Axiom AI"
+
+
+def get_telegram_bot_display_name(tenant_id: str) -> str:
+    """Return @username from the tenant row, else the institute name."""
+    tenant_key = (tenant_id or "").strip()
+    if not tenant_key:
+        return _FALLBACK_BOT_NAME
+    try:
+        row = _fetch_tenant_bot_row(tenant_key) or {}
+    except Exception as exc:
+        logger.warning("Telegram bot name lookup failed tenant={}: {}", tenant_key, exc)
+        return _FALLBACK_BOT_NAME
+    username = str(row.get("telegram_bot_username") or "").strip().lstrip("@")
+    if username:
+        return f"@{username}"
+    name = str(row.get("name") or "").strip()
+    return name or _FALLBACK_BOT_NAME
+
+
 def _fetch_tenant_bot_row(tenant_id: str) -> dict[str, Any] | None:
     client = get_supabase_client()
     response = (
         client.table("tenants")
-        .select("id, status, bot_token")
+        .select("id, status, bot_token, name, telegram_bot_username")
         .eq("id", tenant_id)
         .limit(1)
         .execute()

@@ -161,6 +161,7 @@ class AgentOrchestrator:
         mcp_crm: McpCrmClient | None = None,
         mcp_drive: McpDriveClient | None = None,
         mcp_rag: McpRagClient | None = None,
+        mcp_schedule: McpScheduleClient | None = None,
         router: QueryRouter | None = None,
     ) -> None:
         self.llm_chat = llm_chat
@@ -170,6 +171,7 @@ class AgentOrchestrator:
         self.mcp_crm = mcp_crm
         self.mcp_drive = mcp_drive
         self.mcp_rag = mcp_rag
+        self.mcp_schedule = mcp_schedule
         self.router = router or get_query_router()
         self.graph = self._build_graph()
 
@@ -307,6 +309,7 @@ class AgentOrchestrator:
             state,
             drive=self.mcp_drive,
             rag=self.mcp_rag,
+            schedule=self.mcp_schedule,
             crm=self.mcp_crm,
         )
 
@@ -424,6 +427,7 @@ async def build_agent_mcp(*, memory_tool: MemoryTool | None = None) -> AgentOrch
         mcp_crm=McpCrmClient(tools_by_name),
         mcp_drive=drive_client,
         mcp_rag=McpRagClient(tools_by_name),
+        mcp_schedule=McpScheduleClient(tools_by_name) if "get_next_class" in tools_by_name else None,
     )
     orchestrator.mcp_client = mcp_client
     orchestrator.mcp_tools = tools_by_name

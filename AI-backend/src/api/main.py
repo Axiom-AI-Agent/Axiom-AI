@@ -26,12 +26,14 @@ from agents.runtime import (
 from api.middleware import RequestContextMiddleware
 from api.routers.chat import router as chat_router
 from api.routers.classes import router as classes_router
+from api.routers.dashboard.agent import router as dashboard_agent_router
 from api.routers.dashboard.broadcast import router as dashboard_broadcast_router
 from api.routers.dashboard.chat import router as dashboard_chat_router
 from api.routers.dashboard.chat_logs import router as dashboard_chat_logs_router
 from api.routers.dashboard.escalations import router as dashboard_escalations_router
 from api.routers.dashboard.faqs import router as dashboard_faqs_router
 from api.routers.dashboard.overview import router as dashboard_overview_router
+from api.routers.dashboard.schedules import router as dashboard_schedules_router
 from api.routers.escalations import router as escalations_router
 from api.routers.health import router as health_router
 from api.routers.students import router as students_router
@@ -119,11 +121,13 @@ app.include_router(students_router)
 app.include_router(classes_router)
 app.include_router(escalations_router)
 app.include_router(dashboard_escalations_router, prefix="/dashboard")
+app.include_router(dashboard_agent_router, prefix="/dashboard")
 app.include_router(dashboard_chat_router, prefix="/dashboard")
 app.include_router(dashboard_chat_logs_router, prefix="/dashboard")
 app.include_router(dashboard_overview_router, prefix="/dashboard")
 app.include_router(dashboard_broadcast_router, prefix="/dashboard")
 app.include_router(dashboard_faqs_router, prefix="/dashboard")
+app.include_router(dashboard_schedules_router, prefix="/dashboard")
 app.include_router(rag_tools_router)
 app.include_router(drive_tools_router)
 app.include_router(ingest_tools_router)
@@ -148,6 +152,7 @@ async def root() -> dict:
         "dashboard_escalation_resolve": "/dashboard/escalations/{id}/resolve",
         "dashboard_escalation_reject": "/dashboard/escalations/{id}/reject",
         "dashboard_overview": "/dashboard/overview",
+        "dashboard_agent_query": "/dashboard/agent/query",
         "dashboard_chat_conversations": "/dashboard/chat/conversations",
         "dashboard_chat_thread": "/dashboard/chat/conversations/{phone}",
         "dashboard_chat_send": "/dashboard/chat/send",
