@@ -422,7 +422,7 @@ export default function StudentsPage() {
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 shadow-sm transition-colors"
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 shadow-sm transition-colors"
           >
             <Plus className="h-4 w-4" />
             Add student

@@ -12,6 +12,7 @@ import {
   Inbox,
   LayoutDashboard,
   MessageSquare,
+  School,
   ScrollText,
   Settings,
   UserCog,
@@ -45,10 +46,10 @@ const mainNavItems: NavItem[] = [
     icon: <BarChart3 className="h-5 w-5" />,
   },
   {
-  href: "/dashboard/analytics/classes",
-  label: "Class Analytics",
-  icon: <BarChart3 className="h-5 w-5" />,
-  },  
+    href: "/dashboard/analytics/classes",
+    label: "Class Analytics",
+    icon: <School className="h-5 w-5" />,
+  },
   {
     href: "/dashboard/inbox",
     label: "Inbox",
@@ -142,9 +143,12 @@ export default function Sidebar({
 
       <nav className="flex-1 space-y-2">
         {mainNavItems.map((item) => {
+          // Exact match for Analytics so Class Analytics is not double-highlighted.
           const active =
-            pathname === item.href ||
-            pathname?.startsWith(`${item.href}/`);
+            item.href === "/dashboard/analytics"
+              ? pathname === item.href
+              : pathname === item.href ||
+                Boolean(pathname?.startsWith(`${item.href}/`));
 
           return (
             <Link

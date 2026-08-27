@@ -29,11 +29,11 @@ import {
 
 function senderBubbleClass(sender: string) {
   if (sender === "student") {
-    return "bg-slate-100 dark:bg-slate-800 text-gray-100 self-start";
+    return "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 self-start";
   }
 
   if (sender === "staff") {
-    return "bg-blue-600 text-slate-900 dark:text-white self-end";
+    return "bg-blue-600 text-white self-end";
   }
 
   return "bg-emerald-900/60 text-emerald-100 self-start";
