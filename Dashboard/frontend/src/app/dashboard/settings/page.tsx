@@ -426,7 +426,7 @@ export default function SettingsPage() {
                   setTelegramBusy(false);
                 }
               }}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
             >
               {telegramBusy ? "Working…" : "Generate Telegram code"}
             </button>

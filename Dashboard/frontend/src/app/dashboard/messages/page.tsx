@@ -241,7 +241,7 @@ function MessagesContent() {
                           {conversation.student_name ?? conversation.phone}
                         </p>
                         {conversation.has_open_escalation && (
-                          <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] text-amber-300">
+                          <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-[10px] text-blue-300">
                             !
                           </span>
                         )}
@@ -282,7 +282,7 @@ function MessagesContent() {
                         href={`/dashboard/inbox?status=open&reason_code=${encodeURIComponent(
                           escalation.reason_code,
                         )}`}
-                        className="rounded-full bg-amber-500/10 px-2 py-1 text-xs text-amber-300 hover:bg-amber-500/20"
+                        className="rounded-full bg-blue-500/10 px-2 py-1 text-xs text-blue-300 hover:bg-blue-500/20"
                       >
                         Open: {escalation.reason_code.replaceAll("_", " ")}
                       </Link>

@@ -132,7 +132,7 @@ export default function HomePage() {
           <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl shadow-blue-950/20">
             <div className="flex items-center gap-2 border-b border-slate-800 px-5 py-4">
               <div className="h-3 w-3 rounded-full bg-red-400/70" />
-              <div className="h-3 w-3 rounded-full bg-amber-400/70" />
+              <div className="h-3 w-3 rounded-full bg-blue-400/70" />
               <div className="h-3 w-3 rounded-full bg-emerald-400/70" />
 
               <span className="ml-3 text-xs text-slate-500">

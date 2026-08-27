@@ -221,7 +221,7 @@ ACTION MAP (per route)
 
 PARAM SCHEMAS (null if unknown — never guess)
   admissions params:  student_name, school, district, class_name, class_id, grade (A/L|O/L)
-  resource params:    query, subject, grade, folder (papers|notes|syllabus)
+  resource params:    query, subject, grade, folder (papers|textbooks|syllabus)
   payment_check params: amount, reference, month
   escalation params:  reason, urgency
   direct params:      {{}} (usually empty)
@@ -266,8 +266,14 @@ ROUTING EXAMPLES:
   "Do you have 2023 Physics past papers?"
     → resource {{action: "search", params: {{query: "2023 Physics past papers", subject: "Physics", folder: "papers"}}}}
 
-  "any tutes?" / "send me the papers" / "I need the syllabus PDF"
+  "any tutes?" / "send me the papers"
     → resource {{action: "search", params: {{folder: "papers"}}}}
+
+  "what textbooks do you have" / "send me the text books"
+    → resource {{action: "search", params: {{folder: "textbooks"}}}}
+
+  "I need the syllabus PDF"
+    → resource {{action: "search", params: {{folder: "syllabus"}}}}
 
   "2" (memory shows the assistant listed numbered Drive files)
     → resource {{action: "search", params: {{}}}}

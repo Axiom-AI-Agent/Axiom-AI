@@ -425,7 +425,7 @@ export default function ClassAnalyticsPage() {
                             active
                           </span>
 
-                          <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-300">
+                          <span className="rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-700 dark:text-blue-300">
                             {
                               item.pending_students
                             }{" "}

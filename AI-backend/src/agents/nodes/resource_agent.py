@@ -35,8 +35,9 @@ ResourceSubPath = Literal["drive", "rag", "schedule"]
 _DRIVE_PATTERNS = (
     r"\bpapers?\b",
     r"\btutes?\b",
-    r"\btextbook\b",
-    r"\bsyllabus\b",
+    r"\btext\s*books?\b",
+    r"\bbooks\b",
+    r"\bsyllab(?:us|i)\b",
     r"\bpdfs?\b",
     r"past paper",
     r"model paper",
@@ -54,7 +55,27 @@ _DRIVE_PATTERNS = (
     r"ටියුට්",
     r"පෙළපොත්",
     r"பாடத்தாள",
+    r"பாடநூல்",
+    r"பாடத்திட்ட",
     r"அனுப்பு",
+)
+_SYLLABUS_FOLDER_RE = re.compile(
+    r"\bsyllab(?:us|i)\b|பாடத்திட்ட",
+    re.IGNORECASE,
+)
+_TEXTBOOK_FOLDER_RE = re.compile(
+    r"\btext\s*books?\b|\bbooks\b|\bchapter\b|පෙළපොත්|பாடநூல்",
+    re.IGNORECASE,
+)
+_PAPERS_FOLDER_RE = re.compile(
+    r"\bpapers?\b|\btutes?\b|past paper|model paper|paper eka|tute eka|"
+    r"පේපර්|ටියුට්|பாடத்தாள",
+    re.IGNORECASE,
+)
+_EXPLAIN_RAG_RE = re.compile(
+    r"\bexplain\b|\bunderstand\b|\blesson\b|\bnotes?\b|what did|how does|"
+    r"help me with|kiyala\s+denn|\bkiyanna\b|explain karanna",
+    re.IGNORECASE,
 )
 _RAG_PATTERNS = (
     r"\bexplain\b",
@@ -144,15 +165,23 @@ class ResourceAgentResult:
 
 
 def classify_resource_subpath(message: str) -> ResourceSubPath:
-    """Keyword sub-router: schedule > drive > rag."""
+    """Keyword sub-router: schedule > drive (file folders) > rag."""
     text = message.lower().strip()
     schedule_score = sum(1 for p in _SCHEDULE_PATTERNS if re.search(p, text))
     drive_score = sum(1 for p in _DRIVE_PATTERNS if re.search(p, text))
     rag_score = sum(1 for p in _RAG_PATTERNS if re.search(p, text))
+    file_folder_intent = bool(
+        _SYLLABUS_FOLDER_RE.search(text)
+        or _TEXTBOOK_FOLDER_RE.search(text)
+        or _PAPERS_FOLDER_RE.search(text)
+    )
 
     # Schedule takes priority — time-related queries are unambiguous
     if schedule_score > 0:
         return "schedule"
+    # Papers / textbooks / syllabus listing beats generic "what are" RAG.
+    if file_folder_intent and not _EXPLAIN_RAG_RE.search(text):
+        return "drive"
     if drive_score > rag_score:
         return "drive"
     if rag_score > 0:
@@ -163,12 +192,25 @@ def classify_resource_subpath(message: str) -> ResourceSubPath:
 
 
 def _infer_drive_folder(message: str) -> str:
-    text = message.lower()
-    if "textbook" in text or "chapter" in text:
-        return "textbooks"
-    if "syllabus" in text:
+    """Map a file request to papers, textbooks, or syllabus."""
+    if _SYLLABUS_FOLDER_RE.search(message):
         return "syllabus"
+    if _TEXTBOOK_FOLDER_RE.search(message):
+        return "textbooks"
     return "papers"
+
+
+def _folder_from_route_params(state: AgentState) -> str | None:
+    from infrastructure.config import DRIVE_ALLOWED_FOLDERS
+
+    for decision in state.get("route_decisions") or []:
+        if str(decision.get("route") or "") != "resource":
+            continue
+        params = decision.get("params") or {}
+        folder = str(params.get("folder") or "").strip().lower()
+        if folder in DRIVE_ALLOWED_FOLDERS:
+            return folder
+    return None
 
 
 class DirectDriveClient:
@@ -502,6 +544,9 @@ class ResourceAgent:
     ) -> ResourceAgentResult:
         """Handle Drive file requests."""
         folder = _infer_drive_folder(user_message)
+        routed = _folder_from_route_params(state)
+        if folder == "papers" and routed in {"textbooks", "syllabus"}:
+            folder = routed
         result = await self.drive.drive_list(tenant_id=tenant_id, folder=folder)
         tool_log.append(f"drive_list({folder}): ok={result.get('ok')}")
         files = result.get("files") or []

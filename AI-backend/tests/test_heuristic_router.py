@@ -15,6 +15,8 @@ from agents.router import heuristic_route
         ("Do you have past papers for 2024?", "resource"),
         ("any tutes?", "resource"),
         ("send me the papers", "resource"),
+        ("what are the textbooks you have", "resource"),
+        ("send me the text books", "resource"),
         ("I need the syllabus PDF", "resource"),
         ("Can I speak to the tutor please?", "escalation"),
         ("I want to join A/L Physics", "admissions"),

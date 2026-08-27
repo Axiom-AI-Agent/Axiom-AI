@@ -108,6 +108,43 @@ async def test_resource_agent_drive_lists_tutes_without_filename_guess():
 
 
 @pytest.mark.asyncio
+async def test_resource_agent_drive_lists_textbooks_folder():
+    drive = FakeDrive()
+    agent = ResourceAgent(drive=drive, rag=FakeRag(), pick_store=DrivePickStore())
+    result = await agent.run(
+        {
+            "tenant_id": "tenant-demo-physics",
+            "session_id": "sess",
+            "user_id": "stu-1",
+            "is_enrolled": True,
+            "enrolled_class_ids": ["class-physics-al-2026"],
+            "messages": [HumanMessage(content="what are the textbooks you have")],
+        }
+    )
+    assert result.sub_path == "drive"
+    assert drive.list_calls[0]["folder"] == "textbooks"
+    assert not drive.search_calls
+
+
+@pytest.mark.asyncio
+async def test_resource_agent_drive_lists_syllabus_folder():
+    drive = FakeDrive()
+    agent = ResourceAgent(drive=drive, rag=FakeRag(), pick_store=DrivePickStore())
+    result = await agent.run(
+        {
+            "tenant_id": "tenant-demo-physics",
+            "session_id": "sess",
+            "user_id": "stu-1",
+            "is_enrolled": True,
+            "enrolled_class_ids": ["class-physics-al-2026"],
+            "messages": [HumanMessage(content="send me the syllabus")],
+        }
+    )
+    assert result.sub_path == "drive"
+    assert drive.list_calls[0]["folder"] == "syllabus"
+
+
+@pytest.mark.asyncio
 async def test_resource_agent_rag_path():
     agent = ResourceAgent(drive=FakeDrive(), rag=FakeRag())
     state = {

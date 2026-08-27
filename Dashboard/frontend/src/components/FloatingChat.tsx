@@ -51,7 +51,7 @@ export default function FloatingChat() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg transition-all hover:bg-emerald-500 hover:shadow-xl"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-500 hover:shadow-xl"
         aria-label="Toggle AI assistant"
       >
         {isOpen ? (
@@ -66,7 +66,7 @@ export default function FloatingChat() {
         <div className="fixed bottom-24 right-6 z-50 flex w-[360px] flex-col rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
           {/* Header */}
           <div className="flex items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-slate-700">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500">
               <Sparkles className="h-4 w-4" />
             </div>
             <div>
@@ -127,7 +127,7 @@ export default function FloatingChat() {
             <button
               type="submit"
               disabled={sending || !draft.trim()}
-              className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+              className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
             >
               <Send className="h-4 w-4" />
             </button>

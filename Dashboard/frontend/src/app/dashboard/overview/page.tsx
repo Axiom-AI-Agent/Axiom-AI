@@ -202,7 +202,7 @@ export default function OverviewPage() {
           </Link>
           <Link
             href="/dashboard/classes"
-            className="inline-flex items-center gap-2 rounded-lg border border-emerald-600 bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500 transition-colors shadow-sm font-medium"
+            className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 transition-colors shadow-sm font-medium"
           >
             <Megaphone className="h-4 w-4" />
             Broadcast to class
