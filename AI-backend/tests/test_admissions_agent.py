@@ -118,6 +118,30 @@ def _state(*, message: str, phone: str = "94771111001") -> dict:
 
 
 @pytest.mark.asyncio
+async def test_admissions_agent_greeting_does_not_start_onboarding():
+    crm = FakeCrmClient()
+    agent = AdmissionsAgent(crm=crm)
+    result = await agent.run(_state(message="hi"))
+    assert get_onboarding_session_store().get(
+        tenant_id="tenant-demo-physics", phone="94771111001"
+    ) is None
+    assert "full name" not in result.answer.lower()
+    assert "register" in result.answer.lower() or "enroll" in result.answer.lower()
+
+
+@pytest.mark.asyncio
+async def test_admissions_agent_who_are_you_does_not_collect_name():
+    crm = FakeCrmClient()
+    agent = AdmissionsAgent(crm=crm)
+    result = await agent.run(_state(message="hello who are you"))
+    assert get_onboarding_session_store().get(
+        tenant_id="tenant-demo-physics", phone="94771111001"
+    ) is None
+    assert "school" not in result.answer.lower()
+    assert "full name" not in result.answer.lower()
+
+
+@pytest.mark.asyncio
 async def test_admissions_agent_prompts_for_name_on_enrollment_intent():
     crm = FakeCrmClient()
     agent = AdmissionsAgent(crm=crm)

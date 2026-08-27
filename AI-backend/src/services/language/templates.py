@@ -69,9 +69,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "ta": "பரவாயில்லை — ஆசிரியருக்கு அனுப்ப மாட்டேன். வேறு எதையும் கேட்கலாம்.",
     },
     "onboarding_ask_name": {
-        "en": "Hi! Welcome to {tenant_name} — I'll help you get enrolled. What's your full name?",
-        "si": "ආයුබෝවන්! {tenant_name} වෙත සාදරයෙන් පිළිගනිමු — ලියාපදිංචි වෙන්න උදව් කරනවා. ඔබේ සම්පූර්ණ නම කුමක්ද?",
-        "ta": "வணக்கம்! {tenant_name}க்கு வரவேற்கிறோம் — சேர்க்கைக்கு உதவுவேன். உங்கள் முழுப் பெயர் என்ன?",
+        "en": "Great — let's get you enrolled at {tenant_name}. What's your full name?",
+        "si": "හරි — {tenant_name} හි ලියාපදිංචි වෙමු. ඔබේ සම්පූර්ණ නම කුමක්ද?",
+        "ta": "சரி — {tenant_name} இல் சேர்க்கையைத் தொடங்குவோம். உங்கள் முழுப் பெயர் என்ன?",
     },
     "onboarding_restart": {
         "en": "No problem — let's start over. What's your full name?",
@@ -286,11 +286,20 @@ STRINGS: dict[str, dict[str, str]] = {
     },
     "onboarding_interest": {
         "en": (
-            "Thanks for your interest in {tenant_name}! "
-            "When you're ready to enroll, just say you'd like to join a class."
+            "Hi! Welcome to {tenant_name}. I'm the AI assistant here — I can help with "
+            "classes, past papers, fees, and speaking to a tutor.\n\n"
+            "If you'd like to register or enroll, just say so and I'll get you started."
         ),
-        "si": "{tenant_name} ගැන උනන්දුවට ස්තූතියි! ලියාපදිංචි වෙන්න ready නම්, පන්තියකට join වෙන්න කියලා කියන්න.",
-        "ta": "{tenant_name} ஆர்வத்திற்கு நன்றி! சேர தயாரானால், ஒரு வகுப்பில் சேர விரும்புகிறேன் என்று சொல்லுங்கள்.",
+        "si": (
+            "ආයුබෝවන්! {tenant_name} වෙත සාදරයෙන් පිළිගනිමු. මම මෙහි AI assistant — "
+            "පන්ති, past papers, ගාස්තු, සහ ගුරුවරයාට කතා කරන්න උදව් කරනවා.\n\n"
+            "ලියාපදිංචි වෙන්න ඕන නම් එහෙම කියලා කියන්න — මම පටන් ගන්නම්."
+        ),
+        "ta": (
+            "வணக்கம்! {tenant_name}க்கு வரவேற்கிறோம். நான் இங்கே AI உதவியாளர் — "
+            "வகுப்புகள், பாடக்குறிப்புகள், கட்டணம், ஆசிரியரிடம் பேச உதவுவேன்.\n\n"
+            "பதிவு செய்ய விரும்பினால் அதைச் சொல்லுங்கள் — நான் தொடங்குவேன்."
+        ),
     },
     "missing_enrollment_details": {
         "en": "Some enrollment details are missing. Let's start again — what is your full name?",

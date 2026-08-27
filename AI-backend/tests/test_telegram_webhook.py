@@ -211,7 +211,7 @@ async def test_handle_text_new_user_requests_contact():
 
     mock_contact.assert_awaited_once()
     prompt = mock_contact.await_args.args[2]
-    assert "Welcome!" in prompt
+    assert "Hello!" in prompt
     assert "@DemoPhysicsBot" in prompt
     mock_pipeline.assert_not_called()
 
@@ -283,7 +283,7 @@ async def test_handle_text_passes_enrollment_phrasing_unchanged():
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("skip_typing")
-async def test_handle_contact_starts_enrollment_for_new_phone():
+async def test_handle_contact_greets_new_phone_without_starting_enrollment():
     pending = {
         "id": None,
         "tenant_id": "tenant-demo-physics",
@@ -301,9 +301,12 @@ async def test_handle_contact_starts_enrollment_for_new_phone():
     ) as mock_pipeline, patch(
         "services.messaging.telegram_handlers.send_telegram_message",
         new_callable=AsyncMock,
-    ), patch(
+    ) as mock_send, patch(
         "services.messaging.telegram_handlers.bind_telegram_student_channel",
         new_callable=AsyncMock,
+    ) as mock_bind, patch(
+        "services.messaging.telegram_handlers.get_telegram_bot_display_name",
+        return_value="Akila Sir AI",
     ):
         await handle_contact_shared(
             "tenant-demo-physics",
@@ -313,17 +316,14 @@ async def test_handle_contact_starts_enrollment_for_new_phone():
         )
 
     mock_link.assert_awaited_once()
-    inbound = mock_pipeline.await_args.args[-1]
-    assert inbound.channel is ChatChannel.TELEGRAM
-    assert inbound.phone == "94771234567"
-    assert inbound.body == ""
-    session = get_onboarding_session_store().get(
+    mock_pipeline.assert_not_awaited()
+    mock_bind.assert_awaited_once()
+    greeting = mock_send.await_args.args[2]
+    assert "full name" not in greeting.lower()
+    assert "register" in greeting.lower() or "enroll" in greeting.lower()
+    assert get_onboarding_session_store().get(
         tenant_id="tenant-demo-physics", phone="94771234567"
-    )
-    assert session is not None and session.active
-    get_onboarding_session_store().clear(
-        tenant_id="tenant-demo-physics", phone="94771234567"
-    )
+    ) is None
 
 
 @pytest.mark.asyncio

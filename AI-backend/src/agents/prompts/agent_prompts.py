@@ -383,7 +383,9 @@ Please rephrase your question about classes, enrollment, or your studies — I'm
 """
 
 _ADMISSIONS_STUB_FALLBACK = """\
-Thanks for your interest in joining {tenant_name}! I'll help you get enrolled — let's start with your full name.
+Hi! Welcome to {tenant_name}. I'm the AI assistant here — I can help with classes, past papers, fees, and speaking to a tutor.
+
+If you'd like to register or enroll, just say so and I'll get you started.
 """
 
 _RESOURCE_NOT_ENROLLED_FALLBACK = """\

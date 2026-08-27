@@ -48,6 +48,17 @@ _NAME_PREFIX = re.compile(
     r"^(?:my name is|i'?m|i am|call me|name is|this is)\s+(.+)$",
     re.IGNORECASE,
 )
+_SHORT_GREETING = re.compile(
+    r"^(hi|hello|hey|thanks|thank you)[\s!.?]*$",
+    re.IGNORECASE,
+)
+_IDENTITY_QUESTION = re.compile(
+    r"\b("
+    r"who are you|who is this|what is this|"
+    r"what can you do|who am i"
+    r")\b",
+    re.IGNORECASE,
+)
 _SCHOOL_PREFIX = re.compile(
     r"^(?:i go to|i study at|my school is|school is|at)\s+(.+)$",
     re.IGNORECASE,
@@ -733,6 +744,8 @@ class OnboardingFlow:
         if match:
             return self._title_name(match.group(1))
         if self._looks_like_enrollment_intent(stripped):
+            return None
+        if _SHORT_GREETING.match(stripped) or _IDENTITY_QUESTION.search(stripped):
             return None
         words = stripped.split()
         if "?" in stripped or not (1 <= len(words) <= 5):

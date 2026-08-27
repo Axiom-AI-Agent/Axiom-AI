@@ -407,3 +407,15 @@ def test_custom_only_field_definitions_skip_school_district():
     assert state.slots.school is None
     assert state.slots.district is None
     assert state.next_step == "class"
+
+
+def test_identity_question_is_not_extracted_as_name():
+    flow = OnboardingFlow()
+    state = flow.start_collection()
+    state = flow.apply_message(state, "hello who are you")
+    assert state.slots.name is None
+    assert state.next_step == "name"
+
+    state = flow.apply_message(state, "hi")
+    assert state.slots.name is None
+    assert state.next_step == "name"
