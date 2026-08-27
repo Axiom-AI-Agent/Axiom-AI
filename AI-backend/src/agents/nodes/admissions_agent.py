@@ -57,6 +57,8 @@ class AdmissionsAgent:
                 answer=t("need_contact_details", self.flow.language),
             )
 
+        await self._load_field_definitions(tenant_id, tool_log)
+
         if looks_like_institute_info(user_message):
             return await self._handle_info_inquiry(
                 tenant_id=tenant_id,
@@ -255,6 +257,7 @@ class AdmissionsAgent:
                         phone=phone,
                         student_name=ob_state.slots.name,
                         classes=classes if ob_state.next_step == "class" else None,
+                        select_rejected=ob_state.invalid_select,
                     )
                     return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
                 class_row = next(
@@ -289,6 +292,7 @@ class AdmissionsAgent:
                 phone=phone,
                 student_name=ob_state.slots.name,
                 classes=classes if ob_state.next_step == "class" else None,
+                select_rejected=ob_state.invalid_select,
             )
             return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
 
@@ -357,6 +361,7 @@ class AdmissionsAgent:
             phone=phone,
             student_name=ob_state.slots.name,
             classes=classes if ob_state.next_step == "class" else None,
+            select_rejected=ob_state.invalid_select,
         )
         return AdmissionsAgentResult(answer=answer, tool_output="\n".join(tool_log))
 
@@ -371,7 +376,7 @@ class AdmissionsAgent:
         tool_log: list[str],
     ) -> AdmissionsAgentResult:
         slots = ob_state.slots
-        if not (slots.name and slots.school and slots.district and slots.class_id):
+        if not self.flow._collection_complete(slots):
             return AdmissionsAgentResult(
                 answer=self.flow._t("missing_enrollment_details"),
                 tool_output="\n".join(tool_log),
@@ -383,6 +388,7 @@ class AdmissionsAgent:
             name=slots.name,
             school=slots.school,
             district=slots.district,
+            extra_fields=dict(slots.extra),
             class_id=slots.class_id,
             language_pref=self.flow.language,
         )
@@ -410,6 +416,19 @@ class AdmissionsAgent:
             return None
         classes = await self.crm.list_classes(tenant_id=tenant_id)
         return next((c for c in classes if c.get("id") == class_id), None)
+
+    async def _load_field_definitions(self, tenant_id: str, tool_log: list[str]) -> None:
+        lister = getattr(self.crm, "list_field_definitions", None)
+        if lister is None:
+            return
+        try:
+            rows = await lister(tenant_id=tenant_id)
+            self.flow.set_field_definitions(rows)
+            tool_log.append(
+                f"list_field_definitions: {len(self.flow.field_definitions)} fields"
+            )
+        except Exception as exc:
+            logger.warning("list_field_definitions failed: {}", exc)
 
 
 def _last_user_text(state: AgentState) -> str:

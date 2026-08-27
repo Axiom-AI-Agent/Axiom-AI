@@ -6,6 +6,7 @@ import pytest
 from langchain_core.messages import HumanMessage
 
 from agents.nodes.admissions_agent import AdmissionsAgent
+from services.admissions.field_definitions import DEFAULT_FIELD_DEFINITIONS
 from services.admissions.onboarding_session_store import get_onboarding_session_store
 
 
@@ -33,6 +34,21 @@ class FakeCrmClient:
             }
         ]
         self.committed = False
+        self.commit_kwargs: dict | None = None
+        self.field_definitions = [
+            {
+                "field_key": defn.field_key,
+                "label": defn.label,
+                "field_type": defn.field_type,
+                "required": defn.required,
+                "sort_order": defn.sort_order,
+                "active": True,
+            }
+            for defn in DEFAULT_FIELD_DEFINITIONS
+        ]
+
+    async def list_field_definitions(self, *, tenant_id: str) -> list:
+        return list(self.field_definitions)
 
     async def get_student(self, *, tenant_id: str, phone: str) -> dict:
         if self.student is None:
@@ -56,13 +72,15 @@ class FakeCrmClient:
 
     async def commit_onboarding(self, **kwargs) -> dict:
         self.committed = True
+        self.commit_kwargs = kwargs
         self.student = {
             "id": "stu-new",
             "tenant_id": kwargs["tenant_id"],
             "phone": kwargs["phone"],
             "name": kwargs["name"],
-            "school": kwargs["school"],
-            "district": kwargs["district"],
+            "school": kwargs.get("school"),
+            "district": kwargs.get("district"),
+            "extra_fields": kwargs.get("extra_fields") or {},
             "consent_at": "2026-01-01T00:00:00+00:00",
         }
         self.pending_enrollment = {
@@ -333,3 +351,86 @@ async def test_admissions_agent_lists_available_classes_for_info_inquiry():
     assert "A/L Physics 2026" in result.answer
     assert "O/L Physics 2026" in result.answer
     assert "enrolled students only" not in result.answer.lower()
+
+
+@pytest.mark.asyncio
+async def test_admissions_agent_asks_custom_field_instead_of_school():
+    crm = FakeCrmClient()
+    crm.field_definitions = [
+        {
+            "field_key": "parent_contact",
+            "label": "Parent contact",
+            "field_type": "text",
+            "required": True,
+            "sort_order": 0,
+            "active": True,
+        }
+    ]
+    agent = AdmissionsAgent(crm=crm)
+    store = get_onboarding_session_store()
+    store.start(tenant_id="tenant-demo-physics", phone="94771111001")
+
+    result = await agent.run(_state(message="My name is Mirco Fernando"))
+    assert "parent contact" in result.answer.lower()
+    assert "school" not in result.answer.lower()
+    session = store.get(tenant_id="tenant-demo-physics", phone="94771111001")
+    assert session is not None
+    assert session.slots.name == "Mirco Fernando"
+    assert session.next_step == "parent_contact"
+
+
+@pytest.mark.asyncio
+async def test_admissions_agent_commits_extra_fields():
+    crm = FakeCrmClient()
+    agent = AdmissionsAgent(crm=crm)
+    store = get_onboarding_session_store()
+    session = store.start(tenant_id="tenant-demo-physics", phone="94771111001")
+    session.slots.name = "Kavindu Fernando"
+    session.slots.school = "Royal College Colombo"
+    session.slots.district = "Colombo"
+    session.slots.extra = {
+        "school": "Royal College Colombo",
+        "district": "Colombo",
+    }
+    session.slots.class_id = "class-physics-al-2026"
+    session.awaiting_confirmation = True
+    session.next_step = "confirm"
+    store.save(tenant_id="tenant-demo-physics", phone="94771111001", session=session)
+
+    result = await agent.run(_state(message="YES"))
+    assert crm.committed is True
+    assert crm.commit_kwargs is not None
+    assert crm.commit_kwargs["extra_fields"]["school"] == "Royal College Colombo"
+    assert crm.commit_kwargs["extra_fields"]["district"] == "Colombo"
+    assert "welcome" in result.answer.lower() or "enrollment" in result.answer.lower()
+
+
+@pytest.mark.asyncio
+async def test_admissions_agent_reprompts_invalid_select():
+    crm = FakeCrmClient()
+    crm.field_definitions = [
+        {
+            "field_key": "stream",
+            "label": "Stream",
+            "field_type": "select",
+            "options": ["Physical", "Biological"],
+            "required": True,
+            "sort_order": 0,
+            "active": True,
+        }
+    ]
+    agent = AdmissionsAgent(crm=crm)
+    store = get_onboarding_session_store()
+    session = store.start(tenant_id="tenant-demo-physics", phone="94771111001")
+    session.slots.name = "Mirco Fernando"
+    session.next_step = "stream"
+    store.save(tenant_id="tenant-demo-physics", phone="94771111001", session=session)
+
+    result = await agent.run(_state(message="Commerce"))
+    assert "please choose one of these" in result.answer.lower()
+    assert "physical" in result.answer.lower()
+    session = store.get(tenant_id="tenant-demo-physics", phone="94771111001")
+    assert session is not None
+    assert session.next_step == "stream"
+    assert "stream" not in session.slots.extra
+    assert not crm.committed

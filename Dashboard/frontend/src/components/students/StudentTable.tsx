@@ -8,10 +8,13 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import { Student } from "@/lib/api";
+import { OnboardingFieldDefinition, Student } from "@/lib/api";
+
+import { formatStudentFieldValue } from "./extraFields";
 
 interface StudentTableProps {
   students: Student[];
+  fields: OnboardingFieldDefinition[];
   onEdit: (student: Student) => void;
   onEnroll: (student: Student) => void;
   onDelete: (studentId: string) => void;
@@ -20,6 +23,7 @@ interface StudentTableProps {
 
 export default function StudentTable({
   students,
+  fields,
   onEdit,
   onEnroll,
   onDelete,
@@ -32,7 +36,11 @@ export default function StudentTable({
           <tr className="text-left text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <th className="px-5 py-4 font-medium">Name</th>
             <th className="px-5 py-4 font-medium">Phone</th>
-            <th className="px-5 py-4 font-medium">District</th>
+            {fields.map((field) => (
+              <th key={field.field_key} className="px-5 py-4 font-medium">
+                {field.label}
+              </th>
+            ))}
             <th className="px-5 py-4 font-medium">Language</th>
             <th className="min-w-[220px] px-5 py-4 font-medium">
               Registered classes
@@ -58,9 +66,14 @@ export default function StudentTable({
                 {student.phone}
               </td>
 
-              <td className="px-5 py-4 align-top text-sm text-slate-600 dark:text-slate-400">
-                {student.district?.trim() || "—"}
-              </td>
+              {fields.map((field) => (
+                <td
+                  key={field.field_key}
+                  className="px-5 py-4 align-top text-sm text-slate-600 dark:text-slate-400"
+                >
+                  {formatStudentFieldValue(student, field)}
+                </td>
+              ))}
 
               <td className="px-5 py-4 align-top text-sm uppercase text-slate-600 dark:text-slate-400">
                 {student.language_pref || "en"}

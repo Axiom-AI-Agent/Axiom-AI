@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import {
   Building2,
+  ClipboardList,
   Loader2,
   Plus,
   Trash2,
@@ -22,9 +23,68 @@ import {
 } from "@/lib/auth";
 
 import type {
+  OnboardingFieldType,
   StaffRegistration,
   StaffRole,
 } from "@/types/auth";
+
+type DraftOnboardingField = {
+  label: string;
+  field_key: string;
+  field_type: OnboardingFieldType;
+  required: boolean;
+  optionsText: string;
+  keyEdited: boolean;
+};
+
+const RESERVED_FIELD_KEYS = new Set([
+  "name",
+  "phone",
+  "class",
+  "course",
+  "consent",
+]);
+
+function slugifyFieldKey(label: string): string {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 64);
+}
+
+function emptyOnboardingField(): DraftOnboardingField {
+  return {
+    label: "",
+    field_key: "",
+    field_type: "text",
+    required: true,
+    optionsText: "",
+    keyEdited: false,
+  };
+}
+
+function defaultOnboardingFields(): DraftOnboardingField[] {
+  return [
+    {
+      label: "School",
+      field_key: "school",
+      field_type: "text",
+      required: true,
+      optionsText: "",
+      keyEdited: true,
+    },
+    {
+      label: "District",
+      field_key: "district",
+      field_type: "text",
+      required: true,
+      optionsText: "",
+      keyEdited: true,
+    },
+  ];
+}
 
 function emptyStaff(): StaffRegistration {
   return {
@@ -72,6 +132,13 @@ export default function RegisterPage() {
     staffMembers,
     setStaffMembers,
   ] = useState<StaffRegistration[]>([]);
+
+  const [
+    onboardingFields,
+    setOnboardingFields,
+  ] = useState<DraftOnboardingField[]>(
+    defaultOnboardingFields,
+  );
 
   const [
     loading,
@@ -126,6 +193,44 @@ export default function RegisterPage() {
     );
   }
 
+  function addOnboardingField() {
+    if (onboardingFields.length >= 15) {
+      setError("You can add up to 15 custom onboarding fields.");
+      return;
+    }
+    setOnboardingFields((current) => [
+      ...current,
+      emptyOnboardingField(),
+    ]);
+  }
+
+  function updateOnboardingField(
+    index: number,
+    patch: Partial<DraftOnboardingField>,
+  ) {
+    setOnboardingFields((current) =>
+      current.map((field, fieldIndex) => {
+        if (fieldIndex !== index) {
+          return field;
+        }
+        const next = { ...field, ...patch };
+        if (
+          patch.label !== undefined &&
+          !next.keyEdited
+        ) {
+          next.field_key = slugifyFieldKey(patch.label);
+        }
+        return next;
+      }),
+    );
+  }
+
+  function removeOnboardingField(index: number) {
+    setOnboardingFields((current) =>
+      current.filter((_, fieldIndex) => fieldIndex !== index),
+    );
+  }
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
   ) {
@@ -174,6 +279,43 @@ export default function RegisterPage() {
       return;
     }
 
+    const incompleteFields = onboardingFields.some(
+      (field) => !field.label.trim() || !field.field_key.trim(),
+    );
+    if (incompleteFields) {
+      setError("Each onboarding field needs a label and key.");
+      return;
+    }
+
+    const fieldKeys = onboardingFields.map((field) =>
+      field.field_key.trim().toLowerCase(),
+    );
+    if (fieldKeys.some((key) => RESERVED_FIELD_KEYS.has(key))) {
+      setError(
+        "Name, phone, class, and consent are always collected — do not add them as custom fields.",
+      );
+      return;
+    }
+    if (new Set(fieldKeys).size !== fieldKeys.length) {
+      setError("Onboarding field keys must be unique.");
+      return;
+    }
+
+    const invalidSelect = onboardingFields.some((field) => {
+      if (field.field_type !== "select") {
+        return false;
+      }
+      const options = field.optionsText
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+      return options.length < 2;
+    });
+    if (invalidSelect) {
+      setError("Select fields need at least two comma-separated options.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -211,6 +353,30 @@ export default function RegisterPage() {
                   staff.email
                     .trim()
                     .toLowerCase(),
+              }),
+            ),
+
+          onboarding_fields:
+            onboardingFields.map(
+              (field, index) => ({
+                field_key:
+                  field.field_key
+                    .trim()
+                    .toLowerCase(),
+                label: field.label.trim(),
+                field_type: field.field_type,
+                required: field.required,
+                sort_order: index,
+                options:
+                  field.field_type ===
+                  "select"
+                    ? field.optionsText
+                        .split(",")
+                        .map((item) =>
+                          item.trim(),
+                        )
+                        .filter(Boolean)
+                    : null,
               }),
             ),
         });
@@ -276,7 +442,8 @@ export default function RegisterPage() {
 
           <p className="mt-2 text-sm text-slate-400">
             Set up your organization,
-            administrator, and initial staff
+            administrator, student onboarding
+            questions, and initial staff
             accounts.
           </p>
         </div>
@@ -560,6 +727,168 @@ export default function RegisterPage() {
                     </div>
                   ),
                 )}
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <ClipboardList className="h-5 w-5 text-blue-400" />
+                  <h2 className="text-lg font-semibold">
+                    Student onboarding fields
+                  </h2>
+                </div>
+                <p className="mt-1 text-sm text-slate-400">
+                  Name, phone, class, and
+                  consent are always collected.
+                  Add extra questions here.
+                  This is locked after you
+                  create the institution.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={addOnboardingField}
+                disabled={onboardingFields.length >= 15}
+                className="flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-50"
+              >
+                <Plus className="h-4 w-4" />
+                Add field
+              </button>
+            </div>
+
+            {onboardingFields.length === 0 ? (
+              <div className="mt-5 rounded-lg border border-dashed border-slate-700 p-6 text-center text-sm text-slate-500">
+                No extra fields — students will
+                only be asked for name, then
+                class.
+              </div>
+            ) : (
+              <div className="mt-5 space-y-4">
+                {onboardingFields.map((field, index) => (
+                  <div
+                    key={index}
+                    className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+                  >
+                    <div className="mb-4 flex items-center justify-between">
+                      <h3 className="font-medium">
+                        Field {index + 1}
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeOnboardingField(index)
+                        }
+                        className="rounded-lg p-2 text-red-400 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="space-y-2">
+                        <span className="text-sm text-slate-300">
+                          Label *
+                        </span>
+                        <input
+                          required
+                          placeholder="School"
+                          value={field.label}
+                          onChange={(event) =>
+                            updateOnboardingField(
+                              index,
+                              { label: event.target.value },
+                            )
+                          }
+                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                        />
+                      </label>
+
+                      <label className="space-y-2">
+                        <span className="text-sm text-slate-300">
+                          Key *
+                        </span>
+                        <input
+                          required
+                          placeholder="school"
+                          value={field.field_key}
+                          onChange={(event) =>
+                            updateOnboardingField(
+                              index,
+                              {
+                                field_key: event.target.value,
+                                keyEdited: true,
+                              },
+                            )
+                          }
+                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                        />
+                      </label>
+
+                      <label className="space-y-2">
+                        <span className="text-sm text-slate-300">
+                          Type
+                        </span>
+                        <select
+                          value={field.field_type}
+                          onChange={(event) =>
+                            updateOnboardingField(
+                              index,
+                              {
+                                field_type: event.target
+                                  .value as OnboardingFieldType,
+                              },
+                            )
+                          }
+                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                        >
+                          <option value="text">Text</option>
+                          <option value="number">Number</option>
+                          <option value="select">Select</option>
+                          <option value="boolean">Yes / no</option>
+                          <option value="date">Date</option>
+                        </select>
+                      </label>
+
+                      <label className="flex items-center gap-3 pt-7 text-sm text-slate-300">
+                        <input
+                          type="checkbox"
+                          checked={field.required}
+                          onChange={(event) =>
+                            updateOnboardingField(
+                              index,
+                              { required: event.target.checked },
+                            )
+                          }
+                          className="h-4 w-4 rounded border-slate-600"
+                        />
+                        Required
+                      </label>
+
+                      {field.field_type === "select" && (
+                        <label className="space-y-2 sm:col-span-2">
+                          <span className="text-sm text-slate-300">
+                            Options (comma-separated) *
+                          </span>
+                          <input
+                            required
+                            placeholder="Physical, Biological"
+                            value={field.optionsText}
+                            onChange={(event) =>
+                              updateOnboardingField(
+                                index,
+                                { optionsText: event.target.value },
+                              )
+                            }
+                            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </section>

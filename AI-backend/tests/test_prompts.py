@@ -7,6 +7,8 @@ def test_local_prompt_fallback_text():
     service = PromptService()
     text = service.get_text("axiom/out_of_scope_reply")
     assert "tuition" in text.lower()
+    abusive = service.get_text("axiom/flagged_abusive_reply")
+    assert "abusive" in abusive.lower() or "offensive" in abusive.lower()
 
 
 def test_local_prompt_fallback_messages():

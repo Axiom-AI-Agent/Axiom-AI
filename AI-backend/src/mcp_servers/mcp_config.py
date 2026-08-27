@@ -32,6 +32,7 @@ MCP_CORE_TOOL_NAMES = frozenset(
         "get_tenant_info",
         "get_class_details",
         "list_staff",
+        "list_field_definitions",
         "create_enrollment",
         "commit_onboarding",
         "create_escalation",

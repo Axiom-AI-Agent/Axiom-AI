@@ -5,12 +5,21 @@ from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.deps.tenant import get_tenant_id
-from app.models import Tenant
+from app.models import Tenant, TenantFieldDefinition
 from app.models.enums import TenantStatus
+from app.schemas.auth import (
+    OnboardingFieldResponse,
+    OnboardingFieldsPutRequest,
+    OnboardingFieldsResponse,
+)
 from app.schemas.schemas import (
     TenantProfileResponse,
     TenantUpdate,
     TenantsListResponse,
+)
+from app.services.onboarding_fields import (
+    FieldConfigLockedError,
+    save_tenant_onboarding_fields,
 )
 
 router = APIRouter(tags=["Tenant Settings"])
@@ -87,3 +96,66 @@ def update_tenant_profile(
     db.refresh(tenant)
 
     return tenant
+
+
+@router.get(
+    "/tenant/onboarding-fields",
+    response_model=OnboardingFieldsResponse,
+)
+def get_onboarding_fields(
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    if tenant is None:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+
+    rows = (
+        db.query(TenantFieldDefinition)
+        .filter(TenantFieldDefinition.tenant_id == tenant_id)
+        .order_by(TenantFieldDefinition.sort_order, TenantFieldDefinition.field_key)
+        .all()
+    )
+    return OnboardingFieldsResponse(
+        locked=bool(tenant.field_config_locked),
+        fields=[
+            OnboardingFieldResponse(
+                field_key=row.field_key,
+                label=row.label,
+                field_type=row.field_type,
+                options=list(row.options) if row.options else None,
+                required=bool(row.required),
+                sort_order=int(row.sort_order or 0),
+                active=bool(row.active),
+            )
+            for row in rows
+        ],
+    )
+
+
+@router.put(
+    "/tenant/onboarding-fields",
+    response_model=OnboardingFieldsResponse,
+)
+def replace_onboarding_fields(
+    payload: OnboardingFieldsPutRequest,
+    tenant_id: str = Depends(get_tenant_id),
+    db: Session = Depends(get_db),
+):
+    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    if tenant is None:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+
+    try:
+        save_tenant_onboarding_fields(
+            db,
+            tenant,
+            payload.fields,
+            lock=True,
+        )
+    except FieldConfigLockedError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+
+    db.commit()
+    db.refresh(tenant)
+    return get_onboarding_fields(tenant_id=tenant_id, db=db)

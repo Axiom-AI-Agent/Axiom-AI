@@ -5,6 +5,7 @@ from .staff_link_code import StaffLinkCode
 from .audit_log import AuditLog
 from .parent_guardian import ParentGuardian
 from .student import Student
+from .tenant_field_definition import TenantFieldDefinition
 from .subject_class import SubjectClass
 from .enrollment import Enrollment
 from .invoice import Invoice
@@ -21,6 +22,7 @@ __all__ = [
     "AuditLog",
     "ParentGuardian",
     "Student",
+    "TenantFieldDefinition",
     "SubjectClass",
     "Enrollment",
     "Invoice",
