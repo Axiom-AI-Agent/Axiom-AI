@@ -10,8 +10,9 @@ import {
 
 import SageCheck from "@/components/SageCheck";
 import Modal from "@/components/ui/Modal";
+import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import { OnboardingFieldDefinition, Student } from "@/lib/api";
-import { btnDanger, btnQuiet } from "@/lib/ui";
+import { btnDanger, btnQuiet, surfaceCard } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 import { formatStudentFieldValue } from "./extraFields";
 
@@ -52,22 +53,6 @@ export default function StudentDetailsModal({
           <button
             type="button"
             onClick={() => {
-              onToggleHumanMode(student);
-              onClose();
-            }}
-            className={cn(
-              btnQuiet,
-              student.human_mode && "border-blue/40 text-blue",
-            )}
-          >
-            {student.human_mode ? "Human mode" : "AI active"}
-            {!student.human_mode ? (
-              <SageCheck label="AI handling" />
-            ) : null}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
               onEnroll(student);
               onClose();
             }}
@@ -102,6 +87,27 @@ export default function StudentDetailsModal({
       }
     >
       <div className="space-y-6">
+          <section className={`${surfaceCard} p-4`}>
+            <ToggleSwitch
+              label="AI responses"
+              description={
+                student.human_mode
+                  ? "Human mode is on — staff handle replies for this student."
+                  : "AI is handling replies for this student."
+              }
+              checked={!student.human_mode}
+              onChange={() => {
+                onToggleHumanMode(student);
+              }}
+            />
+            {!student.human_mode ? (
+              <p className="mt-2 inline-flex items-center gap-1 text-xs text-sage">
+                <SageCheck label="AI handling" />
+                AI active
+              </p>
+            ) : null}
+          </section>
+
           <section>
             <h3 className="mb-3 text-sm font-semibold text-heading">
               Contact Information

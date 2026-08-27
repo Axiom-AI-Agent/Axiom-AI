@@ -17,6 +17,7 @@ import {
 
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
+import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import {
   getTenantProfile,
   TenantProfile,
@@ -29,6 +30,15 @@ import {
   type TelegramLinkCode,
   type TelegramLinkStatus,
 } from "@/lib/auth-api";
+import {
+  btnPrimary,
+  btnQuiet,
+  errorBanner,
+  pageHeader,
+  pageSubtitle,
+  pageTitle,
+  surfaceCard,
+} from "@/lib/ui";
 
 interface SettingsFormState {
   name: string;
@@ -274,13 +284,13 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-heading">
+      <div className={pageHeader}>
+        <div className="min-w-0">
+          <h1 className={pageTitle}>
             Settings
           </h1>
 
-          <p className="mt-1 text-sm text-muted">
+          <p className={pageSubtitle}>
             Tenant profile and
             organization configuration.
           </p>
@@ -291,16 +301,16 @@ export default function SettingsPage() {
           onClick={() =>
             void loadProfile()
           }
-          className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-fg hover:bg-hover  bg-surface dark:text-muted"
+          className={btnQuiet}
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
         </button>
       </div>
 
-      <div className="rounded-xl border border-border bg-surface p-5  bg-surface">
+      <div className={`${surfaceCard} p-5`}>
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-soft/20 text-muted">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue/12 text-blue">
             <Building2 className="h-5 w-5" />
           </div>
 
@@ -509,36 +519,26 @@ export default function SettingsPage() {
 
           <label className="block space-y-2">
             <span className="text-sm text-fg">
-              Status
+              Organization status
             </span>
 
-            <select
-              value={form.status}
-              onChange={(event) =>
-                setForm(
-                  (current) =>
+            <div className="rounded-xl border border-border bg-bg/50 p-3">
+              <ToggleSwitch
+                label={form.status === "active" ? "Active" : "Suspended"}
+                description="Suspend to block staff access for this institute."
+                checked={form.status === "active"}
+                onChange={(next) =>
+                  setForm((current) =>
                     current
                       ? {
                           ...current,
-                          status:
-                            event.target
-                              .value as
-                              | "active"
-                              | "suspended",
+                          status: next ? "active" : "suspended",
                         }
                       : current,
-                )
-              }
-              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
-            >
-              <option value="active">
-                Active
-              </option>
-
-              <option value="suspended">
-                Suspended
-              </option>
-            </select>
+                  )
+                }
+              />
+            </div>
           </label>
 
           <label className="block space-y-2 sm:col-span-2">

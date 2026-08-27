@@ -25,6 +25,7 @@ class ClassBase(BaseModel):
     fee_cycle: FeeCycle = "monthly"
     name: Optional[str] = None
     grade: Optional[str] = None
+    payments_enabled: bool = True
 
 
 class ClassCreate(ClassBase):
@@ -37,6 +38,7 @@ class ClassUpdate(BaseModel):
     fee_cycle: Optional[FeeCycle] = None
     name: Optional[str] = None
     grade: Optional[str] = None
+    payments_enabled: Optional[bool] = None
 
 
 class ClassResponse(ClassBase):
@@ -48,6 +50,10 @@ class ClassResponse(ClassBase):
 
     class Config:
         from_attributes = True
+
+
+class ClassPaymentsEnabledUpdate(BaseModel):
+    payments_enabled: bool
 
 
 # ---------- Enrollments ----------
