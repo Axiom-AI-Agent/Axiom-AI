@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   AlertTriangle,
   HelpCircle,
@@ -12,22 +12,61 @@ import { useTenant } from "@/context/TenantContext";
 import {
   analyzeFaqs,
   FaqAnalysisResult,
+  getClasses,
+  SubjectClass,
 } from "@/lib/api";
 
 export default function FaqsPage() {
   const { tenantId } = useTenant();
 
+  const [classes, setClasses] = useState<SubjectClass[]>([]);
+  const [selectedClassId, setSelectedClassId] = useState("");
   const [result, setResult] =
     useState<FaqAnalysisResult | null>(null);
+  const [loadingClasses, setLoadingClasses] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const loadClasses = useCallback(async () => {
+    setLoadingClasses(true);
+    setError(null);
+
+    try {
+      const response = await getClasses(tenantId);
+      setClasses(response);
+      setSelectedClassId((current) => {
+        if (current && response.some((item) => item.id === current)) {
+          return current;
+        }
+        return response[0]?.id ?? "";
+      });
+    } catch (requestError) {
+      console.error(requestError);
+      setError("Could not load classes.");
+    } finally {
+      setLoadingClasses(false);
+    }
+  }, [tenantId]);
+
+  useEffect(() => {
+    void loadClasses();
+  }, [loadClasses]);
+
+  useEffect(() => {
+    setResult(null);
+  }, [selectedClassId]);
+
   async function handleAnalyze() {
+    if (!selectedClassId) {
+      setError("Select a class before analyzing FAQs.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const response = await analyzeFaqs(tenantId);
+      const response = await analyzeFaqs(selectedClassId, tenantId);
       setResult(response);
     } catch (requestError) {
       console.error(requestError);
@@ -39,6 +78,10 @@ export default function FaqsPage() {
     }
   }
 
+  const selectedClass = classes.find(
+    (item) => item.id === selectedClassId,
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -47,14 +90,14 @@ export default function FaqsPage() {
             FAQ Intelligence
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Cluster recent student questions into recurring themes.
+            Cluster recent student questions for one class into recurring themes.
           </p>
         </div>
 
         <button
           type="button"
           onClick={() => void handleAnalyze()}
-          disabled={loading}
+          disabled={loading || loadingClasses || !selectedClassId}
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
         >
           {loading ? (
@@ -62,9 +105,31 @@ export default function FaqsPage() {
           ) : (
             <Sparkles className="h-4 w-4" />
           )}
-          Analyze Recent Questions
+          Analyze Class Questions
         </button>
       </div>
+
+      <label className="block max-w-md space-y-2">
+        <span className="text-sm text-slate-700 dark:text-slate-300">
+          Class
+        </span>
+        <select
+          value={selectedClassId}
+          onChange={(event) => setSelectedClassId(event.target.value)}
+          disabled={loadingClasses || classes.length === 0}
+          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+        >
+          {classes.length === 0 ? (
+            <option value="">No classes available</option>
+          ) : (
+            classes.map((subjectClass) => (
+              <option key={subjectClass.id} value={subjectClass.id}>
+                {subjectClass.name ?? subjectClass.subject}
+              </option>
+            ))
+          )}
+        </select>
+      </label>
 
       {error && (
         <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
@@ -77,7 +142,9 @@ export default function FaqsPage() {
         <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
           <HelpCircle className="mx-auto h-10 w-10 text-slate-400" />
           <p className="mt-3 text-slate-600 dark:text-slate-300">
-            Run an analysis to see recurring student questions.
+            {selectedClass
+              ? `Run an analysis for ${selectedClass.name ?? selectedClass.subject}.`
+              : "Select a class, then run an analysis."}
           </p>
         </div>
       )}
@@ -85,6 +152,9 @@ export default function FaqsPage() {
       {result && (
         <>
           <p className="text-sm text-slate-500 dark:text-slate-400">
+            {selectedClass
+              ? `${selectedClass.name ?? selectedClass.subject} · `
+              : ""}
             Analyzed {result.analyzed_messages} recent messages ·{" "}
             {result.clusters.length} cluster
             {result.clusters.length === 1 ? "" : "s"}
@@ -92,7 +162,7 @@ export default function FaqsPage() {
 
           {result.clusters.length === 0 ? (
             <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900">
-              No recurring questions found yet.
+              No recurring questions found for this class yet.
             </div>
           ) : (
             <div className="grid gap-4">

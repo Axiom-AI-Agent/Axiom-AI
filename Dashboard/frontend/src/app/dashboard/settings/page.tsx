@@ -36,7 +36,6 @@ interface SettingsFormState {
   whatsapp_number: string;
   drive_folder_id: string;
   status: "active" | "suspended";
-  payments_enabled: boolean;
 }
 
 function profileToForm(
@@ -53,8 +52,6 @@ function profileToForm(
       profile.status === "suspended"
         ? "suspended"
         : "active",
-    payments_enabled:
-      profile.payments_enabled ?? true,
   };
 }
 
@@ -205,8 +202,6 @@ export default function SettingsPage() {
 
             status:
               form.status,
-
-            payments_enabled: form.payments_enabled,
           },
           tenantId,
         );
@@ -601,61 +596,9 @@ export default function SettingsPage() {
           </label>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="font-semibold text-slate-900 dark:text-white">
-                Payment submissions
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                Allow students to submit
-                payment receipts through
-                the AI assistant.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              role="switch"
-              aria-checked={
-                form.payments_enabled
-              }
-              aria-label="Enable payment submissions"
-              onClick={() =>
-                setForm(
-                  (current) =>
-                    current
-                      ? {
-                          ...current,
-                          payments_enabled:
-                            !current.payments_enabled,
-                        }
-                      : current,
-                )
-              }
-              className={`relative h-7 w-12 shrink-0 rounded-full transition ${
-                form.payments_enabled
-                  ? "bg-blue-600"
-                  : "bg-slate-400"
-              }`}
-            >
-              <span
-                className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${
-                  form.payments_enabled
-                    ? "left-6"
-                    : "left-1"
-                }`}
-              />
-            </button>
-          </div>
-
-          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-            {form.payments_enabled
-              ? "Payment submissions are enabled."
-              : "Payment submissions are disabled."}
-          </p>
-        </div>
+        <p className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+          Payment collection is controlled per class on the Classes page.
+        </p>
 
         <div className="flex justify-end border-t border-slate-200 pt-4 dark:border-slate-800">
           <button
