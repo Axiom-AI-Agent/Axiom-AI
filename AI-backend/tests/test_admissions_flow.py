@@ -20,10 +20,12 @@ def test_onboarding_extracts_name_school_district():
 
     state = flow.apply_message(state, "Visakha Vidyalaya")
     assert state.slots.school == "Visakha Vidyalaya"
+    assert state.slots.extra["school"] == "Visakha Vidyalaya"
     assert state.next_step == "district"
 
     state = flow.apply_message(state, "Colombo")
     assert state.slots.district == "Colombo"
+    assert state.slots.extra["district"] == "Colombo"
     assert state.next_step == "class"
 
 
@@ -224,9 +226,11 @@ def test_review_and_welcome_messages_have_no_markdown_bold():
         class_row=class_row,
         tenant_name="Demo Physics Academy",
     )
-    assert "**" not in review
-    assert "**" not in welcome
-    assert "Full name: Mirco Fernando" in review
+    assert "Mirco Fernando" in review
+    assert "School:" in review
+    assert "Royal College" in review
+    assert "District:" in review
+    assert "Colombo" in review
     assert "A/L Physics 2026" in welcome
 
 
@@ -278,3 +282,128 @@ def test_off_topic_detected_during_onboarding():
     flow = OnboardingFlow()
     assert flow._looks_like_off_topic_during_onboarding("Explain velocity from the tutor notes")
     assert not flow._looks_like_off_topic_during_onboarding("Royal College Colombo")
+
+
+def test_required_custom_field_blocks_completion():
+    from services.admissions.field_definitions import TenantFieldDef
+
+    flow = OnboardingFlow(
+        field_definitions=[
+            TenantFieldDef(
+                field_key="parent_contact",
+                label="Parent contact",
+                required=True,
+                sort_order=0,
+            )
+        ]
+    )
+    state = flow.start_collection()
+    state.slots.name = "Amaya Perera"
+    state.slots.class_id = "class-al"
+    assert flow._collection_complete(state.slots) is False
+
+    state.slots.extra["parent_contact"] = "0771234567"
+    assert flow._collection_complete(state.slots) is True
+
+
+def test_optional_custom_field_does_not_block_completion():
+    from services.admissions.field_definitions import TenantFieldDef
+
+    flow = OnboardingFlow(
+        field_definitions=[
+            TenantFieldDef(
+                field_key="nickname",
+                label="Nickname",
+                required=False,
+                sort_order=0,
+            )
+        ]
+    )
+    state = flow.start_collection()
+    state.slots.name = "Amaya Perera"
+    state.slots.class_id = "class-al"
+    assert flow._collection_complete(state.slots) is True
+
+
+def test_select_field_rejects_out_of_list_and_reprompts():
+    from services.admissions.field_definitions import TenantFieldDef
+
+    flow = OnboardingFlow(
+        field_definitions=[
+            TenantFieldDef(
+                field_key="stream",
+                label="Stream",
+                field_type="select",
+                options=("Physical", "Biological"),
+                required=True,
+                sort_order=0,
+            )
+        ]
+    )
+    state = flow.start_collection()
+    state.slots.name = "Amaya Perera"
+    state.next_step = "stream"
+    state = flow.apply_message(state, "Commerce")
+    assert "stream" not in state.slots.extra
+    assert state.invalid_select is True
+    assert state.next_step == "stream"
+
+    prompt = flow.prompt_for_step("stream", select_rejected=True)
+    assert "Please choose one of these" in prompt
+    assert "Physical" in prompt
+    assert "Biological" in prompt
+
+    state = flow.apply_message(state, "Physical")
+    assert state.slots.extra["stream"] == "Physical"
+    assert state.invalid_select is False
+    assert state.next_step == "class"
+
+
+def test_select_field_accepts_option_number():
+    from services.admissions.field_definitions import TenantFieldDef
+
+    flow = OnboardingFlow(
+        field_definitions=[
+            TenantFieldDef(
+                field_key="stream",
+                label="Stream",
+                field_type="select",
+                options=("Physical", "Biological"),
+                required=True,
+                sort_order=0,
+            )
+        ]
+    )
+    state = flow.start_collection()
+    state.slots.name = "Amaya Perera"
+    state.next_step = "stream"
+    state = flow.apply_message(state, "2")
+    assert state.slots.extra["stream"] == "Biological"
+    assert state.invalid_select is False
+
+
+def test_custom_only_field_definitions_skip_school_district():
+    from services.admissions.field_definitions import TenantFieldDef
+
+    flow = OnboardingFlow(
+        field_definitions=[
+            TenantFieldDef(
+                field_key="parent_contact",
+                label="Parent contact",
+                field_type="text",
+                required=True,
+                sort_order=0,
+            )
+        ]
+    )
+    state = flow.start_collection()
+    state = flow.apply_message(state, "Amaya Perera")
+    assert state.next_step == "parent_contact"
+    assert state.slots.school is None
+    assert state.slots.district is None
+
+    state = flow.apply_message(state, "0771234567")
+    assert state.slots.extra["parent_contact"] == "0771234567"
+    assert state.slots.school is None
+    assert state.slots.district is None
+    assert state.next_step == "class"

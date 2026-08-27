@@ -9,6 +9,11 @@ from typing import Any
 from loguru import logger
 
 from domain.escalation_reasons import ENROLLMENT_PAYMENT_REASON, PAYMENT_RECEIPT
+from infrastructure.db.schema_compat import (
+    column_available,
+    is_undefined_column_error,
+    mark_column_missing,
+)
 from infrastructure.db.supabase_client import get_supabase_client
 
 
@@ -20,7 +25,7 @@ class AdmissionsDbClient:
         response = (
             client.table("students")
             .select(
-                "id, tenant_id, name, phone, school, district, consent_at, "
+                "id, tenant_id, name, phone, school, district, extra_fields, consent_at, "
                 "selected_class_id, language_pref, created_at"
             )
             .eq("tenant_id", tenant_id)
@@ -36,7 +41,7 @@ class AdmissionsDbClient:
         response = (
             client.table("students")
             .select(
-                "id, tenant_id, name, phone, school, district, consent_at, "
+                "id, tenant_id, name, phone, school, district, extra_fields, consent_at, "
                 "selected_class_id, language_pref, created_at"
             )
             .eq("tenant_id", tenant_id)
@@ -55,6 +60,7 @@ class AdmissionsDbClient:
         name: str | None = None,
         school: str | None = None,
         district: str | None = None,
+        extra_fields: dict[str, Any] | None = None,
         consent: bool = False,
         selected_class_id: str | None = None,
         clear_selected_class: bool = False,
@@ -66,6 +72,8 @@ class AdmissionsDbClient:
             payload["school"] = school
         if district is not None:
             payload["district"] = district
+        if extra_fields is not None:
+            payload["extra_fields"] = extra_fields
         if consent:
             payload["consent_at"] = datetime.now(timezone.utc).isoformat()
         if selected_class_id is not None:
@@ -92,8 +100,9 @@ class AdmissionsDbClient:
         tenant_id: str,
         phone: str,
         name: str,
-        school: str,
-        district: str,
+        school: str | None = None,
+        district: str | None = None,
+        extra_fields: dict[str, Any] | None = None,
         consent: bool = True,
         language_pref: str | None = None,
     ) -> dict[str, Any]:
@@ -108,10 +117,14 @@ class AdmissionsDbClient:
             "tenant_id": tenant_id,
             "phone": phone,
             "name": name,
-            "school": school,
-            "district": district,
             "updated_at": now,
         }
+        if school is not None:
+            payload["school"] = school
+        if district is not None:
+            payload["district"] = district
+        if extra_fields is not None:
+            payload["extra_fields"] = extra_fields
         if consent:
             payload["consent_at"] = now
         if language_pref:
@@ -128,6 +141,24 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         client.table("students").delete().eq("tenant_id", tenant_id).eq("id", student_id).execute()
 
+    @staticmethod
+    def _class_select_columns() -> str:
+        base = "id, tenant_id, name, subject, grade, fee_amount, fee_cycle"
+        if column_available("subject_classes", "payments_enabled"):
+            return f"{base}, payments_enabled"
+        return base
+
+    def _execute_class_query(self, build_query):
+        try:
+            return build_query(self._class_select_columns()).execute()
+        except Exception as exc:
+            if column_available(
+                "subject_classes", "payments_enabled"
+            ) and is_undefined_column_error(exc, "payments_enabled"):
+                mark_column_missing("subject_classes", "payments_enabled")
+                return build_query(self._class_select_columns()).execute()
+            raise
+
     def list_classes(
         self,
         *,
@@ -136,28 +167,35 @@ class AdmissionsDbClient:
         grade: str | None = None,
     ) -> list[dict[str, Any]]:
         client = get_supabase_client()
-        query = (
-            client.table("subject_classes")
-            .select("id, tenant_id, name, subject, grade, fee_amount, fee_cycle")
-            .eq("tenant_id", tenant_id)
-        )
-        if subject:
-            query = query.ilike("subject", f"%{subject}%")
-        if grade:
-            query = query.ilike("grade", f"%{grade}%")
-        response = query.order("subject").execute()
+
+        def build_query(columns: str):
+            query = (
+                client.table("subject_classes")
+                .select(columns)
+                .eq("tenant_id", tenant_id)
+            )
+            if subject:
+                query = query.ilike("subject", f"%{subject}%")
+            if grade:
+                query = query.ilike("grade", f"%{grade}%")
+            return query.order("subject")
+
+        response = self._execute_class_query(build_query)
         return response.data or []
 
     def get_class(self, *, tenant_id: str, class_id: str) -> dict[str, Any] | None:
         client = get_supabase_client()
-        response = (
-            client.table("subject_classes")
-            .select("id, tenant_id, name, subject, grade, fee_amount, fee_cycle")
-            .eq("tenant_id", tenant_id)
-            .eq("id", class_id)
-            .limit(1)
-            .execute()
-        )
+
+        def build_query(columns: str):
+            return (
+                client.table("subject_classes")
+                .select(columns)
+                .eq("tenant_id", tenant_id)
+                .eq("id", class_id)
+                .limit(1)
+            )
+
+        response = self._execute_class_query(build_query)
         rows = response.data or []
         return rows[0] if rows else None
 
@@ -517,3 +555,15 @@ class AdmissionsDbClient:
         )
         rows = response.data or []
         return rows[0] if rows else None
+
+    def list_field_definitions(self, *, tenant_id: str) -> list[dict[str, Any]]:
+        client = get_supabase_client()
+        response = (
+            client.table("tenant_field_definition")
+            .select("field_key, label, field_type, options, required, sort_order, active")
+            .eq("tenant_id", tenant_id)
+            .eq("active", True)
+            .order("sort_order")
+            .execute()
+        )
+        return list(response.data or [])

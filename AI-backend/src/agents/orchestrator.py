@@ -19,7 +19,13 @@ from loguru import logger
 from agents.nodes.admissions_agent import McpCrmClient, run_admissions_agent
 from agents.nodes.escalation_agent import run_escalation_agent
 from agents.nodes.payment_agent import run_payment_agent
-from agents.nodes.resource_agent import DirectDriveClient, McpDriveClient, McpRagClient, run_resource_agent
+from agents.nodes.resource_agent import (
+    DirectDriveClient,
+    McpDriveClient,
+    McpRagClient,
+    McpScheduleClient,
+    run_resource_agent,
+)
 from agents.prompts import build_direct_system_prompt, build_merge_system_prompt
 from agents.router import QueryRouter, get_query_router
 from agents.state import AgentState
@@ -161,6 +167,7 @@ class AgentOrchestrator:
         mcp_crm: McpCrmClient | None = None,
         mcp_drive: McpDriveClient | None = None,
         mcp_rag: McpRagClient | None = None,
+        mcp_schedule: McpScheduleClient | None = None,
         router: QueryRouter | None = None,
     ) -> None:
         self.llm_chat = llm_chat
@@ -170,6 +177,7 @@ class AgentOrchestrator:
         self.mcp_crm = mcp_crm
         self.mcp_drive = mcp_drive
         self.mcp_rag = mcp_rag
+        self.mcp_schedule = mcp_schedule
         self.router = router or get_query_router()
         self.graph = self._build_graph()
 
@@ -213,7 +221,7 @@ class AgentOrchestrator:
         return workflow.compile()
 
     def entry_routing(self, state: AgentState) -> str:
-        if state.get("verdict") == "out_of_scope":
+        if state.get("verdict") in {"out_of_scope", "flagged_abusive"}:
             return "end"
         return "recall"
 
@@ -307,6 +315,7 @@ class AgentOrchestrator:
             state,
             drive=self.mcp_drive,
             rag=self.mcp_rag,
+            schedule=self.mcp_schedule,
             crm=self.mcp_crm,
         )
 
@@ -374,8 +383,8 @@ class AgentOrchestrator:
         route_decisions = final_state.get("route_decisions") or []
         all_routes = [d.get("route", "direct") for d in route_decisions]
         primary = route_decisions[0] if route_decisions else {"route": "direct"}
-        if not all_routes and final_state.get("verdict") == "out_of_scope":
-            all_routes = ["out_of_scope"]
+        if not all_routes and final_state.get("verdict") in {"out_of_scope", "flagged_abusive"}:
+            all_routes = [str(final_state["verdict"])]
         return AgentResponse(
             answer=final_state.get("final_answer") or "",
             route=primary.get("route", "direct"),
@@ -424,6 +433,7 @@ async def build_agent_mcp(*, memory_tool: MemoryTool | None = None) -> AgentOrch
         mcp_crm=McpCrmClient(tools_by_name),
         mcp_drive=drive_client,
         mcp_rag=McpRagClient(tools_by_name),
+        mcp_schedule=McpScheduleClient(tools_by_name) if "get_next_class" in tools_by_name else None,
     )
     orchestrator.mcp_client = mcp_client
     orchestrator.mcp_tools = tools_by_name

@@ -13,6 +13,7 @@ LOCAL_PROMPTS: dict[str, str | list[dict[str, str]]] = {
     ap.LANGFUSE_PROMPT_NAMES["direct_system"]: ap._DIRECT_SYSTEM_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["merge_system"]: ap._MERGE_SYSTEM_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["out_of_scope_reply"]: ap._OUT_OF_SCOPE_REPLY_FALLBACK.strip(),
+    ap.LANGFUSE_PROMPT_NAMES["flagged_abusive_reply"]: ap._FLAGGED_ABUSIVE_REPLY_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["admissions_stub"]: ap._ADMISSIONS_STUB_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["resource_stub"]: ap._RESOURCE_STUB_FALLBACK.strip(),
     ap.LANGFUSE_PROMPT_NAMES["resource_rag"]: ap._RESOURCE_RAG_FALLBACK.strip(),
@@ -28,6 +29,7 @@ LOCAL_PROMPTS: dict[str, str | list[dict[str, str]]] = {
 
 # Legacy aliases kept for older tests
 OUT_OF_SCOPE_REPLY = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["out_of_scope_reply"]]
+FLAGGED_ABUSIVE_REPLY = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["flagged_abusive_reply"]]
 GUARDRAIL_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["guardrail_system"]]
 ROUTER_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["router_system"]]
 MERGE_SYSTEM = LOCAL_PROMPTS[ap.LANGFUSE_PROMPT_NAMES["merge_system"]]

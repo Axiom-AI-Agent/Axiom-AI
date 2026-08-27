@@ -7,8 +7,9 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
+from sqlalchemy.sql import expression, func
 
 from app.database.session import Base
 
@@ -57,6 +58,11 @@ class Student(Base):
         nullable=False,
     )
 
+    school = Column(
+        String,
+        nullable=True,
+    )
+
     district = Column(
         String,
         nullable=True,
@@ -73,6 +79,12 @@ class Student(Base):
         nullable=False,
         default=False,
         server_default="false",
+    )
+
+    extra_fields = Column(
+        JSONB,
+        nullable=False,
+        server_default=expression.text("'{}'::jsonb"),
     )
 
     # Timestamps

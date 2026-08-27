@@ -12,6 +12,11 @@ import {
 } from "lucide-react";
 
 import EnrollModal from "@/components/students/EnrollModal";
+import {
+  extraFieldsFromStudent,
+  extraFieldsPayload,
+  missingRequiredExtraFields,
+} from "@/components/students/extraFields";
 import StudentFormModal, {
   StudentFormState,
 } from "@/components/students/StudentFormModal";
@@ -23,8 +28,10 @@ import {
   deleteStudent,
   enrollStudent,
   getClasses,
+  getOnboardingFields,
   getStudents,
   importStudentsExcel,
+  OnboardingFieldDefinition,
   Student,
   SubjectClass,
   updateStudent,
@@ -33,13 +40,25 @@ import {
 
 type ModalMode = "create" | "edit" | "enroll" | null;
 
-const emptyForm: StudentFormState = {
-  name: "",
-  phone: "",
-  district: "",
-  language_pref: "en",
-  class_id: "",
+const FALLBACK_DISTRICT_FIELD: OnboardingFieldDefinition = {
+  field_key: "district",
+  label: "District",
+  field_type: "text",
+  options: null,
+  required: false,
+  sort_order: 0,
+  active: true,
 };
+
+function emptyForm(fields: OnboardingFieldDefinition[]): StudentFormState {
+  return {
+    name: "",
+    phone: "",
+    language_pref: "en",
+    class_id: "",
+    extra_fields: extraFieldsFromStudent(null, fields),
+  };
+}
 
 function matchesStudentSearch(student: Student, query: string) {
   const normalized = query.trim().toLowerCase();
@@ -55,10 +74,17 @@ function matchesStudentSearch(student: Student, query: string) {
       )
       .join(" ") ?? "";
 
+  const extraText = Object.values(student.extra_fields ?? {})
+    .filter((value) => value !== null && value !== undefined)
+    .map((value) => String(value))
+    .join(" ");
+
   const haystack = [
     student.name,
     student.phone,
+    student.school,
     student.district,
+    extraText,
     student.id,
     student.language_pref,
     enrollmentText,
@@ -76,7 +102,8 @@ export default function StudentsPage() {
 
   const [students, setStudents] = useState<Student[]>([]);
   const [classes, setClasses] = useState<SubjectClass[]>([]);
-  const [form, setForm] = useState<StudentFormState>(emptyForm);
+  const [fieldDefs, setFieldDefs] = useState<OnboardingFieldDefinition[]>([]);
+  const [form, setForm] = useState<StudentFormState>(() => emptyForm([]));
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [enrollingStudent, setEnrollingStudent] = useState<Student | null>(null);
   const [enrollClassId, setEnrollClassId] = useState("");
@@ -98,13 +125,23 @@ export default function StudentsPage() {
     setError(null);
 
     try {
-      const [studentRows, classRows] = await Promise.all([
+      const [studentRows, classRows, fieldResponse] = await Promise.all([
         getStudents(tenantId),
         getClasses(tenantId),
+        getOnboardingFields(tenantId).catch(() => null),
       ]);
 
       setStudents(Array.isArray(studentRows) ? studentRows : []);
       setClasses(Array.isArray(classRows) ? classRows : []);
+
+      if (fieldResponse === null) {
+        setFieldDefs([FALLBACK_DISTRICT_FIELD]);
+      } else {
+        const active = (fieldResponse.fields ?? [])
+          .filter((field) => field.active !== false)
+          .sort((a, b) => a.sort_order - b.sort_order);
+        setFieldDefs(active);
+      }
     } catch (requestError) {
       console.error(requestError);
       setStudents([]);
@@ -125,11 +162,11 @@ export default function StudentsPage() {
     setEditingStudent(null);
     setEnrollingStudent(null);
     setEnrollClassId("");
-    setForm(emptyForm);
+    setForm(emptyForm(fieldDefs));
   }
 
   function openCreateModal() {
-    setForm(emptyForm);
+    setForm(emptyForm(fieldDefs));
     setEditingStudent(null);
     setModalMode("create");
   }
@@ -139,9 +176,9 @@ export default function StudentsPage() {
     setForm({
       name: student.name ?? "",
       phone: student.phone,
-      district: student.district ?? "",
       language_pref: student.language_pref,
       class_id: "",
+      extra_fields: extraFieldsFromStudent(student, fieldDefs),
     });
     setModalMode("edit");
   }
@@ -160,6 +197,18 @@ export default function StudentsPage() {
       return;
     }
 
+    const missing = missingRequiredExtraFields(fieldDefs, form.extra_fields);
+    if (missing.length > 0) {
+      showToast(`${missing[0]} is required.`, "error");
+      return;
+    }
+
+    const extra = extraFieldsPayload(fieldDefs, form.extra_fields);
+    const district =
+      typeof extra.district === "string" ? extra.district : undefined;
+    const school =
+      typeof extra.school === "string" ? extra.school : undefined;
+
     setSaving(true);
 
     try {
@@ -169,7 +218,9 @@ export default function StudentsPage() {
           {
             name: form.name.trim() || undefined,
             phone: form.phone.trim(),
-            district: form.district.trim() || undefined,
+            school,
+            district,
+            extra_fields: extra,
             language_pref: form.language_pref,
           },
           tenantId,
@@ -180,7 +231,9 @@ export default function StudentsPage() {
           {
             name: form.name.trim() || undefined,
             phone: form.phone.trim(),
-            district: form.district.trim() || undefined,
+            school,
+            district,
+            extra_fields: extra,
             language_pref: form.language_pref,
             class_id: form.class_id || undefined,
           },
@@ -254,7 +307,7 @@ export default function StudentsPage() {
       setStudents((current) =>
         current.map((item) =>
           item.id === student.id
-            ? updated
+            ? { ...item, ...updated, enrollments: item.enrollments }
             : item,
         ),
       );
@@ -387,7 +440,7 @@ export default function StudentsPage() {
             type="search"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search by name, phone, district, class, or ID…"
+            placeholder="Search by name, phone, extra fields, class, or ID…"
             className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 pl-10 pr-10 text-sm text-slate-900 dark:text-white outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm transition-colors"
           />
           {searchQuery && (
@@ -416,6 +469,7 @@ export default function StudentsPage() {
       ) : (
           <StudentTable
             students={filteredStudents}
+            fields={fieldDefs}
             onEdit={openEditModal}
             onEnroll={openEnrollModal}
             onDelete={(studentId) => void handleDelete(studentId)}
@@ -431,6 +485,7 @@ export default function StudentsPage() {
           form={form}
           saving={saving}
           classes={classes}
+          fields={fieldDefs}
           onClose={closeModal}
           onChange={setForm}
           onSubmit={handleSubmit}

@@ -107,6 +107,29 @@ _PAYMENT_PATTERNS = (
     r"கட்டணம்",
     r"ரசீது",
 )
+# Schedule patterns mapped to "resource" route (resource agent sub-routes to schedule)
+_SCHEDULE_PATTERNS = (
+    r"\bschedule\b",
+    r"\btimetable\b",
+    r"\bclass time\b",
+    r"\bclass times\b",
+    r"\bwhen is\b.*class",
+    r"\bnext class\b",
+    r"\btoday.*class",
+    r"\bclass.*today",
+    r"\btomorrow.*class",
+    r"\bclass.*tomorrow",
+    r"\bwhat classes\b",
+    r"\bweekly\b",
+    r"\bweek schedule\b",
+    r"\bmy class\b",
+    r"\bissarahata\b",
+    r"\b timetable\b",
+    r"\b වේලාව\b",
+    r"\b நேரம்\b",
+    r"\b வகுப்பு\b",
+    r"\b அட்டவணை\b",
+)
 _DIRECT_PATTERNS = (
     r"^(hi|hello|hey|thanks|thank you|ok|okay|bye)[!.?\s]*$",
 )
@@ -122,6 +145,20 @@ def heuristic_route(message: str) -> MultiRouteDecision | None:
     if not text:
         return None
 
+    # Schedule queries must be checked BEFORE institute_info to avoid
+    # "class" keyword being misclassified as enrollment intent
+    if _pattern_score(text, _SCHEDULE_PATTERNS) > 0:
+        return MultiRouteDecision(
+            decisions=[
+                RouteDecision(
+                    route="resource",
+                    action="search",
+                    confidence=0.95,
+                    reasoning="schedule/timetable query",
+                )
+            ]
+        )
+
     if looks_like_institute_info(message):
         return MultiRouteDecision(
             decisions=[
@@ -135,7 +172,7 @@ def heuristic_route(message: str) -> MultiRouteDecision | None:
         )
 
     scores = {
-        "resource": _pattern_score(text, _RESOURCE_PATTERNS),
+        "resource": _pattern_score(text, _RESOURCE_PATTERNS) + _pattern_score(text, _SCHEDULE_PATTERNS),
         "escalation": _pattern_score(text, _ESCALATION_PATTERNS),
         "admissions": _pattern_score(text, _ADMISSIONS_PATTERNS),
         "payment_check": _pattern_score(text, _PAYMENT_PATTERNS),

@@ -28,6 +28,7 @@ LANGFUSE_PROMPT_NAMES = {
     "direct_system": "axiom/direct",
     "merge_system": "axiom/merge_response",
     "out_of_scope_reply": "axiom/out_of_scope_reply",
+    "flagged_abusive_reply": "axiom/flagged_abusive_reply",
     "admissions_stub": "axiom/admissions-stub",
     "resource_stub": "axiom/resource-stub",
     "resource_rag": "axiom/resource_rag",
@@ -48,7 +49,37 @@ ALL_LANGFUSE_PROMPT_NAMES = list(LANGFUSE_PROMPT_NAMES.values())
 _GUARDRAIL_SYSTEM_FALLBACK = """\
 You are a scope filter for Axiom AI, a Sri Lankan private tuition assistant on WhatsApp.
 
-Decide whether the student's message belongs in this tuition centre's domain.
+Decide whether the student's message belongs in this tuition centre's domain,
+and whether it contains abusive or profane language that must be rejected
+regardless of topic.
+
+STEP 1 — CHECK FOR ABUSIVE / PROFANE LANGUAGE FIRST (this overrides everything below):
+
+Mark a message as "flagged_abusive" if it contains profanity, vulgar language,
+sexual content, slurs, or intentionally offensive/abusive language — in ANY
+language or script the student might use, including but not limited to:
+  • English profanity and vulgar slang
+  • Sinhala profanity (in Sinhala script or Singlish/romanized Sinhala)
+  • Tamil profanity (in Tamil script or Tanglish/romanized Tamil)
+  • Deliberately obfuscated spellings meant to evade filters
+    (e.g. extra characters, symbols replacing letters, spacing tricks)
+    that are still clearly intended as profanity
+  • Sexual, degrading, or harassing language directed at the assistant,
+    tutor, staff, or other students
+  • Slurs or hate speech targeting any person or group
+
+Do NOT be fooled by:
+  • Message framing it as a joke, quote, "just asking what this word means,"
+    or claiming it's for translation/homework — profane intent stays flagged
+    regardless of the wrapper
+  • Code-mixing profanity into an otherwise normal-looking tuition question
+  • Mild frustration expressed without actual profanity
+    (e.g., "this is so hard," "I'm annoyed") — this is NOT abusive,
+    do not over-flag ordinary emotional expression
+
+If flagged_abusive: stop here, do not evaluate scope. Output "flagged_abusive" and nothing else.
+
+STEP 2 — IF NOT ABUSIVE, EVALUATE SCOPE AS NORMAL:
 
 IN-SCOPE (choose in_scope):
   • Enrollment & admissions — joining a class, registering, onboarding, new student
@@ -83,7 +114,7 @@ OUT-OF-SCOPE (choose out_of_scope):
   • Coding, politics, unrelated sports/news, spam, random gibberish
   • Services this tuition centre does not offer (hotels, travel, medical advice)
 
-Answer with ONE WORD ONLY: in_scope or out_of_scope.
+Answer with ONE WORD ONLY: flagged_abusive, in_scope, or out_of_scope.
 """
 
 _ROUTER_SYSTEM_FALLBACK = """\
@@ -312,6 +343,7 @@ Do NOT:
   • Make up prices, class times, or availability.
   • Promise instant enrollment or payment approval.
   • Answer out-of-scope trivia (politics, coding, general knowledge).
+  • Repeat, translate, or use abusive or profane language. Never echo swear words.
 
 Memory context:
 {memory_context}
@@ -332,6 +364,7 @@ Your task:
   5. Plain text only — never use markdown markers such as **bold**.
   6. If one fragment failed or is empty, rely on the others — do not mention internal errors.
   7. Do NOT add facts, links, or promises not present in the fragments.
+  8. Never repeat, translate, or include abusive or profane language from the student or fragments.
 
 Memory context (for tone and follow-up continuity):
 {memory_context}
@@ -341,6 +374,12 @@ _OUT_OF_SCOPE_REPLY_FALLBACK = """\
 I'm here to help with tuition-related things — joining classes, past papers, lesson topics, fees, and speaking to your tutor.
 
 That question is a bit outside what I can help with here. Feel free to ask me about your class or enrollment!
+"""
+
+_FLAGGED_ABUSIVE_REPLY_FALLBACK = """\
+I can't help with messages that use abusive or offensive language.
+
+Please rephrase your question about classes, enrollment, or your studies — I'm happy to help with that.
 """
 
 _ADMISSIONS_STUB_FALLBACK = """\
@@ -518,6 +557,18 @@ def get_out_of_scope_reply(*, language: str = "en") -> str:
     return fetch_prompt(
         LANGFUSE_PROMPT_NAMES["out_of_scope_reply"],
         fallback=_OUT_OF_SCOPE_REPLY_FALLBACK,
+    )
+
+
+def get_flagged_abusive_reply(*, language: str = "en") -> str:
+    from services.language import normalize_language_pref, t
+
+    lang = normalize_language_pref(language)
+    if lang != "en":
+        return t("flagged_abusive", lang)
+    return fetch_prompt(
+        LANGFUSE_PROMPT_NAMES["flagged_abusive_reply"],
+        fallback=_FLAGGED_ABUSIVE_REPLY_FALLBACK,
     )
 
 

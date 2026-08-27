@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.models.enums import ChatChannel, EscalationStatus, EnrollmentStatus
 
@@ -72,8 +72,15 @@ class EnrollmentCreate(BaseModel):
 class StudentBase(BaseModel):
     name: Optional[str] = None
     phone: str
+    school: Optional[str] = None
     district: Optional[str] = None
     language_pref: str = "en"
+    extra_fields: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("extra_fields", mode="before")
+    @classmethod
+    def default_extra_fields(cls, value: Any) -> dict[str, Any]:
+        return value or {}
 
 
 class StudentCreate(StudentBase):
@@ -87,8 +94,10 @@ class StudentCreate(StudentBase):
 class StudentUpdate(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
+    school: Optional[str] = None
     district: Optional[str] = None
     language_pref: Optional[str] = None
+    extra_fields: Optional[dict[str, Any]] = None
 
 
 class StudentResponse(StudentBase):
@@ -277,6 +286,7 @@ class TenantProfileResponse(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     payments_enabled: bool = True
+    field_config_locked: bool = False
 
     class Config:
         from_attributes = True

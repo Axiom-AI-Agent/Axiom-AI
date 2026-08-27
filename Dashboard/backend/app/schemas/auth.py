@@ -6,6 +6,7 @@ from pydantic import (
     EmailStr,
     Field,
     field_validator,
+    model_validator,
 )
 
 
@@ -15,6 +16,101 @@ StaffRoleValue = Literal[
     "marker",
     "viewer",
 ]
+
+OnboardingFieldType = Literal[
+    "text",
+    "number",
+    "select",
+    "boolean",
+    "date",
+]
+
+RESERVED_ONBOARDING_FIELD_KEYS = frozenset(
+    {"name", "phone", "class", "course", "consent"}
+)
+
+
+class OnboardingFieldInput(BaseModel):
+    field_key: str = Field(min_length=1, max_length=64)
+    label: str = Field(min_length=1, max_length=100)
+    field_type: OnboardingFieldType = "text"
+    options: list[str] | None = None
+    required: bool = False
+    sort_order: int = Field(default=0, ge=0, le=100)
+
+    @field_validator("field_key")
+    @classmethod
+    def clean_field_key(cls, value: str) -> str:
+        key = value.strip().lower().replace(" ", "_")
+        if not key or not key[0].isalpha():
+            raise ValueError("Field key must start with a letter.")
+        if any(ch not in "abcdefghijklmnopqrstuvwxyz0123456789_" for ch in key):
+            raise ValueError(
+                "Field key may only contain lowercase letters, numbers, and underscores."
+            )
+        if key in RESERVED_ONBOARDING_FIELD_KEYS:
+            raise ValueError(
+                f"'{key}' is a core field and cannot be used as a custom onboarding field."
+            )
+        return key
+
+    @field_validator("label")
+    @classmethod
+    def clean_label(cls, value: str) -> str:
+        return value.strip()
+
+    @field_validator("options")
+    @classmethod
+    def clean_options(
+        cls,
+        value: list[str] | None,
+    ) -> list[str] | None:
+        if value is None:
+            return None
+        cleaned = [item.strip() for item in value if str(item).strip()]
+        return cleaned or None
+
+    @model_validator(mode="after")
+    def select_requires_options(self) -> "OnboardingFieldInput":
+        if self.field_type == "select":
+            if not self.options or len(self.options) < 2:
+                raise ValueError("Select fields need at least two options.")
+        else:
+            self.options = None
+        return self
+
+
+class OnboardingFieldResponse(BaseModel):
+    field_key: str
+    label: str
+    field_type: str
+    options: list[str] | None = None
+    required: bool
+    sort_order: int
+    active: bool = True
+
+
+class OnboardingFieldsPutRequest(BaseModel):
+    fields: list[OnboardingFieldInput] = Field(
+        default_factory=list,
+        max_length=15,
+    )
+
+    @field_validator("fields")
+    @classmethod
+    def unique_field_keys(
+        cls,
+        value: list[OnboardingFieldInput],
+    ) -> list[OnboardingFieldInput]:
+        keys = [item.field_key for item in value]
+        if len(keys) != len(set(keys)):
+            raise ValueError("Onboarding field keys must be unique.")
+        return value
+
+
+class OnboardingFieldsResponse(BaseModel):
+    locked: bool
+    fields: list[OnboardingFieldResponse]
 
 
 class AdminRegistration(BaseModel):
@@ -98,6 +194,13 @@ class OrganizationRegisterRequest(BaseModel):
         max_length=5,
     )
 
+    onboarding_fields: list[
+        OnboardingFieldInput
+    ] = Field(
+        default_factory=list,
+        max_length=15,
+    )
+
     @field_validator("institution_name")
     @classmethod
     def clean_institution_name(
@@ -105,6 +208,19 @@ class OrganizationRegisterRequest(BaseModel):
         value: str,
     ) -> str:
         return value.strip()
+
+    @field_validator("onboarding_fields")
+    @classmethod
+    def unique_field_keys(
+        cls,
+        value: list[OnboardingFieldInput],
+    ) -> list[OnboardingFieldInput]:
+        keys = [item.field_key for item in value]
+        if len(keys) != len(set(keys)):
+            raise ValueError(
+                "Onboarding field keys must be unique."
+            )
+        return value
 
 
 class LoginRequest(BaseModel):

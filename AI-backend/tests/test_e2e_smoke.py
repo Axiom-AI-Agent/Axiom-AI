@@ -100,6 +100,31 @@ async def test_out_of_scope_skips_orchestrator(ctx: IdentityContext):
 
 
 @pytest.mark.asyncio
+async def test_flagged_abusive_skips_orchestrator(ctx: IdentityContext):
+    guardrail = Guardrail(MagicMock())
+    guardrail.aclassify = AsyncMock(return_value="flagged_abusive")
+    router = QueryRouter(MagicMock())
+    router.aroute = AsyncMock(
+        return_value=MultiRouteDecision(
+            decisions=[RouteDecision(route="admissions", action="general")]
+        )
+    )
+    graph = build_decision_graph(guardrail=guardrail, router=router)
+    orch = _RecordingOrchestrator()
+    result = await run_chat_turn(
+        ctx=ctx,
+        message="you're a stupid idiot, I want to join Physics",
+        decision_graph=graph,
+        orchestrator=orch,  # type: ignore[arg-type]
+        channel="http_dev",
+        memory_tool=MagicMock(recall_turns=MagicMock(return_value="")),
+    )
+    assert result.verdict == "flagged_abusive"
+    assert orch.calls == 0
+    assert "abusive" in result.answer.lower() or "offensive" in result.answer.lower()
+
+
+@pytest.mark.asyncio
 async def test_in_scope_invokes_orchestrator(ctx: IdentityContext):
     graph = _mock_proceed_graph(route="admissions")
     orch = _RecordingOrchestrator()

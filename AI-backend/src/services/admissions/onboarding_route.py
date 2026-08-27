@@ -48,6 +48,8 @@ def apply_onboarding_patch_overrides(
     message: str = "",
 ) -> bool:
     """Force proceed + admissions when mid-onboarding. Returns True if applied."""
+    if patch.get("verdict") == "flagged_abusive":
+        return False
     if not is_onboarding_active(
         tenant_id=tenant_id, phone=phone, student_exists=student_exists
     ):

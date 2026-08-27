@@ -37,7 +37,8 @@ from services.identity.context import IdentityContext
 from services.identity.recall_context import build_recall_context
 from services.language import resolve_reply_language, t
 
-Verdict = Literal["proceed", "out_of_scope"]
+Verdict = Literal["proceed", "out_of_scope", "flagged_abusive"]
+_BLOCKED_VERDICTS = frozenset({"out_of_scope", "flagged_abusive"})
 
 
 async def _noop_emit(_: dict[str, Any]) -> None:
@@ -59,8 +60,8 @@ class ChatResult:
 def _routes_from_patch(patch: dict, *, verdict: Verdict) -> tuple[str, list[str]]:
     decisions = patch.get("route_decisions") or []
     names = [d.get("route", "direct") for d in decisions if d.get("route")]
-    if verdict == "out_of_scope" and not names:
-        return "out_of_scope", ["out_of_scope"]
+    if verdict in _BLOCKED_VERDICTS and not names:
+        return verdict, [verdict]
     if not names:
         return "direct", ["direct"]
     return names[0], names
@@ -193,9 +194,8 @@ async def run_chat_turn(
             media_url=media_url,
             language_pref=reply_language,
         )
-        verdict: Verdict = (
-            "out_of_scope" if patch.get("verdict") == "out_of_scope" else "proceed"
-        )
+        raw_verdict = patch.get("verdict") or "proceed"
+        verdict: Verdict = raw_verdict if raw_verdict in _BLOCKED_VERDICTS else "proceed"
 
         if apply_onboarding_patch_overrides(
             patch,
@@ -219,6 +219,7 @@ async def run_chat_turn(
         if (
             pending_escalation_message
             and confirmation == "yes"
+            and verdict not in _BLOCKED_VERDICTS
         ):
             verdict = "proceed"
 
@@ -250,7 +251,7 @@ async def run_chat_turn(
                 }
             ]
 
-        if verdict == "out_of_scope":
+        if verdict in _BLOCKED_VERDICTS:
             answer = patch.get("final_answer") or ""
             route, routes = _routes_from_patch(patch, verdict=verdict)
             timings["total_ms"] = int((time.perf_counter() - t_total) * 1000)

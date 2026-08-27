@@ -13,6 +13,10 @@ from domain.escalation_reasons import (
     is_payment_reason,
 )
 from services.admissions.admissions_db_client import AdmissionsDbClient
+from services.admissions.field_definitions import (
+    coerce_extra_fields,
+    merge_column_backed_fields,
+)
 
 
 class CrmTool:
@@ -34,6 +38,7 @@ class CrmTool:
         name: str | None = None,
         school: str | None = None,
         district: str | None = None,
+        extra_fields: dict[str, Any] | str | None = None,
         consent: bool = False,
         selected_class_id: str | None = None,
         clear_selected_class: bool = False,
@@ -48,12 +53,22 @@ class CrmTool:
             if row["id"] != student_id:
                 return json.dumps({"ok": False, "error": "student_id does not match phone"})
 
+        coerced = coerce_extra_fields(extra_fields)
+        merged_extra = None
+        if coerced is not None:
+            school, district, merged_extra = merge_column_backed_fields(
+                school=school,
+                district=district,
+                extra_fields=coerced,
+            )
+
         updated = self.db.update_student(
             tenant_id=tenant_id,
             student_id=row["id"],
             name=name,
             school=school,
             district=district,
+            extra_fields=merged_extra,
             consent=consent,
             selected_class_id=selected_class_id,
             clear_selected_class=clear_selected_class,
@@ -83,15 +98,20 @@ class CrmTool:
             }
         )
 
+    def list_field_definitions(self, *, tenant_id: str) -> str:
+        fields = self.db.list_field_definitions(tenant_id=tenant_id)
+        return json.dumps({"ok": True, "fields": fields})
+
     def commit_onboarding(
         self,
         *,
         tenant_id: str,
         phone: str,
         name: str,
-        school: str,
-        district: str,
         class_id: str,
+        school: str | None = None,
+        district: str | None = None,
+        extra_fields: dict[str, Any] | str | None = None,
         language_pref: str | None = None,
     ) -> str:
         """Atomic post-confirmation write: student profile + pending enrollment."""
@@ -99,6 +119,12 @@ class CrmTool:
         class_row = self.db.get_class(tenant_id=tenant_id, class_id=class_id)
         if class_row is None:
             return json.dumps({"ok": False, "error": f"Class not found: {class_id}"})
+
+        school, district, extra = merge_column_backed_fields(
+            school=school,
+            district=district,
+            extra_fields=coerce_extra_fields(extra_fields),
+        )
 
         created_new_student = False
         if existing:
@@ -119,6 +145,7 @@ class CrmTool:
                     name=name,
                     school=school,
                     district=district,
+                    extra_fields=extra,
                     consent=True,
                 )
             else:
@@ -128,6 +155,7 @@ class CrmTool:
                     name=name,
                     school=school,
                     district=district,
+                    extra_fields=extra,
                     consent=True,
                     language_pref=language_pref,
                 )
@@ -296,14 +324,30 @@ class CrmTool:
         linked_enrollment = enrollment_id or (pending["id"] if pending else None)
 
         if is_payment_reason(reason_code):
-            tenant = self.db.get_tenant(tenant_id=tenant_id)
-            if tenant is not None and tenant.get("payments_enabled") is False:
-                return json.dumps(
-                    {
-                        "ok": False,
-                        "error": "Payment submissions are currently disabled",
-                    }
+            class_id = pending.get("class_id") if pending else None
+            if class_id is None and linked_enrollment:
+                enrollment = self.db.get_enrollment(
+                    tenant_id=tenant_id,
+                    enrollment_id=linked_enrollment,
                 )
+                if enrollment is not None:
+                    class_id = enrollment.get("class_id")
+
+            if class_id:
+                subject_class = self.db.get_class(
+                    tenant_id=tenant_id,
+                    class_id=class_id,
+                )
+                if (
+                    subject_class is not None
+                    and subject_class.get("payments_enabled") is False
+                ):
+                    return json.dumps(
+                        {
+                            "ok": False,
+                            "error": "Payment submissions are currently disabled for this class",
+                        }
+                    )
 
         if is_payment_reason(reason_code) and pending is None and linked_enrollment is None:
             return json.dumps(
