@@ -1,7 +1,10 @@
 from collections import defaultdict
 from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy.orm.exc import UnmappedInstanceError
 
 from app.models import (
     Enrollment,
@@ -221,6 +224,84 @@ def student_enrollment_summaries(
     return grouped
 
 
+def _flag_extra_fields(student: Student) -> None:
+    try:
+        flag_modified(student, "extra_fields")
+    except (UnmappedInstanceError, AttributeError):
+        pass
+
+
+def _optional_column_str(value: Any) -> str | None:
+    if value is None or isinstance(value, bool):
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _normalize_extra_value(value: Any) -> Any:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def sync_column_backed_extra_fields(
+    student: Student,
+    *,
+    school: str | None = None,
+    district: str | None = None,
+) -> None:
+    """Keep extra_fields.school/district in sync without dropping other keys."""
+    extra = dict(student.extra_fields or {})
+    if school is not None:
+        if school:
+            extra["school"] = school
+        else:
+            extra.pop("school", None)
+    if district is not None:
+        if district:
+            extra["district"] = district
+        else:
+            extra.pop("district", None)
+    student.extra_fields = extra
+    _flag_extra_fields(student)
+
+
+def apply_student_extra_fields(
+    student: Student,
+    incoming: dict[str, Any] | None,
+    *,
+    school: str | None = None,
+    district: str | None = None,
+) -> None:
+    """Merge extra_fields and dual-write school/district columns."""
+    extra = dict(student.extra_fields or {})
+    payload = dict(incoming or {})
+    if school is not None and "school" not in payload:
+        payload["school"] = school
+    if district is not None and "district" not in payload:
+        payload["district"] = district
+
+    for raw_key, value in payload.items():
+        key = str(raw_key)
+        normalized = _normalize_extra_value(value)
+        if normalized is None:
+            extra.pop(key, None)
+        else:
+            extra[key] = normalized
+
+    student.extra_fields = extra
+    _flag_extra_fields(student)
+    if "school" in payload:
+        student.school = _optional_column_str(extra.get("school"))
+    if "district" in payload:
+        student.district = _optional_column_str(extra.get("district"))
+
+
 def enrich_student(db: Session, student: Student) -> dict:
     enrollments = student_enrollment_summaries(db, [student.id]).get(student.id, [])
     return {
@@ -228,9 +309,11 @@ def enrich_student(db: Session, student: Student) -> dict:
         "tenant_id": student.tenant_id,
         "name": student.name,
         "phone": student.phone,
+        "school": student.school,
         "district": student.district,
+        "extra_fields": dict(student.extra_fields or {}),
         "language_pref": student.language_pref,
-        "human_mode": bool(student.human_mode),        
+        "human_mode": bool(student.human_mode),
         "created_at": student.created_at,
         "updated_at": student.updated_at,
         "enrollments": enrollments,

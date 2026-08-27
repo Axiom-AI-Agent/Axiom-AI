@@ -47,7 +47,10 @@ async def resolve_student(
         if student_id:
             student_response = (
                 client.table("students")
-                .select("id, tenant_id, name, phone, school, district, consent_at, language_pref")
+                .select(
+                    "id, tenant_id, name, phone, school, district, extra_fields, "
+                    "consent_at, language_pref"
+                )
                 .eq("tenant_id", tenant_id)
                 .eq("id", student_id)
                 .limit(1)
@@ -174,7 +177,10 @@ def _lookup_student_by_phone(tenant_id: str, phone: str) -> dict[str, Any] | Non
     client = get_supabase_client()
     response = (
         client.table("students")
-        .select("id, tenant_id, name, phone, school, district, consent_at, language_pref")
+        .select(
+            "id, tenant_id, name, phone, school, district, extra_fields, "
+            "consent_at, language_pref"
+        )
         .eq("tenant_id", tenant_id)
         .eq("phone", phone)
         .limit(1)

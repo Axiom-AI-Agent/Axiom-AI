@@ -215,7 +215,7 @@ class AgentOrchestrator:
         return workflow.compile()
 
     def entry_routing(self, state: AgentState) -> str:
-        if state.get("verdict") == "out_of_scope":
+        if state.get("verdict") in {"out_of_scope", "flagged_abusive"}:
             return "end"
         return "recall"
 
@@ -377,8 +377,8 @@ class AgentOrchestrator:
         route_decisions = final_state.get("route_decisions") or []
         all_routes = [d.get("route", "direct") for d in route_decisions]
         primary = route_decisions[0] if route_decisions else {"route": "direct"}
-        if not all_routes and final_state.get("verdict") == "out_of_scope":
-            all_routes = ["out_of_scope"]
+        if not all_routes and final_state.get("verdict") in {"out_of_scope", "flagged_abusive"}:
+            all_routes = [str(final_state["verdict"])]
         return AgentResponse(
             answer=final_state.get("final_answer") or "",
             route=primary.get("route", "direct"),

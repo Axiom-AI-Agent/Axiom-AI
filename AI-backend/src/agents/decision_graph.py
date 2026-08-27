@@ -20,7 +20,7 @@ from loguru import logger
 
 from agents.decision_state import DecisionState, DecisionVerdict, GuardrailVerdict
 from agents.guardrail import Guardrail, get_guardrail
-from agents.prompts import get_out_of_scope_reply
+from agents.prompts import get_flagged_abusive_reply, get_out_of_scope_reply
 from agents.router import SPECIALIST_ROUTES, QueryRouter, _fallback_multi, get_query_router
 
 EmitFn = Callable[[dict[str, Any]], Awaitable[None]]
@@ -105,6 +105,13 @@ def decide_node(
     decision = state.get("decision")
     primary = decision.primary if decision else None
     primary_route = primary.route if primary else "direct"
+
+    if guardrail_v == "flagged_abusive":
+        return {
+            "verdict": "flagged_abusive",
+            "primary_route": primary_route,
+            "final_answer": get_flagged_abusive_reply(),
+        }
 
     if guardrail_v == "out_of_scope":
         if primary_route in SPECIALIST_ROUTES:

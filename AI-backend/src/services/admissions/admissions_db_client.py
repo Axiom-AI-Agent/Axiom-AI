@@ -20,7 +20,7 @@ class AdmissionsDbClient:
         response = (
             client.table("students")
             .select(
-                "id, tenant_id, name, phone, school, district, consent_at, "
+                "id, tenant_id, name, phone, school, district, extra_fields, consent_at, "
                 "selected_class_id, language_pref, created_at"
             )
             .eq("tenant_id", tenant_id)
@@ -36,7 +36,7 @@ class AdmissionsDbClient:
         response = (
             client.table("students")
             .select(
-                "id, tenant_id, name, phone, school, district, consent_at, "
+                "id, tenant_id, name, phone, school, district, extra_fields, consent_at, "
                 "selected_class_id, language_pref, created_at"
             )
             .eq("tenant_id", tenant_id)
@@ -55,6 +55,7 @@ class AdmissionsDbClient:
         name: str | None = None,
         school: str | None = None,
         district: str | None = None,
+        extra_fields: dict[str, Any] | None = None,
         consent: bool = False,
         selected_class_id: str | None = None,
         clear_selected_class: bool = False,
@@ -66,6 +67,8 @@ class AdmissionsDbClient:
             payload["school"] = school
         if district is not None:
             payload["district"] = district
+        if extra_fields is not None:
+            payload["extra_fields"] = extra_fields
         if consent:
             payload["consent_at"] = datetime.now(timezone.utc).isoformat()
         if selected_class_id is not None:
@@ -92,8 +95,9 @@ class AdmissionsDbClient:
         tenant_id: str,
         phone: str,
         name: str,
-        school: str,
-        district: str,
+        school: str | None = None,
+        district: str | None = None,
+        extra_fields: dict[str, Any] | None = None,
         consent: bool = True,
         language_pref: str | None = None,
     ) -> dict[str, Any]:
@@ -108,10 +112,14 @@ class AdmissionsDbClient:
             "tenant_id": tenant_id,
             "phone": phone,
             "name": name,
-            "school": school,
-            "district": district,
             "updated_at": now,
         }
+        if school is not None:
+            payload["school"] = school
+        if district is not None:
+            payload["district"] = district
+        if extra_fields is not None:
+            payload["extra_fields"] = extra_fields
         if consent:
             payload["consent_at"] = now
         if language_pref:
@@ -523,3 +531,15 @@ class AdmissionsDbClient:
         )
         rows = response.data or []
         return rows[0] if rows else None
+
+    def list_field_definitions(self, *, tenant_id: str) -> list[dict[str, Any]]:
+        client = get_supabase_client()
+        response = (
+            client.table("tenant_field_definition")
+            .select("field_key, label, field_type, options, required, sort_order, active")
+            .eq("tenant_id", tenant_id)
+            .eq("active", True)
+            .order("sort_order")
+            .execute()
+        )
+        return list(response.data or [])

@@ -42,11 +42,12 @@ def register_student(
     name: str | None = None,
     school: str | None = None,
     district: str | None = None,
+    extra_fields: dict | None = None,
     consent: bool = False,
     selected_class_id: str | None = None,
     clear_selected_class: bool = False,
 ) -> str:
-    """Update student profile during onboarding (name, school, district, consent, class)."""
+    """Update student profile during onboarding (name, school, district, extra fields, consent, class)."""
     return _init().register_student(
         tenant_id=tenant_id,
         phone=phone,
@@ -54,6 +55,7 @@ def register_student(
         name=name,
         school=school,
         district=district,
+        extra_fields=extra_fields,
         consent=consent,
         selected_class_id=selected_class_id,
         clear_selected_class=clear_selected_class,
@@ -107,13 +109,20 @@ def list_staff(tenant_id: str, role: str | None = None) -> str:
 
 
 @mcp.tool()
+def list_field_definitions(tenant_id: str) -> str:
+    """List active custom onboarding fields for a tenant, ordered by sort_order."""
+    return _init().list_field_definitions(tenant_id=tenant_id)
+
+
+@mcp.tool()
 def commit_onboarding(
     tenant_id: str,
     phone: str,
     name: str,
-    school: str,
-    district: str,
     class_id: str,
+    school: str | None = None,
+    district: str | None = None,
+    extra_fields: dict | None = None,
     language_pref: str | None = None,
 ) -> str:
     """Create student profile and pending enrollment after explicit confirmation."""
@@ -123,6 +132,7 @@ def commit_onboarding(
         name=name,
         school=school,
         district=district,
+        extra_fields=extra_fields,
         class_id=class_id,
         language_pref=language_pref,
     )

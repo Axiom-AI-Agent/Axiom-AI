@@ -93,6 +93,19 @@ def test_out_of_scope_localized():
     assert "வகுப்பு" in tamil or "சேர்க்கை" in tamil
 
 
+def test_flagged_abusive_localized():
+    from agents.prompts.agent_prompts import get_flagged_abusive_reply
+
+    english = get_flagged_abusive_reply()
+    sinhala = get_flagged_abusive_reply(language="si")
+    tamil = get_flagged_abusive_reply(language="ta")
+    assert "abusive" in english.lower() or "offensive" in english.lower()
+    assert sinhala != english
+    assert tamil != english
+    assert "අසභ්‍ය" in sinhala or "අපහාස" in sinhala
+    assert "தகாத" in tamil or "அவமதிப்பு" in tamil
+
+
 def test_canned_templates_have_en_si_ta():
     assert "voice message" in t("voice_fail", "en").lower()
     assert t("voice_fail", "si") != t("voice_fail", "en")

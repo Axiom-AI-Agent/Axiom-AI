@@ -36,6 +36,8 @@ class CrmClient(Protocol):
         role: str | None = None,
     ) -> list[dict[str, Any]]: ...
 
+    async def list_field_definitions(self, *, tenant_id: str) -> list[dict[str, Any]]: ...
+
     async def register_student(
         self,
         *,
@@ -45,6 +47,7 @@ class CrmClient(Protocol):
         name: str | None = None,
         school: str | None = None,
         district: str | None = None,
+        extra_fields: dict[str, Any] | None = None,
         consent: bool = False,
         selected_class_id: str | None = None,
         clear_selected_class: bool = False,
@@ -64,9 +67,10 @@ class CrmClient(Protocol):
         tenant_id: str,
         phone: str,
         name: str,
-        school: str,
-        district: str,
         class_id: str,
+        school: str | None = None,
+        district: str | None = None,
+        extra_fields: dict[str, Any] | None = None,
         language_pref: str | None = None,
     ) -> dict[str, Any]: ...
 
@@ -142,6 +146,12 @@ class DirectCrmClient:
     ) -> list[dict[str, Any]]:
         payload = json.loads(self._tool.list_staff(tenant_id=tenant_id, role=role))
         return payload.get("staff") or []
+
+    async def list_field_definitions(self, *, tenant_id: str) -> list[dict[str, Any]]:
+        payload = json.loads(self._tool.list_field_definitions(tenant_id=tenant_id))
+        if not payload.get("ok"):
+            raise RuntimeError(payload.get("error") or "list_field_definitions failed")
+        return payload.get("fields") or []
 
     async def register_student(self, **kwargs: Any) -> dict[str, Any]:
         return json.loads(self._tool.register_student(**kwargs))
@@ -232,6 +242,15 @@ class McpCrmClient:
             {"tenant_id": tenant_id, "role": role},
         )
         return payload.get("staff") or []
+
+    async def list_field_definitions(self, *, tenant_id: str) -> list[dict[str, Any]]:
+        payload = await self._invoke(
+            "list_field_definitions",
+            {"tenant_id": tenant_id},
+        )
+        if not payload.get("ok"):
+            raise RuntimeError(payload.get("error") or "list_field_definitions failed")
+        return payload.get("fields") or []
 
     async def register_student(self, **kwargs: Any) -> dict[str, Any]:
         return await self._invoke("register_student", kwargs)

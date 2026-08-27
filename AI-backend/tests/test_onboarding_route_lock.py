@@ -168,6 +168,62 @@ async def test_onboarding_bypasses_guardrail_oos_on_confirm_yes(ctx: IdentityCon
 
 
 @pytest.mark.asyncio
+async def test_abusive_not_overridden_by_onboarding_lock(ctx: IdentityContext):
+    store = get_onboarding_session_store()
+    store.start(tenant_id=ctx.tenant_id, phone=ctx.phone)
+
+    recorded: dict = {}
+
+    class RecordingOrchestrator:
+        async def arun_state(self, patch, config=None):
+            recorded["called"] = True
+            return {
+                "agent_outputs": [],
+                "route_decisions": patch.get("route_decisions"),
+            }
+
+        def _to_agent_response(self, final_state, latency_ms):
+            from agents.orchestrator import AgentResponse
+
+            return AgentResponse(
+                answer="should not run",
+                route="admissions",
+                routes=["admissions"],
+                latency_ms=latency_ms,
+            )
+
+    decision_out = {
+        "guardrail": "flagged_abusive",
+        "verdict": "flagged_abusive",
+        "final_answer": "I can't help with messages that use abusive or offensive language.",
+        "decision": MultiRouteDecision(
+            decisions=[
+                RouteDecision(
+                    route="admissions",
+                    action="general",
+                    confidence=0.9,
+                    reasoning="onboarding-looking message",
+                )
+            ]
+        ),
+    }
+    decision_graph = MagicMock()
+    decision_graph.ainvoke = AsyncMock(return_value=decision_out)
+
+    result = await run_chat_turn(
+        ctx=ctx,
+        message="you're a stupid idiot",
+        decision_graph=decision_graph,
+        orchestrator=RecordingOrchestrator(),  # type: ignore[arg-type]
+        memory_tool=MagicMock(recall_turns=MagicMock(return_value="")),
+    )
+
+    assert recorded.get("called") is None
+    assert result.verdict == "flagged_abusive"
+    assert "abusive" in result.answer.lower() or "offensive" in result.answer.lower()
+
+
+@pytest.mark.asyncio
 async def test_tutoring_question_breaks_onboarding_route_lock(ctx: IdentityContext):
     store = get_onboarding_session_store()
     store.start(tenant_id=ctx.tenant_id, phone=ctx.phone)

@@ -12,8 +12,8 @@ from agents.decision_bridge import map_decision_to_agent_state
 from agents.decision_graph import build_decision_graph, build_decision_input, decide_node
 from agents.decision_state import DecisionState
 from agents.guardrail import Guardrail
+from agents.prompts import get_flagged_abusive_reply, get_out_of_scope_reply
 from agents.router import MultiRouteDecision, QueryRouter, RouteDecision
-from agents.prompts import get_out_of_scope_reply
 
 
 @pytest.mark.asyncio
@@ -27,6 +27,20 @@ async def test_decide_out_of_scope_short_circuit():
     out = decide_node(state)
     assert out["verdict"] == "out_of_scope"
     assert out["final_answer"] == get_out_of_scope_reply()
+
+
+@pytest.mark.asyncio
+async def test_decide_flagged_abusive_short_circuit():
+    state: DecisionState = {
+        "guardrail": "flagged_abusive",
+        "decision": MultiRouteDecision(
+            decisions=[RouteDecision(route="admissions", action="general")]
+        ),
+    }
+    out = decide_node(state)
+    assert out["verdict"] == "flagged_abusive"
+    assert out["final_answer"] == get_flagged_abusive_reply()
+    assert out["primary_route"] == "admissions"
 
 
 @pytest.mark.asyncio
@@ -126,3 +140,14 @@ async def test_guardrail_fail_open():
     guardrail = Guardrail(llm)
     verdict = await guardrail.aclassify("Hello")
     assert verdict == "in_scope"
+
+
+@pytest.mark.asyncio
+async def test_guardrail_parses_flagged_abusive():
+    llm = MagicMock()
+    response = MagicMock()
+    response.content = "flagged_abusive"
+    llm.ainvoke = AsyncMock(return_value=response)
+    guardrail = Guardrail(llm)
+    verdict = await guardrail.aclassify("you're a stupid idiot, send the past papers")
+    assert verdict == "flagged_abusive"

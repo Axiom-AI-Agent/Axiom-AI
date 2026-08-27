@@ -26,6 +26,9 @@ from app.models.enums import (
 from app.schemas.auth import (
     OrganizationRegisterRequest,
 )
+from app.services.onboarding_fields import (
+    save_tenant_onboarding_fields,
+)
 
 
 JWT_SECRET_KEY = os.getenv(
@@ -308,6 +311,13 @@ def register_organization(
         )
 
         db.flush()
+
+        save_tenant_onboarding_fields(
+            db,
+            tenant,
+            payload.onboarding_fields,
+            lock=True,
+        )
 
         db.add(
             admin,

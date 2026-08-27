@@ -14,7 +14,7 @@ from agents.prompts import build_guardrail_system_prompt
 from infrastructure.llm import get_guardrail_llm
 from infrastructure.observability import observe, update_current_observation
 
-GuardrailVerdict = Literal["in_scope", "out_of_scope"]
+GuardrailVerdict = Literal["in_scope", "out_of_scope", "flagged_abusive"]
 
 _default_guardrail: Guardrail | None = None
 
@@ -27,6 +27,9 @@ Examples:
   USER: "What time is Saturday class?"                 → in_scope
   USER: "Hello" / "Thanks"                             → in_scope
   USER: "What is my name?" (recent chat mentions Amaya) → in_scope
+  USER: "this is so hard, I'm annoyed"                 → in_scope
+  USER: "you're a stupid idiot, send the past papers"  → flagged_abusive
+  USER: "what does this dirty word mean for homework"  → flagged_abusive
   USER: "What's the capital of France?"                → out_of_scope
   USER: "Write me a Python function"                   → out_of_scope
   USER: "Who won the cricket match?"                   → out_of_scope
@@ -72,10 +75,13 @@ class Guardrail:
         raw = (
             response.content if hasattr(response, "content") else str(response)
         ).strip().lower()
+        normalized = raw.replace("-", "_").replace(" ", "_")
 
-        if "out_of_scope" in raw or "out-of-scope" in raw or "out of scope" in raw:
-            verdict: GuardrailVerdict = "out_of_scope"
-        elif "in_scope" in raw or "in-scope" in raw or "in scope" in raw:
+        if "flagged_abusive" in normalized:
+            verdict: GuardrailVerdict = "flagged_abusive"
+        elif "out_of_scope" in normalized:
+            verdict = "out_of_scope"
+        elif "in_scope" in normalized:
             verdict = "in_scope"
         else:
             logger.debug("Guardrail unparsable response {!r} → defaulting in_scope", raw[:50])

@@ -6,6 +6,12 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from services.admissions.field_definitions import (
+    COLUMN_BACKED_KEYS,
+    DEFAULT_FIELD_DEFINITIONS,
+    TenantFieldDef,
+    parse_field_definitions,
+)
 from services.language import normalize_language_pref, t
 
 _CONFIRM_YES = re.compile(
@@ -138,6 +144,7 @@ class OnboardingSlots:
     district: str | None = None
     class_id: str | None = None
     confirmed: bool = False
+    extra: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -151,18 +158,53 @@ class OnboardingState:
     awaiting_confirmation: bool = False
     restarted: bool = False
     ambiguous_classes: list[dict[str, Any]] = field(default_factory=list)
+    invalid_select: bool = False
 
 
 class OnboardingFlow:
     """Determine onboarding progress and extract slots from user messages."""
 
-    COLLECTION_STEPS = ("name", "school", "district", "class")
-
-    def __init__(self, *, language: str = "en") -> None:
+    def __init__(
+        self,
+        *,
+        language: str = "en",
+        field_definitions: list[TenantFieldDef] | None = None,
+    ) -> None:
         self.language = normalize_language_pref(language)
+        self.field_definitions: list[TenantFieldDef] = (
+            list(field_definitions)
+            if field_definitions is not None
+            else list(DEFAULT_FIELD_DEFINITIONS)
+        )
+
+    def set_field_definitions(
+        self,
+        rows: list[dict[str, Any]] | list[TenantFieldDef] | None,
+    ) -> None:
+        if rows and isinstance(rows[0], TenantFieldDef):
+            self.field_definitions = list(rows)  # type: ignore[arg-type]
+            return
+        self.field_definitions = parse_field_definitions(
+            rows if isinstance(rows, list) else None
+        )
 
     def _t(self, key: str, **kwargs: Any) -> str:
         return t(key, self.language, **kwargs)
+
+    def _custom_value(self, slots: OnboardingSlots, field_key: str) -> str | None:
+        if field_key in COLUMN_BACKED_KEYS:
+            column = getattr(slots, field_key, None)
+            if column:
+                return str(column)
+        extra = slots.extra.get(field_key)
+        return str(extra) if extra else None
+
+    def _set_custom_value(self, slots: OnboardingSlots, field_key: str, value: str) -> None:
+        slots.extra[field_key] = value
+        if field_key == "school":
+            slots.school = value
+        elif field_key == "district":
+            slots.district = value
 
     def load_from_student(
         self,
@@ -179,8 +221,22 @@ class OnboardingFlow:
 
         slots = state.slots
         slots.name = student.get("name") or None
-        slots.school = student.get("school") or None
-        slots.district = student.get("district") or None
+        raw_extra = student.get("extra_fields") or {}
+        slots.extra = (
+            {
+                str(key): str(val)
+                for key, val in raw_extra.items()
+                if val is not None and str(val).strip()
+            }
+            if isinstance(raw_extra, dict)
+            else {}
+        )
+        slots.school = student.get("school") or slots.extra.get("school")
+        slots.district = student.get("district") or slots.extra.get("district")
+        if slots.school:
+            slots.extra.setdefault("school", slots.school)
+        if slots.district:
+            slots.extra.setdefault("district", slots.district)
         slots.confirmed = bool(student.get("consent_at"))
 
         active_enrollments = [
@@ -217,6 +273,8 @@ class OnboardingFlow:
         text = message.strip()
         if not text:
             return state
+
+        state.invalid_select = False
 
         if state.awaiting_confirmation:
             if self._looks_like_reject(text):
@@ -263,7 +321,7 @@ class OnboardingFlow:
         if _RESTART_PATTERN.search(text):
             return OnboardingState(next_step="name"), True
 
-        match = _EDIT_FIELD_PATTERN.match(text)
+        match = self._edit_field_pattern().match(text)
         if not match:
             return state, False
 
@@ -274,10 +332,16 @@ class OnboardingFlow:
 
         if field == "name":
             state.slots.name = self._title_name(value)
-        elif field == "school":
-            state.slots.school = value.title()
-        elif field == "district":
-            state.slots.district = value.title()
+        elif field in {defn.field_key for defn in self.field_definitions}:
+            defn = self._definition_for(field)
+            if defn and defn.field_type == "select":
+                matched = self._match_select_option(value, defn.options or ())
+                if not matched:
+                    return state, False
+                self._set_custom_value(state.slots, field, matched)
+            else:
+                extracted = self._title_name(value) if field == "school" else value.title()
+                self._set_custom_value(state.slots, field, extracted)
         elif field in {"class", "course"}:
             if not classes:
                 return state, False
@@ -320,14 +384,6 @@ class OnboardingFlow:
                 extracted = self._extract_name(text)
                 if extracted:
                     slots.name = extracted
-        elif step == "school" and not slots.school:
-            extracted = self._extract_labeled_value(text, _SCHOOL_PREFIX)
-            if extracted:
-                slots.school = extracted
-        elif step == "district" and not slots.district:
-            extracted = self._extract_labeled_value(text, _DISTRICT_PREFIX)
-            if extracted:
-                slots.district = extracted
         elif step == "class" and not slots.class_id and classes:
             if self._looks_like_confirm(text):
                 pass
@@ -343,6 +399,13 @@ class OnboardingFlow:
                     elif match:
                         slots.class_id = match["id"]
                         state.ambiguous_classes = []
+        elif self._definition_for(step) and not self._custom_value(slots, step or ""):
+            extracted, rejected = self._extract_custom_value(text, step or "")
+            if extracted:
+                self._set_custom_value(slots, step or "", extracted)
+                state.invalid_select = False
+            elif rejected:
+                state.invalid_select = True
 
         return state
 
@@ -354,6 +417,7 @@ class OnboardingFlow:
         phone: str | None = None,
         student_name: str | None = None,
         classes: list[dict[str, Any]] | None = None,
+        select_rejected: bool = False,
     ) -> str:
         first = student_name.split()[0] if student_name else None
         if step == "class" and classes:
@@ -363,12 +427,20 @@ class OnboardingFlow:
                 student_name=student_name,
             )
         name_suffix = f", {first}" if first else ""
-        prompts = {
-            "name": self._t("onboarding_ask_name", tenant_name=tenant_name),
-            "school": self._t("onboarding_ask_school", name_suffix=name_suffix),
-            "district": self._t("onboarding_ask_district"),
-        }
-        return prompts.get(step or "name", prompts["name"])
+        defn = self._definition_for(step)
+        if defn and defn.field_type == "select":
+            options = self._format_select_options(defn.options or ())
+            key = "onboarding_invalid_select" if select_rejected else "onboarding_ask_select"
+            return self._t(key, label=defn.label.lower(), options=options)
+        if step == "name" or not step:
+            return self._t("onboarding_ask_name", tenant_name=tenant_name)
+        if step == "school":
+            return self._t("onboarding_ask_school", name_suffix=name_suffix)
+        if step == "district":
+            return self._t("onboarding_ask_district")
+        if defn:
+            return self._t("onboarding_ask_custom", label=defn.label.lower())
+        return self._t("onboarding_ask_name", tenant_name=tenant_name)
 
     def class_catalog_message(
         self,
@@ -428,8 +500,7 @@ class OnboardingFlow:
             tenant_name=tenant_name,
             name=slots.name,
             contact=contact,
-            school=slots.school,
-            district=slots.district,
+            custom_lines=self._custom_review_lines(slots),
             class_label=class_label,
             fee_line=fee_line,
         )
@@ -539,19 +610,86 @@ class OnboardingFlow:
         return self._t("not_registered", tenant_name=tenant_name)
 
     def _first_missing_step(self, slots: OnboardingSlots) -> str | None:
-        for step in self.COLLECTION_STEPS:
-            if step == "name" and not slots.name:
-                return "name"
-            if step == "school" and not slots.school:
-                return "school"
-            if step == "district" and not slots.district:
-                return "district"
-            if step == "class" and not slots.class_id:
-                return "class"
+        if not slots.name:
+            return "name"
+        for defn in self.field_definitions:
+            if not self._custom_value(slots, defn.field_key):
+                return defn.field_key
+        if not slots.class_id:
+            return "class"
         return None
 
     def _collection_complete(self, slots: OnboardingSlots) -> bool:
-        return bool(slots.name and slots.school and slots.district and slots.class_id)
+        if not slots.name or not slots.class_id:
+            return False
+        return all(
+            self._custom_value(slots, defn.field_key)
+            for defn in self.field_definitions
+            if defn.required
+        )
+
+    def _definition_for(self, step: str | None) -> TenantFieldDef | None:
+        if not step:
+            return None
+        return next((defn for defn in self.field_definitions if defn.field_key == step), None)
+
+    def _extract_custom_value(self, text: str, field_key: str) -> tuple[str | None, bool]:
+        """Return (value, rejected). rejected=True means an invalid select answer."""
+        defn = self._definition_for(field_key)
+        if defn and defn.field_type == "select":
+            if self._looks_like_off_topic_during_onboarding(text):
+                return None, False
+            matched = self._match_select_option(text, defn.options or ())
+            if matched:
+                return matched, False
+            return None, True
+        if field_key == "school":
+            return self._extract_labeled_value(text, _SCHOOL_PREFIX), False
+        if field_key == "district":
+            return self._extract_labeled_value(text, _DISTRICT_PREFIX), False
+        return self._extract_labeled_value(text, re.compile(r"^(.+)$", re.DOTALL)), False
+
+    def _match_select_option(self, text: str, options: tuple[str, ...]) -> str | None:
+        stripped = text.strip()
+        if not stripped or not options:
+            return None
+        if stripped.isdigit():
+            idx = int(stripped) - 1
+            if 0 <= idx < len(options):
+                return options[idx]
+        lowered = stripped.lower()
+        exact = [opt for opt in options if opt.lower() == lowered]
+        if len(exact) == 1:
+            return exact[0]
+        partial = [
+            opt
+            for opt in options
+            if lowered in opt.lower() or opt.lower().startswith(lowered)
+        ]
+        if len(partial) == 1:
+            return partial[0]
+        return None
+
+    def _format_select_options(self, options: tuple[str, ...]) -> str:
+        if not options:
+            return "(no options configured)"
+        return "\n".join(f"{idx}. {opt}" for idx, opt in enumerate(options, start=1))
+
+    def _edit_field_pattern(self) -> re.Pattern[str]:
+        keys = ["name", "class", "course", *[defn.field_key for defn in self.field_definitions]]
+        unique = list(dict.fromkeys(keys))
+        alt = "|".join(re.escape(key) for key in unique)
+        return re.compile(
+            rf"^\s*(?:change|edit|update|correct)\s+({alt})\s+(?:to\s+)?(.+?)\s*$",
+            re.IGNORECASE,
+        )
+
+    def _custom_review_lines(self, slots: OnboardingSlots) -> str:
+        lines: list[str] = []
+        for defn in self.field_definitions:
+            value = self._custom_value(slots, defn.field_key) or ""
+            lines.append(f"• **{defn.label}:** {value}")
+        return ("\n".join(lines) + "\n") if lines else ""
 
     def _looks_like_confirm(self, text: str) -> bool:
         if self._looks_like_reject(text):

@@ -19,7 +19,12 @@ from app.schemas.schemas import (
     StudentsListResponse,
     StudentHumanModeUpdate,
 )
-from app.services.dashboard_service import enrich_student, student_enrollment_summaries
+from app.services.dashboard_service import (
+    apply_student_extra_fields,
+    enrich_student,
+    student_enrollment_summaries,
+    sync_column_backed_extra_fields,
+)
 
 router = APIRouter(prefix="/students", tags=["Students"])
 
@@ -112,8 +117,16 @@ def create_student(
         tenant_id=tenant_id,
         name=student_data.name,
         phone=student_data.phone.strip(),
+        school=student_data.school,
         district=student_data.district,
         language_pref=student_data.language_pref,
+        extra_fields={},
+    )
+    apply_student_extra_fields(
+        new_student,
+        student_data.extra_fields,
+        school=student_data.school,
+        district=student_data.district,
     )
 
     try:
@@ -163,10 +176,28 @@ def update_student(
         student.name = student_data.name  # type: ignore[assignment]
     if student_data.phone is not None:
         student.phone = student_data.phone.strip()  # type: ignore[assignment]
-    if student_data.district is not None:
-        student.district = student_data.district  # type: ignore[assignment]
     if student_data.language_pref is not None:
         student.language_pref = student_data.language_pref  # type: ignore[assignment]
+    if student_data.extra_fields is not None:
+        apply_student_extra_fields(
+            student,
+            student_data.extra_fields,
+            school=student_data.school,
+            district=student_data.district,
+        )
+    else:
+        if student_data.school is not None:
+            student.school = student_data.school  # type: ignore[assignment]
+            sync_column_backed_extra_fields(
+                student,
+                school=student_data.school,
+            )
+        if student_data.district is not None:
+            student.district = student_data.district  # type: ignore[assignment]
+            sync_column_backed_extra_fields(
+                student,
+                district=student_data.district,
+            )
 
     try:
         db.commit()
