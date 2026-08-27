@@ -35,8 +35,10 @@ const PERIOD_OPTIONS: Array<
   [AnalyticsPeriod, string]
 > = [
   ["today", "Today"],
-  ["7d", "Last 7 days"],
-  ["month", "This month"],
+  ["48h", "Last 48 Hours"],
+  ["7d", "Last 7 Days"],
+  ["30d", "Last 30 Days"],
+  ["90d", "Last 90 Days"],
 ];
 
 function formatClassTitle(
@@ -156,7 +158,7 @@ export default function ClassAnalyticsPage() {
   }, [data]);
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -171,26 +173,17 @@ export default function ClassAnalyticsPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex rounded-lg border border-slate-200 p-1 dark:border-slate-700">
-            {PERIOD_OPTIONS.map(
-              ([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() =>
-                    setPeriod(value)
-                  }
-                  className={`rounded-md px-3 py-1.5 text-xs font-medium ${
-                    period === value
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-                  }`}
-                >
-                  {label}
-                </button>
-              ),
-            )}
-          </div>
+          <select
+            value={period}
+            onChange={(event) => setPeriod(event.target.value as AnalyticsPeriod)}
+            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          >
+            {PERIOD_OPTIONS.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
 
           <button
             type="button"
@@ -206,7 +199,8 @@ export default function ClassAnalyticsPage() {
         </div>
       </div>
 
-      {error && (
+      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+        {error && (
         <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-700 dark:text-red-300">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
 
@@ -483,6 +477,7 @@ export default function ClassAnalyticsPage() {
           )}
         </>
       )}
+      </div>
     </div>
   );
 }
