@@ -13,7 +13,6 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.deps.auth import get_current_staff
 from app.models import StaffUser
-
 from app.schemas.auth import (
     AuthResponse,
     AuthUserResponse,
@@ -21,6 +20,13 @@ from app.schemas.auth import (
     LoginRequest,
     MeResponse,
     OrganizationRegisterRequest,
+    TelegramLinkCodeResponse,
+    TelegramLinkStatusResponse,
+)
+from app.services.staff_telegram_service import (
+    create_staff_link_code,
+    get_telegram_link_status,
+    unlink_telegram,
 )
 
 from app.services.auth_service import (
@@ -136,7 +142,9 @@ def me(
     current_staff: StaffUser = Depends(
         get_current_staff,
     ),
+    db: Session = Depends(get_db),
 ):
+    status = get_telegram_link_status(db, current_staff)
     return MeResponse(
         id=current_staff.id,
         tenant_id=current_staff.tenant_id,
@@ -145,7 +153,56 @@ def me(
         email=current_staff.email,
         role=current_staff.role.value,
         created_at=current_staff.created_at,
+        telegram_linked=bool(status["linked"]),
     )
+
+
+def _tenant_bot_username(staff: StaffUser) -> str | None:
+    tenant = staff.tenant
+    username = getattr(tenant, "telegram_bot_username", None) if tenant is not None else None
+    if username:
+        return str(username)
+    return None
+
+
+@router.post(
+    "/telegram/link-code",
+    response_model=TelegramLinkCodeResponse,
+)
+def create_telegram_link_code(
+    current_staff: StaffUser = Depends(get_current_staff),
+    db: Session = Depends(get_db),
+):
+    record = create_staff_link_code(db, current_staff)
+    return TelegramLinkCodeResponse(
+        code=record.code,
+        expires_at=record.expires_at,
+        ttl_minutes=10,
+        telegram_bot_username=_tenant_bot_username(current_staff),
+    )
+
+
+@router.get(
+    "/telegram/link",
+    response_model=TelegramLinkStatusResponse,
+)
+def telegram_link_status(
+    current_staff: StaffUser = Depends(get_current_staff),
+    db: Session = Depends(get_db),
+):
+    status_payload = get_telegram_link_status(db, current_staff)
+    return TelegramLinkStatusResponse(
+        **status_payload,
+        telegram_bot_username=_tenant_bot_username(current_staff),
+    )
+
+
+@router.delete("/telegram/link", status_code=status.HTTP_204_NO_CONTENT)
+def telegram_unlink(
+    current_staff: StaffUser = Depends(get_current_staff),
+    db: Session = Depends(get_db),
+):
+    unlink_telegram(db, current_staff)
 
 
 @router.post("/bootstrap-demo-physics")

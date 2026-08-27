@@ -8,6 +8,12 @@ from loguru import logger
 
 from domain.enums import ChatChannel
 from services.admissions.onboarding_session_store import get_onboarding_session_store
+from services.identity.staff_resolver import (
+    StaffContext,
+    consume_staff_link_code,
+    looks_like_link_code,
+    resolve_staff,
+)
 from services.identity.student_resolver import (
     bind_telegram_student_channel,
     link_telegram_contact,
@@ -21,14 +27,31 @@ from services.messaging.telegram_client import (
     send_telegram_message,
     telegram_typing,
 )
-from services.tenant_config import TenantBotTokenError, get_bot_token_for_tenant
-
-_CONTACT_PROMPT = "To complete your registration, please share your phone number."
-_VOICE_UNSUPPORTED = (
-    "Voice notes aren't supported yet. Please type your message, "
-    "or send a photo of your payment slip."
+from services.tenant_config import (
+    TenantBotTokenError,
+    get_bot_token_for_tenant,
+    get_telegram_bot_display_name,
 )
+
+
+def _contact_prompt(tenant_id: str) -> str:
+    bot_name = get_telegram_bot_display_name(tenant_id)
+    return (
+        f"Hello! I'm {bot_name}.\n\n"
+        "Im here to help assist you, please share your phone number to get started."
+    )
+
+
 _OWN_CONTACT_ONLY = "Please share your own phone number using the button below."
+_STAFF_LINKED = (
+    "Telegram is now linked to your staff account. Ask me about escalations, "
+    "deflection, enrollments, or class activity. Unlink anytime from dashboard Settings."
+)
+_STAFF_TEXT_ONLY = "Dashboard questions need to be sent as text."
+_STAFF_ALREADY_LINKED = (
+    "This Telegram chat is already linked to your staff account. "
+    "Ask a dashboard question, or unlink from Settings if you need to reconnect."
+)
 
 
 async def handle_text_message(
@@ -41,7 +64,7 @@ async def handle_text_message(
 ) -> None:
     student = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
     if not student or not student.get("phone"):
-        await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
+        await send_telegram_contact_request(tenant_id, chat_id, _contact_prompt(tenant_id))
         return
 
     await _run_pipeline_and_reply(
@@ -51,6 +74,43 @@ async def handle_text_message(
         body=text or "",
         update_id=update_id,
     )
+
+
+async def try_complete_staff_link(
+    tenant_id: str,
+    chat_id: int,
+    text: str,
+) -> bool:
+    """Consume a dashboard link code. Returns True if this update was handled."""
+    if not looks_like_link_code(text):
+        return False
+    staff = await consume_staff_link_code(
+        tenant_id=tenant_id,
+        chat_id=str(chat_id),
+        text=text,
+    )
+    if staff is None:
+        return False
+    await send_telegram_message(tenant_id, chat_id, _STAFF_LINKED)
+    return True
+
+
+async def handle_staff_text_message(
+    tenant_id: str,
+    chat_id: int,
+    text: str,
+    staff: StaffContext,
+) -> None:
+    if looks_like_link_code(text):
+        await send_telegram_message(tenant_id, chat_id, _STAFF_ALREADY_LINKED)
+        return
+
+    from agents.dashboard_agent import run_dashboard_agent
+
+    async with telegram_typing(tenant_id, chat_id):
+        reply = await run_dashboard_agent(staff=staff, message=text or "")
+    if reply:
+        await send_telegram_message(tenant_id, chat_id, reply)
 
 
 async def handle_contact_shared(
@@ -65,7 +125,7 @@ async def handle_contact_shared(
     contact_user_id = contact.get("user_id")
     if sender_id is not None and contact_user_id is not None and sender_id != contact_user_id:
         await send_telegram_message(tenant_id, chat_id, _OWN_CONTACT_ONLY)
-        await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
+        await send_telegram_contact_request(tenant_id, chat_id, _contact_prompt(tenant_id))
         return
 
     phone = contact.get("phone_number") or ""
@@ -99,7 +159,7 @@ async def handle_photo_message(
 ) -> None:
     student = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
     if not student or not student.get("phone"):
-        await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
+        await send_telegram_contact_request(tenant_id, chat_id, _contact_prompt(tenant_id))
         return
 
     file_id = _largest_photo_file_id(photo)
@@ -128,7 +188,7 @@ async def handle_voice_message(
     """Download Telegram voice note, transcribe via STT, and process through pipeline."""
     student = await resolve_student(tenant_id, ChatChannel.TELEGRAM.value, str(chat_id))
     if not student or not student.get("phone"):
-        await send_telegram_contact_request(tenant_id, chat_id, _CONTACT_PROMPT)
+        await send_telegram_contact_request(tenant_id, chat_id, _contact_prompt(tenant_id))
         return
 
     file_id = voice.get("file_id")

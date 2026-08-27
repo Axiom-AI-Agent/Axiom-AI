@@ -156,6 +156,8 @@ class MeResponse(BaseModel):
     role: StaffRoleValue
     created_at: datetime
 
+    telegram_linked: bool = False
+
 
 class StaffCreate(BaseModel):
     name: str = Field(min_length=2, max_length=100)
@@ -177,3 +179,19 @@ class StaffResponse(BaseModel):
     email: str
     role: StaffRoleValue
     is_active: bool
+
+
+class TelegramLinkCodeResponse(BaseModel):
+    code: str
+    expires_at: datetime
+    ttl_minutes: int
+    telegram_bot_username: str | None = None
+
+
+class TelegramLinkStatusResponse(BaseModel):
+    linked: bool
+    channel: str | None = None
+    channel_address: str | None = None
+    linked_at: datetime | None = None
+    telegram_bot_username: str | None = None
+

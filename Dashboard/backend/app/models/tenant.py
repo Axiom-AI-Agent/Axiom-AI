@@ -39,6 +39,7 @@ class Tenant(Base):
         default=True,
         server_default="true",
     )
+    telegram_bot_username = Column(String, nullable=True)
 
     # Timestamps
     created_at = Column(

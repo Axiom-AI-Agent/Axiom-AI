@@ -58,6 +58,24 @@ def skip_typing():
         yield
 
 
+@pytest.fixture(autouse=True)
+def no_staff_on_webhook():
+    """Student webhook tests must not hit staff_channels / link-code tables."""
+    with (
+        patch(
+            "api.webhooks.telegram.resolve_staff",
+            new_callable=AsyncMock,
+            return_value=None,
+        ),
+        patch(
+            "api.webhooks.telegram.try_complete_staff_link",
+            new_callable=AsyncMock,
+            return_value=False,
+        ),
+    ):
+        yield
+
+
 def test_telegram_webhook_text_for_known_student(client):
     with patch("api.webhooks.telegram.ensure_tenant_bot", new_callable=AsyncMock), patch(
         "api.webhooks.telegram.handle_text_message",
@@ -180,6 +198,9 @@ async def test_handle_text_new_user_requests_contact():
         new_callable=AsyncMock,
         return_value=None,
     ), patch(
+        "services.messaging.telegram_handlers.get_telegram_bot_display_name",
+        return_value="@DemoPhysicsBot",
+    ), patch(
         "services.messaging.telegram_handlers.send_telegram_contact_request",
         new_callable=AsyncMock,
     ) as mock_contact, patch(
@@ -189,6 +210,9 @@ async def test_handle_text_new_user_requests_contact():
         await handle_text_message("tenant-demo-physics", 555001, "/start")
 
     mock_contact.assert_awaited_once()
+    prompt = mock_contact.await_args.args[2]
+    assert "Welcome!" in prompt
+    assert "@DemoPhysicsBot" in prompt
     mock_pipeline.assert_not_called()
 
 
@@ -371,17 +395,20 @@ async def test_handle_photo_passes_media_url_into_pipeline():
 @pytest.mark.asyncio
 async def test_handle_voice_does_not_call_pipeline():
     with patch(
-        "services.messaging.telegram_handlers.send_telegram_message",
+        "services.messaging.telegram_handlers.resolve_student",
         new_callable=AsyncMock,
-    ) as mock_send, patch(
+        return_value=None,
+    ), patch(
+        "services.messaging.telegram_handlers.send_telegram_contact_request",
+        new_callable=AsyncMock,
+    ) as mock_contact, patch(
         "services.messaging.telegram_handlers.ChatPipeline.aprocess_message",
         new_callable=AsyncMock,
     ) as mock_pipeline:
         await handle_voice_message("tenant-demo-physics", 555001, {"file_id": "ogg-1"})
 
     mock_pipeline.assert_not_called()
-    mock_send.assert_awaited_once()
-    assert "Voice notes" in mock_send.await_args.args[2]
+    mock_contact.assert_awaited_once()
 
 
 @pytest.mark.asyncio
@@ -439,7 +466,11 @@ async def test_handle_text_new_user_does_not_show_typing():
 @pytest.mark.asyncio
 async def test_handle_voice_does_not_show_typing():
     with patch(
-        "services.messaging.telegram_handlers.send_telegram_message",
+        "services.messaging.telegram_handlers.resolve_student",
+        new_callable=AsyncMock,
+        return_value=None,
+    ), patch(
+        "services.messaging.telegram_handlers.send_telegram_contact_request",
         new_callable=AsyncMock,
     ), patch(
         "services.messaging.telegram_client.send_telegram_chat_action",

@@ -918,6 +918,20 @@ export type DashboardSummary = {
 export const DASHBOARD_API_BASE = DASHBOARD_API_URL;
 export const AI_API_BASE = AI_API_URL;
 
+export function queryDashboardAgent(
+  message: string,
+  tenantId?: string,
+): Promise<{ reply: string; staff_id: string; tenant_id: string }> {
+  return aiRequest(
+    "/dashboard/agent/query",
+    {
+      method: "POST",
+      body: JSON.stringify({ message }),
+    },
+    tenantId,
+  );
+}
+
 /* ---------- Tenant / Settings (Dashboard backend) ---------- */
 
 export interface TenantSummary {

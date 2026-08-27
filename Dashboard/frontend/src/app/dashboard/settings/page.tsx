@@ -12,6 +12,7 @@ import {
   Loader2,
   RefreshCw,
   Save,
+  Smartphone,
 } from "lucide-react";
 
 import { useToast } from "@/context/ToastContext";
@@ -21,6 +22,13 @@ import {
   TenantProfile,
   updateTenantProfile,
 } from "@/lib/api";
+import {
+  createTelegramLinkCode,
+  getTelegramLinkStatus,
+  unlinkTelegram,
+  type TelegramLinkCode,
+  type TelegramLinkStatus,
+} from "@/lib/auth-api";
 
 interface SettingsFormState {
   name: string;
@@ -90,6 +98,21 @@ export default function SettingsPage() {
     null,
   );
 
+  const [
+    telegramStatus,
+    setTelegramStatus,
+  ] = useState<TelegramLinkStatus | null>(null);
+
+  const [
+    telegramCode,
+    setTelegramCode,
+  ] = useState<TelegramLinkCode | null>(null);
+
+  const [
+    telegramBusy,
+    setTelegramBusy,
+  ] = useState(false);
+
   const loadProfile =
     useCallback(async () => {
       setLoading(true);
@@ -110,6 +133,13 @@ export default function SettingsPage() {
             tenantProfile,
           ),
         );
+
+        try {
+          setTelegramStatus(await getTelegramLinkStatus());
+        } catch (telegramError) {
+          console.error(telegramError);
+          setTelegramStatus(null);
+        }
       } catch (requestError) {
         console.error(
           requestError,
@@ -317,6 +347,96 @@ export default function SettingsPage() {
             </dd>
           </div>
         </dl>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-start gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-300">
+            <Smartphone className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="font-medium text-slate-900 dark:text-white">
+              Telegram staff access
+            </h2>
+            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+              Generate a one-time code, then send it to this institute&apos;s
+              Telegram bot. Students cannot gain staff access this way.
+            </p>
+          </div>
+        </div>
+
+        {telegramStatus?.linked ? (
+          <div className="mt-5 space-y-3">
+            <p className="text-sm text-emerald-300">
+              Linked
+              {telegramStatus.channel_address
+                ? ` (chat ${telegramStatus.channel_address})`
+                : ""}
+              .
+            </p>
+            <button
+              type="button"
+              disabled={telegramBusy}
+              onClick={async () => {
+                setTelegramBusy(true);
+                try {
+                  await unlinkTelegram();
+                  setTelegramStatus(await getTelegramLinkStatus());
+                  setTelegramCode(null);
+                  showToast("Telegram unlinked.", "success");
+                } catch (unlinkError) {
+                  console.error(unlinkError);
+                  showToast("Could not unlink Telegram.", "error");
+                } finally {
+                  setTelegramBusy(false);
+                }
+              }}
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-800 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200"
+            >
+              {telegramBusy ? "Working…" : "Unlink Telegram"}
+            </button>
+          </div>
+        ) : (
+          <div className="mt-5 space-y-3">
+            {telegramCode ? (
+              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
+                <p className="text-xs uppercase tracking-wide text-emerald-300">
+                  Send this code to the bot
+                </p>
+                <p className="mt-2 font-mono text-2xl font-semibold text-slate-900 dark:text-white">
+                  {telegramCode.code}
+                </p>
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                  Expires in {telegramCode.ttl_minutes} minutes
+                  {telegramCode.telegram_bot_username
+                    ? ` · @${telegramCode.telegram_bot_username.replace(/^@/, "")}`
+                    : ""}
+                  .
+                </p>
+              </div>
+            ) : null}
+            <button
+              type="button"
+              disabled={telegramBusy}
+              onClick={async () => {
+                setTelegramBusy(true);
+                try {
+                  const created = await createTelegramLinkCode();
+                  setTelegramCode(created);
+                  showToast("Link code generated.", "success");
+                } catch (codeError) {
+                  console.error(codeError);
+                  showToast("Could not generate a link code.", "error");
+                } finally {
+                  setTelegramBusy(false);
+                }
+              }}
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+            >
+              {telegramBusy ? "Working…" : "Generate Telegram code"}
+            </button>
+          </div>
+        )}
       </div>
 
       <form

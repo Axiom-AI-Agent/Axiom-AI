@@ -10,6 +10,7 @@ from services.tenant_config import (
     TenantBotTokenError,
     clear_bot_token_cache,
     get_bot_token_for_tenant,
+    get_telegram_bot_display_name,
 )
 
 
@@ -102,3 +103,23 @@ async def test_tokens_are_isolated_per_tenant():
     ):
         assert await get_bot_token_for_tenant("tenant-demo-physics") == "111:AAA"
         assert await get_bot_token_for_tenant("tenant-demo-chemistry") == "222:BBB"
+
+
+def test_telegram_bot_display_name_uses_username():
+    client = _tenant_client(
+        {
+            "id": "tenant-demo-physics",
+            "name": "Demo Physics Academy",
+            "telegram_bot_username": "DemoPhysicsBot",
+        }
+    )
+    with patch("services.tenant_config.get_supabase_client", return_value=client):
+        assert get_telegram_bot_display_name("tenant-demo-physics") == "@DemoPhysicsBot"
+
+
+def test_telegram_bot_display_name_falls_back_to_tenant_name():
+    client = _tenant_client(
+        {"id": "tenant-demo-physics", "name": "Demo Physics Academy", "telegram_bot_username": ""}
+    )
+    with patch("services.tenant_config.get_supabase_client", return_value=client):
+        assert get_telegram_bot_display_name("tenant-demo-physics") == "Demo Physics Academy"
