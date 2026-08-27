@@ -269,6 +269,36 @@ class DirectScheduleClient:
         return {"ok": True, "schedules": rows, "count": len(rows)}
 
 
+class McpScheduleClient:
+    """MCP subprocess schedule client."""
+
+    def __init__(self, tools_by_name: dict[str, Any]) -> None:
+        self._tools = tools_by_name
+
+    async def _invoke(self, tool_name: str, payload: dict[str, Any]) -> dict[str, Any]:
+        tool = self._tools.get(tool_name)
+        if tool is None:
+            return {"ok": False, "error": f"MCP tool unavailable: {tool_name}"}
+        raw = await tool.ainvoke(payload)
+        text = _mcp_text(raw)
+        return json.loads(text)
+
+    async def get_next_class(
+        self, *, tenant_id: str, student_id: str | None = None
+    ) -> dict[str, Any]:
+        return await self._invoke("get_next_class", {"tenant_id": tenant_id, "student_id": student_id or ""})
+
+    async def get_schedule_for_date(
+        self, *, tenant_id: str, student_id: str | None = None, date_str: str
+    ) -> dict[str, Any]:
+        return await self._invoke("get_schedule_for_date", {"tenant_id": tenant_id, "date": date_str, "student_id": student_id or ""})
+
+    async def get_week_schedule(
+        self, *, tenant_id: str, student_id: str | None = None
+    ) -> dict[str, Any]:
+        return await self._invoke("get_week_schedule", {"tenant_id": tenant_id, "student_id": student_id or ""})
+
+
 class McpDriveClient:
     def __init__(self, tools_by_name: dict[str, Any]) -> None:
         self._tools = tools_by_name

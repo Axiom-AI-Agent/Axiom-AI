@@ -39,6 +39,9 @@ MCP_CORE_TOOL_NAMES = frozenset(
         "reject_payment_escalation",
         "kb_search",
         "kb_ingest_status",
+        "get_next_class",
+        "get_schedule_for_date",
+        "get_week_schedule",
     }
 )
 MCP_DRIVE_TOOL_NAMES = frozenset({"drive_search", "drive_list"})
@@ -107,6 +110,7 @@ def build_mcp_server_config(*, include_drive: bool | None = None) -> dict:
         "axiom-memory": _stdio_server("mcp_servers.memory_server"),
         "axiom-crm": _stdio_server("mcp_servers.crm_server"),
         "axiom-rag": _stdio_server("mcp_servers.rag_server"),
+        "axiom-schedule": _stdio_server("mcp_servers.schedule_server"),
     }
     if include_drive:
         config["axiom-drive"] = _stdio_server("mcp_servers.drive_server")
