@@ -115,13 +115,13 @@
     "semantic_hash": ""
   },
   "Dashboard/backend/app/routes/students.py": {
-    "mtime": 1787815349.3536978,
-    "ast_hash": "a03d5939a642cc9c3ba4b7e3d911f435",
+    "mtime": 1787816257.8415942,
+    "ast_hash": "c590ebf5c4a7826f3a0b1bc4cd643ec8",
     "semantic_hash": ""
   },
   "Dashboard/backend/app/schemas/schemas.py": {
-    "mtime": 1787814848.675083,
-    "ast_hash": "2678f6e335c42484dbd060a299d77bad",
+    "mtime": 1787816242.5694845,
+    "ast_hash": "1799f1a439587b2ccf6e96a7d245a83b",
     "semantic_hash": ""
   },
   "Dashboard/backend/app/services/__init__.py": {
@@ -520,8 +520,8 @@
     "semantic_hash": ""
   },
   "AI-backend/src/agents/prompts/agent_prompts.py": {
-    "mtime": 1787815555.3776157,
-    "ast_hash": "8a530f808a07a91a90d77ed44745f48f",
+    "mtime": 1787816118.862217,
+    "ast_hash": "9f277eace1ffaac59f3b652ff67ac6c3",
     "semantic_hash": ""
   },
   "AI-backend/src/agents/prompts/tutoring_prompts.py": {
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "Dashboard/backend/app/services/dashboard_service.py": {
-    "mtime": 1787815345.6882727,
-    "ast_hash": "0f3a6b30f74b733253504f530d594c4b",
+    "mtime": 1787816354.1316109,
+    "ast_hash": "b7e6dde3996cca9015f897b713d16212",
     "semantic_hash": ""
   },
   "Dashboard/backend/sql/03_staff_auth.sql": {
@@ -1275,8 +1275,8 @@
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/app/dashboard/students/page.tsx": {
-    "mtime": 1787812560.5614665,
-    "ast_hash": "87b8a6b68e9c9d26f2784c624fe43062",
+    "mtime": 1787816338.857226,
+    "ast_hash": "df7199c5cdb35017e2addb0ce605f1fb",
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/app/layout.tsx": {
@@ -1335,13 +1335,13 @@
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/components/students/StudentFormModal.tsx": {
-    "mtime": 1786118664.9556923,
-    "ast_hash": "7784defead57f0acb3221de71b8dc452",
+    "mtime": 1787816338.8572178,
+    "ast_hash": "a7fc576c96ffc6c6fbbf1ab09d964563",
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/components/students/StudentTable.tsx": {
-    "mtime": 1787772683.8582027,
-    "ast_hash": "98d91d3c5d2130c22a9adbd425339090",
+    "mtime": 1787816305.2191744,
+    "ast_hash": "12eea8250db6a4c414b4514c2c6d3535",
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/context/AuthContext.tsx": {
@@ -1370,8 +1370,8 @@
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/lib/api.ts": {
-    "mtime": 1787812560.5627205,
-    "ast_hash": "bc1c798ee83d214dec5abcdade9f6600",
+    "mtime": 1787816271.2838178,
+    "ast_hash": "00b8b349fbb36336996c0a9af2b6e072",
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/lib/auth-api.ts": {
@@ -2042,6 +2042,16 @@
   "AI-backend/tests/test_field_definitions.py": {
     "mtime": 1787815367.6653817,
     "ast_hash": "b76e2d5691278b35009779141f6dcd2d",
+    "semantic_hash": ""
+  },
+  "Dashboard/backend/tests/test_student_extra_fields.py": {
+    "mtime": 1787816338.8636873,
+    "ast_hash": "85794abb60f206786d627931926c07d2",
+    "semantic_hash": ""
+  },
+  "Dashboard/frontend/src/components/students/extraFields.ts": {
+    "mtime": 1787816267.265892,
+    "ast_hash": "bb84779bdfd2ce981038ad335fe22d03",
     "semantic_hash": ""
   }
 }

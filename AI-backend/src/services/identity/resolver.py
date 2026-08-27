@@ -8,6 +8,11 @@ from typing import Any
 from loguru import logger
 
 from infrastructure.config import DEV_TENANT_ID
+from infrastructure.db.schema_compat import (
+    column_available,
+    is_undefined_column_error,
+    mark_column_missing,
+)
 from infrastructure.db.supabase_client import get_supabase_client
 from services.identity.context import IdentityContext
 from services.language import normalize_language_pref
@@ -224,14 +229,22 @@ class IdentityResolver:
     ) -> dict[str, dict[str, Any]]:
         if not class_ids:
             return {}
+        include_payments = column_available("subject_classes", "payments_enabled")
+        columns = "id, name, payments_enabled" if include_payments else "id, name"
         client = get_supabase_client()
-        response = (
-            client.table("subject_classes")
-            .select("id, name, payments_enabled")
-            .eq("tenant_id", tenant_id)
-            .in_("id", class_ids)
-            .execute()
-        )
+        try:
+            response = (
+                client.table("subject_classes")
+                .select(columns)
+                .eq("tenant_id", tenant_id)
+                .in_("id", class_ids)
+                .execute()
+            )
+        except Exception as exc:
+            if include_payments and is_undefined_column_error(exc, "payments_enabled"):
+                mark_column_missing("subject_classes", "payments_enabled")
+                return self._lookup_class_meta(tenant_id, class_ids)
+            raise
         return {
             row["id"]: {
                 "name": row.get("name"),

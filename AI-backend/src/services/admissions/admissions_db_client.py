@@ -9,6 +9,11 @@ from typing import Any
 from loguru import logger
 
 from domain.escalation_reasons import ENROLLMENT_PAYMENT_REASON, PAYMENT_RECEIPT
+from infrastructure.db.schema_compat import (
+    column_available,
+    is_undefined_column_error,
+    mark_column_missing,
+)
 from infrastructure.db.supabase_client import get_supabase_client
 
 
@@ -136,6 +141,24 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         client.table("students").delete().eq("tenant_id", tenant_id).eq("id", student_id).execute()
 
+    @staticmethod
+    def _class_select_columns() -> str:
+        base = "id, tenant_id, name, subject, grade, fee_amount, fee_cycle"
+        if column_available("subject_classes", "payments_enabled"):
+            return f"{base}, payments_enabled"
+        return base
+
+    def _execute_class_query(self, build_query):
+        try:
+            return build_query(self._class_select_columns()).execute()
+        except Exception as exc:
+            if column_available(
+                "subject_classes", "payments_enabled"
+            ) and is_undefined_column_error(exc, "payments_enabled"):
+                mark_column_missing("subject_classes", "payments_enabled")
+                return build_query(self._class_select_columns()).execute()
+            raise
+
     def list_classes(
         self,
         *,
@@ -144,34 +167,35 @@ class AdmissionsDbClient:
         grade: str | None = None,
     ) -> list[dict[str, Any]]:
         client = get_supabase_client()
-        query = (
-            client.table("subject_classes")
-            .select(
-                "id, tenant_id, name, subject, grade, fee_amount, "
-                "fee_cycle, payments_enabled"
+
+        def build_query(columns: str):
+            query = (
+                client.table("subject_classes")
+                .select(columns)
+                .eq("tenant_id", tenant_id)
             )
-            .eq("tenant_id", tenant_id)
-        )
-        if subject:
-            query = query.ilike("subject", f"%{subject}%")
-        if grade:
-            query = query.ilike("grade", f"%{grade}%")
-        response = query.order("subject").execute()
+            if subject:
+                query = query.ilike("subject", f"%{subject}%")
+            if grade:
+                query = query.ilike("grade", f"%{grade}%")
+            return query.order("subject")
+
+        response = self._execute_class_query(build_query)
         return response.data or []
 
     def get_class(self, *, tenant_id: str, class_id: str) -> dict[str, Any] | None:
         client = get_supabase_client()
-        response = (
-            client.table("subject_classes")
-            .select(
-                "id, tenant_id, name, subject, grade, fee_amount, "
-                "fee_cycle, payments_enabled"
+
+        def build_query(columns: str):
+            return (
+                client.table("subject_classes")
+                .select(columns)
+                .eq("tenant_id", tenant_id)
+                .eq("id", class_id)
+                .limit(1)
             )
-            .eq("tenant_id", tenant_id)
-            .eq("id", class_id)
-            .limit(1)
-            .execute()
-        )
+
+        response = self._execute_class_query(build_query)
         rows = response.data or []
         return rows[0] if rows else None
 

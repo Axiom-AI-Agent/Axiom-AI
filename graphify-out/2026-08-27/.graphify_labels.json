@@ -262,6 +262,5 @@
   "260": "log.py",
   "261": "rag.py",
   "262": "test_run_resource_agent_requires_mcp_clients_when_fallback_disabled",
-  "263": "main",
-  "264": "templates.py"
+  "263": "main"
 }

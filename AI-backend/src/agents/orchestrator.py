@@ -19,7 +19,13 @@ from loguru import logger
 from agents.nodes.admissions_agent import McpCrmClient, run_admissions_agent
 from agents.nodes.escalation_agent import run_escalation_agent
 from agents.nodes.payment_agent import run_payment_agent
-from agents.nodes.resource_agent import DirectDriveClient, McpDriveClient, McpRagClient, run_resource_agent
+from agents.nodes.resource_agent import (
+    DirectDriveClient,
+    McpDriveClient,
+    McpRagClient,
+    McpScheduleClient,
+    run_resource_agent,
+)
 from agents.prompts import build_direct_system_prompt, build_merge_system_prompt
 from agents.router import QueryRouter, get_query_router
 from agents.state import AgentState

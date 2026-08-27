@@ -184,7 +184,11 @@ def test_identity_resolver_loads_language_pref():
             "_lookup_enrollments",
             return_value=[{"class_id": "class-1", "status": "active"}],
         ),
-        patch.object(resolver, "_lookup_class_names", return_value={"class-1": "A/L Physics"}),
+        patch.object(
+            resolver,
+            "_lookup_class_meta",
+            return_value={"class-1": {"name": "A/L Physics", "payments_enabled": True}},
+        ),
     ):
         ctx = resolver._build_context(tenant, "94771234567", student)
     assert ctx.language_pref == "ta"
