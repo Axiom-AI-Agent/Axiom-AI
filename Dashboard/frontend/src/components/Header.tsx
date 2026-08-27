@@ -22,11 +22,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-border bg-surface px-6 py-3">
+    <header className="flex items-center justify-between gap-4 border-b border-border bg-surface/90 px-6 py-3 backdrop-blur-sm">
       {onMenuClick ? (
         <button
           onClick={onMenuClick}
-          className="rounded-md p-2 text-muted transition-colors hover:bg-hover hover:text-fg lg:hidden"
+          className="rounded-lg p-2 text-muted transition-colors hover:bg-hover hover:text-fg lg:hidden"
           aria-label="Open sidebar"
           type="button"
         >
@@ -47,7 +47,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
       <div className="flex items-center gap-3">
         {user ? (
-          <div className="hidden items-center gap-2 rounded-md border border-border px-3 py-1.5 sm:flex">
+          <div className="hidden items-center gap-2 rounded-lg border border-border bg-bg/60 px-3 py-1.5 sm:flex">
             <User className="h-4 w-4 text-muted" />
             <div className="text-xs">
               <p className="font-medium text-fg">{user.name}</p>
@@ -60,7 +60,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           type="button"
           onClick={toggleTheme}
           whileTap={{ scale: 0.98 }}
-          className="rounded-md p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
+          className="rounded-lg p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
           aria-label="Toggle dark mode"
         >
           {theme === "dark" ? (
@@ -74,7 +74,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           type="button"
           onClick={handleLogout}
           whileTap={{ scale: 0.98 }}
-          className="rounded-md p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
+          className="rounded-lg p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
           aria-label="Logout"
           title="Logout"
         >

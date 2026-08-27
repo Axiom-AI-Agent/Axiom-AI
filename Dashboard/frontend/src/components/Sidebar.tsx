@@ -116,10 +116,10 @@ function NavLink({
       href={item.href}
       onClick={onClose}
       className={cn(
-        "flex items-center space-x-3 rounded-md px-3 py-2 text-sm transition-colors",
+        "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm transition-colors",
         active
-          ? "bg-indigo-soft/50 font-medium text-paper shadow-[inset_2px_0_0_0_var(--blue)]"
-          : "text-paper/75 hover:bg-indigo-soft/40 hover:text-paper",
+          ? "bg-blue/20 font-medium text-paper shadow-[inset_2px_0_0_0_var(--blue)]"
+          : "text-paper/70 hover:bg-white/10 hover:text-paper",
       )}
     >
       {item.icon}
@@ -134,7 +134,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-indigo-soft bg-indigo p-4 text-paper transition-transform duration-300 ease-in-out lg:relative",
+        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-white/10 bg-[linear-gradient(180deg,#152238_0%,#1a2744_55%,#152033_100%)] p-4 text-paper transition-transform duration-300 ease-in-out lg:relative",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:flex lg:translate-x-0",
       )}
@@ -177,7 +177,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      <nav className="mt-auto border-t border-indigo-soft pt-4">
+      <nav className="mt-auto border-t border-white/10 pt-4">
         <NavLink
           item={settingsNavItem}
           active={

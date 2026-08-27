@@ -1,7 +1,8 @@
 import os
 
 DEFAULT_PRODUCTION_ORIGIN = "https://axiom-dashboard-xi.vercel.app"
-DEFAULT_ORIGIN_REGEX = r"https://axiom-dashboard(-[a-z0-9]+)*\.vercel\.app"
+# Match all Vercel deployments for this project (production + git previews).
+DEFAULT_ORIGIN_REGEX = r"https://axiom-dashboard[\w.-]*\.vercel\.app"
 
 
 def build_cors_origins(
@@ -12,6 +13,8 @@ def build_cors_origins(
     origins = {
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
         DEFAULT_PRODUCTION_ORIGIN,
     }
     for raw in (

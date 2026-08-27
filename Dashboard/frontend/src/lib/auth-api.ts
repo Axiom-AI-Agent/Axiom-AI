@@ -35,13 +35,25 @@ async function authRequest<T>(
   path: string,
   options: RequestInit,
 ): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    throw new AuthApiError(
+      error instanceof TypeError
+        ? "Cannot reach the Dashboard API"
+        : "Network request failed",
+      0,
+      error,
+    );
+  }
 
   if (!response.ok) {
     let details: unknown;
@@ -59,9 +71,7 @@ async function authRequest<T>(
     );
   }
 
-  const data: T = await response.json();
-
-  return data;
+  return (await response.json()) as T;
 }
 
 export function loginStaff(
@@ -70,6 +80,13 @@ export function loginStaff(
   return authRequest<AuthResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+export function loginDemo(): Promise<AuthResponse> {
+  return authRequest<AuthResponse>("/auth/demo-login", {
+    method: "POST",
+    body: JSON.stringify({}),
   });
 }
 

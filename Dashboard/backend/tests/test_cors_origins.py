@@ -28,4 +28,8 @@ def test_vercel_preview_origin_matches_default_regex():
     pattern = re.compile(DEFAULT_ORIGIN_REGEX)
     assert pattern.fullmatch("https://axiom-dashboard-xi.vercel.app")
     assert pattern.fullmatch("https://axiom-dashboard-git-main-team.vercel.app")
+    assert pattern.fullmatch(
+        "https://axiom-dashboard-git-feat-schedule-ui-imasha4.vercel.app"
+    )
     assert not pattern.fullmatch("http://localhost:3000")
+    assert not pattern.fullmatch("https://evil-app.vercel.app")

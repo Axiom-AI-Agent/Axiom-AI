@@ -37,7 +37,7 @@ export default function MetricCard({
           {icon ? (
             <div
               className={cn(
-                "mr-4 flex items-center justify-center rounded-md p-2.5",
+                "mr-4 flex items-center justify-center rounded-lg p-2.5",
                 attention
                   ? "bg-blue/15 text-blue"
                   : healthy

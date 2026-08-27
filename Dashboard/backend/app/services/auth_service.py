@@ -203,6 +203,79 @@ def authenticate_staff(
     return staff
 
 
+DEMO_TENANT_ID = "tenant-demo-physics"
+DEMO_STAFF_ID = "staff-physics-001"
+DEMO_EMAIL = "demo.physics@axiom.ai"
+DEMO_PASSWORD = "DemoPhysics123!"
+DEMO_STAFF_NAME = "Demo Physics Admin"
+
+
+def ensure_demo_physics_staff(
+    db: Session,
+) -> StaffUser:
+    """
+    Make sure the hackathon demo admin can sign in.
+
+    Creates the demo tenant/staff if missing, or refreshes email/password
+    on the seeded staff row so Proceed to Demo keeps working.
+    """
+    tenant = (
+        db.query(Tenant)
+        .filter(Tenant.id == DEMO_TENANT_ID)
+        .first()
+    )
+
+    if tenant is None:
+        tenant = Tenant(
+            id=DEMO_TENANT_ID,
+            name="Demo Physics",
+            slug="demo-physics",
+            status=TenantStatus.ACTIVE,
+        )
+        db.add(tenant)
+        db.flush()
+
+    password_hash = hash_password(DEMO_PASSWORD)
+
+    staff = (
+        db.query(StaffUser)
+        .filter(StaffUser.id == DEMO_STAFF_ID)
+        .first()
+    )
+
+    if staff is None:
+        staff = (
+            db.query(StaffUser)
+            .filter(StaffUser.email == DEMO_EMAIL)
+            .first()
+        )
+
+    if staff is None:
+        staff = StaffUser(
+            id=DEMO_STAFF_ID,
+            tenant_id=tenant.id,
+            name=DEMO_STAFF_NAME,
+            email=DEMO_EMAIL,
+            password_hash=password_hash,
+            role=StaffRole.ADMIN,
+            is_active=True,
+        )
+        db.add(staff)
+    else:
+        staff.tenant_id = tenant.id
+        staff.name = staff.name or DEMO_STAFF_NAME
+        staff.email = DEMO_EMAIL
+        staff.password_hash = password_hash
+        staff.role = StaffRole.ADMIN
+        staff.is_active = True
+
+    db.commit()
+    db.refresh(staff)
+    # Ensure tenant is available for AuthResponse.institution_name
+    _ = staff.tenant
+    return staff
+
+
 def register_organization(
     db: Session,
     payload:

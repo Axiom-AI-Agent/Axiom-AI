@@ -33,6 +33,7 @@ from app.services.staff_telegram_service import (
 from app.services.auth_service import (
     authenticate_staff,
     create_access_token,
+    ensure_demo_physics_staff,
     hash_password,
     register_organization,
 )
@@ -118,6 +119,18 @@ def login(
         payload.password,
     )
 
+    # Demo credentials: self-heal missing/stale seeded staff rows.
+    if staff is None and (
+        payload.email.strip().lower() == "demo.physics@axiom.ai"
+        and payload.password == "DemoPhysics123!"
+    ):
+        ensure_demo_physics_staff(db)
+        staff = authenticate_staff(
+            db,
+            payload.email,
+            payload.password,
+        )
+
     if staff is None:
         raise HTTPException(
             status_code=401,
@@ -128,12 +141,54 @@ def login(
         staff,
     )
 
+    institution_name = (
+        staff.tenant.name
+        if staff.tenant is not None
+        else staff.tenant_id
+    )
+
     return AuthResponse(
         access_token=token,
         user=AuthUserResponse(
             id=staff.id,
             tenant_id=staff.tenant_id,
-            institution_name=staff.tenant.name,
+            institution_name=institution_name,
+            name=staff.name,
+            email=staff.email,
+            role=staff.role.value,
+        ),
+    )
+
+
+@router.post(
+    "/demo-login",
+    response_model=AuthResponse,
+)
+def demo_login(
+    db: Session = Depends(get_db),
+):
+    """Public hackathon shortcut — ensures demo admin exists, then signs in."""
+    try:
+        staff = ensure_demo_physics_staff(db)
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not prepare demo login: {error}",
+        ) from error
+
+    token = create_access_token(staff)
+    institution_name = (
+        staff.tenant.name
+        if staff.tenant is not None
+        else "Demo Physics"
+    )
+
+    return AuthResponse(
+        access_token=token,
+        user=AuthUserResponse(
+            id=staff.id,
+            tenant_id=staff.tenant_id,
+            institution_name=institution_name,
             name=staff.name,
             email=staff.email,
             role=staff.role.value,
