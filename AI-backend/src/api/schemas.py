@@ -6,7 +6,14 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-from domain.enums import PaymentStatus, TenantStatus, MessageRole
+from domain.enums import (
+    DayOfWeek,
+    OccurrenceStatus,
+    PaymentStatus,
+    ScheduleStatus,
+    TenantStatus,
+    MessageRole,
+)
 
 
 class HealthResponse(BaseModel):
@@ -260,3 +267,110 @@ class IngestDocumentDeleteResponse(BaseModel):
     chunks_deleted: int
     registry_deleted: bool
     points_count: Optional[int] = None
+
+
+# ---------------------------------------------------------------------------
+# Schedule / Timetable schemas
+# ---------------------------------------------------------------------------
+
+
+class ScheduleCreate(BaseModel):
+    class_id: str
+    teacher_id: Optional[str] = None
+    day_of_week: DayOfWeek
+    start_time: str = Field(..., description="HH:MM format, e.g. '09:00'")
+    end_time: str = Field(..., description="HH:MM format, e.g. '10:30'")
+    room: Optional[str] = None
+    effective_from: Optional[str] = None
+    effective_until: Optional[str] = None
+
+
+class ScheduleUpdate(BaseModel):
+    teacher_id: Optional[str] = None
+    day_of_week: Optional[DayOfWeek] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    room: Optional[str] = None
+    effective_from: Optional[str] = None
+    effective_until: Optional[str] = None
+    status: Optional[ScheduleStatus] = None
+
+
+class ScheduleResponse(BaseModel):
+    id: str
+    tenant_id: str
+    class_id: str
+    teacher_id: Optional[str] = None
+    day_of_week: str
+    start_time: str
+    end_time: str
+    room: Optional[str] = None
+    status: str
+    effective_from: str
+    effective_until: Optional[str] = None
+    created_at: str
+    updated_at: str
+    # Joined fields from related tables
+    class_name: Optional[str] = None
+    subject: Optional[str] = None
+    teacher_name: Optional[str] = None
+
+
+class ScheduleListResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    schedules: list[ScheduleResponse]
+
+
+class ScheduleDetailResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    schedule: ScheduleResponse
+
+
+class ExceptionCreate(BaseModel):
+    schedule_id: str
+    exception_date: str = Field(..., description="YYYY-MM-DD format")
+    status: OccurrenceStatus = OccurrenceStatus.CANCELLED
+    new_start_time: Optional[str] = None
+    new_end_time: Optional[str] = None
+    new_room: Optional[str] = None
+    new_date: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class ExceptionResponse(BaseModel):
+    id: str
+    tenant_id: str
+    schedule_id: str
+    exception_date: str
+    status: str
+    new_start_time: Optional[str] = None
+    new_end_time: Optional[str] = None
+    new_room: Optional[str] = None
+    new_date: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: str
+
+
+class ExceptionListResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    exceptions: list[ExceptionResponse]
+
+
+class ExceptionDeleteResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    exception_id: str
+
+
+class ScheduleQueryRequest(BaseModel):
+    student_id: Optional[str] = None
+
+
+class ScheduleQueryResponse(BaseModel):
+    ok: bool = True
+    tenant_id: str
+    date: str
+    schedules: list[ScheduleResponse]
