@@ -80,7 +80,7 @@ export default function LogsPage() {
           <div className="flex items-center gap-3">
             <ScrollText className="h-6 w-6 text-blue-500" />
 
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-semibold text-slate-900 ">
               Message Logs
             </h1>
           </div>
@@ -94,7 +94,7 @@ export default function LogsPage() {
           type="button"
           onClick={() => void loadLogs()}
           disabled={loading}
-          className="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+          className="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-hover disabled:opacity-50 dark:border-slate-700 dark:text-muted dark:hover:bg-slate-800"
         >
           <RefreshCw
             className={`h-4 w-4 ${
@@ -114,7 +114,7 @@ export default function LogsPage() {
             setSearch(event.target.value)
           }
           placeholder="Search by student, channel, intent..."
-          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 "
         />
       </div>
 
@@ -137,7 +137,7 @@ export default function LogsPage() {
       ) : (
         <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
           <table className="min-w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+            <thead className="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-muted">
               <tr>
                 <th className="px-4 py-3">
                   Time
@@ -175,7 +175,7 @@ export default function LogsPage() {
                       : "—"}
                   </td>
 
-                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">
+                  <td className="px-4 py-3 font-medium text-slate-900 ">
                     {log.student_name ??
                       "Unknown student"}
                   </td>
@@ -184,11 +184,11 @@ export default function LogsPage() {
                     {log.student_id}
                   </td>
 
-                  <td className="px-4 py-3 capitalize text-slate-700 dark:text-slate-300">
+                  <td className="px-4 py-3 capitalize text-slate-700 dark:text-muted">
                     {log.channel || "—"}
                   </td>
 
-                  <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+                  <td className="px-4 py-3 text-slate-700 dark:text-muted">
                     {log.intent
                       ? log.intent.replaceAll(
                           "_",

@@ -132,10 +132,10 @@ export default function LoginPage() {
     loading || demoLoading;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 text-white">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-xl">
+    <main className="flex min-h-screen items-center justify-center bg-ink px-4 text-paper">
+      <div className="w-full max-w-md rounded-md border border-border bg-indigo p-8 ">
         <div className="mb-7 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-ember">
             <Building2 className="h-6 w-6" />
           </div>
 
@@ -143,7 +143,7 @@ export default function LoginPage() {
             Staff Login
           </h1>
 
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted">
             Sign in to your institution dashboard.
           </p>
         </div>
@@ -154,7 +154,7 @@ export default function LoginPage() {
             void handleDemoLogin()
           }
           disabled={busy}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"        >
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-4 py-3 font-medium text-ink transition hover:bg-ember/90 disabled:cursor-not-allowed disabled:opacity-50"        >
           {demoLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
@@ -166,22 +166,22 @@ export default function LoginPage() {
             : "Proceed to Demo"}
         </button>
 
-        <p className="mt-2 text-center text-xs text-slate-500">
+        <p className="mt-2 text-center text-xs text-muted">
           Click to open the preconfigured Demo Physics dashboard.
         </p>
 
         <div className="my-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-slate-800" />
+          <div className="h-px flex-1 bg-surface" />
 
-          <span className="text-xs uppercase tracking-wider text-slate-500">
+          <span className="text-xs uppercase tracking-wider text-muted">
             or sign in
           </span>
 
-          <div className="h-px flex-1 bg-slate-800" />
+          <div className="h-px flex-1 bg-surface" />
         </div>
 
         {error && (
-          <div className="mb-5 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+          <div className="mb-5 rounded-lg border border-border bg-surface p-3 text-sm text-fg">
             {error}
           </div>
         )}
@@ -191,7 +191,7 @@ export default function LoginPage() {
           className="space-y-4"
         >
           <label className="block space-y-2">
-            <span className="text-sm text-slate-300">
+            <span className="text-sm text-muted">
               Email
             </span>
 
@@ -205,12 +205,12 @@ export default function LoginPage() {
                 )
               }
               disabled={busy}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500 disabled:opacity-50"
+              className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft disabled:opacity-50"
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm text-slate-300">
+            <span className="text-sm text-muted">
               Password
             </span>
 
@@ -224,14 +224,14 @@ export default function LoginPage() {
                 )
               }
               disabled={busy}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500 disabled:opacity-50"
+              className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft disabled:opacity-50"
             />
           </label>
 
           <button
             type="submit"
             disabled={busy}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 font-medium hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-4 py-2.5 font-medium hover:bg-ember/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading && (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -241,12 +241,12 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-400">
+        <p className="mt-6 text-center text-sm text-muted">
           New institution?{" "}
 
           <Link
             href="/register"
-            className="font-medium text-blue-400 hover:text-blue-300"
+            className="font-medium text-muted hover:text-muted"
           >
             Create organization
           </Link>

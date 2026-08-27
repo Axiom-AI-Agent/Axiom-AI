@@ -13,10 +13,18 @@ import {
   Users,
 } from "lucide-react";
 
-import MetricCard from "@/components/MetricCard";
 import ChartCard from "@/components/ChartCard";
+import MetricCard from "@/components/MetricCard";
 import { useTenant } from "@/context/TenantContext";
 import { DashboardOverview, getDashboardOverview } from "@/lib/api";
+import {
+  btnPrimary,
+  btnQuiet,
+  errorBanner,
+  pageSubtitle,
+  pageTitle,
+  surfaceCard,
+} from "@/lib/ui";
 
 export default function OverviewPage() {
   const { tenantId } = useTenant();
@@ -48,16 +56,12 @@ export default function OverviewPage() {
     return (
       <div className="space-y-6">
         <div>
-          <div className="h-8 w-56 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
-          <div className="mt-2 h-4 w-72 animate-pulse rounded bg-slate-200 dark:bg-slate-800" />
+          <div className="h-8 w-56 animate-pulse rounded-md bg-hover" />
+          <div className="mt-2 h-4 w-72 animate-pulse rounded-md bg-hover" />
         </div>
-
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-28 animate-pulse rounded-xl bg-slate-200 dark:bg-slate-800"
-            />
+            <div key={index} className="h-28 animate-pulse rounded-md bg-hover" />
           ))}
         </div>
       </div>
@@ -66,20 +70,19 @@ export default function OverviewPage() {
 
   if (error || !data) {
     return (
-      <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6">
-        <div className="flex items-center gap-3 text-red-200">
-          <AlertTriangle className="h-5 w-5" />
+      <div className={errorBanner}>
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ember" />
+        <div>
           <p>{error ?? "Dashboard data is unavailable."}</p>
+          <button
+            type="button"
+            onClick={() => void loadOverview()}
+            className={`${btnQuiet} mt-4`}
+          >
+            <RefreshCw className="h-4 w-4" />
+            Try again
+          </button>
         </div>
-
-        <button
-          type="button"
-          onClick={() => void loadOverview()}
-          className="mt-4 flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Try again
-        </button>
       </div>
     );
   }
@@ -88,10 +91,8 @@ export default function OverviewPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Dashboard Overview
-          </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <h1 className={pageTitle}>Dashboard Overview</h1>
+          <p className={pageSubtitle}>
             Live operational data for {data.tenant_id}.
           </p>
         </div>
@@ -99,7 +100,7 @@ export default function OverviewPage() {
         <button
           type="button"
           onClick={() => void loadOverview()}
-          className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 shadow-sm transition-colors"
+          className={btnQuiet}
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
@@ -128,6 +129,8 @@ export default function OverviewPage() {
             title="Requires Attention"
             value={data.open_escalations}
             icon={<AlertTriangle className="h-5 w-5" />}
+            attention={data.open_escalations > 0}
+            healthy={data.open_escalations === 0}
           />
         </Link>
 
@@ -139,6 +142,8 @@ export default function OverviewPage() {
             title="Payment Receipts"
             value={data.open_payment_receipts}
             icon={<CreditCard className="h-5 w-5" />}
+            attention={data.open_payment_receipts > 0}
+            healthy={data.open_payment_receipts === 0}
           />
         </Link>
 
@@ -150,6 +155,8 @@ export default function OverviewPage() {
             title="Talk to Tutor"
             value={data.open_talk_to_tutor}
             icon={<UserCheck className="h-5 w-5" />}
+            attention={data.open_talk_to_tutor > 0}
+            healthy={data.open_talk_to_tutor === 0}
           />
         </Link>
 
@@ -158,6 +165,8 @@ export default function OverviewPage() {
             title="Pending Enrollments"
             value={data.pending_enrollments}
             icon={<MessageSquare className="h-5 w-5" />}
+            attention={data.pending_enrollments > 0}
+            healthy={data.pending_enrollments === 0}
           />
         </Link>
       </div>
@@ -170,50 +179,48 @@ export default function OverviewPage() {
           data={[
             data.open_payment_receipts,
             data.open_talk_to_tutor,
-            Math.max(0, data.open_escalations - data.open_payment_receipts - data.open_talk_to_tutor),
+            Math.max(
+              0,
+              data.open_escalations -
+                data.open_payment_receipts -
+                data.open_talk_to_tutor,
+            ),
           ]}
         />
 
-        <div className="flex flex-col gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4">
           <MetricCard
             title="Active Students"
             value={data.students - data.pending_enrollments}
-            icon={<UserCheck className="h-5 w-5 text-emerald-500" />}
+            icon={<UserCheck className="h-5 w-5" />}
+            healthy
           />
           <MetricCard
             title="Pending Students"
             value={data.pending_enrollments}
-            icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
+            icon={<AlertTriangle className="h-5 w-5" />}
+            attention={data.pending_enrollments > 0}
+            healthy={data.pending_enrollments === 0}
           />
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
-        <h2 className="font-semibold text-slate-900 dark:text-white text-lg mb-4">Quick actions</h2>
+      <div className={`${surfaceCard} p-6`}>
+        <h2 className="font-display mb-4 text-lg font-semibold text-heading">
+          Quick actions
+        </h2>
         <div className="flex flex-wrap gap-3 text-sm">
-          <Link
-            href="/dashboard/inbox?status=open"
-            className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
-          >
+          <Link href="/dashboard/inbox?status=open" className={btnQuiet}>
             Open inbox
           </Link>
-          <Link
-            href="/dashboard/messages"
-            className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
-          >
+          <Link href="/dashboard/messages" className={btnQuiet}>
             Staff messages
           </Link>
-          <Link
-            href="/dashboard/classes"
-            className="inline-flex items-center gap-2 rounded-lg border border-emerald-600 bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500 transition-colors shadow-sm font-medium"
-          >
+          <Link href="/dashboard/classes" className={btnPrimary}>
             <Megaphone className="h-4 w-4" />
             Broadcast to class
           </Link>
-          <Link
-            href="/dashboard/ingest"
-            className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors shadow-sm font-medium"
-          >
+          <Link href="/dashboard/ingest" className={btnQuiet}>
             Upload tutor notes
           </Link>
         </div>

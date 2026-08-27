@@ -1,12 +1,11 @@
 "use client";
 
 import { FormEvent } from "react";
-import { Loader2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
+import Modal from "@/components/ui/Modal";
 import { OnboardingFieldDefinition, SubjectClass } from "@/lib/api";
-
-const inputClassName =
-  "w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm";
+import { btnPrimary, btnQuiet, inputClass } from "@/lib/ui";
 
 export interface StudentFormState {
   name: string;
@@ -37,20 +36,22 @@ function ExtraFieldInput({
   onChange: (value: string) => void;
 }) {
   const label = (
-    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+    <span className="text-sm font-medium text-fg">
       {field.label}
-      {field.required ? <span className="text-red-500"> *</span> : null}
+      {field.required ? <span className="text-ember"> *</span> : null}
     </span>
   );
 
   if (field.field_type === "boolean") {
     return (
-      <label className="flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
+      <label className="flex items-center gap-3 rounded-md border border-border px-3 py-2">
         <input
           type="checkbox"
           checked={value === "true"}
-          onChange={(event) => onChange(event.target.checked ? "true" : "false")}
-          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+          onChange={(event) =>
+            onChange(event.target.checked ? "true" : "false")
+          }
+          className="h-4 w-4 rounded-sm border-border text-ember focus:ring-indigo-soft"
         />
         {label}
       </label>
@@ -65,7 +66,7 @@ function ExtraFieldInput({
           required={field.required}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className={inputClassName}
+          className={inputClass}
         >
           <option value="">{field.required ? "Select…" : "Not set"}</option>
           {(field.options ?? []).map((option) => (
@@ -93,7 +94,7 @@ function ExtraFieldInput({
         required={field.required}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={inputClassName}
+        className={inputClass}
       />
     </label>
   );
@@ -110,144 +111,106 @@ export default function StudentFormModal({
   onSubmit,
 }: StudentFormModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button
-        type="button"
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
-        aria-label="Close dialog"
-      />
+    <Modal
+      open
+      onClose={onClose}
+      title={mode === "create" ? "Add student" : "Edit student"}
+      description={
+        mode === "create"
+          ? "Create a new student record."
+          : "Update this student's profile."
+      }
+    >
+      <form id="student-form" onSubmit={onSubmit} className="space-y-4">
+        <label className="block space-y-2">
+          <span className="text-sm font-medium text-fg">Name</span>
+          <input
+            value={form.name}
+            onChange={(event) =>
+              onChange({ ...form, name: event.target.value })
+            }
+            className={inputClass}
+          />
+        </label>
 
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="student-form-title"
-        className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl"
-      >
-        <div className="mb-5 flex items-start justify-between gap-4">
-          <div>
-            <h2
-              id="student-form-title"
-              className="text-lg font-semibold text-slate-900 dark:text-white"
-            >
-              {mode === "create" ? "Add student" : "Edit student"}
-            </h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              {mode === "create"
-                ? "Create a new student record."
-                : "Update this student's profile."}
-            </p>
+        <label className="block space-y-2">
+          <span className="text-sm font-medium text-fg">Phone</span>
+          <input
+            required
+            value={form.phone}
+            onChange={(event) =>
+              onChange({ ...form, phone: event.target.value })
+            }
+            className={inputClass}
+          />
+        </label>
+
+        {fields.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {fields.map((field) => (
+              <ExtraFieldInput
+                key={field.field_key}
+                field={field}
+                value={form.extra_fields[field.field_key] ?? ""}
+                onChange={(value) =>
+                  onChange({
+                    ...form,
+                    extra_fields: {
+                      ...form.extra_fields,
+                      [field.field_key]: value,
+                    },
+                  })
+                }
+              />
+            ))}
           </div>
+        ) : null}
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition-colors"
-            aria-label="Close"
+        <label className="block space-y-2">
+          <span className="text-sm font-medium text-fg">Language</span>
+          <select
+            value={form.language_pref}
+            onChange={(event) =>
+              onChange({ ...form, language_pref: event.target.value })
+            }
+            className={inputClass}
           >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+            <option value="en">English</option>
+            <option value="si">Sinhala</option>
+            <option value="ta">Tamil</option>
+          </select>
+        </label>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        {mode === "create" ? (
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Name</span>
-            <input
-              value={form.name}
-              onChange={(event) =>
-                onChange({ ...form, name: event.target.value })
-              }
-              className={inputClassName}
-            />
-          </label>
-
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Phone</span>
-            <input
-              required
-              value={form.phone}
-              onChange={(event) =>
-                onChange({ ...form, phone: event.target.value })
-              }
-              className={inputClassName}
-            />
-          </label>
-
-          {fields.length > 0 && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {fields.map((field) => (
-                <ExtraFieldInput
-                  key={field.field_key}
-                  field={field}
-                  value={form.extra_fields[field.field_key] ?? ""}
-                  onChange={(value) =>
-                    onChange({
-                      ...form,
-                      extra_fields: {
-                        ...form.extra_fields,
-                        [field.field_key]: value,
-                      },
-                    })
-                  }
-                />
-              ))}
-            </div>
-          )}
-
-          <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Language</span>
+            <span className="text-sm font-medium text-fg">Initial class</span>
             <select
-              value={form.language_pref}
+              value={form.class_id}
               onChange={(event) =>
-                onChange({ ...form, language_pref: event.target.value })
+                onChange({ ...form, class_id: event.target.value })
               }
-              className={inputClassName}
+              className={inputClass}
             >
-              <option value="en">English</option>
-              <option value="si">Sinhala</option>
-              <option value="ta">Tamil</option>
+              <option value="">No enrollment yet</option>
+              {classes.map((subjectClass) => (
+                <option key={subjectClass.id} value={subjectClass.id}>
+                  {subjectClass.subject}
+                </option>
+              ))}
             </select>
           </label>
+        ) : null}
 
-          {mode === "create" && (
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Initial class</span>
-              <select
-                value={form.class_id}
-                onChange={(event) =>
-                  onChange({ ...form, class_id: event.target.value })
-                }
-                className={inputClassName}
-              >
-                <option value="">No enrollment yet</option>
-                {classes.map((subjectClass) => (
-                  <option key={subjectClass.id} value={subjectClass.id}>
-                    {subjectClass.subject}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-
-          <div className="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-5 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50 shadow-sm transition-colors"
-            >
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {mode === "create" ? "Create student" : "Save changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex justify-end gap-2 border-t border-border pt-4">
+          <button type="button" onClick={onClose} className={btnQuiet}>
+            Cancel
+          </button>
+          <button type="submit" disabled={saving} className={btnPrimary}>
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {mode === "create" ? "Create student" : "Save changes"}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

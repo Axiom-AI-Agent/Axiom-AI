@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import {
+  BarChart3,
   BookOpen,
   Calendar,
   FileUp,
@@ -18,7 +18,6 @@ import {
   UserCog,
   Users,
   X,
-  BarChart3,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -103,16 +102,39 @@ const settingsNavItem: NavItem = {
   icon: <Settings className="h-5 w-5" />,
 };
 
-export default function Sidebar({
-  isOpen,
+function NavLink({
+  item,
+  active,
   onClose,
-}: SidebarProps) {
+}: {
+  item: NavItem;
+  active: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <Link
+      href={item.href}
+      onClick={onClose}
+      className={cn(
+        "flex items-center space-x-3 rounded-md px-3 py-2 text-sm transition-colors",
+        active
+          ? "bg-indigo-soft/50 font-medium text-paper shadow-[inset_2px_0_0_0_var(--ember)]"
+          : "text-paper/75 hover:bg-indigo-soft/40 hover:text-paper",
+      )}
+    >
+      {item.icon}
+      <span>{item.label}</span>
+    </Link>
+  );
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-slate-200 bg-white p-4 text-slate-700 transition-transform duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 lg:relative",
+        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-indigo-soft bg-indigo p-4 text-paper transition-transform duration-300 ease-in-out lg:relative",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:flex lg:translate-x-0",
       )}
@@ -120,13 +142,8 @@ export default function Sidebar({
       <div className="mb-6 flex items-center justify-between px-2 lg:justify-start">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo.png"
-            alt="Axiom AI Logo"
-            className="h-8 w-auto"
-          />
-
-          <h2 className="text-base font-semibold tracking-tight text-slate-900 dark:text-white">
+          <img src="/logo.png" alt="Axiom AI Logo" className="h-8 w-auto" />
+          <h2 className="font-display text-base font-semibold tracking-tight text-paper">
             Axiom AI
           </h2>
         </div>
@@ -134,16 +151,15 @@ export default function Sidebar({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white lg:hidden"
+          className="rounded-md p-2 text-paper/70 hover:bg-indigo-soft hover:text-paper lg:hidden"
           aria-label="Close sidebar"
         >
           <X className="h-5 w-5" />
         </button>
       </div>
 
-      <nav className="flex-1 space-y-2">
+      <nav className="flex-1 space-y-1">
         {mainNavItems.map((item) => {
-          // Exact match for Analytics so Class Analytics is not double-highlighted.
           const active =
             item.href === "/dashboard/analytics"
               ? pathname === item.href
@@ -151,39 +167,25 @@ export default function Sidebar({
                 Boolean(pathname?.startsWith(`${item.href}/`));
 
           return (
-            <Link
+            <NavLink
               key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ease-in-out",
-                active
-                  ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
-                  : "hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-slate-800/50 dark:hover:text-white",
-              )}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </Link>
+              item={item}
+              active={active}
+              onClose={onClose}
+            />
           );
         })}
       </nav>
 
-      <nav className="mt-auto border-t border-slate-200 pt-4 dark:border-slate-800">
-        <Link
-          href={settingsNavItem.href}
-          onClick={onClose}
-          className={cn(
-            "flex items-center space-x-3 rounded-lg px-3 py-2 transition-all duration-200 ease-in-out",
+      <nav className="mt-auto border-t border-indigo-soft pt-4">
+        <NavLink
+          item={settingsNavItem}
+          active={
             pathname === settingsNavItem.href ||
-              pathname?.startsWith(`${settingsNavItem.href}/`)
-              ? "bg-blue-50 font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-400"
-              : "hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-slate-800/50 dark:hover:text-white",
-          )}
-        >
-          {settingsNavItem.icon}
-          <span>{settingsNavItem.label}</span>
-        </Link>
+            Boolean(pathname?.startsWith(`${settingsNavItem.href}/`))
+          }
+          onClose={onClose}
+        />
       </nav>
     </aside>
   );

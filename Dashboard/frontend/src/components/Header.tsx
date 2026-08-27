@@ -1,186 +1,86 @@
 "use client";
 
-import {
-  Menu,
-  MoonIcon,
-  LogOut,
-  SunIcon,
-  User,
-} from "lucide-react";
+import { LogOut, Menu, MoonIcon, SunIcon, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  useRouter,
-} from "next/navigation";
-
-import {
-  useAuth,
-} from "@/context/AuthContext";
-
+import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 
 interface HeaderProps {
   onMenuClick?: () => void;
 }
 
-
-export default function Header({
-  onMenuClick,
-}: HeaderProps) {
-  const router =
-    useRouter();
-
-  const {
-    user,
-    logout,
-  } = useAuth();
-
-  const [
-    dark,
-    setDark,
-  ] = useState(false);
-
-
-  useEffect(() => {
-    const isDark =
-      document
-        .documentElement
-        .classList
-        .contains(
-          "dark",
-        );
-
-    setDark(
-      isDark,
-    );
-  }, []);
-
-
-  useEffect(() => {
-    document
-      .documentElement
-      .classList
-      .toggle(
-        "dark",
-        dark,
-      );
-
-    document
-      .body
-      .classList
-      .toggle(
-        "dark",
-        dark,
-      );
-
-    localStorage.setItem(
-      "theme",
-      dark
-        ? "dark"
-        : "light",
-    );
-  }, [
-    dark,
-  ]);
-
+export default function Header({ onMenuClick }: HeaderProps) {
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   function handleLogout() {
     logout();
-
-    router.replace(
-      "/login",
-    );
+    router.replace("/login");
   }
 
-
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-
-      {onMenuClick && (
+    <header className="flex items-center justify-between gap-4 border-b border-border bg-surface px-6 py-3">
+      {onMenuClick ? (
         <button
-          onClick={
-            onMenuClick
-          }
-          className="rounded-md p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white lg:hidden"
+          onClick={onMenuClick}
+          className="rounded-md p-2 text-muted transition-colors hover:bg-hover hover:text-fg lg:hidden"
           aria-label="Open sidebar"
           type="button"
         >
           <Menu className="h-6 w-6" />
         </button>
-      )}
-
+      ) : null}
 
       <div className="flex-1">
-
-        <h1 className="text-lg font-medium tracking-tight text-slate-900 dark:text-white">
+        <h1 className="font-display text-lg font-medium tracking-tight text-heading">
           Staff Dashboard
         </h1>
-
-        {user && (
-          <p className="hidden text-sm text-slate-500 sm:block">
+        {user ? (
+          <p className="hidden text-sm text-muted sm:block">
             {user.institution_name}
           </p>
-        )}
-
+        ) : null}
       </div>
-
 
       <div className="flex items-center gap-3">
-
-        {user && (
-          <div className="hidden items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 dark:border-slate-700 sm:flex">
-
-            <User className="h-4 w-4 text-slate-500" />
-
+        {user ? (
+          <div className="hidden items-center gap-2 rounded-md border border-border px-3 py-1.5 sm:flex">
+            <User className="h-4 w-4 text-muted" />
             <div className="text-xs">
-
-              <p className="font-medium text-slate-800 dark:text-slate-200">
-                {user.name}
-              </p>
-
-              <p className="capitalize text-slate-500">
-                {user.role}
-              </p>
-
+              <p className="font-medium text-fg">{user.name}</p>
+              <p className="capitalize text-muted">{user.role}</p>
             </div>
-
           </div>
-        )}
+        ) : null}
 
-
-        <button
-          onClick={() =>
-            setDark(
-              !dark,
-            )
-          }
-          className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-800"
-          aria-label="Toggle dark mode"
+        <motion.button
           type="button"
+          onClick={toggleTheme}
+          whileTap={{ scale: 0.98 }}
+          className="rounded-md p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
+          aria-label="Toggle dark mode"
         >
-          <SunIcon className="h-5 w-5 text-slate-600 dark:hidden" />
+          {theme === "dark" ? (
+            <SunIcon className="h-5 w-5" />
+          ) : (
+            <MoonIcon className="h-5 w-5" />
+          )}
+        </motion.button>
 
-          <MoonIcon className="hidden h-5 w-5 text-slate-300 dark:inline-block" />
-        </button>
-
-
-        <button
-          onClick={
-            handleLogout
-          }
-          className="rounded-full p-2 text-slate-500 hover:bg-red-500/10 hover:text-red-500"
+        <motion.button
+          type="button"
+          onClick={handleLogout}
+          whileTap={{ scale: 0.98 }}
+          className="rounded-md p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
           aria-label="Logout"
           title="Logout"
-          type="button"
         >
           <LogOut className="h-5 w-5" />
-        </button>
-
+        </motion.button>
       </div>
-
     </header>
   );
 }

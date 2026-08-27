@@ -38,6 +38,17 @@ import {
   updateStudent,
   updateStudentHumanMode,
 } from "@/lib/api";
+import {
+  btnPrimary,
+  btnQuiet,
+  emptyState,
+  errorBanner,
+  inputClass,
+  pageSubtitle,
+  pageTitle,
+  surfaceCard,
+} from "@/lib/ui";
+import { cn } from "@/lib/utils";
 
 type ModalMode = "create" | "edit" | "enroll" | "details" | null;
 
@@ -379,8 +390,8 @@ export default function StudentsPage() {
     <div className="flex h-[calc(100vh-4rem)] flex-col space-y-6 overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Students</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <h1 className={pageTitle}>Students</h1>
+          <p className={pageSubtitle}>
             {searchQuery.trim()
               ? `${filteredStudents.length} of ${students.length} students`
               : `${students.length} student${students.length === 1 ? "" : "s"}`}
@@ -393,7 +404,7 @@ export default function StudentsPage() {
             type="button"
             onClick={() => void loadData()}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 shadow-sm transition-colors disabled:opacity-50"
+            className={btnQuiet}
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -417,7 +428,7 @@ export default function StudentsPage() {
               importInputRef.current?.click()
             }
             disabled={importing}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 shadow-sm transition-colors disabled:opacity-50"
+            className={btnQuiet}
           >
             {importing ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -430,7 +441,7 @@ export default function StudentsPage() {
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 shadow-sm transition-colors"
+            className={btnPrimary}
           >
             <Plus className="h-4 w-4" />
             Add student
@@ -439,7 +450,7 @@ export default function StudentsPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 p-4 text-red-800 dark:text-red-200">
+        <div className={errorBanner}>
           <AlertTriangle className="h-5 w-5" />
           {error}
         </div>
@@ -447,19 +458,19 @@ export default function StudentsPage() {
 
       {!loading && students.length > 0 && (
         <div className="relative max-w-xl">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <input
             type="search"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             placeholder="Search by name, phone, extra fields, class, or ID…"
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 py-2.5 pl-10 pr-10 text-sm text-slate-900 dark:text-white outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm transition-colors"
+            className={cn(inputClass, "py-2.5 pl-10 pr-10")}
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-white transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-muted transition-colors hover:bg-hover hover:text-fg"
               aria-label="Clear search"
             >
               <X className="h-4 w-4" />
@@ -469,11 +480,11 @@ export default function StudentsPage() {
       )}
 
       {loading ? (
-        <div className="flex min-h-48 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
-          <Loader2 className="h-7 w-7 animate-spin text-blue-500 dark:text-blue-400" />
+        <div className={cn(surfaceCard, "flex min-h-48 items-center justify-center")}>
+          <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : filteredStudents.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center text-slate-500 dark:text-slate-400 shadow-sm">
+        <div className={emptyState}>
           {searchQuery.trim()
             ? `No students match "${searchQuery.trim()}".`
             : 'No students registered yet. Click "Add student" to create one.'}

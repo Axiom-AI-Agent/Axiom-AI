@@ -84,8 +84,8 @@ function ProtectedDashboard({
     || !user
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+      <div className="flex min-h-screen items-center justify-center bg-bg">
+        <Loader2 className="h-8 w-8 animate-spin text-muted" />
       </div>
     );
   }
@@ -96,7 +96,7 @@ function ProtectedDashboard({
 
       <ToastProvider>
 
-        <div className="flex min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+        <div className="flex min-h-screen bg-bg text-fg">
 
           <Sidebar
             isOpen={
@@ -112,7 +112,7 @@ function ProtectedDashboard({
 
           {sidebarOpen && (
             <div
-              className="fixed inset-0 bg-black/50 lg:hidden"
+              className="fixed inset-0 bg-ink/55 lg:hidden"
               onClick={() =>
                 setSidebarOpen(
                   false,

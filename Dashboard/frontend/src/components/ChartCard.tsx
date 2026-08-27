@@ -1,20 +1,21 @@
-// src/components/ChartCard.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { Line, Bar, Doughnut } from "react-chartjs-2";
+import { useEffect, useMemo, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
+  ArcElement,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend,
-  ArcElement,
 } from "chart.js";
+
+import { surfaceCard } from "@/lib/ui";
 
 ChartJS.register(
   CategoryScale,
@@ -25,7 +26,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 );
 
 interface ChartCardProps {
@@ -35,21 +36,51 @@ interface ChartCardProps {
   data: number[];
 }
 
-export default function ChartCard({ title, type, labels, data }: ChartCardProps) {
-  const [isDark, setIsDark] = useState(() => typeof window !== "undefined" && document.documentElement.classList.contains("dark"));
+function readToken(name: string, fallback: string) {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return value || fallback;
+}
+
+export default function ChartCard({
+  title,
+  type,
+  labels,
+  data,
+}: ChartCardProps) {
+  const [isDark, setIsDark] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      document.documentElement.classList.contains("dark"),
+  );
 
   useEffect(() => {
     const update = () => {
       setIsDark(document.documentElement.classList.contains("dark"));
     };
     const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    window.addEventListener("storage", update);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("storage", update);
-    };
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
   }, []);
+
+  const palette = useMemo(() => {
+    const ember = readToken("--ember", "#E8985E");
+    const sage = readToken("--sage", "#6FA287");
+    const indigoSoft = readToken("--indigo-soft", "#2C3E63");
+    const ink = readToken("--ink", "#0B1220");
+    const paper = readToken("--paper", "#F7F8FB");
+    const muted = readToken("--muted", indigoSoft);
+    const border = readToken("--border", indigoSoft);
+    const tick = isDark ? paper : ink;
+    return { ember, sage, indigoSoft, tick, muted, border, ink, paper };
+  }, [isDark]);
 
   const chartData = {
     labels,
@@ -57,11 +88,15 @@ export default function ChartCard({ title, type, labels, data }: ChartCardProps)
       {
         label: title,
         data,
-        borderColor: type === "donut" ? "transparent" : "#2563EB",
-        backgroundColor: type === "donut" 
-          ? ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"] 
-          : "rgba(37, 99, 235, 0.1)",
-        tension: 0.4,
+        borderColor: type === "donut" ? "transparent" : palette.ember,
+        backgroundColor:
+          type === "donut"
+            ? labels.map(
+                (_, index) =>
+                  [palette.ember, palette.sage, palette.indigoSoft][index % 3],
+              )
+            : `${palette.ember}1A`,
+        tension: 0.35,
       },
     ],
   };
@@ -72,27 +107,40 @@ export default function ChartCard({ title, type, labels, data }: ChartCardProps)
       legend: { display: false },
       title: { display: false },
       tooltip: {
-        titleColor: isDark ? "#fff" : "#000",
-        bodyColor: isDark ? "#fff" : "#000",
-        backgroundColor: isDark ? "rgba(0,0,0,0.8)" : "rgba(255,255,255,0.9)",
+        titleColor: palette.tick,
+        bodyColor: palette.tick,
+        backgroundColor: isDark ? `${palette.ink}CC` : `${palette.paper}F2`,
       },
     },
-    scales: {
-      x: {
-        ticks: { color: isDark ? "#fff" : "#333" },
-        grid: { color: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)" },
-      },
-      y: {
-        ticks: { color: isDark ? "#fff" : "#333" },
-        grid: { color: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)" },
-      },
-    },
+    scales:
+      type === "donut"
+        ? undefined
+        : {
+            x: {
+              ticks: { color: palette.muted, font: { family: "inherit" } },
+              grid: { color: `${palette.border}66` },
+            },
+            y: {
+              ticks: { color: palette.muted, font: { family: "inherit" } },
+              grid: { color: `${palette.border}66` },
+            },
+          },
   };
 
   return (
-    <div className="p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-      <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{title}</h2>
-      {type === "line" ? <Line data={chartData} options={options} /> : type === "bar" ? <Bar data={chartData} options={options} /> : <div className="max-w-xs mx-auto"><Doughnut data={chartData} options={options} /></div>}
+    <div className={`${surfaceCard} p-5`}>
+      <h2 className="font-display mb-4 text-lg font-semibold text-heading">
+        {title}
+      </h2>
+      {type === "line" ? (
+        <Line data={chartData} options={options} />
+      ) : type === "bar" ? (
+        <Bar data={chartData} options={options} />
+      ) : (
+        <div className="mx-auto max-w-xs">
+          <Doughnut data={chartData} options={options} />
+        </div>
+      )}
     </div>
   );
 }

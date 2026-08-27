@@ -1,27 +1,72 @@
-// src/components/MetricCard.tsx
+"use client";
+
 import { ReactNode } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+
+import AttentionGlow from "@/components/AttentionGlow";
+import SageCheck from "@/components/SageCheck";
+import { surfaceCard } from "@/lib/ui";
+import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
   title: string;
   value: number | string;
   icon?: ReactNode;
+  attention?: boolean;
+  healthy?: boolean;
+  className?: string;
 }
 
-export default function MetricCard({ title, value, icon }: MetricCardProps) {
+export default function MetricCard({
+  title,
+  value,
+  icon,
+  attention = false,
+  healthy = false,
+  className,
+}: MetricCardProps) {
+  const reduced = useReducedMotion();
+
   return (
     <motion.div
-      className="flex items-center p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={cn("h-full", className)}
+      initial={reduced ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.28, ease: "easeOut" }}
     >
-      {icon && <div className="mr-4 flex items-center justify-center p-3 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">{icon}</div>}
-      <div>
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
-        <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{value}</p>
-      </div>
+      <AttentionGlow active={attention} className="h-full">
+        <div
+          className={cn(
+            surfaceCard,
+            "flex h-full items-center p-5",
+            attention && "border-ember/40",
+          )}
+        >
+          {icon ? (
+            <div
+              className={cn(
+                "mr-4 flex items-center justify-center rounded-md p-2.5",
+                attention
+                  ? "bg-ember/15 text-ember"
+                  : healthy
+                    ? "bg-sage/15 text-sage"
+                    : "bg-indigo-soft/20 text-muted",
+              )}
+            >
+              {icon}
+            </div>
+          ) : null}
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
+              {title}
+              {healthy && !attention ? <SageCheck label="Healthy" /> : null}
+            </p>
+            <p className="font-display mt-1 text-2xl font-bold tabular text-heading">
+              {value}
+            </p>
+          </div>
+        </div>
+      </AttentionGlow>
     </motion.div>
   );
 }

@@ -38,9 +38,9 @@ const features = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-ink text-white">
       {/* Navigation */}
-      <header className="border-b border-slate-800/80">
+      <header className="border-b border-border/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link
             href="/"
@@ -61,14 +61,14 @@ export default function HomePage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden rounded-lg px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white sm:block"
+              className="hidden rounded-lg px-4 py-2 text-sm font-medium text-muted transition hover:bg-surface hover:text-white sm:block"
             >
               Sign In
             </Link>
 
             <Link
               href="/login"
-              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
+              className="flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink transition hover:bg-ember/90"
             >
               Open Dashboard
               <ArrowRight className="h-4 w-4" />
@@ -79,23 +79,23 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute left-1/2 top-20 -z-0 h-96 w-96 -translate-x-1/2 rounded-full bg-blue-600/10 blur-3xl" />
+        <div className="absolute left-1/2 top-20 -z-0 h-96 w-96 -translate-x-1/2 rounded-full bg-ember/10 blur-3xl" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-24 text-center sm:pt-32">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-sm text-blue-300">
+          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-indigo-soft/20 px-4 py-2 text-sm text-muted">
             <ShieldCheck className="h-4 w-4" />
             AI-powered tuition operations
           </div>
 
           <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight sm:text-6xl">
             Run your tuition classes with
-            <span className="text-blue-500">
+            <span className="text-muted">
               {" "}
               intelligent automation
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted sm:text-lg">
             Axiom AI helps tuition institutes manage
             students, conversations, classes, payments,
             learning resources, and escalations from one
@@ -105,7 +105,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/login"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-500 sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-6 py-3 font-medium text-ink transition hover:bg-ember/90 sm:w-auto"
             >
               Try the Demo
               <ArrowRight className="h-5 w-5" />
@@ -113,13 +113,13 @@ export default function HomePage() {
 
             <Link
               href="/register"
-              className="w-full rounded-lg border border-slate-700 px-6 py-3 font-medium text-slate-200 transition hover:bg-slate-800 sm:w-auto"
+              className="w-full rounded-lg border border-border px-6 py-3 font-medium text-muted transition hover:bg-surface sm:w-auto"
             >
               Register Institution
             </Link>
           </div>
 
-          <p className="mt-4 text-xs text-slate-500">
+          <p className="mt-4 text-xs text-muted">
             Use “Proceed to Demo” on the login page for
             instant access.
           </p>
@@ -129,13 +129,13 @@ export default function HomePage() {
       {/* Dashboard Preview */}
       <section className="px-6 pb-24">
         <div className="mx-auto max-w-6xl">
-          <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl shadow-blue-950/20">
-            <div className="flex items-center gap-2 border-b border-slate-800 px-5 py-4">
+          <div className="overflow-hidden rounded-md border border-border bg-indigo  shadow-blue-950/20">
+            <div className="flex items-center gap-2 border-b border-border px-5 py-4">
               <div className="h-3 w-3 rounded-full bg-red-400/70" />
               <div className="h-3 w-3 rounded-full bg-amber-400/70" />
               <div className="h-3 w-3 rounded-full bg-emerald-400/70" />
 
-              <span className="ml-3 text-xs text-slate-500">
+              <span className="ml-3 text-xs text-muted">
                 Axiom AI Dashboard
               </span>
             </div>
@@ -163,7 +163,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-5 px-6 pb-6 md:grid-cols-5">
-              <div className="rounded-xl border border-slate-800 bg-slate-950 p-5 md:col-span-3">
+              <div className="rounded-xl border border-border bg-ink p-5 md:col-span-3">
                 <p className="text-sm font-medium">
                   Recent Activity
                 </p>
@@ -186,7 +186,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-800 bg-slate-950 p-5 md:col-span-2">
+              <div className="rounded-xl border border-border bg-ink p-5 md:col-span-2">
                 <p className="text-sm font-medium">
                   AI Operations
                 </p>
@@ -214,10 +214,10 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="border-y border-slate-800 bg-slate-900/40 px-6 py-24">
+      <section className="border-y border-border bg-indigo/40 px-6 py-24">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-2xl">
-            <p className="text-sm font-medium text-blue-400">
+            <p className="text-sm font-medium text-muted">
               Built for tuition operations
             </p>
 
@@ -225,7 +225,7 @@ export default function HomePage() {
               Everything staff need in one place
             </h2>
 
-            <p className="mt-3 text-slate-400">
+            <p className="mt-3 text-muted">
               Keep the AI handling routine work while staff
               maintain visibility and control through the
               dashboard.
@@ -239,9 +239,9 @@ export default function HomePage() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-xl border border-slate-800 bg-slate-900 p-5"
+                  className="rounded-xl border border-border bg-indigo p-5"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-soft/20 text-muted">
                     <Icon className="h-5 w-5" />
                   </div>
 
@@ -249,7 +249,7 @@ export default function HomePage() {
                     {feature.title}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                  <p className="mt-2 text-sm leading-6 text-muted">
                     {feature.description}
                   </p>
                 </div>
@@ -261,12 +261,12 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="px-6 py-24">
-        <div className="mx-auto max-w-4xl rounded-2xl border border-blue-500/20 bg-blue-500/10 px-6 py-12 text-center">
+        <div className="mx-auto max-w-4xl rounded-md border border-border bg-indigo-soft/20 px-6 py-12 text-center">
           <h2 className="text-3xl font-bold">
             See Axiom AI in action
           </h2>
 
-          <p className="mx-auto mt-3 max-w-xl text-slate-400">
+          <p className="mx-auto mt-3 max-w-xl text-muted">
             Explore the preconfigured Demo Physics
             institution and see the dashboard, students,
             classes, conversations, and AI workflows.
@@ -274,7 +274,7 @@ export default function HomePage() {
 
           <Link
             href="/login"
-            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-medium transition hover:bg-blue-500"
+            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-ember px-6 py-3 font-medium transition hover:bg-ember/90"
           >
             Launch Demo Dashboard
             <ArrowRight className="h-5 w-5" />
@@ -283,8 +283,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 px-6 py-7">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-sm text-slate-500 sm:flex-row">
+      <footer className="border-t border-border px-6 py-7">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-sm text-muted sm:flex-row">
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -313,8 +313,8 @@ function DashboardCard({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-950 p-5">
-      <p className="text-sm text-slate-500">
+    <div className="rounded-xl border border-border bg-ink p-5">
+      <p className="text-sm text-muted">
         {label}
       </p>
 
@@ -337,11 +337,11 @@ function ActivityRow({
       <div className="mt-1.5 h-2 w-2 rounded-full bg-blue-500" />
 
       <div>
-        <p className="text-sm text-slate-200">
+        <p className="text-sm text-muted">
           {title}
         </p>
 
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-muted">
           {detail}
         </p>
       </div>
@@ -357,12 +357,12 @@ function StatusRow({
   status: string;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-slate-800 px-3 py-3">
-      <span className="text-sm text-slate-300">
+    <div className="flex items-center justify-between rounded-lg border border-border px-3 py-3">
+      <span className="text-sm text-muted">
         {label}
       </span>
 
-      <span className="flex items-center gap-2 text-xs text-emerald-400">
+      <span className="flex items-center gap-2 text-xs text-sage">
         <span className="h-2 w-2 rounded-full bg-emerald-400" />
         {status}
       </span>

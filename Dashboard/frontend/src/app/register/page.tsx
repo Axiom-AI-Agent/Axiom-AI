@@ -438,10 +438,10 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 px-4 py-10 text-white">
+    <main className="min-h-screen bg-ink px-4 py-10 text-white">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-ember">
             <Building2 className="h-6 w-6" />
           </div>
 
@@ -449,7 +449,7 @@ export default function RegisterPage() {
             Create your institution
           </h1>
 
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-muted">
             Set up your organization,
             administrator, student onboarding
             questions, and initial staff
@@ -462,19 +462,19 @@ export default function RegisterPage() {
           className="space-y-6"
         >
           {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-300">
+            <div className="rounded-lg border border-border bg-surface p-4 text-sm text-fg">
               {error}
             </div>
           )}
 
-          <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+          <section className="rounded-xl border border-border bg-indigo p-6">
             <h2 className="text-lg font-semibold">
               Institution
             </h2>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <label className="space-y-2 sm:col-span-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   Institution name *
                 </span>
 
@@ -487,12 +487,12 @@ export default function RegisterPage() {
                     )
                   }
                   placeholder="Apex Physics Academy"
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
 
               <label className="space-y-2 sm:col-span-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   WhatsApp number
                 </span>
 
@@ -504,12 +504,12 @@ export default function RegisterPage() {
                     )
                   }
                   placeholder="94771234567"
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
 
               <label className="space-y-2 sm:col-span-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   Google Drive Folder ID
                 </span>
 
@@ -521,25 +521,25 @@ export default function RegisterPage() {
                     )
                   }
                   placeholder="1AbC..."
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+          <section className="rounded-xl border border-border bg-indigo p-6">
             <h2 className="text-lg font-semibold">
               Administrator
             </h2>
 
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-muted">
               This account receives full
               organization access.
             </p>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <label className="space-y-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   Full name *
                 </span>
 
@@ -551,12 +551,12 @@ export default function RegisterPage() {
                       event.target.value,
                     )
                   }
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
 
               <label className="space-y-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   Email *
                 </span>
 
@@ -569,12 +569,12 @@ export default function RegisterPage() {
                       event.target.value,
                     )
                   }
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
 
               <label className="space-y-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   Password *
                 </span>
 
@@ -588,12 +588,12 @@ export default function RegisterPage() {
                       event.target.value,
                     )
                   }
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
 
               <label className="space-y-2">
-                <span className="text-sm text-slate-300">
+                <span className="text-sm text-muted">
                   Confirm password *
                 </span>
 
@@ -607,24 +607,24 @@ export default function RegisterPage() {
                       event.target.value,
                     )
                   }
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-border bg-ink px-3 py-2.5 outline-none focus:border-indigo-soft"
                 />
               </label>
             </div>
           </section>
 
-          <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+          <section className="rounded-xl border border-border bg-indigo p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-blue-400" />
+                  <Users className="h-5 w-5 text-muted" />
 
                   <h2 className="text-lg font-semibold">
                     Initial staff
                   </h2>
                 </div>
 
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-muted">
                   Optional — add up to five
                   staff accounts.
                 </p>
@@ -637,7 +637,7 @@ export default function RegisterPage() {
                   staffMembers.length >=
                   5
                 }
-                className="flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
                 Add staff
@@ -645,7 +645,7 @@ export default function RegisterPage() {
             </div>
 
             {staffMembers.length === 0 ? (
-              <div className="mt-5 rounded-lg border border-dashed border-slate-700 p-6 text-center text-sm text-slate-500">
+              <div className="mt-5 rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted">
                 You can skip this and add
                 staff later.
               </div>
@@ -655,7 +655,7 @@ export default function RegisterPage() {
                   (staff, index) => (
                     <div
                       key={index}
-                      className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+                      className="rounded-xl border border-border bg-ink p-4"
                     >
                       <div className="mb-4 flex items-center justify-between">
                         <h3 className="font-medium">
@@ -670,7 +670,7 @@ export default function RegisterPage() {
                               index,
                             )
                           }
-                          className="rounded-lg p-2 text-red-400 hover:bg-red-500/10"
+                          className="rounded-lg p-2 text-muted hover:bg-hover"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -689,7 +689,7 @@ export default function RegisterPage() {
                                 .value,
                             )
                           }
-                          className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         />
 
                         <input
@@ -705,7 +705,7 @@ export default function RegisterPage() {
                                 .value,
                             )
                           }
-                          className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         />
 
                         <input
@@ -722,7 +722,7 @@ export default function RegisterPage() {
                                 .value,
                             )
                           }
-                          className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         />
 
                         <select
@@ -735,7 +735,7 @@ export default function RegisterPage() {
                                 .value,
                             )
                           }
-                          className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         >
                           <option value="admin">
                             Admin
@@ -761,16 +761,16 @@ export default function RegisterPage() {
             )}
           </section>
 
-          <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+          <section className="rounded-xl border border-border bg-indigo p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <ClipboardList className="h-5 w-5 text-blue-400" />
+                  <ClipboardList className="h-5 w-5 text-muted" />
                   <h2 className="text-lg font-semibold">
                     Student onboarding fields
                   </h2>
                 </div>
-                <p className="mt-1 text-sm text-slate-400">
+                <p className="mt-1 text-sm text-muted">
                   Name, phone, class, and
                   consent are always collected.
                   Add extra questions here.
@@ -782,7 +782,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={addOnboardingField}
                 disabled={onboardingFields.length >= 15}
-                className="flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm hover:bg-surface disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
                 Add field
@@ -790,7 +790,7 @@ export default function RegisterPage() {
             </div>
 
             {onboardingFields.length === 0 ? (
-              <div className="mt-5 rounded-lg border border-dashed border-slate-700 p-6 text-center text-sm text-slate-500">
+              <div className="mt-5 rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted">
                 No extra fields — students will
                 only be asked for name, then
                 class.
@@ -800,7 +800,7 @@ export default function RegisterPage() {
                 {onboardingFields.map((field, index) => (
                   <div
                     key={index}
-                    className="rounded-xl border border-slate-800 bg-slate-950 p-4"
+                    className="rounded-xl border border-border bg-ink p-4"
                   >
                     <div className="mb-4 flex items-center justify-between">
                       <h3 className="font-medium">
@@ -811,7 +811,7 @@ export default function RegisterPage() {
                         onClick={() =>
                           removeOnboardingField(index)
                         }
-                        className="rounded-lg p-2 text-red-400 hover:bg-red-500/10"
+                        className="rounded-lg p-2 text-muted hover:bg-hover"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -819,7 +819,7 @@ export default function RegisterPage() {
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <label className="space-y-2">
-                        <span className="text-sm text-slate-300">
+                        <span className="text-sm text-muted">
                           Label *
                         </span>
                         <input
@@ -832,12 +832,12 @@ export default function RegisterPage() {
                               { label: event.target.value },
                             )
                           }
-                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="w-full rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         />
                       </label>
 
                       <label className="space-y-2">
-                        <span className="text-sm text-slate-300">
+                        <span className="text-sm text-muted">
                           Key *
                         </span>
                         <input
@@ -853,12 +853,12 @@ export default function RegisterPage() {
                               },
                             )
                           }
-                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="w-full rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         />
                       </label>
 
                       <label className="space-y-2">
-                        <span className="text-sm text-slate-300">
+                        <span className="text-sm text-muted">
                           Type
                         </span>
                         <select
@@ -872,7 +872,7 @@ export default function RegisterPage() {
                               },
                             )
                           }
-                          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                          className="w-full rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                         >
                           <option value="text">Text</option>
                           <option value="number">Number</option>
@@ -882,7 +882,7 @@ export default function RegisterPage() {
                         </select>
                       </label>
 
-                      <label className="flex items-center gap-3 pt-7 text-sm text-slate-300">
+                      <label className="flex items-center gap-3 pt-7 text-sm text-muted">
                         <input
                           type="checkbox"
                           checked={field.required}
@@ -892,14 +892,14 @@ export default function RegisterPage() {
                               { required: event.target.checked },
                             )
                           }
-                          className="h-4 w-4 rounded border-slate-600"
+                          className="h-4 w-4 rounded border-border"
                         />
                         Required
                       </label>
 
                       {field.field_type === "select" && (
                         <label className="space-y-2 sm:col-span-2">
-                          <span className="text-sm text-slate-300">
+                          <span className="text-sm text-muted">
                             Options (comma-separated) *
                           </span>
                           <input
@@ -912,7 +912,7 @@ export default function RegisterPage() {
                                 { optionsText: event.target.value },
                               )
                             }
-                            className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 outline-none focus:border-blue-500"
+                            className="w-full rounded-lg border border-border bg-indigo px-3 py-2.5 outline-none focus:border-indigo-soft"
                           />
                         </label>
                       )}
@@ -926,7 +926,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 font-medium hover:bg-blue-500 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-4 py-3 font-medium hover:bg-ember/90 disabled:opacity-50"
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -935,11 +935,11 @@ export default function RegisterPage() {
             Create institution
           </button>
 
-          <p className="text-center text-sm text-slate-400">
+          <p className="text-center text-sm text-muted">
             Already registered?{" "}
             <Link
               href="/login"
-              className="font-medium text-blue-400 hover:text-blue-300"
+              className="font-medium text-muted hover:text-muted"
             >
               Sign in
             </Link>

@@ -6,11 +6,16 @@ import {
   Pencil,
   Trash2,
   UserPlus,
-  X,
 } from "lucide-react";
 
+import AttentionGlow from "@/components/AttentionGlow";
+import SageCheck from "@/components/SageCheck";
+import Modal from "@/components/ui/Modal";
 import { OnboardingFieldDefinition, Student } from "@/lib/api";
+import { btnDanger, btnQuiet } from "@/lib/ui";
+import { cn } from "@/lib/utils";
 import { formatStudentFieldValue } from "./extraFields";
+import { studentNeedsAttention } from "./attention";
 
 interface StudentDetailsModalProps {
   student: Student;
@@ -31,153 +36,153 @@ export default function StudentDetailsModal({
   onDelete,
   onToggleHumanMode,
 }: StudentDetailsModalProps) {
+  const attention = studentNeedsAttention(student);
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      role="presentation"
-      onClick={onClose}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-800 dark:bg-slate-900 flex flex-col max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4 shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              {student.name?.trim() || "Unnamed Student"}
-            </h2>
-            <p className="mt-1 font-mono text-sm text-slate-500 dark:text-slate-400">
-              {student.id}
-            </p>
-          </div>
+    <Modal
+      open
+      onClose={onClose}
+      title={student.name?.trim() || "Unnamed Student"}
+      description={student.id}
+      footer={
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+          <Link
+            href={`/dashboard/messages?phone=${encodeURIComponent(student.phone)}`}
+            className={btnQuiet}
+          >
+            <MessageSquare className="h-4 w-4" />
+            Chat
+          </Link>
           <button
             type="button"
-            onClick={onClose}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            aria-label="Close dialog"
+            onClick={() => {
+              onToggleHumanMode(student);
+              onClose();
+            }}
+            className={cn(
+              btnQuiet,
+              student.human_mode && "border-ember/40 text-ember",
+            )}
           >
-            <X className="h-5 w-5" />
+            {student.human_mode ? "Human mode" : "AI active"}
+            {!student.human_mode ? (
+              <SageCheck label="AI handling" />
+            ) : null}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onEnroll(student);
+              onClose();
+            }}
+            className={btnQuiet}
+          >
+            <UserPlus className="h-4 w-4" />
+            Enroll
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onEdit(student);
+              onClose();
+            }}
+            className={btnQuiet}
+          >
+            <Pencil className="h-4 w-4" />
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onDelete(student.id);
+              onClose();
+            }}
+            className={cn(btnDanger, "col-span-2 sm:col-span-1")}
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete
           </button>
         </div>
-
-        <div className="py-5 flex-1 overflow-y-auto space-y-6">
+      }
+    >
+      <AttentionGlow active={attention} className="rounded-md">
+        <div className="space-y-6">
           <section>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Contact Information</h3>
+            <h3 className="mb-3 text-sm font-semibold text-heading">
+              Contact Information
+            </h3>
             <div className="space-y-3 text-sm">
-              <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                <span className="text-slate-500 dark:text-slate-400">Phone number</span>
-                <span className="font-medium text-slate-900 dark:text-white">{student.phone}</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                <span className="text-muted">Phone number</span>
+                <span className="font-medium tabular text-fg">
+                  {student.phone}
+                </span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                <span className="text-slate-500 dark:text-slate-400">Language preference</span>
-                <span className="font-medium text-slate-900 dark:text-white uppercase">{student.language_pref || "en"}</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                <span className="text-muted">Language preference</span>
+                <span className="font-medium uppercase text-fg">
+                  {student.language_pref || "en"}
+                </span>
               </div>
             </div>
           </section>
 
-          {fields.length > 0 && (
+          {fields.length > 0 ? (
             <section>
-              <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Additional Details</h3>
+              <h3 className="mb-3 text-sm font-semibold text-heading">
+                Additional Details
+              </h3>
               <div className="space-y-3 text-sm">
                 {fields.map((field) => (
-                  <div key={field.field_key} className="flex flex-col sm:flex-row sm:justify-between gap-1">
-                    <span className="text-slate-500 dark:text-slate-400">{field.label}</span>
-                    <span className="font-medium text-slate-900 dark:text-white">
+                  <div
+                    key={field.field_key}
+                    className="flex flex-col gap-1 sm:flex-row sm:justify-between"
+                  >
+                    <span className="text-muted">{field.label}</span>
+                    <span className="font-medium text-fg">
                       {formatStudentFieldValue(student, field) || "—"}
                     </span>
                   </div>
                 ))}
               </div>
             </section>
-          )}
+          ) : null}
 
           <section>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Registered Classes</h3>
-            {Array.isArray(student.enrollments) && student.enrollments.length > 0 ? (
+            <h3 className="mb-3 text-sm font-semibold text-heading">
+              Registered Classes
+            </h3>
+            {Array.isArray(student.enrollments) &&
+            student.enrollments.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {student.enrollments.map((enrollment) => (
-                  <span
-                    key={enrollment.id}
-                    className="inline-flex items-center rounded-full border border-blue-200 dark:border-blue-500/20 bg-blue-50 dark:bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-700 dark:text-blue-300"
-                  >
-                    {enrollment.class_subject ?? enrollment.class_name ?? enrollment.class_id}
-                    <span className="ml-2 capitalize text-blue-500 dark:text-blue-400/70">
-                      {enrollment.status}
+                {student.enrollments.map((enrollment) => {
+                  const pending = enrollment.status === "pending";
+                  return (
+                    <span
+                      key={enrollment.id}
+                      className={cn(
+                        "inline-flex items-center rounded-md border border-border px-3 py-1 text-sm font-medium text-fg",
+                        pending && "attention-glow border-ember/40",
+                      )}
+                    >
+                      {enrollment.class_subject ??
+                        enrollment.class_name ??
+                        enrollment.class_id}
+                      <span className="ml-2 capitalize text-muted">
+                        {enrollment.status}
+                      </span>
                     </span>
-                  </span>
-                ))}
+                  );
+                })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500 dark:text-slate-400 italic">Not enrolled in any classes.</p>
+              <p className="text-sm italic text-muted">
+                Not enrolled in any classes.
+              </p>
             )}
           </section>
         </div>
-
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 shrink-0">
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
-            <Link
-              href={`/dashboard/messages?phone=${encodeURIComponent(student.phone)}`}
-              className="inline-flex justify-center items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-            >
-              <MessageSquare className="h-4 w-4" />
-              Chat
-            </Link>
-            
-            <button
-              type="button"
-              onClick={() => {
-                onToggleHumanMode(student);
-                onClose();
-              }}
-              className={`inline-flex justify-center items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                student.human_mode
-                  ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20"
-                  : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
-              }`}
-            >
-              {student.human_mode ? "Human mode" : "AI active"}
-            </button>
-            
-            <button
-              type="button"
-              onClick={() => {
-                onEnroll(student);
-                onClose();
-              }}
-              className="inline-flex justify-center items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-            >
-              <UserPlus className="h-4 w-4" />
-              Enroll
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onEdit(student);
-                onClose();
-              }}
-              className="inline-flex justify-center items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-            >
-              <Pencil className="h-4 w-4" />
-              Edit
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                onDelete(student.id);
-                onClose();
-              }}
-              className="col-span-2 sm:col-span-1 inline-flex justify-center items-center gap-2 rounded-lg border border-red-200 dark:border-red-500/30 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      </AttentionGlow>
+    </Modal>
   );
 }

@@ -21,6 +21,9 @@ import {
 
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
+import AttentionGlow from "@/components/AttentionGlow";
+import SageCheck from "@/components/SageCheck";
+import { cn } from "@/lib/utils";
 import { usePolling } from "@/hooks/usePolling";
 import {
   EscalationSocketEvent,
@@ -37,14 +40,14 @@ import {
 
 function statusClass(status: EscalationStatus) {
   if (status === "resolved") {
-    return "bg-emerald-500/10 text-emerald-300";
+    return "bg-sage/15 text-sage";
   }
 
   if (status === "assigned") {
-    return "bg-blue-500/10 text-blue-300";
+    return "bg-indigo-soft/20 text-muted";
   }
 
-  return "bg-amber-500/10 text-amber-300";
+  return "bg-ember/15 text-ember";
 }
 
 function isPaymentReason(reasonCode: string) {
@@ -285,13 +288,13 @@ function InboxContent() {
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-semibold text-heading">
             Escalation Inbox
           </h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-muted">
             Unified HITL queue for payment receipts and tutor requests.
           </p>
-          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-xs text-muted">
             Auto-refreshes every 5 seconds
             {connected ? " · WebSocket connected" : " · WebSocket reconnecting"}
           </p>
@@ -301,7 +304,7 @@ function InboxContent() {
           type="button"
           onClick={() => void loadEscalations(true)}
           disabled={loading}
-          className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-fg hover:bg-hover bg-surface disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -312,7 +315,7 @@ function InboxContent() {
         <select
           value={statusFilter ?? ""}
           onChange={(event) => updateFilter("status", event.target.value)}
-          className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white"
+          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-heading"
         >
           <option value="">All statuses</option>
           <option value="open">Open</option>
@@ -325,7 +328,7 @@ function InboxContent() {
           onChange={(event) =>
             updateFilter("reason_code", event.target.value)
           }
-          className="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white"
+          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-heading"
         >
         <option value="">All reasons</option>
         <option value="payment_receipt">Payment receipt</option>
@@ -338,7 +341,7 @@ function InboxContent() {
 
       <div className="flex-1 space-y-4 overflow-y-auto pr-1">
         {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-200">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface p-4 text-fg">
           <AlertTriangle className="h-5 w-5" />
           {error}
         </div>
@@ -346,10 +349,10 @@ function InboxContent() {
 
       {loading ? (
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : escalations.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-10 text-center text-slate-600 dark:text-slate-400">
+        <div className="rounded-xl border border-border bg-surface p-10 text-center text-muted">
           No escalations match the current filters.
         </div>
       ) : (
@@ -359,47 +362,57 @@ function InboxContent() {
             const payment = isPaymentReason(escalation.reason_code);
 
             return (
-              <article
+              <AttentionGlow
                 key={escalation.id}
-                className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
+                active={escalation.status !== "resolved"}
+              >
+              <article
+                className={cn(
+                  "rounded-md border border-border bg-surface p-5",
+                  escalation.status !== "resolved" && "border-ember/40",
+                )}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <h2 className="font-semibold text-slate-900 dark:text-white">
+                    <h2 className="font-semibold text-heading">
                       {escalation.student_name ?? escalation.student_id}
                     </h2>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                    <p className="mt-1 text-sm text-muted">
                       {escalation.student_phone ?? "No phone on file"}
                     </p>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                    <p className="mt-1 text-sm text-muted">
                       Reason:{" "}
                       {escalation.reason_code.replaceAll("_", " ")}
                     </p>
                   </div>
 
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusClass(
-                      escalation.status,
-                    )}`}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-3 py-1 text-xs font-medium capitalize",
+                      statusClass(escalation.status),
+                    )}
                   >
+                    {escalation.status === "resolved" ? (
+                      <SageCheck label="Resolved" />
+                    ) : null}
                     {escalation.status}
                   </span>
                 </div>
 
                 {escalation.student_message && (
-                  <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                    <p className="text-xs uppercase tracking-wide text-muted">
                       Student message
                     </p>
-                    <p className="mt-2 text-sm text-slate-800 dark:text-slate-200">
+                    <p className="mt-2 text-sm text-fg">
                       {escalation.student_message}
                     </p>
                   </div>
                 )}
 
                 {escalation.media_url && (
-                  <div className="mt-4 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                    <p className="text-xs uppercase tracking-wide text-muted">
                       Payment slip
                     </p>
                     <div className="mt-3 flex flex-wrap items-start gap-4">
@@ -407,13 +420,13 @@ function InboxContent() {
                       <img
                         src={escalation.media_url}
                         alt="Payment receipt"
-                        className="max-h-48 rounded-lg border border-slate-300 dark:border-slate-700 object-contain"
+                        className="max-h-48 rounded-lg border border-border object-contain"
                       />
                       <a
                         href={escalation.media_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-blue-300 hover:text-blue-200"
+                        className="inline-flex items-center gap-2 text-sm text-muted hover:text-fg"
                       >
                         Open full size
                         <ExternalLink className="h-4 w-4" />
@@ -423,7 +436,7 @@ function InboxContent() {
                 )}
 
                 {(escalation.reviewed_by || escalation.reviewed_at) && (
-                  <div className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="mt-4 text-xs text-muted">
                     {escalation.reviewed_by && (
                       <p>Reviewed by: {escalation.reviewed_by}</p>
                     )}
@@ -442,8 +455,8 @@ function InboxContent() {
                 )}
 {escalation.student_phone &&
   escalation.status !== "resolved" && (
-    <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+    <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted">
         Reply to student
       </p>
 
@@ -469,7 +482,7 @@ function InboxContent() {
             }
           }}
           placeholder="Type a reply to send via WhatsApp..."
-          className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+          className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-heading outline-none focus:border-indigo-soft"
         />
 
         <button
@@ -479,7 +492,7 @@ function InboxContent() {
             !(replyDrafts[escalation.id] ?? "").trim()
           }
           onClick={() => void handleReply(escalation)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {sendingReplyId === escalation.id ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -491,13 +504,13 @@ function InboxContent() {
         </button>
       </div>
 
-      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+      <p className="mt-2 text-xs text-muted">
         Sends directly to {escalation.student_phone} through WhatsApp.
       </p>
     </div>
   )}
                 <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-                  <div className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="text-xs text-muted">
                     <p>ID: {escalation.id}</p>
                     <p className="mt-1">
                       Created:{" "}
@@ -511,7 +524,7 @@ function InboxContent() {
                         href={`/dashboard/messages?phone=${encodeURIComponent(
                           escalation.student_phone,
                         )}`}
-                        className="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800"
+                        className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-fg hover:bg-hover bg-surface"
                       >
                         <MessageSquare className="h-4 w-4" />
                         Open chat
@@ -523,7 +536,7 @@ function InboxContent() {
                         type="button"
                         disabled={processing}
                         onClick={() => void handleResolve(escalation)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-sm text-white hover:bg-emerald-500 disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-lg bg-ember px-3 py-2 text-sm text-white hover:bg-ember/90 disabled:opacity-50"
                       >
                         {processing ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -539,7 +552,7 @@ function InboxContent() {
                         type="button"
                         disabled={processing}
                         onClick={() => void handleReject(escalation)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-500 disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg hover:bg-hover disabled:opacity-50"
                       >
                         <XCircle className="h-4 w-4" />
                         Reject
@@ -548,6 +561,7 @@ function InboxContent() {
                   </div>
                 </div>
               </article>
+              </AttentionGlow>
             );
           })}
         </div>
@@ -562,7 +576,7 @@ export default function InboxPage() {
     <Suspense
       fallback={
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       }
     >

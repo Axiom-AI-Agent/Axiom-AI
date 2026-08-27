@@ -237,7 +237,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex min-h-48 items-center justify-center">
-        <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
+        <Loader2 className="h-7 w-7 animate-spin text-muted" />
       </div>
     );
   }
@@ -248,8 +248,8 @@ export default function SettingsPage() {
     !form
   ) {
     return (
-      <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6">
-        <div className="flex items-center gap-3 text-red-200">
+      <div className="rounded-xl border border-border bg-surface p-6">
+        <div className="flex items-center gap-3 text-fg">
           <AlertTriangle className="h-5 w-5" />
 
           <p>
@@ -263,7 +263,7 @@ export default function SettingsPage() {
           onClick={() =>
             void loadProfile()
           }
-          className="mt-4 flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black"
+          className="mt-4 flex items-center gap-2 rounded-lg bg-surface px-4 py-2 text-sm font-medium text-ink"
         >
           <RefreshCw className="h-4 w-4" />
           Try again
@@ -276,11 +276,11 @@ export default function SettingsPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-semibold text-heading">
             Settings
           </h1>
 
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-muted">
             Tenant profile and
             organization configuration.
           </p>
@@ -291,37 +291,37 @@ export default function SettingsPage() {
           onClick={() =>
             void loadProfile()
           }
-          className="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-800 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+          className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-fg hover:bg-hover  bg-surface dark:text-muted"
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
         </button>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+      <div className="rounded-xl border border-border bg-surface p-5  bg-surface">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-500/10 text-blue-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-soft/20 text-muted">
             <Building2 className="h-5 w-5" />
           </div>
 
           <div>
-            <h2 className="font-medium text-slate-900 dark:text-white">
+            <h2 className="font-medium text-heading">
               {profile.name}
             </h2>
 
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-muted">
               Tenant ID: {profile.id}
             </p>
           </div>
         </div>
 
-        <dl className="mt-5 grid gap-3 border-t border-slate-200 pt-5 text-sm sm:grid-cols-2 dark:border-slate-800">
+        <dl className="mt-5 grid gap-3 border-t border-border pt-5 text-sm sm:grid-cols-2 ">
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">
+            <dt className="text-muted">
               Created
             </dt>
 
-            <dd className="mt-1 text-slate-700 dark:text-slate-300">
+            <dd className="mt-1 text-fg">
               {new Date(
                 profile.created_at,
               ).toLocaleString()}
@@ -329,11 +329,11 @@ export default function SettingsPage() {
           </div>
 
           <div>
-            <dt className="text-slate-500 dark:text-slate-400">
+            <dt className="text-muted">
               Last updated
             </dt>
 
-            <dd className="mt-1 text-slate-700 dark:text-slate-300">
+            <dd className="mt-1 text-fg">
               {profile.updated_at
                 ? new Date(
                     profile.updated_at,
@@ -344,16 +344,16 @@ export default function SettingsPage() {
         </dl>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+      <div className="rounded-xl border border-border bg-surface p-6  bg-surface">
         <div className="flex items-start gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-sage/15 text-sage">
             <Smartphone className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-medium text-slate-900 dark:text-white">
+            <h2 className="font-medium text-heading">
               Telegram staff access
             </h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-1 text-sm text-muted">
               Generate a one-time code, then send it to this institute&apos;s
               Telegram bot. Students cannot gain staff access this way.
             </p>
@@ -362,7 +362,7 @@ export default function SettingsPage() {
 
         {telegramStatus?.linked ? (
           <div className="mt-5 space-y-3">
-            <p className="text-sm text-emerald-300">
+            <p className="text-sm text-sage">
               Linked
               {telegramStatus.channel_address
                 ? ` (chat ${telegramStatus.channel_address})`
@@ -386,7 +386,7 @@ export default function SettingsPage() {
                   setTelegramBusy(false);
                 }
               }}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-800 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200"
+              className="rounded-lg border border-border px-4 py-2 text-sm text-fg hover:bg-hover disabled:opacity-50  dark:text-muted"
             >
               {telegramBusy ? "Working…" : "Unlink Telegram"}
             </button>
@@ -394,14 +394,14 @@ export default function SettingsPage() {
         ) : (
           <div className="mt-5 space-y-3">
             {telegramCode ? (
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4">
-                <p className="text-xs uppercase tracking-wide text-emerald-300">
+              <div className="rounded-lg border border-emerald-500/30 bg-sage/15 p-4">
+                <p className="text-xs uppercase tracking-wide text-sage">
                   Send this code to the bot
                 </p>
-                <p className="mt-2 font-mono text-2xl font-semibold text-slate-900 dark:text-white">
+                <p className="mt-2 font-mono text-2xl font-semibold text-heading">
                   {telegramCode.code}
                 </p>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                <p className="mt-2 text-sm text-muted">
                   Expires in {telegramCode.ttl_minutes} minutes
                   {telegramCode.telegram_bot_username
                     ? ` · @${telegramCode.telegram_bot_username.replace(/^@/, "")}`
@@ -426,7 +426,7 @@ export default function SettingsPage() {
                   setTelegramBusy(false);
                 }
               }}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+              className="rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
             >
               {telegramBusy ? "Working…" : "Generate Telegram code"}
             </button>
@@ -436,14 +436,14 @@ export default function SettingsPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"
+        className="space-y-5 rounded-xl border border-border bg-surface p-6  bg-surface"
       >
         <div>
-          <h2 className="text-lg font-medium text-slate-900 dark:text-white">
+          <h2 className="text-lg font-medium text-heading">
             Organization profile
           </h2>
 
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-muted">
             Update institute details
             used across the dashboard
             and integrations.
@@ -452,7 +452,7 @@ export default function SettingsPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block space-y-2 sm:col-span-2">
-            <span className="text-sm text-slate-700 dark:text-slate-300">
+            <span className="text-sm text-fg">
               Institute name
             </span>
 
@@ -472,12 +472,12 @@ export default function SettingsPage() {
                       : current,
                 )
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm text-slate-700 dark:text-slate-300">
+            <span className="text-sm text-fg">
               Slug
             </span>
 
@@ -497,18 +497,18 @@ export default function SettingsPage() {
                       : current,
                 )
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
               placeholder="demo-physics"
             />
 
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="text-xs text-muted">
               Lowercase letters, numbers,
               and hyphens only.
             </span>
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm text-slate-700 dark:text-slate-300">
+            <span className="text-sm text-fg">
               Status
             </span>
 
@@ -529,7 +529,7 @@ export default function SettingsPage() {
                       : current,
                 )
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
             >
               <option value="active">
                 Active
@@ -542,7 +542,7 @@ export default function SettingsPage() {
           </label>
 
           <label className="block space-y-2 sm:col-span-2">
-            <span className="text-sm text-slate-700 dark:text-slate-300">
+            <span className="text-sm text-fg">
               WhatsApp number
             </span>
 
@@ -563,13 +563,13 @@ export default function SettingsPage() {
                       : current,
                 )
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
               placeholder="whatsapp:+14155238886"
             />
           </label>
 
           <label className="block space-y-2 sm:col-span-2">
-            <span className="text-sm text-slate-700 dark:text-slate-300">
+            <span className="text-sm text-fg">
               Google Drive folder ID
             </span>
 
@@ -590,21 +590,21 @@ export default function SettingsPage() {
                       : current,
                 )
               }
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
               placeholder="drive-folder-physics-demo"
             />
           </label>
         </div>
 
-        <p className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+        <p className="rounded-xl border border-border bg-surface p-4 text-sm text-muted  bg-surface dark:text-muted">
           Payment collection is controlled per class on the Classes page.
         </p>
 
-        <div className="flex justify-end border-t border-slate-200 pt-4 dark:border-slate-800">
+        <div className="flex justify-end border-t border-border pt-4 ">
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" />

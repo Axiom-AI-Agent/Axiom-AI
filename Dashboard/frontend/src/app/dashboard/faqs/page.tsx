@@ -86,10 +86,10 @@ export default function FaqsPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-heading">
             FAQ Intelligence
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-muted">
             Cluster recent student questions for one class into recurring themes.
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function FaqsPage() {
           type="button"
           onClick={() => void handleAnalyze()}
           disabled={loading || loadingClasses || !selectedClassId}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -110,14 +110,14 @@ export default function FaqsPage() {
       </div>
 
       <label className="block max-w-md space-y-2">
-        <span className="text-sm text-slate-700 dark:text-slate-300">
+        <span className="text-sm text-fg">
           Class
         </span>
         <select
           value={selectedClassId}
           onChange={(event) => setSelectedClassId(event.target.value)}
           disabled={loadingClasses || classes.length === 0}
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+          className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft  bg-surface "
         >
           {classes.length === 0 ? (
             <option value="">No classes available</option>
@@ -132,16 +132,16 @@ export default function FaqsPage() {
       </label>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
+        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800   text-fg">
           <AlertTriangle className="h-5 w-5" />
           {error}
         </div>
       )}
 
       {!result && !loading && !error && (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-900">
-          <HelpCircle className="mx-auto h-10 w-10 text-slate-400" />
-          <p className="mt-3 text-slate-600 dark:text-slate-300">
+        <div className="rounded-xl border border-dashed border-border bg-surface p-10 text-center  bg-surface">
+          <HelpCircle className="mx-auto h-10 w-10 text-muted" />
+          <p className="mt-3 text-muted">
             {selectedClass
               ? `Run an analysis for ${selectedClass.name ?? selectedClass.subject}.`
               : "Select a class, then run an analysis."}
@@ -151,7 +151,7 @@ export default function FaqsPage() {
 
       {result && (
         <>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-muted">
             {selectedClass
               ? `${selectedClass.name ?? selectedClass.subject} · `
               : ""}
@@ -161,7 +161,7 @@ export default function FaqsPage() {
           </p>
 
           {result.clusters.length === 0 ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900">
+            <div className="rounded-xl border border-border bg-surface p-8 text-center text-muted  bg-surface">
               No recurring questions found for this class yet.
             </div>
           ) : (
@@ -169,28 +169,28 @@ export default function FaqsPage() {
               {result.clusters.map((cluster, index) => (
                 <article
                   key={`${cluster.question}-${index}`}
-                  className="rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900"
+                  className="rounded-xl border border-border bg-surface p-5  bg-surface"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                      <h2 className="text-lg font-semibold text-heading">
                         {cluster.question}
                       </h2>
-                      <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+                      <p className="mt-1 text-xs uppercase tracking-wide text-muted">
                         {cluster.category}
                       </p>
                     </div>
-                    <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs font-medium text-blue-700 dark:text-blue-300">
+                    <span className="rounded-full bg-indigo-soft/20 px-3 py-1 text-xs font-medium text-fg">
                       Asked {cluster.frequency} times
                     </span>
                   </div>
 
                   {cluster.examples.length > 0 && (
                     <div className="mt-4">
-                      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted">
                         Examples
                       </p>
-                      <ul className="mt-2 space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                      <ul className="mt-2 space-y-1 text-sm text-muted">
                         {cluster.examples.map((example) => (
                           <li key={example}>• {example}</li>
                         ))}
@@ -199,8 +199,8 @@ export default function FaqsPage() {
                   )}
 
                   {cluster.suggested_answer && (
-                    <div className="mt-4 rounded-lg bg-slate-50 p-3 text-sm text-slate-700 dark:bg-slate-950 dark:text-slate-200">
-                      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <div className="mt-4 rounded-lg bg-surface p-3 text-sm text-fg bg-surface dark:text-muted">
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted">
                         Suggested answer
                       </p>
                       <p className="mt-1">{cluster.suggested_answer}</p>

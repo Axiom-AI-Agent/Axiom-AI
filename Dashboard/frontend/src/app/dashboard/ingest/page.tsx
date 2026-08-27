@@ -173,24 +173,24 @@ function IngestContent() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+        <h1 className="text-2xl font-semibold text-heading">
           Upload Tutor Notes
         </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-1 text-sm text-muted">
           PDF, Word and Markdown files are chunked and added to the tenant
           knowledge base for RAG.
         </p>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-200">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface p-4 text-fg">
           <AlertTriangle className="h-5 w-5" />
           {error}
         </div>
       )}
 
       {warnings.length > 0 && (
-        <div className="space-y-1 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
+        <div className="space-y-1 rounded-lg border border-amber-500/30 bg-ember/15 p-4 text-sm text-ember">
           <div className="flex items-center gap-2 font-medium">
             <AlertTriangle className="h-5 w-5" />
             Ingested with warnings
@@ -205,15 +205,15 @@ function IngestContent() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
+        className="space-y-4 rounded-xl border border-border bg-surface p-5"
       >
         <label className="block space-y-2">
-          <span className="text-sm text-slate-700 dark:text-slate-300">Class</span>
+          <span className="text-sm text-fg">Class</span>
           <select
             value={classId}
             onChange={(event) => setClassId(event.target.value)}
             disabled={loadingClasses}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-gray-500"
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft"
           >
             {classes.map((subjectClass) => (
               <option key={subjectClass.id} value={subjectClass.id}>
@@ -224,7 +224,7 @@ function IngestContent() {
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm text-slate-700 dark:text-slate-300">Document</span>
+          <span className="text-sm text-fg">Document</span>
           <input
             type="file"
             accept={INGEST_ACCEPT}
@@ -233,36 +233,36 @@ function IngestContent() {
               setWarnings([]);
               setError(null);
             }}
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-700 dark:text-slate-300"
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg"
           />
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm text-slate-700 dark:text-slate-300">Title (optional)</span>
+          <span className="text-sm text-fg">Title (optional)</span>
           <input
             type="text"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Lesson 7 Notes"
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-gray-500"
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft"
           />
         </label>
 
         <label className="block space-y-2">
-          <span className="text-sm text-slate-700 dark:text-slate-300">Lesson label (optional)</span>
+          <span className="text-sm text-fg">Lesson label (optional)</span>
           <input
             type="text"
             value={lesson}
             onChange={(event) => setLesson(event.target.value)}
             placeholder="7"
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-gray-500"
+            className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft"
           />
         </label>
 
         <button
           type="submit"
           disabled={uploading || !file || !classId}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
         >
           {uploading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -275,7 +275,7 @@ function IngestContent() {
         </button>
       </form>
 
-      <div className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 text-sm text-slate-600 dark:text-slate-400">
+      <div className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-muted">
         <FileUp className="mt-0.5 h-5 w-5 shrink-0" />
         <p>
           Accepts PDF with selectable text (max 50 MB), Word .docx (25 MB) and Markdown (5 MB).
@@ -284,39 +284,39 @@ function IngestContent() {
         </p>
       </div>
 
-      <section className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+      <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium text-slate-900 dark:text-white">
+          <h2 className="text-lg font-medium text-heading">
             Ingested documents
           </h2>
           <button
             type="button"
             onClick={() => void loadDocuments()}
-            className="text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+            className="text-sm text-muted hover:text-heading dark:text-muted hover:text-fg"
           >
             Refresh
           </button>
         </div>
 
         {loadingDocuments ? (
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-muted">
             <Loader2 className="h-4 w-4 animate-spin" />
             Loading documents…
           </div>
         ) : documents.length === 0 ? (
-          <p className="text-sm text-slate-500">No documents ingested yet for this class.</p>
+          <p className="text-sm text-muted">No documents ingested yet for this class.</p>
         ) : (
-          <ul className="divide-y divide-slate-200 dark:divide-slate-800">
+          <ul className="divide-y divide-border">
             {documents.map((doc) => (
               <li
                 key={doc.document_id}
                 className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-slate-900 dark:text-white">
+                  <p className="truncate font-medium text-heading">
                     {doc.title || doc.filename}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted">
                     {doc.source_type.toUpperCase()} · {doc.chunks_upserted ?? 0} chunks ·{" "}
                     {doc.status}
                     {doc.page_count ? ` · ${doc.page_count} pages` : ""}
@@ -326,7 +326,7 @@ function IngestContent() {
                   type="button"
                   onClick={() => void handleDelete(doc.document_id, doc.filename)}
                   disabled={deletingId === doc.document_id}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-red-500/30 px-2 py-1 text-xs text-red-400 hover:bg-red-500/10 disabled:opacity-50"
+                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted hover:bg-hover disabled:opacity-50"
                 >
                   {deletingId === doc.document_id ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -349,7 +349,7 @@ export default function IngestPage() {
     <Suspense
       fallback={
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       }
     >

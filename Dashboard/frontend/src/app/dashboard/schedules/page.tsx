@@ -137,10 +137,10 @@ export default function SchedulesPage() {
     <div className="flex h-[calc(100vh-4rem)] flex-col space-y-6 overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-semibold text-heading">
             Schedules
           </h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-muted">
             Manage class timetables and recurring schedules.
           </p>
         </div>
@@ -150,7 +150,7 @@ export default function SchedulesPage() {
             type="button"
             onClick={() => void loadData()}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-800 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-fg hover:bg-hover bg-surface disabled:opacity-50"
           >
             <RefreshCw className="h-4 w-4" />
             Refresh
@@ -159,7 +159,7 @@ export default function SchedulesPage() {
           <button
             type="button"
             onClick={() => setShowForm((current) => !current)}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
+            className="flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90"
           >
             {showForm ? (
               <X className="h-4 w-4" />
@@ -172,7 +172,7 @@ export default function SchedulesPage() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-200">
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface p-4 text-fg">
           <AlertTriangle className="h-5 w-5" />
           <span>{error}</span>
         </div>
@@ -181,10 +181,10 @@ export default function SchedulesPage() {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="grid gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 md:grid-cols-2 xl:grid-cols-3"
+          className="grid gap-4 rounded-xl border border-border bg-surface p-5 md:grid-cols-2 xl:grid-cols-3"
         >
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-sm font-medium text-fg">
               Class
             </span>
             <select
@@ -196,7 +196,7 @@ export default function SchedulesPage() {
                   class_id: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft focus:ring-1 focus:ring-indigo-soft transition-colors "
             >
               <option value="">Select a class</option>
               {classes.map((cls) => (
@@ -208,7 +208,7 @@ export default function SchedulesPage() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-sm font-medium text-fg">
               Day
             </span>
             <select
@@ -219,7 +219,7 @@ export default function SchedulesPage() {
                   day_of_week: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft focus:ring-1 focus:ring-indigo-soft transition-colors "
             >
               {DAYS.map((day) => (
                 <option key={day} value={day}>
@@ -230,7 +230,7 @@ export default function SchedulesPage() {
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-sm font-medium text-fg">
               Start Time
             </span>
             <input
@@ -243,12 +243,12 @@ export default function SchedulesPage() {
                   start_time: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft focus:ring-1 focus:ring-indigo-soft transition-colors "
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-sm font-medium text-fg">
               End Time
             </span>
             <input
@@ -261,12 +261,12 @@ export default function SchedulesPage() {
                   end_time: event.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft focus:ring-1 focus:ring-indigo-soft transition-colors "
             />
           </label>
 
           <label className="block space-y-2">
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <span className="text-sm font-medium text-fg">
               Room
             </span>
             <input
@@ -276,7 +276,7 @@ export default function SchedulesPage() {
                 setForm((current) => ({ ...current, room: event.target.value }))
               }
               placeholder="Room A"
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-heading outline-none focus:border-indigo-soft focus:ring-1 focus:ring-indigo-soft transition-colors "
             />
           </label>
 
@@ -284,7 +284,7 @@ export default function SchedulesPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50 shadow-sm transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50  transition-colors"
             >
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
               Create Schedule
@@ -295,15 +295,15 @@ export default function SchedulesPage() {
 
       {loading ? (
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-slate-600 dark:text-slate-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : schedules.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-10 text-center">
-          <Calendar className="mx-auto h-10 w-10 text-slate-500 dark:text-slate-400" />
-          <p className="mt-3 text-slate-700 dark:text-slate-300">
+        <div className="rounded-xl border border-border bg-surface p-10 text-center">
+          <Calendar className="mx-auto h-10 w-10 text-muted" />
+          <p className="mt-3 text-fg">
             No schedules yet.
           </p>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-muted">
             Use Add Schedule to create the first one.
           </p>
         </div>
@@ -313,14 +313,14 @@ export default function SchedulesPage() {
           {schedules.map((schedule) => (
             <article
               key={schedule.id}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
+              className="rounded-xl border border-border bg-surface p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  <h2 className="text-lg font-semibold text-heading">
                     {getClassName(schedule.class_id)}
                   </h2>
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 text-xs text-muted">
                     {schedule.day_of_week.charAt(0).toUpperCase() +
                       schedule.day_of_week.slice(1)}
                   </p>
@@ -328,7 +328,7 @@ export default function SchedulesPage() {
                 <button
                   type="button"
                   onClick={() => void handleDelete(schedule.id)}
-                  className="rounded-md border border-red-500/30 px-2.5 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/10 transition-colors"
+                  className="rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted hover:bg-hover transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -336,18 +336,18 @@ export default function SchedulesPage() {
 
               <dl className="mt-5 space-y-3 text-sm">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-slate-500 dark:text-slate-400">Time</dt>
-                  <dd className="font-medium text-slate-900 dark:text-white">
+                  <dt className="text-muted">Time</dt>
+                  <dd className="font-medium text-heading">
                     {schedule.start_time} - {schedule.end_time}
                   </dd>
                 </div>
 
                 {schedule.room && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-slate-500 dark:text-slate-400">
+                    <dt className="text-muted">
                       Room
                     </dt>
-                    <dd className="text-slate-700 dark:text-slate-300">
+                    <dd className="text-fg">
                       {schedule.room}
                     </dd>
                   </div>
@@ -355,25 +355,25 @@ export default function SchedulesPage() {
 
                 {schedule.teacher_name && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-slate-500 dark:text-slate-400">
+                    <dt className="text-muted">
                       Teacher
                     </dt>
-                    <dd className="text-slate-700 dark:text-slate-300">
+                    <dd className="text-fg">
                       {schedule.teacher_name}
                     </dd>
                   </div>
                 )}
 
                 <div className="flex justify-between gap-4">
-                  <dt className="text-slate-500 dark:text-slate-400">
+                  <dt className="text-muted">
                     Status
                   </dt>
-                  <dd className="text-slate-700 dark:text-slate-300">
+                  <dd className="text-fg">
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                         schedule.status === "active"
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                          : "bg-slate-500/10 text-slate-600 dark:text-slate-400"
+                          ? "bg-sage/15 text-sage"
+                          : "bg-surface0/10 text-muted"
                       }`}
                     >
                       {schedule.status}

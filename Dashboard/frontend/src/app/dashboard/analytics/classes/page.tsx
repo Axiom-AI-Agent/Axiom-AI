@@ -18,11 +18,23 @@ import {
 } from "react";
 
 import { useTenant } from "@/context/TenantContext";
+import AttentionGlow from "@/components/AttentionGlow";
+import SageCheck from "@/components/SageCheck";
 import {
   AnalyticsPeriod,
   ClassAnalyticsComparison,
   getClassAnalytics,
 } from "@/lib/api";
+import {
+  btnQuiet,
+  emptyState,
+  errorBanner,
+  pageSubtitle,
+  pageTitle,
+  selectClass,
+  surfaceCard,
+} from "@/lib/ui";
+import { cn } from "@/lib/utils";
 
 type SortKey =
   | "deflection_rate"
@@ -161,11 +173,11 @@ export default function ClassAnalyticsPage() {
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+          <h1 className={pageTitle}>
             Class Analytics
           </h1>
 
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className={pageSubtitle}>
             Compare AI automation and
             human review performance across
             classes.
@@ -176,7 +188,7 @@ export default function ClassAnalyticsPage() {
           <select
             value={period}
             onChange={(event) => setPeriod(event.target.value as AnalyticsPeriod)}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+            className={selectClass}
           >
             {PERIOD_OPTIONS.map(([value, label]) => (
               <option key={value} value={value}>
@@ -191,7 +203,7 @@ export default function ClassAnalyticsPage() {
               void loadAnalytics(false)
             }
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className={btnQuiet}
           >
             <RefreshCw className="h-4 w-4" />
             Refresh
@@ -201,8 +213,8 @@ export default function ClassAnalyticsPage() {
 
       <div className="flex-1 space-y-6 overflow-y-auto pr-1">
         {error && (
-        <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-700 dark:text-red-300">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+        <div className={errorBanner}>
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ember" />
 
           <div>
             <p className="font-medium">
@@ -218,10 +230,10 @@ export default function ClassAnalyticsPage() {
 
       {loading ? (
         <div className="flex min-h-64 items-center justify-center">
-          <RefreshCw className="h-7 w-7 animate-spin text-slate-500" />
+          <RefreshCw className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : !data ? (
-        <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900">
+        <div className={emptyState}>
           Class analytics are unavailable.
         </div>
       ) : (
@@ -257,16 +269,18 @@ export default function ClassAnalyticsPage() {
               icon={
                 <AlertTriangle className="h-5 w-5" />
               }
+              attention={totals.escalations > 0}
+              healthy={totals.escalations === 0}
             />
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+          <div className={`${surfaceCard} flex flex-wrap items-center justify-between gap-3 p-4`}>
             <div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white">
+              <p className="text-sm font-medium text-heading">
                 Compare classes by
               </p>
 
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              <p className="mt-1 text-xs text-muted">
                 Classes are sorted from
                 highest to lowest.
               </p>
@@ -280,7 +294,7 @@ export default function ClassAnalyticsPage() {
                     .value as SortKey,
                 )
               }
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+              className={selectClass}
             >
               <option value="deflection_rate">
                 Resolved by AI
@@ -305,7 +319,7 @@ export default function ClassAnalyticsPage() {
           </div>
 
           {sortedClasses.length === 0 ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900">
+            <div className={emptyState}>
               No classes are available for
               comparison.
             </div>
@@ -313,16 +327,24 @@ export default function ClassAnalyticsPage() {
             <div className="grid gap-5 xl:grid-cols-2">
               {sortedClasses.map(
                 (item) => (
-                  <article
+                  <AttentionGlow
                     key={item.class_id}
-                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                    active={item.open_escalations > 0}
+                    className="h-full"
+                  >
+                  <article
+                    className={cn(
+                      surfaceCard,
+                      "p-5",
+                      item.open_escalations > 0 && "border-ember/40",
+                    )}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <BookOpen className="h-5 w-5 text-blue-500" />
+                          <BookOpen className="h-5 w-5 text-muted" />
 
-                          <h2 className="font-semibold text-slate-900 dark:text-white">
+                          <h2 className="font-display font-semibold text-heading">
                             {formatClassTitle(
                               item.class_name,
                               item.subject,
@@ -330,7 +352,7 @@ export default function ClassAnalyticsPage() {
                           </h2>
                         </div>
 
-                        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        <p className="mt-1 text-sm text-muted">
                           {item.subject}
 
                           {item.grade
@@ -340,11 +362,11 @@ export default function ClassAnalyticsPage() {
                       </div>
 
                       <div className="text-right">
-                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                        <p className="text-xs uppercase tracking-wide text-muted">
                           Resolved by AI
                         </p>
 
-                        <p className="mt-1 text-2xl font-semibold text-blue-600 dark:text-blue-400">
+                        <p className="font-display mt-1 text-2xl font-semibold tabular text-heading">
                           {
                             item.deflection_rate
                           }
@@ -412,20 +434,27 @@ export default function ClassAnalyticsPage() {
                     </div>
 
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
-                        <p className="text-xs text-slate-500">
+                      <div className={`${surfaceCard} p-3`}>
+                        <p className="text-xs text-muted">
                           Enrollment
                         </p>
 
                         <div className="mt-2 flex flex-wrap gap-2">
-                          <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                          <span className="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium tabular text-sage">
+                            <SageCheck label="Active students" />
                             {
                               item.active_students
                             }{" "}
                             active
                           </span>
 
-                          <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-300">
+                          <span
+                            className={cn(
+                              "rounded-md border border-border px-2.5 py-1 text-xs font-medium tabular text-fg",
+                              item.pending_students > 0 &&
+                                "attention-glow border-ember/40",
+                            )}
+                          >
                             {
                               item.pending_students
                             }{" "}
@@ -434,20 +463,27 @@ export default function ClassAnalyticsPage() {
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
-                        <p className="text-xs text-slate-500">
+                      <div className={`${surfaceCard} p-3`}>
+                        <p className="text-xs text-muted">
                           Needs Review status
                         </p>
 
                         <div className="mt-2 flex flex-wrap gap-2">
-                          <span className="rounded-full bg-red-500/10 px-2.5 py-1 text-xs font-medium text-red-700 dark:text-red-300">
+                          <span
+                            className={cn(
+                              "rounded-md border border-border px-2.5 py-1 text-xs font-medium tabular text-fg",
+                              item.open_escalations > 0 &&
+                                "attention-glow border-ember/40 text-ember",
+                            )}
+                          >
                             {
                               item.open_escalations
                             }{" "}
                             open
                           </span>
 
-                          <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                          <span className="inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium tabular text-sage">
+                            <SageCheck label="Resolved" />
                             {
                               item.resolved_escalations
                             }{" "}
@@ -457,7 +493,7 @@ export default function ClassAnalyticsPage() {
                       </div>
                     </div>
 
-                    <div className="mt-4 border-t border-slate-200 pt-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                    <div className="mt-4 border-t border-border pt-4 text-xs text-muted">
                       <span>
                         {
                           item.deflected_conversations
@@ -471,6 +507,7 @@ export default function ClassAnalyticsPage() {
                       </span>
                     </div>
                   </article>
+                  </AttentionGlow>
                 ),
               )}
             </div>
@@ -486,29 +523,47 @@ function SummaryCard({
   label,
   value,
   icon,
+  attention = false,
+  healthy = false,
 }: {
   label: string;
   value: number;
   icon: React.ReactNode;
+  attention?: boolean;
+  healthy?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            {label}
-          </p>
-
-          <p className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">
-            {value}
-          </p>
-        </div>
-
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
-          {icon}
+    <AttentionGlow active={attention}>
+      <div
+        className={cn(
+          surfaceCard,
+          "p-5",
+          attention && "border-ember/40",
+        )}
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="flex items-center gap-1.5 text-sm text-muted">
+              {label}
+              {healthy && !attention ? <SageCheck /> : null}
+            </p>
+            <p className="font-display mt-2 text-2xl font-semibold tabular text-heading">
+              {value}
+            </p>
+          </div>
+          <div
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-md",
+              attention
+                ? "bg-ember/15 text-ember"
+                : "bg-indigo-soft/20 text-muted",
+            )}
+          >
+            {icon}
+          </div>
         </div>
       </div>
-    </div>
+    </AttentionGlow>
   );
 }
 
@@ -522,18 +577,12 @@ function MetricCard({
   value: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
-      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+    <div className={`${surfaceCard} p-3`}>
+      <div className="flex items-center gap-2 text-muted">
         {icon}
-
-        <span className="text-xs">
-          {label}
-        </span>
+        <span className="text-xs">{label}</span>
       </div>
-
-      <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
-        {value}
-      </p>
+      <p className="mt-2 text-lg font-semibold tabular text-heading">{value}</p>
     </div>
   );
 }
