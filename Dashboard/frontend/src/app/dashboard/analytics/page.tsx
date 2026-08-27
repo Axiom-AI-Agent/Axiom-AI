@@ -23,10 +23,12 @@ import {
 import {
   btnQuiet,
   errorBanner,
+  pageHeader,
   pageSubtitle,
   pageTitle,
-  selectClass,
+  pageToolbar,
   surfaceCard,
+  toolbarSelect,
 } from "@/lib/ui";
 
 function humanizeReason(reason: string) {
@@ -107,21 +109,22 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+      <div className={pageHeader}>
+        <div className="min-w-0">
           <h1 className={pageTitle}>Tutor Automation Analytics</h1>
           <p className={pageSubtitle}>
             Live automation and human review metrics for {data.tenant_id}.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className={pageToolbar}>
           <select
             value={period}
             onChange={(event) =>
               setPeriod(event.target.value as AnalyticsPeriod)
             }
-            className={selectClass}
+            className={toolbarSelect}
+            aria-label="Analytics period"
           >
             {PERIOD_OPTIONS.map(([value, label]) => (
               <option key={value} value={value}>
@@ -141,7 +144,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-6 overflow-hidden pr-1">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden pr-1">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard
             title="Resolved by AI"

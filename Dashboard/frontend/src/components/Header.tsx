@@ -22,7 +22,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-border bg-surface/90 px-6 py-3 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-border/80 bg-surface/80 px-5 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-surface/70">
       {onMenuClick ? (
         <button
           onClick={onMenuClick}
@@ -34,21 +34,23 @@ export default function Header({ onMenuClick }: HeaderProps) {
         </button>
       ) : null}
 
-      <div className="flex-1">
-        <h1 className="font-display text-lg font-medium tracking-tight text-heading">
+      <div className="min-w-0 flex-1">
+        <h1 className="font-display text-lg font-semibold tracking-tight text-heading">
           Staff Dashboard
         </h1>
         {user ? (
-          <p className="hidden text-sm text-muted sm:block">
+          <p className="hidden truncate text-sm text-muted sm:block">
             {user.institution_name}
           </p>
         ) : null}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {user ? (
-          <div className="hidden items-center gap-2 rounded-lg border border-border bg-bg/60 px-3 py-1.5 sm:flex">
-            <User className="h-4 w-4 text-muted" />
+          <div className="hidden items-center gap-2.5 rounded-xl border border-border bg-bg/70 px-3 py-1.5 shadow-sm sm:flex">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue/12 text-blue">
+              <User className="h-4 w-4" />
+            </div>
             <div className="text-xs">
               <p className="font-medium text-fg">{user.name}</p>
               <p className="capitalize text-muted">{user.role}</p>
@@ -59,8 +61,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <motion.button
           type="button"
           onClick={toggleTheme}
-          whileTap={{ scale: 0.98 }}
-          className="rounded-lg p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
+          whileTap={{ scale: 0.97 }}
+          className="rounded-xl border border-border bg-surface p-2 text-muted shadow-sm transition-colors hover:bg-hover hover:text-fg"
           aria-label="Toggle dark mode"
         >
           {theme === "dark" ? (
@@ -73,8 +75,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
         <motion.button
           type="button"
           onClick={handleLogout}
-          whileTap={{ scale: 0.98 }}
-          className="rounded-lg p-2 text-muted transition-colors hover:bg-hover hover:text-fg"
+          whileTap={{ scale: 0.97 }}
+          className="rounded-xl border border-border bg-surface p-2 text-muted shadow-sm transition-colors hover:bg-hover hover:text-fg"
           aria-label="Logout"
           title="Logout"
         >

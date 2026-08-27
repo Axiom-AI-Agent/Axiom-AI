@@ -123,9 +123,9 @@ export default function LoginPage() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(720px_340px_at_50%_-12%,rgba(59,122,237,0.28),transparent_58%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(520px_280px_at_90%_100%,rgba(111,162,135,0.16),transparent_50%)]" />
 
-      <div className="relative w-full max-w-md rounded-xl border border-white/10 bg-indigo/95 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur">
+      <div className="relative w-full max-w-md rounded-2xl border border-white/12 bg-[linear-gradient(165deg,rgba(22,35,61,0.96),rgba(15,26,46,0.98))] p-8 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md">
         <div className="mb-7 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue text-paper shadow-lg shadow-blue/25">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue text-paper shadow-lg shadow-blue/30">
             <Building2 className="h-6 w-6" />
           </div>
 

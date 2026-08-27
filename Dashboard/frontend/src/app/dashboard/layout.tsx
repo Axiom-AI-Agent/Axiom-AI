@@ -134,7 +134,7 @@ function ProtectedDashboard({
             />
 
 
-            <main className="flex-1 overflow-auto p-6">
+            <main className="relative flex-1 overflow-auto p-5 md:p-6 lg:p-7">
               {children}
             </main>
 

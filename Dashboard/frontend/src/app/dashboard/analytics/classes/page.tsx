@@ -28,10 +28,12 @@ import {
   btnQuiet,
   emptyState,
   errorBanner,
+  pageHeader,
   pageSubtitle,
   pageTitle,
-  selectClass,
+  pageToolbar,
   surfaceCard,
+  toolbarSelect,
 } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 
@@ -170,8 +172,8 @@ export default function ClassAnalyticsPage() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+      <div className={pageHeader}>
+        <div className="min-w-0">
           <h1 className={pageTitle}>
             Class Analytics
           </h1>
@@ -183,11 +185,12 @@ export default function ClassAnalyticsPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className={pageToolbar}>
           <select
             value={period}
             onChange={(event) => setPeriod(event.target.value as AnalyticsPeriod)}
-            className={selectClass}
+            className={toolbarSelect}
+            aria-label="Class analytics period"
           >
             {PERIOD_OPTIONS.map(([value, label]) => (
               <option key={value} value={value}>
@@ -210,7 +213,7 @@ export default function ClassAnalyticsPage() {
         </div>
       </div>
 
-      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+      <div className="min-h-0 flex-1 space-y-6 overflow-y-auto pr-1">
         {error && (
         <div className={errorBanner}>
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-blue" />
@@ -293,7 +296,8 @@ export default function ClassAnalyticsPage() {
                     .value as SortKey,
                 )
               }
-              className={selectClass}
+              className={toolbarSelect}
+              aria-label="Sort classes by"
             >
               <option value="deflection_rate">
                 Resolved by AI
@@ -516,7 +520,7 @@ function SummaryCard({
   healthy?: boolean;
 }) {
   return (
-      <div className={cn(surfaceCard, "p-5")}>
+      <div className={cn(surfaceCard, "p-5 transition-shadow hover:shadow-[var(--shadow-soft)]")}>
         <div className="flex items-center justify-between">
           <div>
             <p className="flex items-center gap-1.5 text-sm text-muted">
@@ -529,10 +533,12 @@ function SummaryCard({
           </div>
           <div
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-md",
+              "flex h-11 w-11 items-center justify-center rounded-xl",
               attention
                 ? "bg-blue/15 text-blue"
-                : "bg-indigo-soft/20 text-muted",
+                : healthy
+                  ? "bg-sage/15 text-sage"
+                  : "bg-blue/10 text-blue",
             )}
           >
             {icon}

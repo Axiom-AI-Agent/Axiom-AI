@@ -116,13 +116,20 @@ function NavLink({
       href={item.href}
       onClick={onClose}
       className={cn(
-        "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200",
         active
-          ? "bg-blue/20 font-medium text-paper shadow-[inset_2px_0_0_0_var(--blue)]"
-          : "text-paper/70 hover:bg-white/10 hover:text-paper",
+          ? "bg-blue/20 font-medium text-white shadow-[inset_3px_0_0_0_var(--blue)]"
+          : "text-white/70 hover:bg-white/10 hover:text-white",
       )}
     >
-      {item.icon}
+      <span
+        className={cn(
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors",
+          active ? "bg-blue/25 text-white" : "text-white/55",
+        )}
+      >
+        {item.icon}
+      </span>
       <span>{item.label}</span>
     </Link>
   );
@@ -134,31 +141,36 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-white/10 bg-[linear-gradient(180deg,#152238_0%,#1a2744_55%,#152033_100%)] p-4 text-paper transition-transform duration-300 ease-in-out lg:relative",
+        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-white/10 bg-[linear-gradient(175deg,#0f1a2e_0%,#15233b_48%,#101b2d_100%)] p-3 text-white shadow-[var(--shadow-soft)] transition-transform duration-300 ease-in-out lg:relative lg:shadow-none",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:flex lg:translate-x-0",
       )}
     >
-      <div className="mb-6 flex items-center justify-between px-2 lg:justify-start">
+      <div className="mb-5 flex items-center justify-between px-2 pt-1 lg:justify-start">
         <div className="flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Axiom AI Logo" className="h-8 w-auto" />
-          <h2 className="font-display text-base font-semibold tracking-tight text-paper">
-            Axiom AI
-          </h2>
+          <div>
+            <h2 className="font-display text-base font-semibold tracking-tight text-white">
+              Axiom AI
+            </h2>
+            <p className="text-[11px] tracking-wide text-white/45">
+              Staff Console
+            </p>
+          </div>
         </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md p-2 text-paper/70 hover:bg-indigo-soft hover:text-paper lg:hidden"
+          className="rounded-lg p-2 text-white/65 hover:bg-white/10 hover:text-white lg:hidden"
           aria-label="Close sidebar"
         >
           <X className="h-5 w-5" />
         </button>
       </div>
 
-      <nav className="flex-1 space-y-1">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-0.5">
         {mainNavItems.map((item) => {
           const active =
             item.href === "/dashboard/analytics"
@@ -177,7 +189,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      <nav className="mt-auto border-t border-white/10 pt-4">
+      <nav className="mt-auto border-t border-white/10 pt-3">
         <NavLink
           item={settingsNavItem}
           active={

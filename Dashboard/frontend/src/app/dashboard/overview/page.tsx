@@ -21,6 +21,7 @@ import {
   btnPrimary,
   btnQuiet,
   errorBanner,
+  pageHeader,
   pageSubtitle,
   pageTitle,
   surfaceCard,
@@ -89,8 +90,8 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+      <div className={pageHeader}>
+        <div className="min-w-0">
           <h1 className={pageTitle}>Dashboard Overview</h1>
           <p className={pageSubtitle}>
             Live operational data for {data.tenant_id}.

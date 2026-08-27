@@ -32,31 +32,37 @@ export default function MetricCard({
       initial={reduced ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: "easeOut" }}
+      whileHover={reduced ? undefined : { y: -2 }}
     >
-      <div className={cn(surfaceCard, "flex h-full items-center p-5")}>
-          {icon ? (
-            <div
-              className={cn(
-                "mr-4 flex items-center justify-center rounded-lg p-2.5",
-                attention
-                  ? "bg-blue/15 text-blue"
-                  : healthy
-                    ? "bg-sage/15 text-sage"
-                    : "bg-indigo-soft/20 text-muted",
-              )}
-            >
-              {icon}
-            </div>
-          ) : null}
-          <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
-              {title}
-              {healthy && !attention ? <SageCheck label="Healthy" /> : null}
-            </p>
-            <p className="font-display mt-1 text-2xl font-bold tabular text-heading">
-              {value}
-            </p>
+      <div
+        className={cn(
+          surfaceCard,
+          "flex h-full items-center p-5 transition-shadow duration-200 hover:shadow-[var(--shadow-soft)]",
+        )}
+      >
+        {icon ? (
+          <div
+            className={cn(
+              "mr-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
+              attention
+                ? "bg-blue/15 text-blue"
+                : healthy
+                  ? "bg-sage/15 text-sage"
+                  : "bg-blue/10 text-blue",
+            )}
+          >
+            {icon}
           </div>
+        ) : null}
+        <div className="min-w-0 flex-1">
+          <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
+            {title}
+            {healthy && !attention ? <SageCheck label="Healthy" /> : null}
+          </p>
+          <p className="font-display mt-1 text-2xl font-semibold tabular tracking-tight text-heading">
+            {value}
+          </p>
+        </div>
       </div>
     </motion.div>
   );
