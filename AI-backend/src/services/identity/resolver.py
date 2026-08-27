@@ -120,7 +120,6 @@ class IdentityResolver:
     ) -> IdentityContext:
         tenant_id = tenant["id"]
         session_id = build_session_id(tenant_id, phone)
-        payments_enabled = bool(tenant.get("payments_enabled", True))
         language_pref = normalize_language_pref(
             student.get("language_pref") if student else None
         )
@@ -133,7 +132,7 @@ class IdentityResolver:
                 phone=phone,
                 session_id=session_id,
                 student_exists=False,
-                payments_enabled=payments_enabled,
+                payments_enabled=True,
                 language_pref=language_pref,
             )
 
@@ -146,17 +145,24 @@ class IdentityResolver:
                 phone=phone,
                 session_id=session_id,
                 student_exists=False,
-                payments_enabled=payments_enabled,
+                payments_enabled=True,
                 language_pref=language_pref,
             )
 
-        class_names = self._lookup_class_names(
-            tenant_id,
-            [row["class_id"] for row in enrollments if row.get("class_id")],
-        )
+        class_ids = [
+            row["class_id"] for row in enrollments if row.get("class_id")
+        ]
+        class_meta = self._lookup_class_meta(tenant_id, class_ids)
         enrolled_rows = [
             row for row in enrollments if row.get("status") in _ENROLLED_STATUSES
         ]
+        enrolled_class_ids = tuple(
+            row["class_id"] for row in enrolled_rows if row.get("class_id")
+        )
+        payments_enabled = self._payments_enabled_for_classes(
+            enrolled_class_ids,
+            class_meta,
+        )
         enrollment_status = self._enrollment_status(enrollments)
 
         return IdentityContext(
@@ -173,11 +179,11 @@ class IdentityResolver:
             is_enrolled=bool(enrolled_rows),
             enrollment_status=enrollment_status,
             active_class_names=tuple(
-                class_names.get(row["class_id"], row["class_id"]) for row in enrolled_rows
+                class_meta.get(row["class_id"], {}).get("name")
+                or row["class_id"]
+                for row in enrolled_rows
             ),
-            enrolled_class_ids=tuple(
-                row["class_id"] for row in enrolled_rows if row.get("class_id")
-            ),
+            enrolled_class_ids=enrolled_class_ids,
             language_pref=language_pref,
         )
 
@@ -213,17 +219,45 @@ class IdentityResolver:
         )
         return response.data or []
 
-    def _lookup_class_names(
+    def _lookup_class_meta(
         self, tenant_id: str, class_ids: list[str]
-    ) -> dict[str, str]:
+    ) -> dict[str, dict[str, Any]]:
         if not class_ids:
             return {}
         client = get_supabase_client()
         response = (
             client.table("subject_classes")
-            .select("id, name")
+            .select("id, name, payments_enabled")
             .eq("tenant_id", tenant_id)
             .in_("id", class_ids)
             .execute()
         )
-        return {row["id"]: row["name"] for row in (response.data or []) if row.get("id")}
+        return {
+            row["id"]: {
+                "name": row.get("name"),
+                "payments_enabled": bool(row.get("payments_enabled", True)),
+            }
+            for row in (response.data or [])
+            if row.get("id")
+        }
+
+    @staticmethod
+    def _payments_enabled_for_classes(
+        class_ids: tuple[str, ...],
+        class_meta: dict[str, dict[str, Any]],
+    ) -> bool:
+        if not class_ids:
+            return True
+        return any(
+            class_meta.get(class_id, {}).get("payments_enabled", True)
+            for class_id in class_ids
+        )
+
+    def _lookup_class_names(
+        self, tenant_id: str, class_ids: list[str]
+    ) -> dict[str, str]:
+        meta = self._lookup_class_meta(tenant_id, class_ids)
+        return {
+            class_id: (info.get("name") or class_id)
+            for class_id, info in meta.items()
+        }

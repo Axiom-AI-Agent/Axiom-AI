@@ -191,6 +191,7 @@ CREATE TABLE IF NOT EXISTS subject_classes (
     grade           TEXT,
     fee_amount      NUMERIC(12, 2) NOT NULL DEFAULT 0,
     fee_cycle       fee_cycle NOT NULL DEFAULT 'monthly',
+    payments_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -201,6 +202,10 @@ EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 DO $$ BEGIN
     ALTER TABLE subject_classes ADD COLUMN IF NOT EXISTS grade TEXT;
+EXCEPTION WHEN duplicate_column THEN NULL; END $$;
+
+DO $$ BEGIN
+    ALTER TABLE subject_classes ADD COLUMN IF NOT EXISTS payments_enabled BOOLEAN NOT NULL DEFAULT TRUE;
 EXCEPTION WHEN duplicate_column THEN NULL; END $$;
 
 CREATE INDEX IF NOT EXISTS idx_subject_classes_tenant ON subject_classes(tenant_id);
