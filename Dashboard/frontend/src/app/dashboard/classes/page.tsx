@@ -620,38 +620,25 @@ export default function ClassesPage() {
                     {subjectClass.fee_cycle}
                   </dd>
                 </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-muted">
-                    Payments
-                  </dt>
-                  <dd
-                    className={
-                      subjectClass.payments_enabled === false
-                        ? "text-blue"
-                        : "text-sage"
-                    }
-                  >
-                    {subjectClass.payments_enabled === false
-                      ? "Disabled"
-                      : "Enabled"}
-                  </dd>
-                </div>
               </dl>
 
-              <div className="mt-5 space-y-3 rounded-xl border border-border bg-bg/50 p-3">
+              <div className="mt-5 space-y-4 rounded-xl border border-blue/20 bg-blue/[0.04] p-4 dark:bg-blue/10">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+                  Enable / disable
+                </p>
                 <ToggleSwitch
-                  label="Payment collection"
-                  description="Allow students to submit payment slips for this class."
+                  label="Payments"
+                  description="Collect payment slips for this class"
                   checked={subjectClass.payments_enabled !== false}
                   disabled={busyClassId === subjectClass.id}
                   onChange={(next) =>
                     void toggleClassPayments(subjectClass, next)
                   }
                 />
-                <div className="border-t border-border pt-3">
+                <div className="border-t border-border/80 pt-4">
                   <ToggleSwitch
-                    label="AI responses"
-                    description="Apply AI or human mode to every enrolled student."
+                    label="AI for class"
+                    description="Off = human mode for all enrolled students"
                     checked={classAiEnabled[subjectClass.id] ?? true}
                     disabled={busyClassId === subjectClass.id}
                     onChange={(next) =>

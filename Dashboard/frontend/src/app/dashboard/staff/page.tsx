@@ -201,6 +201,7 @@ export default function StaffPage() {
                   </td>
                   <td className="px-4 py-3">
                     <ToggleSwitch
+                      size="sm"
                       label={member.is_active ? "Active" : "Inactive"}
                       checked={member.is_active}
                       onChange={() => void toggleActive(member)}

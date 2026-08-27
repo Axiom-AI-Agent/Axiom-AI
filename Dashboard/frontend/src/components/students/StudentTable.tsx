@@ -1,5 +1,6 @@
 "use client";
 
+import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import { OnboardingFieldDefinition, Student } from "@/lib/api";
 import { surfaceCard } from "@/lib/ui";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ interface StudentTableProps {
 export default function StudentTable({
   students,
   fields,
+  onToggleHumanMode,
   onRowClick,
 }: StudentTableProps) {
   return (
@@ -35,17 +37,21 @@ export default function StudentTable({
             <th className="min-w-[220px] px-5 py-4 font-medium">
               Registered classes
             </th>
+            <th className="min-w-[160px] px-5 py-4 font-medium">AI mode</th>
             <th className="px-5 py-4 font-medium">Joined</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-          {students.map((student) => (
+          {students.map((student) => {
+            const aiEnabled = !student.human_mode;
+
+            return (
               <tr
                 key={student.id}
                 onClick={() => onRowClick(student)}
                 className="cursor-pointer transition-colors hover:bg-hover"
               >
-                <td className="px-5 py-4 align-top">
+                <td className="px-5 py-4 align-middle">
                   <p className="text-sm font-medium text-heading">
                     {student.name?.trim() || "Unnamed"}
                   </p>
@@ -56,30 +62,30 @@ export default function StudentTable({
                 {fields.map((field) => (
                   <td
                     key={field.field_key}
-                    className="px-5 py-4 align-top text-sm text-muted"
+                    className="px-5 py-4 align-middle text-sm text-muted"
                   >
                     {formatStudentFieldValue(student, field)}
                   </td>
                 ))}
-                <td className="px-5 py-4 align-top text-sm uppercase text-muted">
+                <td className="px-5 py-4 align-middle text-sm uppercase text-muted">
                   {student.language_pref || "en"}
                 </td>
-                <td className="px-5 py-4 align-top">
+                <td className="px-5 py-4 align-middle">
                   {Array.isArray(student.enrollments) &&
                   student.enrollments.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5">
                       {student.enrollments.map((enrollment) => (
-                          <span
-                            key={enrollment.id}
-                            className="inline-flex items-center rounded-md border border-border px-2.5 py-1 text-xs font-medium text-fg"
-                          >
-                            {enrollment.class_subject ??
-                              enrollment.class_name ??
-                              enrollment.class_id}
-                            <span className="ml-1.5 capitalize text-muted">
-                              {enrollment.status}
-                            </span>
+                        <span
+                          key={enrollment.id}
+                          className="inline-flex items-center rounded-md border border-border px-2.5 py-1 text-xs font-medium text-fg"
+                        >
+                          {enrollment.class_subject ??
+                            enrollment.class_name ??
+                            enrollment.class_id}
+                          <span className="ml-1.5 capitalize text-muted">
+                            {enrollment.status}
                           </span>
+                        </span>
                       ))}
                     </div>
                   ) : (
@@ -88,13 +94,26 @@ export default function StudentTable({
                     </span>
                   )}
                 </td>
-                <td className="px-5 py-4 align-top text-sm tabular text-muted">
+                <td
+                  className="px-5 py-4 align-middle"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <ToggleSwitch
+                    size="sm"
+                    label={aiEnabled ? "AI on" : "Human"}
+                    checked={aiEnabled}
+                    onChange={() => onToggleHumanMode(student)}
+                    className="min-w-[8.5rem]"
+                  />
+                </td>
+                <td className="px-5 py-4 align-middle text-sm tabular text-muted">
                   {student.created_at
                     ? new Date(student.created_at).toLocaleDateString()
                     : "—"}
                 </td>
               </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

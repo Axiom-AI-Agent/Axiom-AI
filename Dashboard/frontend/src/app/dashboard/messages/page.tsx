@@ -25,8 +25,12 @@ import {
   ChatThread,
   getChatConversations,
   getChatThread,
+  getStudentByPhone,
   sendStaffMessage,
+  Student,
+  updateStudentHumanMode,
 } from "@/lib/api";
+import ToggleSwitch from "@/components/ui/ToggleSwitch";
 
 function senderBubbleClass(sender: string) {
   if (sender === "student") {
@@ -51,10 +55,12 @@ function MessagesContent() {
 
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [thread, setThread] = useState<ChatThread | null>(null);
+  const [threadStudent, setThreadStudent] = useState<Student | null>(null);
   const [message, setMessage] = useState("");
   const [loadingList, setLoadingList] = useState(true);
   const [loadingThread, setLoadingThread] = useState(false);
   const [sending, setSending] = useState(false);
+  const [togglingAi, setTogglingAi] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadConversations = useCallback(async () => {
@@ -82,6 +88,7 @@ function MessagesContent() {
     async (phone: string) => {
       if (!phone) {
         setThread(null);
+        setThreadStudent(null);
         return;
       }
 
@@ -89,10 +96,16 @@ function MessagesContent() {
       setError(null);
 
       try {
-        setThread(await getChatThread(phone, { limit: 100 }, tenantId));
+        const [nextThread, profile] = await Promise.all([
+          getChatThread(phone, { limit: 100 }, tenantId),
+          getStudentByPhone(phone, tenantId).catch(() => null),
+        ]);
+        setThread(nextThread);
+        setThreadStudent(profile?.student ?? null);
       } catch (requestError) {
         console.error(requestError);
         setThread(null);
+        setThreadStudent(null);
         setError("Could not load this conversation.");
       } finally {
         setLoadingThread(false);
@@ -110,6 +123,7 @@ function MessagesContent() {
       void loadThread(selectedPhone);
     } else {
       setThread(null);
+      setThreadStudent(null);
     }
   }, [loadThread, selectedPhone]);
 
@@ -163,6 +177,36 @@ function MessagesContent() {
       showToast("Could not send the message.", "error");
     } finally {
       setSending(false);
+    }
+  }
+
+  async function handleThreadHumanMode(nextAiEnabled: boolean) {
+    if (!threadStudent) {
+      return;
+    }
+
+    setTogglingAi(true);
+
+    try {
+      const updated = await updateStudentHumanMode(
+        threadStudent.id,
+        !nextAiEnabled,
+        tenantId,
+      );
+      setThreadStudent((current) =>
+        current ? { ...current, ...updated } : current,
+      );
+      showToast(
+        updated.human_mode
+          ? "Human mode on — AI paused for this student."
+          : "AI responses enabled for this student.",
+        "success",
+      );
+    } catch (requestError) {
+      console.error(requestError);
+      showToast("Could not update AI mode.", "error");
+    } finally {
+      setTogglingAi(false);
     }
   }
 
@@ -271,10 +315,29 @@ function MessagesContent() {
           ) : (
             <>
               <div className="border-b border-border px-4 py-3">
-                <h2 className="font-medium text-heading">
-                  {thread.student_name ?? thread.phone}
-                </h2>
-                <p className="text-xs text-muted">{thread.phone}</p>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 className="font-medium text-heading">
+                      {thread.student_name ?? thread.phone}
+                    </h2>
+                    <p className="text-xs text-muted">{thread.phone}</p>
+                  </div>
+
+                  {threadStudent ? (
+                    <div className="rounded-xl border border-border bg-bg/60 px-3 py-2">
+                      <ToggleSwitch
+                        size="sm"
+                        label={
+                          threadStudent.human_mode ? "Human mode" : "AI on"
+                        }
+                        checked={!threadStudent.human_mode}
+                        disabled={togglingAi}
+                        onChange={(next) => void handleThreadHumanMode(next)}
+                        className="min-w-[9rem]"
+                      />
+                    </div>
+                  ) : null}
+                </div>
 
                 {thread.open_escalations.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">

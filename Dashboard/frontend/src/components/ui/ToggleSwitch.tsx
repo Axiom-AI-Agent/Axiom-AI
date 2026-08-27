@@ -10,6 +10,8 @@ interface ToggleSwitchProps {
   description?: string;
   id?: string;
   className?: string;
+  /** Smaller control for dense tables */
+  size?: "md" | "sm";
 }
 
 export default function ToggleSwitch({
@@ -20,17 +22,38 @@ export default function ToggleSwitch({
   description,
   id,
   className,
+  size = "md",
 }: ToggleSwitchProps) {
-  const switchId = id ?? (label ? `toggle-${label.replace(/\s+/g, "-").toLowerCase()}` : undefined);
+  const switchId =
+    id ??
+    (label ? `toggle-${label.replace(/\s+/g, "-").toLowerCase()}` : undefined);
+
+  const track =
+    size === "sm"
+      ? "h-5 w-9"
+      : "h-7 w-12";
+  const thumb =
+    size === "sm"
+      ? "h-3.5 w-3.5"
+      : "h-5 w-5";
+  const thumbOn =
+    size === "sm" ? "translate-x-[1.125rem]" : "translate-x-6";
+  const thumbOff = "translate-x-1";
 
   return (
-    <div className={cn("flex items-start justify-between gap-4", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3",
+        description && "items-start",
+        className,
+      )}
+    >
       {(label || description) && (
         <div className="min-w-0 flex-1">
           {label ? (
             <label
               htmlFor={switchId}
-              className="block text-sm font-medium text-heading"
+              className="block cursor-pointer text-sm font-medium text-heading"
             >
               {label}
             </label>
@@ -48,20 +71,25 @@ export default function ToggleSwitch({
         type="button"
         role="switch"
         aria-checked={checked}
-        aria-label={label}
+        aria-label={label ?? (checked ? "On" : "Off")}
         disabled={disabled}
-        onClick={() => onChange(!checked)}
+        onClick={(event) => {
+          event.stopPropagation();
+          onChange(!checked);
+        }}
         className={cn(
-          "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50",
+          "relative inline-flex shrink-0 items-center rounded-full border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50",
+          track,
           checked
-            ? "border-blue/40 bg-blue"
-            : "border-border bg-bg dark:bg-surface-elevated",
+            ? "border-blue bg-blue shadow-[0_0_0_3px_color-mix(in_srgb,var(--blue)_18%,transparent)]"
+            : "border-border bg-muted/25 dark:bg-surface-elevated",
         )}
       >
         <span
           className={cn(
-            "pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200",
-            checked ? "translate-x-6" : "translate-x-1",
+            "pointer-events-none inline-block rounded-full bg-white shadow-md transition-transform duration-200",
+            thumb,
+            checked ? thumbOn : thumbOff,
           )}
         />
       </button>
