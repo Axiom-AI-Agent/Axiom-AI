@@ -1,5 +1,7 @@
 "use client";
 
+import { useId } from "react";
+
 import { cn } from "@/lib/utils";
 
 interface ToggleSwitchProps {
@@ -24,9 +26,9 @@ export default function ToggleSwitch({
   className,
   size = "md",
 }: ToggleSwitchProps) {
-  const switchId =
-    id ??
-    (label ? `toggle-${label.replace(/\s+/g, "-").toLowerCase()}` : undefined);
+  const reactId = useId();
+  // Always unique — never derive from label alone (duplicate labels broke class cards).
+  const switchId = id ?? `toggle-${reactId}`;
 
   const track =
     size === "sm"
@@ -74,11 +76,12 @@ export default function ToggleSwitch({
         aria-label={label ?? (checked ? "On" : "Off")}
         disabled={disabled}
         onClick={(event) => {
+          event.preventDefault();
           event.stopPropagation();
           onChange(!checked);
         }}
         className={cn(
-          "relative inline-flex shrink-0 items-center rounded-full border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50",
+          "relative z-10 inline-flex shrink-0 items-center rounded-full border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50",
           track,
           checked
             ? "border-blue bg-blue shadow-[0_0_0_3px_color-mix(in_srgb,var(--blue)_18%,transparent)]"

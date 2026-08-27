@@ -47,6 +47,7 @@ class ChatPipeline:
 
         if ctx.human_mode:
             logger.info("Human mode active for session {} — skipping auto-reply", ctx.session_id)
+            self._open_human_mode_escalation(ctx, inbound)
             flush()
             return self._result(ctx, inbound, reply="")
 
@@ -88,6 +89,43 @@ class ChatPipeline:
             to_number=inbound.to_number,
             from_number=inbound.phone,
         )
+
+    def _open_human_mode_escalation(
+        self,
+        ctx: IdentityContext,
+        inbound: InboundMessage,
+    ) -> None:
+        """Surface human-mode student messages in the Escalation Inbox."""
+        if not ctx.student_id:
+            logger.info(
+                "Human mode message with no student_id tenant={} phone={} — no escalation",
+                ctx.tenant_id,
+                ctx.phone,
+            )
+            return
+
+        try:
+            from domain.escalation_reasons import TALK_TO_TUTOR
+            from services.admissions.admissions_db_client import AdmissionsDbClient
+
+            message = (inbound.body or "").strip() or None
+            if inbound.media_url and not message:
+                message = "[media attachment]"
+
+            AdmissionsDbClient().create_escalation(
+                tenant_id=ctx.tenant_id,
+                student_id=ctx.student_id,
+                reason_code=TALK_TO_TUTOR,
+                media_url=inbound.media_url,
+                student_message=message,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Failed to open human-mode escalation tenant={} student={}: {}",
+                ctx.tenant_id,
+                ctx.student_id,
+                exc,
+            )
 
     def _deliver_reply(
         self,

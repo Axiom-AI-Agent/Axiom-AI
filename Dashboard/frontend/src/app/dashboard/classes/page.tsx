@@ -628,6 +628,7 @@ export default function ClassesPage() {
                   Enable / disable
                 </p>
                 <ToggleSwitch
+                  id={`class-${subjectClass.id}-payments`}
                   label="Payments"
                   description="Collect payment slips for this class"
                   checked={subjectClass.payments_enabled !== false}
@@ -638,6 +639,7 @@ export default function ClassesPage() {
                 />
                 <div className="border-t border-border/80 pt-4">
                   <ToggleSwitch
+                    id={`class-${subjectClass.id}-ai`}
                     label="AI for class"
                     description="Off = human mode for all enrolled students"
                     checked={classAiEnabled[subjectClass.id] ?? true}

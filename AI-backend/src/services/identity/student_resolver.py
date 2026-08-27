@@ -49,7 +49,7 @@ async def resolve_student(
                 client.table("students")
                 .select(
                     "id, tenant_id, name, phone, school, district, extra_fields, "
-                    "consent_at, language_pref"
+                    "consent_at, language_pref, human_mode"
                 )
                 .eq("tenant_id", tenant_id)
                 .eq("id", student_id)
@@ -58,12 +58,9 @@ async def resolve_student(
             )
             student_rows = student_response.data or []
             if student_rows:
-                student = student_rows[0]
-                if _has_enrollment(tenant_id, student["id"]):
-                    return student
-                phone = student.get("phone")
-                if phone:
-                    return _pending_identity(tenant_id, str(phone))
+                # Always return the linked student so staff notify + human mode
+                # escalations have a real student_id even before enrollment.
+                return student_rows[0]
 
     if channel is ChatChannel.TELEGRAM:
         pending_phone = _lookup_pending_phone(tenant_id, address)

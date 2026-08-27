@@ -18,6 +18,7 @@ import {
 } from "react";
 
 import { useTenant } from "@/context/TenantContext";
+import ChartCard from "@/components/ChartCard";
 import SageCheck from "@/components/SageCheck";
 import {
   AnalyticsPeriod,
@@ -170,6 +171,25 @@ export default function ClassAnalyticsPage() {
     );
   }, [data]);
 
+  const attentionByClass = useMemo(() => {
+    if (!data) {
+      return { labels: ["No classes"], values: [0] };
+    }
+    const rows = [...data.classes].sort(
+      (left, right) =>
+        right.total_escalations - left.total_escalations,
+    );
+    if (rows.length === 0) {
+      return { labels: ["No classes"], values: [0] };
+    }
+    return {
+      labels: rows.map((item) =>
+        formatClassTitle(item.class_name, item.subject),
+      ),
+      values: rows.map((item) => item.total_escalations),
+    };
+  }, [data]);
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className={pageHeader}>
@@ -275,6 +295,13 @@ export default function ClassAnalyticsPage() {
               healthy={totals.escalations === 0}
             />
           </div>
+
+          <ChartCard
+            title="Requires Attention by Class"
+            type="bar"
+            labels={attentionByClass.labels}
+            data={attentionByClass.values}
+          />
 
           <div className={`${surfaceCard} flex flex-wrap items-center justify-between gap-3 p-4`}>
             <div>

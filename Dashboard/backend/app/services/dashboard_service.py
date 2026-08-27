@@ -394,37 +394,34 @@ def build_dashboard_analytics(
 
     total_conversations = len(session_ids)
 
-    # Current escalation table does not store session_id.
-    # Student-based proxy is used until exact session-level
-    # escalation attribution is introduced.
+    # Prefer conversations that actually got an AI assistant reply and
+    # were not tied to an in-period escalation. Counting *all* sessions for
+    # escalated students made longer windows report *less* time saved.
     escalated_student_ids = {
         escalation.student_id
         for escalation in escalations
+        if escalation.student_id
     }
 
-    sessions_by_student: dict[str, set[str]] = defaultdict(set)
+    grouped_turns: dict[str, list[STTurn]] = defaultdict(list)
 
     for turn in turns:
-        if turn.user_id and turn.session_id:
-            sessions_by_student[
-                turn.user_id
-            ].add(turn.session_id)
+        if turn.session_id:
+            grouped_turns[turn.session_id].append(turn)
 
-    escalated_conversation_proxy = sum(
-        len(sessions_by_student.get(student_id, set()))
-        for student_id in escalated_student_ids
-    )
-
-    escalated_conversation_proxy = min(
-        escalated_conversation_proxy,
-        total_conversations,
-    )
-
-    deflected_conversations = max(
-        total_conversations
-        - escalated_conversation_proxy,
-        0,
-    )
+    deflected_conversations = 0
+    for session_turns in grouped_turns.values():
+        has_assistant = any(
+            turn.role == MessageRole.ASSISTANT for turn in session_turns
+        )
+        if not has_assistant:
+            continue
+        session_students = {
+            turn.user_id for turn in session_turns if turn.user_id
+        }
+        if session_students & escalated_student_ids:
+            continue
+        deflected_conversations += 1
 
     if total_conversations > 0:
         deflection_rate = round(
@@ -440,13 +437,6 @@ def build_dashboard_analytics(
 
     # Calculate user -> next assistant latency per session.
     response_times: list[float] = []
-
-    grouped_turns: dict[str, list[STTurn]] = defaultdict(list)
-
-    for turn in turns:
-        grouped_turns[
-            turn.session_id
-        ].append(turn)
 
     for session_turns in grouped_turns.values():
         for index, turn in enumerate(session_turns):
@@ -849,32 +839,25 @@ def build_class_analytics(
             escalation.student_id
             for escalation
             in class_escalations
+            if escalation.student_id
         }
 
-        escalated_sessions = set()
-
-        for student_id in (
-            escalated_student_ids
-        ):
-            for turn in turns_by_student.get(
-                student_id,
-                [],
-            ):
-                if turn.session_id:
-                    escalated_sessions.add(
-                        turn.session_id
-                    )
-
-        escalated_conversation_proxy = min(
-            len(escalated_sessions),
-            total_conversations,
-        )
-
-        deflected_conversations = max(
-            total_conversations
-            - escalated_conversation_proxy,
-            0,
-        )
+        deflected_conversations = 0
+        for session_turns in grouped_turns.values():
+            has_assistant = any(
+                turn.role == MessageRole.ASSISTANT
+                for turn in session_turns
+            )
+            if not has_assistant:
+                continue
+            session_students = {
+                turn.user_id
+                for turn in session_turns
+                if turn.user_id
+            }
+            if session_students & escalated_student_ids:
+                continue
+            deflected_conversations += 1
 
         deflection_rate = (
             round(

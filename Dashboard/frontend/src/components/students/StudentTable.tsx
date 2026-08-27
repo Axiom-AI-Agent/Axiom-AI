@@ -108,6 +108,7 @@ export default function StudentTable({
                   onClick={(event) => event.stopPropagation()}
                 >
                   <ToggleSwitch
+                    id={`student-${student.id}-ai`}
                     size="sm"
                     label={aiEnabled ? "AI on" : "Human"}
                     checked={aiEnabled}

@@ -228,6 +228,30 @@ class IdentityResolver:
             rows = response.data or []
             if rows:
                 return rows[0]
+
+        target_digits = "".join(character for character in phone if character.isdigit())
+        if len(target_digits) < 8:
+            return None
+        students = (
+            client.table("students")
+            .select("id, name, phone, human_mode, language_pref")
+            .eq("tenant_id", tenant_id)
+            .execute()
+            .data
+            or []
+        )
+        for row in students:
+            row_digits = "".join(
+                character for character in str(row.get("phone") or "") if character.isdigit()
+            )
+            if not row_digits:
+                continue
+            if (
+                target_digits == row_digits
+                or target_digits.endswith(row_digits)
+                or row_digits.endswith(target_digits)
+            ):
+                return row
         return None
 
     def _lookup_enrollments(self, tenant_id: str, student_id: str) -> list[dict[str, Any]]:

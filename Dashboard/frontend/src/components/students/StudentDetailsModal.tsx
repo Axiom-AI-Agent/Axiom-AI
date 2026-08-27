@@ -80,6 +80,7 @@ export default function StudentDetailsModal({
       <div className="space-y-6">
           <section className={`${surfaceCard} p-4`}>
             <ToggleSwitch
+              id={`student-details-${student.id}-ai`}
               label="AI responses"
               description={
                 student.human_mode

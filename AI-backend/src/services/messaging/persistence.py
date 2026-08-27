@@ -49,8 +49,14 @@ class MessagePersistence:
         channel: ChatChannel = ChatChannel.HTTP_DEV,
     ) -> None:
         """Persist a staff-authored message (role=system → sender=staff in dashboard UI)."""
-        if ctx.student_exists and ctx.student_id:
-            self._insert_message_log(ctx, intent="staff_reply", channel=channel)
+        if not (ctx.student_exists and ctx.student_id):
+            logger.warning(
+                "Skipping staff_reply persist — missing student_id tenant={} phone={}",
+                ctx.tenant_id,
+                ctx.phone,
+            )
+            return
+        self._insert_message_log(ctx, intent="staff_reply", channel=channel)
         self._insert_turn(ctx, role=MessageRole.SYSTEM, content=body)
 
     def _insert_message_log(
@@ -79,7 +85,7 @@ class MessagePersistence:
             client.table("st_turns").insert(
                 {
                     "tenant_id": ctx.tenant_id,
-                    "user_id": ctx.student_id or ctx.phone,
+                    "user_id": ctx.student_id,
                     "session_id": ctx.session_id,
                     "role": role.value,
                     "content": content,

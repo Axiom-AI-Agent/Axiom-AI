@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Query
@@ -34,6 +35,21 @@ class EscalationActionResponse(BaseModel):
     enrollment_status: Optional[str] = None
     student_notified: bool = False
     notification_message: Optional[str] = None
+
+
+def _phone_digits(value: str) -> str:
+    return "".join(character for character in value if character.isdigit())
+
+
+def _phones_match(left: str, right: str) -> bool:
+    a = _phone_digits(left)
+    b = _phone_digits(right)
+    if not a or not b:
+        return False
+    if a == b:
+        return True
+    # Match local numbers that differ by country-code prefixes.
+    return a.endswith(b) or b.endswith(a)
 
 
 def _telegram_chat_id_for_student(*, tenant_id: str, student_id: str | None) -> int | None:
@@ -94,7 +110,7 @@ def _telegram_chat_id_for_phone(*, tenant_id: str, phone: str) -> int | None:
 
 
 def _student_id_for_phone(*, tenant_id: str, phone: str) -> str | None:
-    """Best-effort student lookup by normalized phone variants."""
+    """Best-effort student lookup by normalized phone variants / digit suffix."""
     from services.identity.resolver import normalize_phone
 
     client = get_supabase_client()
@@ -103,6 +119,7 @@ def _student_id_for_phone(*, tenant_id: str, phone: str) -> str | None:
         normalized,
         f"+{normalized}" if normalized else "",
         normalized.lstrip("0") if normalized else "",
+        phone,
     }
     for candidate in candidates:
         if not candidate:
@@ -119,6 +136,23 @@ def _student_id_for_phone(*, tenant_id: str, phone: str) -> str | None:
         )
         if rows and rows[0].get("id"):
             return str(rows[0]["id"])
+
+    # Fallback: digit-suffix match (handles +94 vs 94 vs 0-prefixed storage).
+    target = _phone_digits(normalized or phone)
+    if len(target) < 8:
+        return None
+    students = (
+        client.table("students")
+        .select("id, phone")
+        .eq("tenant_id", tenant_id)
+        .execute()
+        .data
+        or []
+    )
+    for row in students:
+        row_phone = str(row.get("phone") or "")
+        if _phones_match(target, row_phone) and row.get("id"):
+            return str(row["id"])
     return None
 
 
@@ -154,6 +188,13 @@ async def notify_student(
         tenant_id=tenant_id,
         phone=phone,
     )
+    if student_id and not ctx.student_id:
+        ctx = replace(
+            ctx,
+            student_id=student_id,
+            student_exists=True,
+        )
+
     chat_id = _telegram_chat_id_for_student(
         tenant_id=tenant_id,
         student_id=student_id,
@@ -168,6 +209,22 @@ async def notify_student(
             await send_telegram_message(tenant_id, chat_id, message)
             delivered = True
             delivery_channel = ChatChannel.TELEGRAM
+            # Ensure future staff replies resolve without fuzzy matching.
+            if student_id:
+                try:
+                    from services.identity.student_resolver import _upsert_channel
+
+                    _upsert_channel(
+                        tenant_id=tenant_id,
+                        student_id=student_id,
+                        channel=ChatChannel.TELEGRAM,
+                        channel_address=str(chat_id),
+                    )
+                except Exception as link_exc:
+                    logger.warning(
+                        "Could not persist Telegram channel after staff send: {}",
+                        link_exc,
+                    )
         except Exception as exc:
             logger.warning(
                 "Telegram staff notify failed tenant={} phone={} chat_id={}: {}",
