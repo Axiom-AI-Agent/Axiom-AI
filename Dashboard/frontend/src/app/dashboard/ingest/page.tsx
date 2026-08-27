@@ -217,7 +217,7 @@ function IngestContent() {
           >
             {classes.map((subjectClass) => (
               <option key={subjectClass.id} value={subjectClass.id}>
-                {subjectClass.subject} ({subjectClass.id})
+                {subjectClass.name || subjectClass.subject}
               </option>
             ))}
           </select>
