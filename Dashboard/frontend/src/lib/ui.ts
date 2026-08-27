@@ -1,14 +1,19 @@
 export const pageTitle =
   "font-display text-2xl font-semibold tracking-tight text-heading";
 
-export const pageSubtitle = "mt-1.5 max-w-2xl text-sm leading-relaxed text-muted";
+export const pageSubtitle =
+  "mt-1.5 max-w-2xl text-sm leading-relaxed text-muted";
 
 /** Keeps page title/actions clear of content cards below. */
 export const pageHeader =
-  "mb-6 flex shrink-0 flex-wrap items-start justify-between gap-4";
+  "mb-5 flex shrink-0 flex-wrap items-start justify-between gap-4";
 
 export const pageToolbar =
   "flex shrink-0 flex-wrap items-center justify-end gap-2.5";
+
+/** Filter strip under the page header (status/reason selects, etc.). */
+export const filterBar =
+  "mb-5 flex shrink-0 flex-wrap items-center gap-2.5 rounded-xl border border-border bg-surface/90 p-2.5 shadow-[var(--shadow-card)] backdrop-blur-sm";
 
 export const surfaceCard =
   "rounded-xl border border-border bg-surface shadow-[var(--shadow-card)]";
@@ -17,7 +22,7 @@ export const btnPrimary =
   "inline-flex items-center justify-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper shadow-sm transition-all hover:bg-blue/90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50";
 
 export const btnQuiet =
-  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-fg shadow-sm transition-colors hover:bg-hover hover:border-blue/25 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3.5 py-2 text-sm font-medium text-fg shadow-sm transition-colors hover:border-blue/30 hover:bg-hover disabled:cursor-not-allowed disabled:opacity-50";
 
 export const btnGhost =
   "inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-hover hover:text-fg disabled:opacity-50";

@@ -35,40 +35,50 @@
 }
 
 :root {
-  --ink: #0b1220;
-  --indigo: #16233d;
-  --indigo-soft: #3a4f73;
-  --paper: #f4f6fa;
-  --blue: #2f6fed;
-  --sage: #4f9474;
+  --ink: #0a1220;
+  --indigo: #14233c;
+  --indigo-soft: #41597f;
+  --paper: #f7f9fc;
+  --blue: #2d6cf0;
+  --sage: #3f916f;
 
-  --bg: #e8ecf4;
+  --bg: #edf1f8;
   --surface: #ffffff;
   --surface-elevated: #ffffff;
-  --fg: #1a2740;
-  --heading: #0b1220;
-  --muted: #5c6d88;
-  --border: color-mix(in srgb, #3a4f73 14%, #ffffff);
-  --hover: color-mix(in srgb, #2f6fed 7%, #ffffff);
-  --ring: color-mix(in srgb, #2f6fed 28%, transparent);
+  --fg: #17253d;
+  --heading: #0a1220;
+  --muted: #5a6c87;
+  --border: color-mix(in srgb, #41597f 12%, #ffffff);
+  --hover: color-mix(in srgb, #2d6cf0 6%, #ffffff);
+  --ring: color-mix(in srgb, #2d6cf0 26%, transparent);
 
-  --shadow-card: 0 1px 2px rgba(11, 18, 32, 0.04), 0 8px 24px rgba(11, 18, 32, 0.05);
-  --shadow-soft: 0 12px 40px rgba(11, 18, 32, 0.08);
+  --shadow-card:
+    0 0 0 1px color-mix(in srgb, #14233c 4%, transparent),
+    0 1px 2px rgba(10, 18, 32, 0.04),
+    0 10px 28px rgba(10, 18, 32, 0.06);
+  --shadow-soft:
+    0 0 0 1px color-mix(in srgb, #14233c 5%, transparent),
+    0 18px 48px rgba(10, 18, 32, 0.1);
 }
 
 .dark {
-  --bg: #070b14;
-  --surface: #101827;
-  --surface-elevated: #152033;
-  --fg: #e6edf8;
-  --heading: #f5f8fc;
-  --muted: #93a4bd;
-  --border: color-mix(in srgb, #6b82a8 28%, #101827);
-  --hover: color-mix(in srgb, #2f6fed 12%, #101827);
-  --ring: color-mix(in srgb, #2f6fed 35%, transparent);
+  --bg: #060910;
+  --surface: #0d1524;
+  --surface-elevated: #141f33;
+  --fg: #e8eef8;
+  --heading: #f7f9fc;
+  --muted: #8fa1bb;
+  --border: color-mix(in srgb, #6f87ad 22%, #0d1524);
+  --hover: color-mix(in srgb, #2d6cf0 11%, #0d1524);
+  --ring: color-mix(in srgb, #2d6cf0 38%, transparent);
 
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25), 0 10px 28px rgba(0, 0, 0, 0.28);
-  --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --shadow-card:
+    0 0 0 1px color-mix(in srgb, #8fa1bb 8%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 14px 36px rgba(0, 0, 0, 0.35);
+  --shadow-soft:
+    0 0 0 1px color-mix(in srgb, #8fa1bb 10%, transparent),
+    0 22px 56px rgba(0, 0, 0, 0.5);
 }
 
 html {
@@ -87,16 +97,17 @@ body {
   background-color: var(--bg);
   color: var(--fg);
   background-image:
-    radial-gradient(920px 420px at 12% -8%, color-mix(in srgb, var(--blue) 14%, transparent), transparent 58%),
-    radial-gradient(760px 380px at 92% 0%, color-mix(in srgb, var(--sage) 10%, transparent), transparent 52%);
+    radial-gradient(1100px 520px at 8% -12%, color-mix(in srgb, var(--blue) 16%, transparent), transparent 60%),
+    radial-gradient(900px 460px at 96% -4%, color-mix(in srgb, var(--sage) 11%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--paper) 55%, transparent), transparent 42%);
   background-attachment: fixed;
 }
 
-.dark body,
 html.dark body {
   background-image:
-    radial-gradient(880px 400px at 8% -10%, color-mix(in srgb, var(--blue) 18%, transparent), transparent 55%),
-    radial-gradient(720px 360px at 100% 0%, color-mix(in srgb, #4f6fa8 12%, transparent), transparent 50%);
+    radial-gradient(1000px 480px at 6% -14%, color-mix(in srgb, var(--blue) 22%, transparent), transparent 58%),
+    radial-gradient(820px 420px at 100% -2%, color-mix(in srgb, #4d6ea8 16%, transparent), transparent 52%),
+    linear-gradient(180deg, color-mix(in srgb, #121c30 70%, transparent), transparent 40%);
 }
 
 h1,
@@ -104,6 +115,7 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }
 
 .tabular {
@@ -112,4 +124,9 @@ h3,
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--blue) 28%, transparent);
+  color: var(--heading);
 }

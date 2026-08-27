@@ -51,7 +51,7 @@ const mainNavItems: NavItem[] = [
   },
   {
     href: "/dashboard/inbox",
-    label: "Inbox",
+    label: "Escalation Inbox",
     icon: <Inbox className="h-5 w-5" />,
   },
   {
@@ -141,7 +141,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-64 flex-col border-r border-white/10 bg-[linear-gradient(175deg,#0f1a2e_0%,#15233b_48%,#101b2d_100%)] p-3 text-white shadow-[var(--shadow-soft)] transition-transform duration-300 ease-in-out lg:relative lg:shadow-none",
+        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-72 flex-col border-r border-white/10 bg-[linear-gradient(175deg,#0c1628_0%,#132038_46%,#0e1830_100%)] p-3 text-white shadow-[var(--shadow-soft)] transition-transform duration-300 ease-in-out lg:relative lg:shadow-none",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:flex lg:translate-x-0",
       )}

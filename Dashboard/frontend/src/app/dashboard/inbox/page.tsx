@@ -36,6 +36,19 @@ import {
   resolveEscalation,
   sendStaffMessage,
 } from "@/lib/api";
+import {
+  btnPrimary,
+  btnQuiet,
+  emptyState,
+  errorBanner,
+  filterBar,
+  inputClass,
+  pageHeader,
+  pageSubtitle,
+  pageTitle,
+  surfaceCard,
+  toolbarSelect,
+} from "@/lib/ui";
 
 function statusClass(status: EscalationStatus) {
   if (status === "resolved") {
@@ -285,12 +298,10 @@ function InboxContent() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-heading">
-            Escalation Inbox
-          </h1>
-          <p className="mt-1 text-sm text-muted">
+      <div className={pageHeader}>
+        <div className="min-w-0">
+          <h1 className={pageTitle}>Escalation Inbox</h1>
+          <p className={pageSubtitle}>
             Unified HITL queue for payment receipts and tutor requests.
           </p>
           <p className="mt-2 text-xs text-muted">
@@ -303,18 +314,19 @@ function InboxContent() {
           type="button"
           onClick={() => void loadEscalations(true)}
           disabled={loading}
-          className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm text-fg hover:bg-hover bg-surface disabled:opacity-50"
+          className={btnQuiet}
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className={filterBar}>
         <select
           value={statusFilter ?? ""}
           onChange={(event) => updateFilter("status", event.target.value)}
-          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-heading"
+          className={toolbarSelect}
+          aria-label="Filter by status"
         >
           <option value="">All statuses</option>
           <option value="open">Open</option>
@@ -327,21 +339,20 @@ function InboxContent() {
           onChange={(event) =>
             updateFilter("reason_code", event.target.value)
           }
-          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-heading"
+          className={toolbarSelect}
+          aria-label="Filter by reason"
         >
-        <option value="">All reasons</option>
-        <option value="payment_receipt">Payment receipt</option>
-        <option value="talk_to_tutor">Talk to tutor</option>
-        <option value="low_rag_confidence">
-          Low RAG confidence
-        </option>
+          <option value="">All reasons</option>
+          <option value="payment_receipt">Payment receipt</option>
+          <option value="talk_to_tutor">Talk to tutor</option>
+          <option value="low_rag_confidence">Low RAG confidence</option>
         </select>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
         {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface p-4 text-fg">
-          <AlertTriangle className="h-5 w-5" />
+        <div className={errorBanner}>
+          <AlertTriangle className="h-5 w-5 shrink-0 text-blue" />
           {error}
         </div>
       )}
@@ -351,7 +362,7 @@ function InboxContent() {
           <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : escalations.length === 0 ? (
-        <div className="rounded-xl border border-border bg-surface p-10 text-center text-muted">
+        <div className={emptyState}>
           No escalations match the current filters.
         </div>
       ) : (
@@ -363,11 +374,11 @@ function InboxContent() {
             return (
               <article
                 key={escalation.id}
-                className="rounded-md border border-border bg-surface p-5"
+                className={`${surfaceCard} p-5 transition-shadow hover:shadow-[var(--shadow-soft)]`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <h2 className="font-semibold text-heading">
+                    <h2 className="font-display font-semibold text-heading">
                       {escalation.student_name ?? escalation.student_id}
                     </h2>
                     <p className="mt-1 text-sm text-muted">
@@ -381,7 +392,7 @@ function InboxContent() {
 
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md px-3 py-1 text-xs font-medium capitalize",
+                      "inline-flex items-center gap-1 rounded-lg px-3 py-1 text-xs font-medium capitalize",
                       statusClass(escalation.status),
                     )}
                   >
@@ -393,7 +404,7 @@ function InboxContent() {
                 </div>
 
                 {escalation.student_message && (
-                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                  <div className="mt-4 rounded-xl border border-border bg-bg/60 p-4">
                     <p className="text-xs uppercase tracking-wide text-muted">
                       Student message
                     </p>
@@ -404,7 +415,7 @@ function InboxContent() {
                 )}
 
                 {escalation.media_url && (
-                  <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+                  <div className="mt-4 rounded-xl border border-border bg-bg/60 p-4">
                     <p className="text-xs uppercase tracking-wide text-muted">
                       Payment slip
                     </p>
@@ -448,7 +459,7 @@ function InboxContent() {
                 )}
 {escalation.student_phone &&
   escalation.status !== "resolved" && (
-    <div className="mt-4 rounded-lg border border-border bg-surface p-4">
+    <div className="mt-4 rounded-xl border border-border bg-bg/60 p-4">
       <p className="text-xs font-medium uppercase tracking-wide text-muted">
         Reply to student
       </p>
@@ -475,7 +486,7 @@ function InboxContent() {
             }
           }}
           placeholder="Type a reply to send via WhatsApp..."
-          className="flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-heading outline-none focus:border-indigo-soft"
+          className={`${inputClass} flex-1`}
         />
 
         <button
@@ -485,7 +496,7 @@ function InboxContent() {
             !(replyDrafts[escalation.id] ?? "").trim()
           }
           onClick={() => void handleReply(escalation)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className={btnPrimary}
         >
           {sendingReplyId === escalation.id ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -517,7 +528,7 @@ function InboxContent() {
                         href={`/dashboard/messages?phone=${encodeURIComponent(
                           escalation.student_phone,
                         )}`}
-                        className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-fg hover:bg-hover bg-surface"
+                        className={btnQuiet}
                       >
                         <MessageSquare className="h-4 w-4" />
                         Open chat
@@ -529,7 +540,7 @@ function InboxContent() {
                         type="button"
                         disabled={processing}
                         onClick={() => void handleResolve(escalation)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-blue px-3 py-2 text-sm text-paper hover:bg-blue/90 disabled:opacity-50"
+                        className={btnPrimary}
                       >
                         {processing ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -545,7 +556,7 @@ function InboxContent() {
                         type="button"
                         disabled={processing}
                         onClick={() => void handleReject(escalation)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-fg hover:bg-hover disabled:opacity-50"
+                        className={btnQuiet}
                       >
                         <XCircle className="h-4 w-4" />
                         Reject

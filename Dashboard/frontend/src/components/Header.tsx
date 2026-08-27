@@ -22,11 +22,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-border/80 bg-surface/80 px-5 py-3 backdrop-blur-md supports-[backdrop-filter]:bg-surface/70">
+    <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-border/70 bg-surface/75 px-5 py-3.5 shadow-[0_8px_24px_rgba(10,18,32,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-surface/65 dark:shadow-[0_10px_28px_rgba(0,0,0,0.28)]">
       {onMenuClick ? (
         <button
           onClick={onMenuClick}
-          className="rounded-lg p-2 text-muted transition-colors hover:bg-hover hover:text-fg lg:hidden"
+          className="rounded-xl p-2 text-muted transition-colors hover:bg-hover hover:text-fg lg:hidden"
           aria-label="Open sidebar"
           type="button"
         >
@@ -47,8 +47,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
       <div className="flex items-center gap-2 sm:gap-3">
         {user ? (
-          <div className="hidden items-center gap-2.5 rounded-xl border border-border bg-bg/70 px-3 py-1.5 shadow-sm sm:flex">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue/12 text-blue">
+          <div className="hidden items-center gap-2.5 rounded-2xl border border-border bg-bg/80 px-3 py-1.5 shadow-sm sm:flex">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue/12 text-blue">
               <User className="h-4 w-4" />
             </div>
             <div className="text-xs">
@@ -62,7 +62,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           type="button"
           onClick={toggleTheme}
           whileTap={{ scale: 0.97 }}
-          className="rounded-xl border border-border bg-surface p-2 text-muted shadow-sm transition-colors hover:bg-hover hover:text-fg"
+          className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:border-blue/30 hover:bg-hover hover:text-fg"
           aria-label="Toggle dark mode"
         >
           {theme === "dark" ? (
@@ -76,7 +76,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           type="button"
           onClick={handleLogout}
           whileTap={{ scale: 0.97 }}
-          className="rounded-xl border border-border bg-surface p-2 text-muted shadow-sm transition-colors hover:bg-hover hover:text-fg"
+          className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:border-blue/30 hover:bg-hover hover:text-fg"
           aria-label="Logout"
           title="Logout"
         >
