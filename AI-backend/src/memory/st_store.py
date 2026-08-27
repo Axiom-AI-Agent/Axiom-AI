@@ -111,18 +111,41 @@ class ShortTermMemoryStore:
         session_id: str,
         k: int = 10,
     ) -> list[tuple[str, str]]:
-        """Return up to k (user, assistant) pairs — BookMe SessionStore interface."""
-        turns = self.recall_turns(
-            tenant_id=tenant_id,
-            session_id=session_id,
-            user_id=user_id,
-            limit=k * 2,
-        )
+        """Return up to k most recent (user, assistant) pairs.
+
+        ``recall_turns`` is oldest-first and ``limit`` truncates from the start
+        of the session, so a long chat would never surface the last exchange.
+        Fetch newest-first here, then pair in chronological order.
+        """
+        try:
+            client = get_supabase_client()
+            query = (
+                client.table("st_turns")
+                .select("role, content, created_at")
+                .eq("tenant_id", tenant_id)
+                .eq("session_id", session_id)
+                .order("created_at", desc=True)
+                .limit(k * 2 + 2)
+            )
+            if user_id:
+                query = query.eq("user_id", user_id)
+            rows = list(reversed(query.execute().data or []))
+        except Exception as exc:
+            logger.warning("ST recent_pairs failed: {}", exc)
+            return []
+
+        turns: list[tuple[str, str]] = []
+        for row in rows:
+            role = str(row.get("role") or "user")
+            if role not in ("user", "assistant"):
+                continue
+            turns.append((role, str(row.get("content") or "")))
+
         pairs: list[tuple[str, str]] = []
         i = 0
         while i < len(turns) - 1:
-            if turns[i].role == "user" and turns[i + 1].role == "assistant":
-                pairs.append((turns[i].content, turns[i + 1].content))
+            if turns[i][0] == "user" and turns[i + 1][0] == "assistant":
+                pairs.append((turns[i][1], turns[i + 1][1]))
                 i += 2
             else:
                 i += 1

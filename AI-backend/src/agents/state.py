@@ -13,6 +13,8 @@ from langchain_core.messages import AnyMessage
 from langgraph.graph.message import add_messages
 from typing_extensions import TypedDict
 
+from services.nlu import IntentResult
+
 
 class AgentState(TypedDict, total=False):
     messages: Annotated[list[AnyMessage], add_messages]
@@ -30,8 +32,14 @@ class AgentState(TypedDict, total=False):
     language_pref: str
 
     media_url: Optional[str]
+    media_kind: Optional[str]
 
     memory_context: Optional[str]
+
+    #: Intent classified for *this* turn. Recomputed every message so an
+    #: in-progress flow can never dictate how the next one is interpreted.
+    intent: Optional[IntentResult]
+    flow_nudge_key: Optional[str]
 
     guardrail: Optional[str]
     verdict: Optional[str]

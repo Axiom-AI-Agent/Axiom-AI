@@ -22,8 +22,13 @@ from agents.decision_state import DecisionState, DecisionVerdict, GuardrailVerdi
 from agents.guardrail import Guardrail, get_guardrail
 from agents.prompts import get_flagged_abusive_reply, get_out_of_scope_reply
 from agents.router import SPECIALIST_ROUTES, QueryRouter, _fallback_multi, get_query_router
+from services.nlu import classify
 
 EmitFn = Callable[[dict[str, Any]], Awaitable[None]]
+
+#: How sure the router must be before its route outranks an out_of_scope
+#: guardrail verdict.
+_GUARDRAIL_OVERRIDE_CONFIDENCE = 0.7
 
 
 def _ms(t0: float) -> int:
@@ -73,6 +78,9 @@ def make_router_node(router: QueryRouter):
         emit = _emit_from_config(config)
         t0 = time.perf_counter()
         await emit({"type": "stage_start", "stage": "route"})
+        # Classified once per turn and carried forward, so downstream agents
+        # decide against this message rather than against a remembered flow.
+        intent = classify(state["message"])
         try:
             decision = await router.aroute(
                 state["message"],
@@ -88,10 +96,14 @@ def make_router_node(router: QueryRouter):
                 "type": "stage_done",
                 "stage": "route",
                 "ms": ms,
-                "detail": {"route": primary.route, "action": primary.action},
+                "detail": {
+                    "route": primary.route,
+                    "action": primary.action,
+                    "intent": intent.intent.value,
+                },
             }
         )
-        return {"decision": decision, "route_ms": ms}
+        return {"decision": decision, "route_ms": ms, "intent": intent}
 
     return router_node
 
@@ -114,10 +126,21 @@ def decide_node(
         }
 
     if guardrail_v == "out_of_scope":
-        if primary_route in SPECIALIST_ROUTES:
+        # The router may overrule the guardrail, because the guardrail LLM
+        # sometimes calls a terse in-domain request off-topic. But it only gets
+        # that power when it is *confident*: a hesitant specialist guess used to
+        # be enough to wave anything through, which turned the guardrail into a
+        # suggestion rather than a gate (A4).
+        confident_specialist = (
+            primary is not None
+            and primary_route in SPECIALIST_ROUTES
+            and primary.confidence >= _GUARDRAIL_OVERRIDE_CONFIDENCE
+        )
+        if confident_specialist:
             logger.info(
-                "Guardrail out_of_scope but router chose {}; proceeding",
+                "Guardrail out_of_scope but router chose {} at {:.2f}; proceeding",
                 primary_route,
+                primary.confidence,  # type: ignore[union-attr]
             )
             return {"verdict": "proceed", "primary_route": primary_route}
         return {

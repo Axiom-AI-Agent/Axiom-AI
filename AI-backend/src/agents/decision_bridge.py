@@ -33,6 +33,7 @@ def map_decision_to_agent_state(
     enrolled_class_ids: list[str] | None = None,
     student_profile_context: str = "",
     media_url: str | None = None,
+    media_kind: str | None = None,
     language_pref: str = "en",
 ) -> AgentState:
     patch: dict[str, Any] = {
@@ -49,9 +50,11 @@ def map_decision_to_agent_state(
         "enrolled_class_ids": list(enrolled_class_ids or []),
         "student_profile_context": student_profile_context,
         "media_url": media_url,
+        "media_kind": media_kind,
         "language_pref": normalize_language_pref(language_pref),
         "guardrail": decision_out.get("guardrail", "in_scope"),
         "verdict": decision_out.get("verdict", "proceed"),
+        "intent": decision_out.get("intent"),
     }
 
     if patch["verdict"] == "out_of_scope":

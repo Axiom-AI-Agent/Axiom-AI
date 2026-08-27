@@ -398,13 +398,13 @@ class ScheduleService:
         return all_schedules
 
     def _get_enrolled_class_ids(self, tenant_id: str, student_id: str) -> list[str]:
-        """Get class IDs the student is actively enrolled in."""
+        """Get class IDs the student is enrolled in (active or pending)."""
         resp = (
             self.client.table("enrollments")
             .select("class_id")
             .eq("tenant_id", tenant_id)
             .eq("student_id", student_id)
-            .eq("status", "active")
+            .in_("status", ["active", "pending"])
             .execute()
         )
         return [e["class_id"] for e in (resp.data or [])]

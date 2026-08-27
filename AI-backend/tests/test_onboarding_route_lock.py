@@ -282,7 +282,12 @@ async def test_tutoring_question_breaks_onboarding_route_lock(ctx: IdentityConte
 
     assert recorded["routes"] == ["resource"]
     assert result.route == "resource"
-    assert store.get(tenant_id=ctx.tenant_id, phone=ctx.phone) is None
+
+    # The half-finished enrollment is suspended, not discarded, so the student
+    # can be nudged back to it and resume where they stopped.
+    session = store.get(tenant_id=ctx.tenant_id, phone=ctx.phone)
+    assert session is not None
+    assert session.active is False
 
 
 def test_router_routes_class_availability_to_admissions():

@@ -20,6 +20,7 @@ def parse_twilio_form(form: dict[str, str]) -> TwilioInboundMessage:
         "Body": form.get("Body", ""),
         "NumMedia": num_media,
         "MediaUrl0": form.get("MediaUrl0"),
+        "MediaContentType0": form.get("MediaContentType0"),
         "ProfileName": form.get("ProfileName"),
     }
     return TwilioInboundMessage.model_validate(payload)

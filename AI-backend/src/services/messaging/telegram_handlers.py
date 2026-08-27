@@ -7,7 +7,6 @@ from typing import Any
 from loguru import logger
 
 from domain.enums import ChatChannel
-from services.admissions.onboarding_session_store import get_onboarding_session_store
 from services.identity.staff_resolver import (
     StaffContext,
     consume_staff_link_code,
@@ -27,6 +26,7 @@ from services.messaging.telegram_client import (
     send_telegram_message,
     telegram_typing,
 )
+from services.language import t
 from services.tenant_config import (
     TenantBotTokenError,
     get_bot_token_for_tenant,
@@ -138,15 +138,24 @@ async def handle_contact_shared(
     )
     already_enrolled = bool(student.get("id"))
     phone_norm = student.get("phone") or ""
-    if not already_enrolled and phone_norm:
-        _ensure_onboarding_session(tenant_id, phone_norm)
-    await _run_pipeline_and_reply(
-        tenant_id=tenant_id,
-        chat_id=chat_id,
-        student=student,
-        body="Hello" if already_enrolled else "",
-        update_id=update_id,
+    if already_enrolled:
+        await _run_pipeline_and_reply(
+            tenant_id=tenant_id,
+            chat_id=chat_id,
+            student=student,
+            body="Hello",
+            update_id=update_id,
+        )
+        return
+
+    bot_name = get_telegram_bot_display_name(tenant_id)
+    await send_telegram_message(
+        tenant_id,
+        chat_id,
+        t("onboarding_interest", tenant_name=bot_name),
     )
+    if phone_norm:
+        await bind_telegram_student_channel(tenant_id, str(chat_id), phone_norm)
 
 
 async def handle_photo_message(
@@ -239,13 +248,6 @@ async def _run_pipeline_and_reply(
         await send_telegram_message(tenant_id, chat_id, result.reply)
     await bind_telegram_student_channel(tenant_id, str(chat_id), phone)
     return result
-
-
-def _ensure_onboarding_session(tenant_id: str, phone: str) -> None:
-    """Sharing a phone is a registration step, not a classified user query."""
-    store = get_onboarding_session_store()
-    if store.get(tenant_id=tenant_id, phone=phone) is None:
-        store.start(tenant_id=tenant_id, phone=phone)
 
 
 def _largest_photo_file_id(photo: list[dict[str, Any]]) -> str | None:

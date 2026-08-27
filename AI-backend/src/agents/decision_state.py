@@ -11,6 +11,7 @@ from typing import Literal, Optional
 from typing_extensions import TypedDict
 
 from agents.router import MultiRouteDecision
+from services.nlu import IntentResult
 
 GuardrailVerdict = Literal["in_scope", "out_of_scope", "flagged_abusive"]
 DecisionVerdict = Literal["out_of_scope", "flagged_abusive", "proceed"]
@@ -22,6 +23,7 @@ class DecisionState(TypedDict, total=False):
 
     guardrail: GuardrailVerdict
     decision: MultiRouteDecision
+    intent: Optional[IntentResult]
 
     guardrail_ms: int
     route_ms: int

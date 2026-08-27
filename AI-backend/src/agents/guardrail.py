@@ -13,6 +13,7 @@ from loguru import logger
 from agents.prompts import build_guardrail_system_prompt
 from infrastructure.llm import get_guardrail_llm
 from infrastructure.observability import observe, update_current_observation
+from services.nlu.safety import contains_abuse
 
 GuardrailVerdict = Literal["in_scope", "out_of_scope", "flagged_abusive"]
 
@@ -62,6 +63,12 @@ class Guardrail:
         message: str,
         memory_context: str = "",
     ) -> GuardrailVerdict:
+        # Deterministic first, so blatant abuse does not depend on the LLM
+        # labelling a statement the same way it labels the question form (A4).
+        if contains_abuse(message):
+            update_current_observation(input=(message or "")[:200], output="flagged_abusive")
+            return "flagged_abusive"
+
         msgs = [
             {"role": "system", "content": build_guardrail_system_prompt()},
             {"role": "user", "content": _build_user_prompt(message, memory_context)},

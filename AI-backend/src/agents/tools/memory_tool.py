@@ -34,6 +34,22 @@ class MemoryTool:
         formatted = self.st_store.format_turns(turns)
         return formatted or "(no prior turns)"
 
+    def recent_pairs(
+        self,
+        *,
+        tenant_id: str,
+        user_id: str,
+        session_id: str,
+        k: int = 10,
+    ) -> list[tuple[str, str]]:
+        """Up to ``k`` recent (user, assistant) pairs for this session."""
+        return self.st_store.recent_pairs(
+            tenant_id=tenant_id,
+            user_id=user_id,
+            session_id=session_id,
+            k=k,
+        )
+
     def add_turn(
         self,
         *,
