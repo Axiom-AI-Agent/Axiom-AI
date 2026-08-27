@@ -134,8 +134,8 @@ export default function SchedulesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="flex h-[calc(100vh-4rem)] flex-col space-y-6 overflow-hidden">
+      <div className="flex flex-wrap items-start justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
             Schedules
@@ -308,7 +308,8 @@ export default function SchedulesPage() {
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="flex-1 overflow-y-auto pr-1">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 pb-6">
           {schedules.map((schedule) => (
             <article
               key={schedule.id}
@@ -382,6 +383,7 @@ export default function SchedulesPage() {
               </dl>
             </article>
           ))}
+          </div>
         </div>
       )}
     </div>

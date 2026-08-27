@@ -21,6 +21,7 @@ import StudentFormModal, {
   StudentFormState,
 } from "@/components/students/StudentFormModal";
 import StudentTable from "@/components/students/StudentTable";
+import StudentDetailsModal from "@/components/students/StudentDetailsModal";
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
 import {
@@ -38,7 +39,7 @@ import {
   updateStudentHumanMode,
 } from "@/lib/api";
 
-type ModalMode = "create" | "edit" | "enroll" | null;
+type ModalMode = "create" | "edit" | "enroll" | "details" | null;
 
 const FALLBACK_DISTRICT_FIELD: OnboardingFieldDefinition = {
   field_key: "district",
@@ -107,6 +108,7 @@ export default function StudentsPage() {
   const [form, setForm] = useState<StudentFormState>(() => emptyForm([]));
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [enrollingStudent, setEnrollingStudent] = useState<Student | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [enrollClassId, setEnrollClassId] = useState("");
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [loading, setLoading] = useState(true);
@@ -165,6 +167,7 @@ export default function StudentsPage() {
     setModalMode(null);
     setEditingStudent(null);
     setEnrollingStudent(null);
+    setSelectedStudent(null);
     setEnrollClassId("");
     setForm(emptyForm(fieldDefs));
   }
@@ -191,6 +194,11 @@ export default function StudentsPage() {
     setEnrollingStudent(student);
     setEnrollClassId("");
     setModalMode("enroll");
+  }
+
+  function openDetailsModal(student: Student) {
+    setSelectedStudent(student);
+    setModalMode("details");
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -368,8 +376,8 @@ export default function StudentsPage() {
     }
   }
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="flex h-[calc(100vh-4rem)] flex-col space-y-6 overflow-hidden">
+      <div className="flex flex-wrap items-start justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Students</h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -477,9 +485,8 @@ export default function StudentsPage() {
             onEdit={openEditModal}
             onEnroll={openEnrollModal}
             onDelete={(studentId) => void handleDelete(studentId)}
-            onToggleHumanMode={(student) =>
-              void handleHumanModeToggle(student)
-            }
+            onToggleHumanMode={(student) => void handleHumanModeToggle(student)}
+            onRowClick={openDetailsModal}
           />
       )}
 
@@ -505,6 +512,18 @@ export default function StudentsPage() {
           onClose={closeModal}
           onChange={setEnrollClassId}
           onSubmit={handleEnrollSubmit}
+        />
+      )}
+
+      {modalMode === "details" && selectedStudent && (
+        <StudentDetailsModal
+          student={selectedStudent}
+          fields={fieldDefs}
+          onClose={closeModal}
+          onEdit={openEditModal}
+          onEnroll={openEnrollModal}
+          onDelete={(studentId) => void handleDelete(studentId)}
+          onToggleHumanMode={(student) => void handleHumanModeToggle(student)}
         />
       )}
     </div>

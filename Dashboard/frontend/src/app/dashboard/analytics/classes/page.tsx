@@ -167,7 +167,7 @@ export default function ClassAnalyticsPage() {
 
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
             Compare AI automation and
-            escalation performance across
+            human review performance across
             classes.
           </p>
         </div>
@@ -252,7 +252,7 @@ export default function ClassAnalyticsPage() {
             />
 
             <SummaryCard
-              label="Escalations"
+              label="Requires Attention"
               value={totals.escalations}
               icon={
                 <AlertTriangle className="h-5 w-5" />
@@ -283,7 +283,7 @@ export default function ClassAnalyticsPage() {
               className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
             >
               <option value="deflection_rate">
-                Deflection rate
+                Resolved by AI
               </option>
 
               <option value="total_messages">
@@ -295,7 +295,7 @@ export default function ClassAnalyticsPage() {
               </option>
 
               <option value="total_escalations">
-                Escalations
+                Requires Attention
               </option>
 
               <option value="average_response_seconds">
@@ -341,7 +341,7 @@ export default function ClassAnalyticsPage() {
 
                       <div className="text-right">
                         <p className="text-xs uppercase tracking-wide text-slate-500">
-                          Deflection
+                          Resolved by AI
                         </p>
 
                         <p className="mt-1 text-2xl font-semibold text-blue-600 dark:text-blue-400">
@@ -404,7 +404,7 @@ export default function ClassAnalyticsPage() {
                         icon={
                           <AlertTriangle className="h-4 w-4" />
                         }
-                        label="Escalations"
+                        label="Requires Attention"
                         value={
                           item.total_escalations
                         }
@@ -436,7 +436,7 @@ export default function ClassAnalyticsPage() {
 
                       <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
                         <p className="text-xs text-slate-500">
-                          Escalation status
+                          Needs Review status
                         </p>
 
                         <div className="mt-2 flex flex-wrap gap-2">

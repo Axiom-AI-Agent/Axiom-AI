@@ -115,12 +115,12 @@ export default function Header({
 
       <div className="flex-1">
 
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-white">
+        <h1 className="text-lg font-medium tracking-tight text-slate-900 dark:text-white">
           Staff Dashboard
         </h1>
 
         {user && (
-          <p className="hidden text-xs text-slate-500 sm:block">
+          <p className="hidden text-sm text-slate-500 sm:block">
             {user.institution_name}
           </p>
         )}

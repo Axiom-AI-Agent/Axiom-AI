@@ -200,3 +200,4 @@ See [DEV_CHAT.md](DEV_CHAT.md) for full examples.
 - [PHASE6_PLAN.md](PHASE6_PLAN.md) — implementation plan
 - [DRIVE_INTEGRATION.md](DRIVE_INTEGRATION.md) — when enabling Drive MCP
 - [DATABASE.md](DATABASE.md) — schema reference
+- [NEW_INSTITUTION_SETUP.md](NEW_INSTITUTION_SETUP.md) — full runbook for a real (non-demo) tenant

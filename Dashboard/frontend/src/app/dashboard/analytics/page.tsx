@@ -161,7 +161,7 @@ export default function AnalyticsPage() {
           </h1>
 
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Live automation and escalation
+            Live automation and human review
             metrics for {data.tenant_id}.
           </p>
         </div>
@@ -192,10 +192,10 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+      <div className="flex flex-1 flex-col gap-6 overflow-hidden pr-1">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          title="AI Deflection Rate"
+          title="Resolved by AI"
           value={`${data.deflection_rate}%`}
           icon={
             <TrendingUp className="h-5 w-5" />
@@ -229,8 +229,8 @@ export default function AnalyticsPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartCard
-          title="Open vs Resolved Escalations"
-          type="bar"
+          title="Open vs Resolved (Requires Attention)"
+          type="donut"
           labels={[
             "Open",
             "Resolved",
@@ -242,14 +242,14 @@ export default function AnalyticsPage() {
         />
 
         <ChartCard
-          title="Escalations by Category"
-          type="bar"
+          title="Requires Attention by Category"
+          type="donut"
           labels={categoryLabels}
           data={categoryValues}
         />
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex min-h-0 flex-1 flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -269,9 +269,9 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="mt-5 overflow-x-auto">
+        <div className="mt-5 flex-1 overflow-auto rounded-lg border border-slate-200 dark:border-slate-700">
           <table className="min-w-full text-sm">
-            <thead>
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/90 backdrop-blur-sm shadow-sm">
               <tr className="border-b border-slate-200 text-left text-slate-500 dark:border-slate-700 dark:text-slate-400">
                 <th className="px-3 py-3">
                   Student
@@ -286,7 +286,7 @@ export default function AnalyticsPage() {
                 </th>
 
                 <th className="px-3 py-3">
-                  Escalations
+                  Requires Attention
                 </th>
               </tr>
             </thead>

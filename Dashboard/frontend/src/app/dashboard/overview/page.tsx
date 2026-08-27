@@ -125,7 +125,7 @@ export default function OverviewPage() {
 
         <Link href="/dashboard/inbox?status=open" className="block">
           <MetricCard
-            title="Open Escalations"
+            title="Requires Attention"
             value={data.open_escalations}
             icon={<AlertTriangle className="h-5 w-5" />}
           />
@@ -164,8 +164,8 @@ export default function OverviewPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartCard
-          title="Escalation Breakdown"
-          type="bar"
+          title="Requires Attention (Breakdown)"
+          type="donut"
           labels={["Payment Receipts", "Talk to Tutor", "Other"]}
           data={[
             data.open_payment_receipts,
@@ -174,15 +174,18 @@ export default function OverviewPage() {
           ]}
         />
 
-        <ChartCard
-          title="Enrollment Status"
-          type="bar"
-          labels={["Active", "Pending"]}
-          data={[
-            data.students - data.pending_enrollments,
-            data.pending_enrollments,
-          ]}
-        />
+        <div className="flex flex-col gap-4 justify-center">
+          <MetricCard
+            title="Active Students"
+            value={data.students - data.pending_enrollments}
+            icon={<UserCheck className="h-5 w-5 text-emerald-500" />}
+          />
+          <MetricCard
+            title="Pending Students"
+            value={data.pending_enrollments}
+            icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
+          />
+        </div>
       </div>
 
       <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">

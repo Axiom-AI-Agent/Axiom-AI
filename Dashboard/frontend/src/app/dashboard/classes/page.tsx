@@ -401,8 +401,8 @@ export default function ClassesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="flex h-[calc(100vh-4rem)] flex-col space-y-6 overflow-hidden">
+      <div className="flex flex-wrap items-start justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Classes</h1>
           <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
@@ -567,7 +567,8 @@ export default function ClassesPage() {
           <p className="mt-3 text-slate-700 dark:text-slate-300">No classes yet.</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="flex-1 overflow-y-auto pr-1">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 pb-6">
           {classes.map((subjectClass) => (
             <article
               key={subjectClass.id}
@@ -712,6 +713,7 @@ export default function ClassesPage() {
               </div>
             </article>
           ))}
+          </div>
         </div>
       )}
 

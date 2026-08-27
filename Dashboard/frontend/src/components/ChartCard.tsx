@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Line, Bar } from "react-chartjs-2";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +13,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
 
 ChartJS.register(
@@ -23,12 +24,13 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
 interface ChartCardProps {
   title: string;
-  type: "line" | "bar";
+  type: "line" | "bar" | "donut";
   labels: string[];
   data: number[];
 }
@@ -55,8 +57,10 @@ export default function ChartCard({ title, type, labels, data }: ChartCardProps)
       {
         label: title,
         data,
-        borderColor: "#2563EB",
-        backgroundColor: "rgba(37, 99, 235, 0.1)",
+        borderColor: type === "donut" ? "transparent" : "#2563EB",
+        backgroundColor: type === "donut" 
+          ? ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"] 
+          : "rgba(37, 99, 235, 0.1)",
         tension: 0.4,
       },
     ],
@@ -88,7 +92,7 @@ export default function ChartCard({ title, type, labels, data }: ChartCardProps)
   return (
     <div className="p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
       <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{title}</h2>
-      {type === "line" ? <Line data={chartData} options={options} /> : <Bar data={chartData} options={options} />}
+      {type === "line" ? <Line data={chartData} options={options} /> : type === "bar" ? <Bar data={chartData} options={options} /> : <div className="max-w-xs mx-auto"><Doughnut data={chartData} options={options} /></div>}
     </div>
   );
 }

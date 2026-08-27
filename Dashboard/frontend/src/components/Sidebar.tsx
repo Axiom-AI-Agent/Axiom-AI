@@ -126,7 +126,7 @@ export default function Sidebar({
             className="h-8 w-auto"
           />
 
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-base font-semibold tracking-tight text-slate-900 dark:text-white">
             Axiom AI
           </h2>
         </div>

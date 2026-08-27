@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import {
   MessageSquare,
   Pencil,
   Trash2,
@@ -19,6 +18,7 @@ interface StudentTableProps {
   onEnroll: (student: Student) => void;
   onDelete: (studentId: string) => void;
   onToggleHumanMode: (student: Student) => void;
+  onRowClick: (student: Student) => void;
 }
 
 export default function StudentTable({
@@ -28,14 +28,14 @@ export default function StudentTable({
   onEnroll,
   onDelete,
   onToggleHumanMode,
+  onRowClick,
 }: StudentTableProps) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
+    <div className="flex-1 min-h-0 overflow-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
       <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-        <thead className="bg-slate-50 dark:bg-slate-800/50">
+        <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/90 backdrop-blur-sm shadow-sm">
           <tr className="text-left text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <th className="px-5 py-4 font-medium">Name</th>
-            <th className="px-5 py-4 font-medium">Phone</th>
             {fields.map((field) => (
               <th key={field.field_key} className="px-5 py-4 font-medium">
                 {field.label}
@@ -46,13 +46,16 @@ export default function StudentTable({
               Registered classes
             </th>
             <th className="px-5 py-4 font-medium">Joined</th>
-            <th className="px-5 py-4 text-right font-medium">Actions</th>
           </tr>
         </thead>
 
         <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
           {students.map((student) => (
-            <tr key={student.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+            <tr 
+              key={student.id} 
+              onClick={() => onRowClick(student)}
+              className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+            >
               <td className="px-5 py-4 align-top">
                 <p className="text-sm font-medium text-slate-900 dark:text-white">
                   {student.name?.trim() || "Unnamed"}
@@ -61,11 +64,6 @@ export default function StudentTable({
                   {student.id}
                 </p>
               </td>
-
-              <td className="px-5 py-4 align-top text-sm text-slate-700 dark:text-slate-300">
-                {student.phone}
-              </td>
-
               {fields.map((field) => (
                 <td
                   key={field.field_key}
@@ -106,62 +104,6 @@ export default function StudentTable({
                 {student.created_at
                   ? new Date(student.created_at).toLocaleDateString()
                   : "—"}
-              </td>
-
-              <td className="px-5 py-4 align-top">
-                <div className="flex flex-wrap justify-end gap-1.5">
-                  <Link
-                    href={`/dashboard/messages?phone=${encodeURIComponent(student.phone)}`}
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <MessageSquare className="h-3.5 w-3.5" />
-                    Chat
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => onToggleHumanMode(student)}
-                    title={
-                      student.human_mode
-                        ? "AI replies are disabled for this student"
-                        : "AI replies are enabled for this student"
-                    }
-                    className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-medium shadow-sm transition-colors ${
-                      student.human_mode
-                        ? "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20"
-                        : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
-                    }`}
-                  >
-                    {student.human_mode
-                      ? "Human mode"
-                      : "AI active"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onEnroll(student)}
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <UserPlus className="h-3.5 w-3.5" />
-                    Enroll
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onEdit(student)}
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onDelete(student.id)}
-                    className="inline-flex items-center gap-1 rounded-md border border-red-200 dark:border-red-500/30 px-2.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 bg-white dark:bg-transparent shadow-sm transition-colors"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Delete
-                  </button>
-                </div>
               </td>
             </tr>
           ))}
