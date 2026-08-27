@@ -84,13 +84,13 @@ async def list_schedules(
 ) -> ScheduleListResponse:
     svc = ScheduleService()
     rows = svc.list_schedules(
-        tenant.id,
+        tenant.tenant_id,
         class_id=class_id,
         teacher_id=teacher_id,
         day_of_week=day_of_week,
     )
     return ScheduleListResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         schedules=[_to_schedule_response(r) for r in rows],
     )
 
@@ -98,11 +98,11 @@ async def list_schedules(
 @router.get("/{schedule_id}", response_model=ScheduleDetailResponse)
 async def get_schedule(tenant: DashboardTenant, schedule_id: str) -> ScheduleDetailResponse:
     svc = ScheduleService()
-    row = svc.get_schedule(tenant.id, schedule_id)
+    row = svc.get_schedule(tenant.tenant_id, schedule_id)
     if not row:
         raise HTTPException(status_code=404, detail="Schedule not found")
     return ScheduleDetailResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         schedule=_to_schedule_response(row),
     )
 
@@ -115,7 +115,7 @@ async def create_schedule(
     svc = ScheduleService()
     try:
         row = svc.create_schedule(
-            tenant.id,
+            tenant.tenant_id,
             class_id=body.class_id,
             teacher_id=body.teacher_id,
             day_of_week=body.day_of_week,
@@ -134,7 +134,7 @@ async def create_schedule(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     return ScheduleDetailResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         schedule=_to_schedule_response(row),
     )
 
@@ -155,11 +155,11 @@ async def update_schedule(
         if key in fields and fields[key] is not None:
             fields[key] = fields[key].value
 
-    row = svc.update_schedule(tenant.id, schedule_id, **fields)
+    row = svc.update_schedule(tenant.tenant_id, schedule_id, **fields)
     if not row:
         raise HTTPException(status_code=404, detail="Schedule not found")
     return ScheduleDetailResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         schedule=_to_schedule_response(row),
     )
 
@@ -167,10 +167,10 @@ async def update_schedule(
 @router.delete("/{schedule_id}")
 async def cancel_schedule(tenant: DashboardTenant, schedule_id: str):
     svc = ScheduleService()
-    row = svc.cancel_schedule(tenant.id, schedule_id)
+    row = svc.cancel_schedule(tenant.tenant_id, schedule_id)
     if not row:
         raise HTTPException(status_code=404, detail="Schedule not found")
-    return {"ok": True, "tenant_id": tenant.id, "schedule_id": schedule_id}
+    return {"ok": True, "tenant_id": tenant.tenant_id, "schedule_id": schedule_id}
 
 
 # ---------------------------------------------------------------------------
@@ -185,9 +185,9 @@ async def list_exceptions(
     exception_date: str | None = None,
 ) -> ExceptionListResponse:
     svc = ScheduleService()
-    rows = svc.list_exceptions(tenant.id, schedule_id=schedule_id, exception_date=exception_date)
+    rows = svc.list_exceptions(tenant.tenant_id, schedule_id=schedule_id, exception_date=exception_date)
     return ExceptionListResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         exceptions=[_to_exception_response(r) for r in rows],
     )
 
@@ -201,12 +201,12 @@ async def create_exception(
     svc = ScheduleService()
 
     # Verify schedule exists
-    schedule = svc.get_schedule(tenant.id, schedule_id)
+    schedule = svc.get_schedule(tenant.tenant_id, schedule_id)
     if not schedule:
         raise HTTPException(status_code=404, detail="Schedule not found")
 
     row = svc.create_exception(
-        tenant.id,
+        tenant.tenant_id,
         schedule_id=schedule_id,
         exception_date=body.exception_date,
         status=body.status,
@@ -226,10 +226,10 @@ async def delete_exception(
     exception_id: str,
 ):
     svc = ScheduleService()
-    deleted = svc.delete_exception(tenant.id, exception_id)
+    deleted = svc.delete_exception(tenant.tenant_id, exception_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Exception not found")
-    return ExceptionDeleteResponse(tenant_id=tenant.id, exception_id=exception_id)
+    return ExceptionDeleteResponse(tenant_id=tenant.tenant_id, exception_id=exception_id)
 
 
 # ---------------------------------------------------------------------------
@@ -251,10 +251,10 @@ async def query_schedule_for_date(
 
     svc = ScheduleService()
     student_id = body.student_id if body else None
-    rows = svc.get_schedules_for_date(tenant.id, d, student_id=student_id)
+    rows = svc.get_schedules_for_date(tenant.tenant_id, d, student_id=student_id)
 
     return ScheduleQueryResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         date=target_date,
         schedules=[_to_schedule_response(r) for r in rows],
     )
@@ -268,11 +268,11 @@ async def query_next_class(
     """Get the next upcoming class for a student."""
     svc = ScheduleService()
     student_id = body.student_id if body else None
-    row = svc.get_next_class(tenant.id, student_id=student_id)
+    row = svc.get_next_class(tenant.tenant_id, student_id=student_id)
     if not row:
         return None
     return ScheduleDetailResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         schedule=_to_schedule_response(row),
     )
 
@@ -287,10 +287,10 @@ async def query_week_schedule(
     d = date.fromisoformat(start_date) if start_date else None
     svc = ScheduleService()
     student_id = body.student_id if body else None
-    rows = svc.get_week_schedule(tenant.id, student_id=student_id, start_date=d)
+    rows = svc.get_week_schedule(tenant.tenant_id, student_id=student_id, start_date=d)
 
     return ScheduleQueryResponse(
-        tenant_id=tenant.id,
+        tenant_id=tenant.tenant_id,
         date=(d or date.today()).isoformat(),
         schedules=[_to_schedule_response(r) for r in rows],
     )

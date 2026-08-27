@@ -374,3 +374,27 @@ class TestTenantIsolation:
         tables = mock_client._tables
         if "class_schedules" in tables:
             assert tables["class_schedules"]._filters.get("tenant_id") == ("eq", "tenant-1")
+
+
+@pytest.mark.asyncio
+async def test_list_schedules_route_uses_tenant_id():
+    from api.routers.dashboard.schedules import list_schedules
+    from api.tenant_scope import TenantScope
+
+    tenant = TenantScope(
+        tenant_id="tenant-demo-physics",
+        slug="demo-physics",
+        name="Demo Physics Academy",
+    )
+    with patch("api.routers.dashboard.schedules.ScheduleService") as svc_cls:
+        svc_cls.return_value.list_schedules.return_value = []
+        result = await list_schedules(tenant)
+
+    svc_cls.return_value.list_schedules.assert_called_once_with(
+        "tenant-demo-physics",
+        class_id=None,
+        teacher_id=None,
+        day_of_week=None,
+    )
+    assert result.tenant_id == "tenant-demo-physics"
+    assert result.schedules == []
