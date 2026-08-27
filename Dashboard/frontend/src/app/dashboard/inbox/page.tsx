@@ -282,7 +282,7 @@ function InboxContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -336,7 +336,8 @@ function InboxContent() {
         </select>
       </div>
 
-      {error && (
+      <div className="flex-1 space-y-4 overflow-y-auto pr-1">
+        {error && (
         <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-200">
           <AlertTriangle className="h-5 w-5" />
           {error}
@@ -551,6 +552,7 @@ function InboxContent() {
           })}
         </div>
       )}
+      </div>
     </div>
   );
 }

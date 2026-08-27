@@ -1058,8 +1058,10 @@ export interface DashboardAnalytics {
 
 export type AnalyticsPeriod =
   | "today"
+  | "48h"
   | "7d"
-  | "month";
+  | "30d"
+  | "90d";
 
 export function getDashboardAnalytics(
   tenantId?: string,
