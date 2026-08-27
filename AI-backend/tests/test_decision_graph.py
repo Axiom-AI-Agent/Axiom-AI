@@ -48,12 +48,30 @@ async def test_decide_router_override_on_borderline_guardrail():
     state: DecisionState = {
         "guardrail": "out_of_scope",
         "decision": MultiRouteDecision(
-            decisions=[RouteDecision(route="admissions", action="general")]
+            decisions=[
+                RouteDecision(route="admissions", action="general", confidence=0.95)
+            ]
         ),
     }
     out = decide_node(state)
     assert out["verdict"] == "proceed"
     assert out["primary_route"] == "admissions"
+
+
+@pytest.mark.asyncio
+async def test_decide_keeps_out_of_scope_when_router_is_unsure():
+    """A hesitant specialist guess must not act as a guardrail bypass (A4)."""
+    state: DecisionState = {
+        "guardrail": "out_of_scope",
+        "decision": MultiRouteDecision(
+            decisions=[
+                RouteDecision(route="escalation", action="escalate", confidence=0.3)
+            ]
+        ),
+    }
+    out = decide_node(state)
+    assert out["verdict"] == "out_of_scope"
+    assert out["final_answer"] == get_out_of_scope_reply()
 
 
 @pytest.mark.asyncio

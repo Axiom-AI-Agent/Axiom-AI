@@ -7,7 +7,6 @@ Ported from BookMe AI ``agents/router.py``; routes adapted for Axiom MVP SRS.
 from __future__ import annotations
 
 import json
-import re
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -18,7 +17,7 @@ from agents.prompts import build_router_prompt
 from agents.state import AgentState
 from infrastructure.llm import get_router_llm
 from infrastructure.observability import observe, update_current_observation
-from services.admissions.institute_info import looks_like_institute_info
+from services.nlu import IntentResult, StudentIntent, aclassify, classify
 
 VALID_ROUTES = frozenset({"admissions", "resource", "payment_check", "escalation", "direct"})
 VALID_ACTIONS = frozenset({"general", "search", "check", "escalate"})
@@ -28,187 +27,49 @@ _default_router: QueryRouter | None = None
 
 SPECIALIST_ROUTES = frozenset({"admissions", "resource", "payment_check", "escalation"})
 
-_RESOURCE_PATTERNS = (
-    r"\bpast paper",
-    r"\bmodel paper",
-    r"\btutes?\b",
-    r"\bpapers?\b",
-    r"\btext\s*books?\b",
-    r"\bbooks\b",
-    r"\bsyllab(?:us|i)\b",
-    r"\bpdfs?\b",
-    r"\bdownload\b",
-    r"send me",
-    r"get me",
-    r"\bnotes?\b",
-    r"\buploaded\b",
-    r"\blesson\b",
-    r"\bexplain\b",
-    r"\bunderstand\b",
-    r"what did",
-    r"what is",
-    r"what are",
-    r"help me with",
-    r"how does",
-    r"how do",
-    r"tute eka",
-    r"paper eka",
-    r"notes? tika",
-    r"පේපර්",
-    r"ටියුට්",
-    r"පාඩම්",
-    r"නෝට්ස්",
-    r"பேப்பர்",
-    r"பாடக்குறிப்பு",
-    r"பாடம்",
-)
-_ESCALATION_PATTERNS = (
-    r"speak to (?:a |the )?(?:tutor|human|person|teacher|sir|madam)",
-    r"talk to (?:a |the )?(?:tutor|human|person|teacher|sir|madam)",
-    r"\bcomplaint\b",
-    r"\burgent\b",
-    r"need (?:a )?human",
-    r"sir ekata",
-    r"tutor ekata",
-    r"ගුරුවරය",
-    r"ஆசிரிய",
-)
-_ADMISSIONS_PATTERNS = (
-    r"\benroll\b",
-    r"\bregister\b",
-    r"want to join",
-    r"join (?:the )?class",
-    r"join (?:a |an )?",
-    r"new student",
-    r"sign up",
-    r"am i enrolled",
-    r"enrollment status",
-    r"am i registered",
-    r"join karanna",
-    r"enroll wenna",
-    r"class eka join",
-    r"ලියාපදිංචි",
-    r"එකතු වෙ",
-    r"பதிவு",
-    r"சேர",
-    r"வகுப்பில் சேர",
-)
-_PAYMENT_PATTERNS = (
-    r"bank slip",
-    r"\bpayment\b",
-    r"\bfee\b",
-    r"\breceipt\b",
-    r"paid my",
-    r"slip eka",
-    r"fee eka",
-    r"geewuwa",
-    r"ගෙවුවා",
-    r"ගාස්තු",
-    r"රිසිට්",
-    r"கட்டணம்",
-    r"ரசீது",
-)
-# Schedule patterns mapped to "resource" route (resource agent sub-routes to schedule)
-_SCHEDULE_PATTERNS = (
-    r"\bschedule\b",
-    r"\btimetable\b",
-    r"\bclass time\b",
-    r"\bclass times\b",
-    r"\bwhen is\b.*class",
-    r"\bnext class\b",
-    r"\btoday.*class",
-    r"\bclass.*today",
-    r"\btomorrow.*class",
-    r"\bclass.*tomorrow",
-    r"\bwhat classes\b",
-    r"\bweekly\b",
-    r"\bweek schedule\b",
-    r"\bmy class\b",
-    r"\bissarahata\b",
-    r"\b timetable\b",
-    r"\b වේලාව\b",
-    r"\b நேரம்\b",
-    r"\b வகுப்பு\b",
-    r"\b அட்டவணை\b",
-)
-_DIRECT_PATTERNS = (
-    r"^(hi|hello|hey|thanks|thank you|ok|okay|bye)[!.?\s]*$",
-)
+#: Below this the classifier is guessing, so the LLM router gets the message
+#: instead of a coin-flip route.
+_ROUTE_CONFIDENCE_FLOOR = 0.45
 
+def decision_from_intent(intent: IntentResult) -> MultiRouteDecision | None:
+    """Turn a classified intent into a route, or ``None`` to defer to the LLM.
 
-def _pattern_score(text: str, patterns: tuple[str, ...]) -> int:
-    return sum(1 for p in patterns if re.search(p, text))
-
-
-def heuristic_route(message: str) -> MultiRouteDecision | None:
-    """Deterministic routing for unambiguous tuition intents (before LLM)."""
-    text = message.lower().strip()
-    if not text:
+    This replaces the old keyword tables. Those tables decided routes by
+    counting regex hits, so "What classes do you teach?" and "Can you give me a
+    list of the classes available" — one intent, two phrasings — landed on
+    different routes (A1). Scoring paraphrases against a labelled example
+    corpus removes that cliff edge.
+    """
+    if intent.intent is StudentIntent.UNKNOWN:
+        return None
+    if intent.confidence < _ROUTE_CONFIDENCE_FLOOR:
         return None
 
-    # Schedule queries must be checked BEFORE institute_info to avoid
-    # "class" keyword being misclassified as enrollment intent
-    if _pattern_score(text, _SCHEDULE_PATTERNS) > 0:
-        return MultiRouteDecision(
-            decisions=[
-                RouteDecision(
-                    route="resource",
-                    action="search",
-                    confidence=0.95,
-                    reasoning="schedule/timetable query",
-                )
-            ]
-        )
-
-    if looks_like_institute_info(message):
-        return MultiRouteDecision(
-            decisions=[
-                RouteDecision(
-                    route="admissions",
-                    action="search",
-                    confidence=0.97,
-                    reasoning="institute/class/staff info lookup via CRM",
-                )
-            ]
-        )
-
-    scores = {
-        "resource": _pattern_score(text, _RESOURCE_PATTERNS) + _pattern_score(text, _SCHEDULE_PATTERNS),
-        "escalation": _pattern_score(text, _ESCALATION_PATTERNS),
-        "admissions": _pattern_score(text, _ADMISSIONS_PATTERNS),
-        "payment_check": _pattern_score(text, _PAYMENT_PATTERNS),
-    }
-    best_route = max(scores, key=lambda k: scores[k])
-    best_score = scores[best_route]
-
-    if best_score == 0:
-        if _pattern_score(text, _DIRECT_PATTERNS):
-            return MultiRouteDecision(
-                decisions=[
-                    RouteDecision(
-                        route="direct",
-                        action="general",
-                        confidence=0.95,
-                        reasoning="greeting or social message",
-                    )
-                ]
-            )
-        return None
-
-    if best_score > 0 and sum(1 for v in scores.values() if v == best_score) > 1:
-        return None
-
-    action = _normalize_action(best_route, None)
     return MultiRouteDecision(
         decisions=[
             RouteDecision(
-                route=best_route,
-                action=action,
-                confidence=0.95,
-                reasoning=f"keyword heuristic ({best_score} match(es))",
+                route=intent.route,
+                action=_normalize_action(intent.route, intent.action),
+                confidence=round(intent.confidence, 2),
+                reasoning=f"intent={intent.intent.value} via {intent.source}",
+                params={"intent": intent.intent.value},
             )
         ]
     )
+
+
+def heuristic_route(message: str) -> MultiRouteDecision | None:
+    """Route a message by classified intent, before any LLM call."""
+    if not (message or "").strip():
+        return None
+    return decision_from_intent(classify(message))
+
+
+async def aheuristic_route(message: str) -> MultiRouteDecision | None:
+    """Async twin of :func:`heuristic_route` — may consult the LLM classifier."""
+    if not (message or "").strip():
+        return None
+    return decision_from_intent(await aclassify(message))
 
 
 @dataclass
@@ -271,12 +132,19 @@ def router_node(state: AgentState) -> dict:
     user_message = _last_user_text(state)
     memory_context = state.get("memory_context") or ""
     tenant_name = state.get("tenant_name") or "your tuition centre"
+    # Classified fresh every turn and published on the state, so the agent that
+    # ends up handling this message reasons about *this* message rather than
+    # whatever flow the student was last inside.
+    intent = classify(user_message)
     result = get_query_router().route(
         user_message,
         memory_context=memory_context,
         tenant_name=tenant_name,
     )
-    return {"route_decisions": [asdict(d) for d in result.decisions]}
+    return {
+        "route_decisions": [asdict(d) for d in result.decisions],
+        "intent": intent,
+    }
 
 
 def _last_user_text(state: AgentState) -> str:
@@ -380,7 +248,7 @@ class QueryRouter:
         *,
         tenant_name: str = "your tuition centre",
     ) -> MultiRouteDecision:
-        heuristic = heuristic_route(user_message)
+        heuristic = await aheuristic_route(user_message)
         if heuristic is not None:
             return heuristic
         try:

@@ -6,6 +6,7 @@ from agents.tools.memory_tool import (
     MemoryTool,
 )
 from services.language import t
+from services.nlu import StudentIntent, classify
 
 ConfirmationDecision = Literal[
     "yes",
@@ -14,9 +15,15 @@ ConfirmationDecision = Literal[
 ]
 
 
-CONFIRMATION_TEXT = (
-    "Would you like me to send this "
-    "question to your tutor?"
+#: The exact question the agent asks before escalating. Derived from the
+#: template rather than restated here — the two drifted apart once already, and
+#: a one-word difference silently stopped every "Yes" from escalating (B4).
+CONFIRMATION_TEXT = t("escalation_confirm", "en")
+
+#: Every localized form of that question, so the match does not depend on which
+#: language the previous turn was answered in.
+_CONFIRMATION_TEXTS = tuple(
+    t("escalation_confirm", language).lower() for language in ("en", "si", "ta")
 )
 
 
@@ -81,6 +88,15 @@ def classify_confirmation(
     if normalized in NO_REPLIES:
         return "no"
 
+    # The literal sets above only cover replies typed exactly as listed. The
+    # classifier handles the rest ("yeah go ahead", "ඔව් හරි") without needing
+    # every phrasing enumerated.
+    intent = classify(message).intent
+    if intent is StudentIntent.AFFIRM:
+        return "yes"
+    if intent is StudentIntent.DENY:
+        return "no"
+
     return "none"
 
 
@@ -119,11 +135,8 @@ def get_pending_low_confidence_question(
     if not assistant_message:
         return None
 
-    if (
-        CONFIRMATION_TEXT.lower() not in assistant_message.lower()
-        and t("escalation_confirm", "si").lower() not in assistant_message.lower()
-        and t("escalation_confirm", "ta").lower() not in assistant_message.lower()
-    ):
+    lowered = assistant_message.lower()
+    if not any(text in lowered for text in _CONFIRMATION_TEXTS):
         return None
 
     return user_message

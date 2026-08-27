@@ -17,6 +17,9 @@ class TwilioInboundMessage(BaseModel):
     body: str = Field(default="", alias="Body")
     num_media: int = Field(default=0, alias="NumMedia")
     media_url: Optional[str] = Field(default=None, alias="MediaUrl0")
+    # Twilio media URLs carry no file extension, so the declared content type is
+    # the only reliable way to tell a photographed bank slip from a voice note.
+    media_content_type: Optional[str] = Field(default=None, alias="MediaContentType0")
     profile_name: Optional[str] = Field(default=None, alias="ProfileName")
 
     model_config = {"populate_by_name": True}
@@ -38,6 +41,7 @@ class InboundMessage(BaseModel):
     tenant_id: Optional[str] = None
     to_number: Optional[str] = None
     media_url: Optional[str] = None
+    media_content_type: Optional[str] = None
     external_id: Optional[str] = None
     num_media: int = 0
 

@@ -13,7 +13,8 @@ from infrastructure.observability import flush
 from services.identity.context import IdentityContext
 from services.identity.resolver import IdentityResolver
 from services.language import resolve_reply_language, stt_language_hint, t
-from services.media.stt_service import _get_twilio_auth, _is_audio_url, transcribe_audio
+from services.media.media_kind import MediaKind, classify_media
+from services.media.stt_service import _get_twilio_auth, transcribe_audio
 from services.messaging.persistence import MessagePersistence
 from services.messaging.plaintext import strip_markdown_markers
 from services.messaging.schemas import ChatTurnResult, InboundMessage, TwilioInboundMessage
@@ -68,6 +69,7 @@ class ChatPipeline:
                 body=inbound.body,
                 to_number=inbound.to_number,
                 media_url=inbound.media_url,
+                media_content_type=inbound.media_content_type,
                 external_id=inbound.message_sid,
                 num_media=inbound.num_media,
             )
@@ -113,37 +115,10 @@ class ChatPipeline:
             )
 
     async def _build_reply(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
-        # Media attached — check if it's a voice note or unsupported audio
         if inbound.num_media > 0 and inbound.media_url:
-            if _is_audio_url(inbound.media_url):
-                # Voice note: transcribe before agent processing
-                auth = _get_twilio_auth() if inbound.channel == ChatChannel.TWILIO_WHATSAPP else None
-                transcript = await transcribe_audio(
-                    inbound.media_url,
-                    message_sid=inbound.external_id,
-                    sender_id=ctx.student_id or ctx.phone,
-                    language_hint=stt_language_hint(ctx.language_pref),
-                    auth=auth,
-                )
-                if transcript:
-                    inbound.body = transcript
-                else:
-                    lang = resolve_reply_language(
-                        message=inbound.body or "",
-                        language_pref=ctx.language_pref,
-                    )
-                    return t("voice_fail", lang)
-            elif not ctx.payments_enabled:
-                return (
-                    "Payment submissions are currently disabled for this "
-                    "institute. Please contact the tutor for assistance."
-                )
-            else:
-                lang = resolve_reply_language(
-                    message=inbound.body or "",
-                    language_pref=ctx.language_pref,
-                )
-                return t("unsupported_audio", lang)
+            handled = await self._handle_media(ctx, inbound)
+            if handled is not None:
+                return handled
 
         try:
             reply = await self._run_agent_turn(ctx, inbound)
@@ -156,10 +131,49 @@ class ChatPipeline:
             )
             reply = t("technical_issue", lang, tenant_name=tenant_label)
 
-        if inbound.num_media > 0 and inbound.media_url:
-            pass  # payment receipt handled by payment agent when pending enrollment exists
-
         return strip_markdown_markers(reply)
+
+    async def _handle_media(
+        self, ctx: IdentityContext, inbound: InboundMessage
+    ) -> str | None:
+        """Reply for an attachment we can't pass on, or ``None`` to keep going.
+
+        A voice note is transcribed into the message body; an image or document
+        falls through to the agent, where the payment agent reads it as a bank
+        slip. Only genuinely unreadable formats get an apology, and it names the
+        actual format rather than assuming a broken voice note (B6).
+        """
+        kind = classify_media(inbound.media_url, content_type=inbound.media_content_type)
+        lang = resolve_reply_language(
+            message=inbound.body or "",
+            language_pref=ctx.language_pref,
+        )
+
+        if kind is MediaKind.VOICE_NOTE:
+            auth = _get_twilio_auth() if inbound.channel == ChatChannel.TWILIO_WHATSAPP else None
+            transcript = await transcribe_audio(
+                inbound.media_url or "",
+                message_sid=inbound.external_id,
+                sender_id=ctx.student_id or ctx.phone,
+                language_hint=stt_language_hint(ctx.language_pref),
+                auth=auth,
+            )
+            if not transcript:
+                return t("voice_fail", lang)
+            inbound.body = transcript
+            return None
+
+        if kind.is_payment_slip_candidate or kind is MediaKind.UNKNOWN:
+            if not ctx.payments_enabled:
+                return t("payments_disabled", lang)
+            # Hand the attachment to the agent — the payment agent decides
+            # whether it is a slip for a pending enrollment.
+            return None
+
+        if kind is MediaKind.AUDIO_FILE:
+            return t("unsupported_audio", lang)
+
+        return t("unsupported_media", lang)
 
     async def _run_agent_turn(self, ctx: IdentityContext, inbound: InboundMessage) -> str:
         orchestrator = await get_orchestrator()
@@ -170,6 +184,9 @@ class ChatPipeline:
             orchestrator=orchestrator,
             channel=inbound.channel.value,
             media_url=inbound.media_url,
+            media_kind=classify_media(
+                inbound.media_url, content_type=inbound.media_content_type
+            ).value,
             extra_metadata={
                 "external_id": inbound.external_id,
                 "student_exists": ctx.student_exists,

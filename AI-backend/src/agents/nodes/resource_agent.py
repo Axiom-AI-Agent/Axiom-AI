@@ -414,9 +414,23 @@ class ResourceAgent:
     ) -> None:
         self.drive = drive
         self.rag = rag
-        self.schedule = schedule or DirectScheduleClient()
-        self.crm = crm or DirectCrmClient()
+        # Built on first use, not here: the direct clients open Supabase
+        # connections, which the drive and RAG paths never need.
+        self._schedule = schedule
+        self._crm = crm
         self.pick_store = pick_store or get_drive_pick_store()
+
+    @property
+    def schedule(self) -> ScheduleClient:
+        if self._schedule is None:
+            self._schedule = DirectScheduleClient()
+        return self._schedule
+
+    @property
+    def crm(self) -> CrmClient:
+        if self._crm is None:
+            self._crm = DirectCrmClient()
+        return self._crm
 
     async def run(self, state: AgentState) -> ResourceAgentResult:
         tenant_id = state.get("tenant_id") or ""
@@ -590,8 +604,10 @@ class ResourceAgent:
                 f"rag_confidence: docs={num_docs}, best={best_score:.3f}, "
                 f"threshold={RETRIEVAL_ESCALATION_THRESHOLD}, low=True"
             )
+            # Must be the canonical template: the next turn's "Yes" is matched
+            # against this exact question to decide whether to escalate (B4).
             return ResourceAgentResult(
-                answer="I couldn't find enough reliable information to answer that confidently. Would you like me to send this to your tutor?",
+                answer=t("rag_low_confidence_ask", language),
                 tool_output="\n".join(tool_log),
                 sub_path="rag",
             )
@@ -761,8 +777,6 @@ async def run_resource_agent(
                 "MCP rag client required; set ALLOW_INPROCESS_TOOLS=true for in-process RagTool."
             )
         rag = DirectRagClient()
-    if schedule is None:
-        schedule = DirectScheduleClient()
 
     agent = ResourceAgent(drive=drive, rag=rag, schedule=schedule, crm=crm)
     result = await agent.run(state)

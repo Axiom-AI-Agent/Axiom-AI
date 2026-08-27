@@ -63,10 +63,117 @@ STRINGS: dict[str, dict[str, str]] = {
         "si": "මේ ප්‍රශ්නය ගුරුවරයාට යවන්නද?",
         "ta": "இந்தக் கேள்வியை உங்கள் ஆசிரியருக்கு அனுப்பட்டுமா?",
     },
+    "rag_low_confidence_ask": {
+        "en": (
+            "I couldn't find enough reliable information to answer that confidently.\n\n"
+            "Would you like me to send this question to your tutor?"
+        ),
+        "si": (
+            "විශ්වාසයෙන් උත්තර දෙන්න තරම් තොරතුරු හම්බුණේ නෑ.\n\n"
+            "මේ ප්‍රශ්නය ගුරුවරයාට යවන්නද?"
+        ),
+        "ta": (
+            "நம்பகமான தகவல் போதுமான அளவு கிடைக்கவில்லை.\n\n"
+            "இந்தக் கேள்வியை உங்கள் ஆசிரியருக்கு அனுப்பட்டுமா?"
+        ),
+    },
     "escalation_declined": {
         "en": "No problem — I won't send it to the tutor. You can ask me something else anytime.",
         "si": "කමක් නෑ — ගුරුවරයාට යවන්නේ නෑ. වෙන දෙයක් අහන්න පුළුවන්.",
         "ta": "பரவாயில்லை — ஆசிரியருக்கு அனுப்ப மாட்டேன். வேறு எதையும் கேட்கலாம்.",
+    },
+    "nudge_send_payment_slip": {
+        "en": "Btw, don't forget to send your payment slip whenever you're ready!",
+        "si": "අමතක කරන්න එපා — පහසු වෙලාවක ගෙවීමේ රිසිට් එක එවන්න!",
+        "ta": "மறக்க வேண்டாம் — வசதியான நேரத்தில் கட்டணச் சீட்டை அனுப்புங்கள்!",
+    },
+    "nudge_finish_enrollment": {
+        "en": "Btw, we can finish your enrollment whenever you're ready — just say continue.",
+        "si": "ඔබට පහසු වෙලාවක ලියාපදිංචිය සම්පූර්ණ කරන්න පුළුවන් — 'continue' කියන්න.",
+        "ta": "வசதியான நேரத்தில் சேர்க்கையை முடிக்கலாம் — 'continue' என்று சொல்லுங்கள்.",
+    },
+    "already_enrolled_in_class": {
+        "en": (
+            "Good news — you're already enrolled in {class_label} at {tenant_name}, "
+            "so there's nothing more to do for that one.\n\n"
+            "If you'd like to join a different class, just ask me for the class list."
+        ),
+        "si": (
+            "සුබ ආරංචියක් — ඔබ දැනටමත් {tenant_name} හි {class_label} සඳහා ලියාපදිංචි වී ඇත.\n\n"
+            "වෙනත් පන්තියකට එකතු වෙන්න ඕන නම්, පන්ති ලැයිස්තුව ඉල්ලන්න."
+        ),
+        "ta": (
+            "நல்ல செய்தி — நீங்கள் ஏற்கனவே {tenant_name} இல் {class_label} இல் சேர்ந்துவிட்டீர்கள்.\n\n"
+            "வேறு வகுப்பில் சேர விரும்பினால், வகுப்புப் பட்டியலைக் கேளுங்கள்."
+        ),
+    },
+    "application_already_pending": {
+        "en": (
+            "You already have an application in progress for {class_label} at {tenant_name} — "
+            "it just needs your payment slip to be confirmed.\n\n"
+            "If you'd rather join a different class instead, ask me for the class list."
+        ),
+        "si": (
+            "{tenant_name} හි {class_label} සඳහා ඔබේ අයදුම්පත දැනටමත් ක්‍රියාත්මකයි — "
+            "ගෙවීමේ රිසිට් එක එවූ පසු තහවුරු වේ.\n\n"
+            "වෙනත් පන්තියක් ඕන නම්, පන්ති ලැයිස්තුව ඉල්ලන්න."
+        ),
+        "ta": (
+            "{tenant_name} இல் {class_label} க்கான உங்கள் விண்ணப்பம் ஏற்கனவே நடைபெறுகிறது — "
+            "கட்டணச் சீட்டு மட்டுமே தேவை.\n\n"
+            "வேறு வகுப்பு வேண்டுமானால், வகுப்புப் பட்டியலைக் கேளுங்கள்."
+        ),
+    },
+    "arithmetic_answer": {
+        "en": "That works out to {answer}.\n\nAnything else I can help with?",
+        "si": "පිළිතුර {answer}.\n\nතව මොනවහරි උදව්වක් ඕනද?",
+        "ta": "விடை {answer}.\n\nவேறு ஏதாவது உதவி வேண்டுமா?",
+    },
+    "unsupported_link": {
+        "en": (
+            "I can't open links, so I wasn't able to read that one.\n\n"
+            "If it's a payment slip, please send it as a photo. Otherwise, "
+            "type your question here and I'll help."
+        ),
+        "si": (
+            "මට links විවෘත කරන්න බෑ, ඒ නිසා ඒක කියවන්න බැරි වුණා.\n\n"
+            "ගෙවීමේ රිසිට් එකක් නම් photo එකක් විදිහට එවන්න. නැත්නම් ප්‍රශ්නය මෙතන type කරන්න."
+        ),
+        "ta": (
+            "என்னால் இணைப்புகளைத் திறக்க முடியாது, அதனால் அதைப் படிக்க முடியவில்லை.\n\n"
+            "கட்டணச் சீட்டு என்றால் புகைப்படமாக அனுப்புங்கள். இல்லையெனில் கேள்வியை இங்கே தட்டச்சு செய்யுங்கள்."
+        ),
+    },
+    "payments_disabled": {
+        "en": (
+            "Payment submissions are currently disabled for this institute. "
+            "Please contact the tutor for assistance."
+        ),
+        "si": "මේ ආයතනය සඳහා ගෙවීම් යොමු කිරීම දැනට ක්‍රියාවිරහිතයි. කරුණාකර ගුරුවරයා අමතන්න.",
+        "ta": "இந்த நிறுவனத்திற்கு கட்டணச் சமர்ப்பிப்பு தற்போது முடக்கப்பட்டுள்ளது. ஆசிரியரைத் தொடர்பு கொள்ளுங்கள்.",
+    },
+    "unsupported_media": {
+        "en": (
+            "I can't read that kind of file yet.\n\n"
+            "For a payment slip, send a clear photo. For anything else, "
+            "type your question or record a voice note."
+        ),
+        "si": (
+            "ඒ වර්ගයේ file එකක් කියවන්න මට තාම බෑ.\n\n"
+            "ගෙවීමේ රිසිට් එකක් නම් පැහැදිලි photo එකක් එවන්න. නැත්නම් type කරන්න හෝ voice note එකක් එවන්න."
+        ),
+        "ta": (
+            "அந்த வகைக் கோப்பை என்னால் இன்னும் படிக்க முடியாது.\n\n"
+            "கட்டணச் சீட்டுக்கு தெளிவான புகைப்படம் அனுப்புங்கள். இல்லையெனில் தட்டச்சு செய்யுங்கள் அல்லது குரல் குறிப்பு அனுப்புங்கள்."
+        ),
+    },
+    "invalid_registration_value": {
+        "en": (
+            "That doesn't look like a valid {label}. "
+            "Please type it using letters (and numbers where relevant)."
+        ),
+        "si": "ඒක වලංගු {label} එකක් වගේ නෑ. අකුරු භාවිතා කරලා type කරන්න.",
+        "ta": "அது சரியான {label} போல் தெரியவில்லை. எழுத்துக்களைப் பயன்படுத்தி தட்டச்சு செய்யுங்கள்.",
     },
     "onboarding_ask_name": {
         "en": "Great — let's get you enrolled at {tenant_name}. What's your full name?",
