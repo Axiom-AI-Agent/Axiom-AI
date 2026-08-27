@@ -1356,11 +1356,11 @@ export function getSchedules(
   if (params?.teacher_id) query.set("teacher_id", params.teacher_id);
   if (params?.day_of_week) query.set("day_of_week", params.day_of_week);
   const qs = query.toString();
-  return aiRequest<Schedule[]>(
+  return aiRequest<{ ok: boolean; schedules: Schedule[] }>(
     `/dashboard/schedules${qs ? `?${qs}` : ""}`,
     {},
     tenantId,
-  );
+  ).then((res) => res.schedules);
 }
 
 export function getSchedule(
