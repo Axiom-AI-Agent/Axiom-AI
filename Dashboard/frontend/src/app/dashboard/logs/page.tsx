@@ -2,6 +2,8 @@
 
 import {
   AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
   Loader2,
   RefreshCw,
   ScrollText,
@@ -30,12 +32,15 @@ import {
   surfaceCard,
 } from "@/lib/ui";
 
+const PAGE_SIZE = 25;
+
 export default function LogsPage() {
   const { tenantId } = useTenant();
   const [logs, setLogs] = useState<MessageLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
   const loadLogs = useCallback(async () => {
     setLoading(true);
@@ -82,9 +87,25 @@ export default function LogsPage() {
     });
   }, [logs, search]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [search, logs]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredLogs.length / PAGE_SIZE),
+  );
+
+  const currentPage = Math.min(page, totalPages);
+
+  const pageLogs = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredLogs.slice(start, start + PAGE_SIZE);
+  }, [filteredLogs, currentPage]);
+
   return (
-    <div className="space-y-6">
-      <div className={pageHeader}>
+    <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-hidden">
+      <div className={`${pageHeader} mb-0 shrink-0`}>
         <div className="min-w-0">
           <div className="flex items-center gap-3">
             <ScrollText className="h-6 w-6 text-blue" />
@@ -111,60 +132,97 @@ export default function LogsPage() {
         value={search}
         onChange={(event) => setSearch(event.target.value)}
         placeholder="Search by student, channel, intent..."
-        className={inputClass}
+        className={`${inputClass} shrink-0`}
       />
 
       {error ? (
-        <div className={errorBanner}>
+        <div className={`${errorBanner} shrink-0`}>
           <AlertTriangle className="h-5 w-5 shrink-0 text-blue" />
           {error}
         </div>
       ) : null}
 
       {loading ? (
-        <div className="flex min-h-48 items-center justify-center">
+        <div className="flex min-h-48 flex-1 items-center justify-center">
           <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : filteredLogs.length === 0 ? (
         <div className={emptyState}>No message logs found.</div>
       ) : (
-        <div className={`${surfaceCard} overflow-x-auto`}>
-          <table className="min-w-full text-sm">
-            <thead className="border-b border-border bg-bg/60 text-left text-muted">
-              <tr>
-                <th className="px-4 py-3 font-medium">Time</th>
-                <th className="px-4 py-3 font-medium">Student</th>
-                <th className="px-4 py-3 font-medium">Student ID</th>
-                <th className="px-4 py-3 font-medium">Channel</th>
-                <th className="px-4 py-3 font-medium">Intent</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLogs.map((log) => (
-                <tr
-                  key={log.id}
-                  className="border-b border-border last:border-0"
-                >
-                  <td className="whitespace-nowrap px-4 py-3 text-muted">
-                    {log.timestamp
-                      ? new Date(log.timestamp).toLocaleString()
-                      : "—"}
-                  </td>
-                  <td className="px-4 py-3 font-medium text-heading">
-                    {log.student_name ?? "Unknown student"}
-                  </td>
-                  <td className="px-4 py-3 text-muted">{log.student_id}</td>
-                  <td className="px-4 py-3 capitalize text-fg">
-                    {log.channel || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-fg">
-                    {log.intent ? log.intent.replaceAll("_", " ") : "—"}
-                  </td>
+        <>
+          <div
+            className={`${surfaceCard} min-h-0 flex-1 overflow-auto`}
+          >
+            <table className="min-w-full text-sm">
+              <thead className="sticky top-0 z-10 border-b border-border bg-surface text-left text-muted">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Time</th>
+                  <th className="px-4 py-3 font-medium">Student</th>
+                  <th className="px-4 py-3 font-medium">Student ID</th>
+                  <th className="px-4 py-3 font-medium">Channel</th>
+                  <th className="px-4 py-3 font-medium">Intent</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {pageLogs.map((log) => (
+                  <tr
+                    key={log.id}
+                    className="border-b border-border last:border-0"
+                  >
+                    <td className="whitespace-nowrap px-4 py-3 text-muted">
+                      {log.timestamp
+                        ? new Date(log.timestamp).toLocaleString()
+                        : "—"}
+                    </td>
+                    <td className="px-4 py-3 font-medium text-heading">
+                      {log.student_name ?? "Unknown student"}
+                    </td>
+                    <td className="px-4 py-3 text-muted">{log.student_id}</td>
+                    <td className="px-4 py-3 capitalize text-fg">
+                      {log.channel || "—"}
+                    </td>
+                    <td className="px-4 py-3 text-fg">
+                      {log.intent ? log.intent.replaceAll("_", " ") : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 text-sm text-muted">
+            <p>
+              Showing {(currentPage - 1) * PAGE_SIZE + 1}–
+              {Math.min(currentPage * PAGE_SIZE, filteredLogs.length)} of{" "}
+              {filteredLogs.length}
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className={btnQuiet}
+                disabled={currentPage <= 1}
+                onClick={() => setPage((value) => Math.max(1, value - 1))}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Prev
+              </button>
+              <span className="tabular text-fg">
+                Page {currentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                className={btnQuiet}
+                disabled={currentPage >= totalPages}
+                onClick={() =>
+                  setPage((value) => Math.min(totalPages, value + 1))
+                }
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

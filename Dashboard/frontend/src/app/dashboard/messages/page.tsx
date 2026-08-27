@@ -263,9 +263,9 @@ function MessagesContent() {
         </div>
       )}
 
-      <div className="grid min-h-[32rem] grid-cols-1 overflow-hidden rounded-xl border border-border lg:grid-cols-[18rem_1fr]">
-        <aside className="border-b border-border bg-surface lg:border-b-0 lg:border-r">
-          <div className="border-b border-border px-4 py-3 text-sm font-medium text-fg">
+      <div className="grid h-[min(70vh,40rem)] min-h-[28rem] grid-cols-1 overflow-hidden rounded-xl border border-border lg:grid-cols-[18rem_1fr]">
+        <aside className="flex min-h-0 flex-col border-b border-border bg-surface lg:border-b-0 lg:border-r">
+          <div className="shrink-0 border-b border-border px-4 py-3 text-sm font-medium text-fg">
             Conversations
           </div>
 
@@ -276,7 +276,7 @@ function MessagesContent() {
           ) : conversations.length === 0 ? (
             <p className="p-4 text-sm text-muted">No conversations yet.</p>
           ) : (
-            <ul className="max-h-[28rem] overflow-y-auto">
+            <ul className="min-h-0 flex-1 overflow-y-auto">
               {conversations.map((conversation) => {
                 const active = conversation.phone === selectedPhone;
 
@@ -311,7 +311,7 @@ function MessagesContent() {
           )}
         </aside>
 
-        <section className="flex min-h-[32rem] flex-col bg-surface">
+        <section className="flex min-h-0 flex-col bg-surface">
           {!selectedPhone ? (
             <div className="flex flex-1 items-center justify-center text-sm text-muted">
               Select a conversation to view the thread.
@@ -322,7 +322,7 @@ function MessagesContent() {
             </div>
           ) : (
             <>
-              <div className="border-b border-border px-4 py-3">
+              <div className="shrink-0 border-b border-border px-4 py-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <h2 className="font-medium text-heading">
@@ -357,14 +357,17 @@ function MessagesContent() {
                         )}`}
                         className="rounded-md border border-border px-2 py-1 text-xs text-blue hover:bg-hover"
                       >
-                        Open: {escalation.reason_code.replaceAll("_", " ")}
+                        Open:{" "}
+                        {escalation.reason_code === "low_rag_confidence"
+                          ? "low AI confidence"
+                          : escalation.reason_code.replaceAll("_", " ")}
                       </Link>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+              <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
                 {thread.turns.map((turn) => (
                   <div
                     key={turn.id}
@@ -385,7 +388,7 @@ function MessagesContent() {
 
               <form
                 onSubmit={handleSend}
-                className="flex gap-2 border-t border-border p-4"
+                className="flex shrink-0 gap-2 border-t border-border p-4"
               >
                 <input
                   type="text"

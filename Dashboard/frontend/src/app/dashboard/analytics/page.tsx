@@ -32,7 +32,9 @@ import {
 } from "@/lib/ui";
 
 function humanizeReason(reason: string) {
-  return reason
+  const normalized =
+    reason === "low_rag_confidence" ? "low AI confidence" : reason;
+  return normalized
     .replaceAll("_", " ")
     .replace(/\b\w/g, (character) => character.toUpperCase());
 }
@@ -108,7 +110,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
+    <div className="space-y-6">
       <div className={pageHeader}>
         <div className="min-w-0">
           <h1 className={pageTitle}>Tutor Automation Analytics</h1>
@@ -144,76 +146,87 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden pr-1">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <MetricCard
-            title="Resolved by AI"
-            value={`${data.deflection_rate}%`}
-            icon={<TrendingUp className="h-5 w-5" />}
-            healthy
-          />
-          <MetricCard
-            title="Avg. Response Time"
-            value={`${data.average_response_seconds}s`}
-            icon={<Clock3 className="h-5 w-5" />}
-          />
-          <MetricCard
-            title="Estimated Time Saved"
-            value={`${data.estimated_minutes_saved} min`}
-            icon={<TimerReset className="h-5 w-5" />}
-            healthy
-          />
-          <MetricCard
-            title="Total Messages"
-            value={data.total_messages}
-            icon={<MessageSquare className="h-5 w-5" />}
-          />
-        </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <MetricCard
+          title="Resolved by AI"
+          value={`${data.deflection_rate}%`}
+          icon={<TrendingUp className="h-5 w-5" />}
+          healthy
+        />
+        <MetricCard
+          title="Avg. Response Time"
+          value={`${data.average_response_seconds}s`}
+          icon={<Clock3 className="h-5 w-5" />}
+        />
+        <MetricCard
+          title="Estimated Time Saved"
+          value={`${data.estimated_minutes_saved} min`}
+          icon={<TimerReset className="h-5 w-5" />}
+          healthy
+        />
+        <MetricCard
+          title="Total Messages"
+          value={data.total_messages}
+          icon={<MessageSquare className="h-5 w-5" />}
+        />
+      </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <ChartCard
-            title="Open vs Resolved (Requires Attention)"
-            type="donut"
-            labels={["Open", "Resolved"]}
-            data={[data.open_escalations, data.resolved_escalations]}
-          />
-          <ChartCard
-            title="Requires Attention by Category"
-            type="donut"
-            labels={categoryLabels}
-            data={categoryValues}
-          />
-        </div>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ChartCard
+          title="Open vs Resolved (Requires Attention)"
+          type="donut"
+          labels={["Open", "Resolved"]}
+          data={[data.open_escalations, data.resolved_escalations]}
+        />
+        <ChartCard
+          title="Requires Attention by Category"
+          type="donut"
+          labels={
+            categoryLabels.length > 0 ? categoryLabels : ["No categories"]
+          }
+          data={categoryValues.length > 0 ? categoryValues : [0]}
+        />
+      </div>
 
-        <div className={`${surfaceCard} flex min-h-0 flex-1 flex-col p-6`}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="font-display text-lg font-semibold text-heading">
-                Student Automation Activity
-              </h2>
-              <p className="mt-1 text-xs text-muted">
-                Time saved uses an estimate of 2 minutes per deflected
-                conversation.
-              </p>
-            </div>
-            <div className="text-sm tabular text-muted">
-              {data.total_conversations} total conversations
-            </div>
+      <div className={`${surfaceCard} p-6`}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-lg font-semibold text-heading">
+              Student Automation Activity
+            </h2>
+            <p className="mt-1 text-xs text-muted">
+              Time saved uses an estimate of 2 minutes per deflected
+              conversation.
+            </p>
           </div>
+          <div className="text-sm tabular text-muted">
+            {data.total_conversations} total conversations
+          </div>
+        </div>
 
-          <div className="mt-5 flex-1 overflow-auto rounded-md border border-border">
-            <table className="min-w-full text-sm">
-              <thead className="sticky top-0 z-10 bg-surface">
-                <tr className="border-b border-border text-left text-muted">
-                  <th className="px-3 py-3 font-medium">Student</th>
-                  <th className="px-3 py-3 font-medium">Messages</th>
-                  <th className="px-3 py-3 font-medium">Conversations</th>
-                  <th className="px-3 py-3 font-medium">Requires Attention</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence initial={false}>
-                  {data.students.map((student) => {
+        <div className="mt-5 max-h-[28rem] overflow-auto rounded-md border border-border">
+          <table className="min-w-full text-sm">
+            <thead className="sticky top-0 z-10 bg-surface">
+              <tr className="border-b border-border text-left text-muted">
+                <th className="px-3 py-3 font-medium">Student</th>
+                <th className="px-3 py-3 font-medium">Messages</th>
+                <th className="px-3 py-3 font-medium">Conversations</th>
+                <th className="px-3 py-3 font-medium">Requires Attention</th>
+              </tr>
+            </thead>
+            <tbody>
+              <AnimatePresence initial={false}>
+                {data.students.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-3 py-8 text-center text-muted"
+                    >
+                      No student activity for this period.
+                    </td>
+                  </tr>
+                ) : (
+                  data.students.map((student) => {
                     const needsAttention = student.escalations > 0;
                     return (
                       <motion.tr
@@ -249,11 +262,11 @@ export default function AnalyticsPage() {
                         </td>
                       </motion.tr>
                     );
-                  })}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
+                  })
+                )}
+              </AnimatePresence>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

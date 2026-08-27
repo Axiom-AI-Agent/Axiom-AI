@@ -147,9 +147,12 @@ class IdentityResolver:
                 tenant_id=tenant_id,
                 tenant_slug=tenant.get("slug"),
                 tenant_name=tenant.get("name"),
+                student_id=student["id"],
                 phone=phone,
                 session_id=session_id,
-                student_exists=False,
+                human_mode=bool(student.get("human_mode", False)),
+                student_exists=True,
+                student_name=student.get("name"),
                 payments_enabled=True,
                 language_pref=language_pref,
             )
@@ -202,16 +205,30 @@ class IdentityResolver:
 
     def _lookup_student(self, tenant_id: str, phone: str) -> dict[str, Any] | None:
         client = get_supabase_client()
-        response = (
-            client.table("students")
-            .select("id, name, phone, human_mode, language_pref")
-            .eq("tenant_id", tenant_id)
-            .eq("phone", phone)
-            .limit(1)
-            .execute()
-        )
-        rows = response.data or []
-        return rows[0] if rows else None
+        candidates = {
+            phone,
+            phone.lstrip("0"),
+            f"+{phone}" if not phone.startswith("+") else phone,
+        }
+        # Also try with/without country-style leading zeros stripped twice
+        if phone.startswith("0") and len(phone) > 1:
+            candidates.add(phone[1:])
+
+        for candidate in candidates:
+            if not candidate:
+                continue
+            response = (
+                client.table("students")
+                .select("id, name, phone, human_mode, language_pref")
+                .eq("tenant_id", tenant_id)
+                .eq("phone", candidate)
+                .limit(1)
+                .execute()
+            )
+            rows = response.data or []
+            if rows:
+                return rows[0]
+        return None
 
     def _lookup_enrollments(self, tenant_id: str, student_id: str) -> list[dict[str, Any]]:
         client = get_supabase_client()

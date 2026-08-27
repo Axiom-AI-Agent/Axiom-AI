@@ -62,6 +62,13 @@ function statusClass(status: EscalationStatus) {
   return "bg-blue/15 text-blue";
 }
 
+function formatReasonLabel(reasonCode: string) {
+  if (reasonCode === "low_rag_confidence") {
+    return "low AI confidence";
+  }
+  return reasonCode.replaceAll("_", " ");
+}
+
 function isPaymentReason(reasonCode: string) {
   return (
     reasonCode === "payment_receipt" ||
@@ -150,7 +157,7 @@ function InboxContent() {
     [loadEscalations],
   );
 
-  const { connected } = useEscalationSocket({
+  useEscalationSocket({
     tenantId,
     onEvent: handleSocketEvent,
   });
@@ -302,11 +309,7 @@ function InboxContent() {
         <div className="min-w-0">
           <h1 className={pageTitle}>Escalation Inbox</h1>
           <p className={pageSubtitle}>
-            Unified HITL queue for payment receipts and tutor requests.
-          </p>
-          <p className="mt-2 text-xs text-muted">
-            Auto-refreshes every 5 seconds
-            {connected ? " · WebSocket connected" : " · WebSocket reconnecting"}
+            Review payment receipts and tutor requests that need staff action.
           </p>
         </div>
 
@@ -345,7 +348,7 @@ function InboxContent() {
           <option value="">All reasons</option>
           <option value="payment_receipt">Payment receipt</option>
           <option value="talk_to_tutor">Talk to tutor</option>
-          <option value="low_rag_confidence">Low RAG confidence</option>
+          <option value="low_rag_confidence">Low AI confidence</option>
         </select>
       </div>
 
@@ -386,7 +389,7 @@ function InboxContent() {
                     </p>
                     <p className="mt-1 text-sm text-muted">
                       Reason:{" "}
-                      {escalation.reason_code.replaceAll("_", " ")}
+                      {formatReasonLabel(escalation.reason_code)}
                     </p>
                   </div>
 

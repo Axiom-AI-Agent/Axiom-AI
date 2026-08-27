@@ -50,6 +50,21 @@ class TelegramPendingStore:
             expires_at=self._now() + self._ttl,
         )
 
+    def find_chat_id_by_phone(self, *, tenant_id: str, phone: str) -> str | None:
+        """Reverse lookup for staff notify before student_channels exists."""
+        self._purge_expired()
+        prefix = f"{tenant_id}:"
+        target = phone.strip()
+        if not target:
+            return None
+        for key, row in self._by_chat.items():
+            if not key.startswith(prefix):
+                continue
+            if row.phone == target:
+                row.expires_at = self._now() + self._ttl
+                return key[len(prefix) :]
+        return None
+
     def delete(self, *, tenant_id: str, chat_id: str) -> None:
         self._by_chat.pop(self._key(tenant_id=tenant_id, chat_id=chat_id), None)
 

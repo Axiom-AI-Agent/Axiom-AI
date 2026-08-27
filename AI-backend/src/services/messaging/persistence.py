@@ -51,7 +51,7 @@ class MessagePersistence:
         """Persist a staff-authored message (role=system → sender=staff in dashboard UI)."""
         if ctx.student_exists and ctx.student_id:
             self._insert_message_log(ctx, intent="staff_reply", channel=channel)
-            self._insert_turn(ctx, role=MessageRole.SYSTEM, content=body)
+        self._insert_turn(ctx, role=MessageRole.SYSTEM, content=body)
 
     def _insert_message_log(
         self,
@@ -79,7 +79,7 @@ class MessagePersistence:
             client.table("st_turns").insert(
                 {
                     "tenant_id": ctx.tenant_id,
-                    "user_id": ctx.student_id,
+                    "user_id": ctx.student_id or ctx.phone,
                     "session_id": ctx.session_id,
                     "role": role.value,
                     "content": content,

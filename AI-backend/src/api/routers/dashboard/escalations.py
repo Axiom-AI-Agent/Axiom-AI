@@ -62,6 +62,66 @@ def _telegram_chat_id_for_student(*, tenant_id: str, student_id: str | None) -> 
         return None
 
 
+def _telegram_chat_id_for_phone(*, tenant_id: str, phone: str) -> int | None:
+    """Resolve Telegram chat id from linked channels or pending contact store."""
+    from services.identity.resolver import normalize_phone
+    from services.identity.telegram_pending_store import get_telegram_pending_store
+
+    student_id = _student_id_for_phone(tenant_id=tenant_id, phone=phone)
+    chat_id = _telegram_chat_id_for_student(
+        tenant_id=tenant_id,
+        student_id=student_id,
+    )
+    if chat_id is not None:
+        return chat_id
+
+    normalized = normalize_phone(phone)
+    pending = get_telegram_pending_store().find_chat_id_by_phone(
+        tenant_id=tenant_id,
+        phone=normalized,
+    )
+    if pending is None and normalized:
+        pending = get_telegram_pending_store().find_chat_id_by_phone(
+            tenant_id=tenant_id,
+            phone=f"+{normalized}",
+        )
+    if pending is None:
+        return None
+    try:
+        return int(str(pending).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _student_id_for_phone(*, tenant_id: str, phone: str) -> str | None:
+    """Best-effort student lookup by normalized phone variants."""
+    from services.identity.resolver import normalize_phone
+
+    client = get_supabase_client()
+    normalized = normalize_phone(phone)
+    candidates = {
+        normalized,
+        f"+{normalized}" if normalized else "",
+        normalized.lstrip("0") if normalized else "",
+    }
+    for candidate in candidates:
+        if not candidate:
+            continue
+        rows = (
+            client.table("students")
+            .select("id")
+            .eq("tenant_id", tenant_id)
+            .eq("phone", candidate)
+            .limit(1)
+            .execute()
+            .data
+            or []
+        )
+        if rows and rows[0].get("id"):
+            return str(rows[0]["id"])
+    return None
+
+
 async def notify_student(
     *,
     tenant_id: str,
@@ -78,16 +138,31 @@ async def notify_student(
             tenant_id=tenant_id,
             phone=phone,
         )
-    except Exception:
+    except Exception as exc:
+        logger.warning(
+            "Staff notify identity resolve failed tenant={} phone={}: {}",
+            tenant_id,
+            phone,
+            exc,
+        )
         return False
 
     delivered = False
     delivery_channel = ChatChannel.HTTP_DEV
 
+    student_id = getattr(ctx, "student_id", None) or _student_id_for_phone(
+        tenant_id=tenant_id,
+        phone=phone,
+    )
     chat_id = _telegram_chat_id_for_student(
         tenant_id=tenant_id,
-        student_id=getattr(ctx, "student_id", None),
+        student_id=student_id,
     )
+    if chat_id is None:
+        chat_id = _telegram_chat_id_for_phone(
+            tenant_id=tenant_id,
+            phone=phone,
+        )
     if chat_id is not None:
         try:
             await send_telegram_message(tenant_id, chat_id, message)
@@ -95,9 +170,10 @@ async def notify_student(
             delivery_channel = ChatChannel.TELEGRAM
         except Exception as exc:
             logger.warning(
-                "Telegram staff notify failed tenant={} phone={}: {}",
+                "Telegram staff notify failed tenant={} phone={} chat_id={}: {}",
                 tenant_id,
                 phone,
+                chat_id,
                 exc,
             )
 
@@ -107,12 +183,16 @@ async def notify_student(
             to_number=phone,
             body=message,
         )
-        delivered = result.status in {"sent", "dry_run"}
+        # Treat dry_run as undelivered so demo staff get a clear failure
+        # when Telegram isn't linked and Twilio isn't live.
+        delivered = result.status == "sent"
         if delivered:
-            delivery_channel = (
-                ChatChannel.HTTP_DEV
-                if result.status == "dry_run"
-                else ChatChannel.TWILIO_WHATSAPP
+            delivery_channel = ChatChannel.TWILIO_WHATSAPP
+        elif result.status == "dry_run":
+            logger.warning(
+                "WhatsApp dry-run only for tenant={} phone={}; message not sent",
+                tenant_id,
+                phone,
             )
 
     if not delivered:

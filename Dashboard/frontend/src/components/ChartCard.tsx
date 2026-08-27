@@ -103,6 +103,7 @@ export default function ChartCard({
 
   const options = {
     responsive: true,
+    maintainAspectRatio: true,
     plugins: {
       legend: { display: false },
       title: { display: false },
@@ -133,11 +134,15 @@ export default function ChartCard({
         {title}
       </h2>
       {type === "line" ? (
-        <Line data={chartData} options={options} />
+        <div className="h-56">
+          <Line data={chartData} options={options} />
+        </div>
       ) : type === "bar" ? (
-        <Bar data={chartData} options={options} />
+        <div className="h-56">
+          <Bar data={chartData} options={options} />
+        </div>
       ) : (
-        <div className="mx-auto max-w-xs">
+        <div className="mx-auto h-56 max-w-xs">
           <Doughnut data={chartData} options={options} />
         </div>
       )}

@@ -40,6 +40,7 @@ import {
   uploadClassDocument,
   updateClass,
 } from "@/lib/api";
+import { btnPrimary, btnQuiet } from "@/lib/ui";
 
 interface ClassFormState {
   subject: string;
@@ -450,7 +451,7 @@ export default function ClassesPage() {
           <button
             type="button"
             onClick={() => (showForm ? setShowForm(false) : openCreateForm())}
-            className="flex items-center gap-2 rounded-lg bg-surface px-4 py-2 text-sm font-medium text-ink hover:bg-hover"
+            className={showForm ? btnQuiet : btnPrimary}
           >
             {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             {showForm ? "Cancel" : "Add class"}
