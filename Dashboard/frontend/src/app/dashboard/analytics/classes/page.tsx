@@ -190,6 +190,19 @@ export default function ClassAnalyticsPage() {
     };
   }, [data]);
 
+  const attentionStatusTotals = useMemo(() => {
+    if (!data) {
+      return { open: 0, resolved: 0 };
+    }
+    return data.classes.reduce(
+      (current, item) => ({
+        open: current.open + item.open_escalations,
+        resolved: current.resolved + item.resolved_escalations,
+      }),
+      { open: 0, resolved: 0 },
+    );
+  }, [data]);
+
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
       <div className={pageHeader}>
@@ -296,12 +309,23 @@ export default function ClassAnalyticsPage() {
             />
           </div>
 
-          <ChartCard
-            title="Requires Attention by Class"
-            type="bar"
-            labels={attentionByClass.labels}
-            data={attentionByClass.values}
-          />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ChartCard
+              title="Open vs Resolved (Requires Attention)"
+              type="donut"
+              labels={["Open", "Resolved"]}
+              data={[
+                attentionStatusTotals.open,
+                attentionStatusTotals.resolved,
+              ]}
+            />
+            <ChartCard
+              title="Requires Attention by Class"
+              type="bar"
+              labels={attentionByClass.labels}
+              data={attentionByClass.values}
+            />
+          </div>
 
           <div className={`${surfaceCard} flex flex-wrap items-center justify-between gap-3 p-4`}>
             <div>

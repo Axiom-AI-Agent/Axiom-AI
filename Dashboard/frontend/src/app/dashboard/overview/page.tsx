@@ -215,7 +215,7 @@ export default function OverviewPage() {
             Open inbox
           </Link>
           <Link href="/dashboard/messages" className={btnQuiet}>
-            Staff messages
+            Messages
           </Link>
           <Link href="/dashboard/classes" className={btnPrimary}>
             <Megaphone className="h-4 w-4" />
