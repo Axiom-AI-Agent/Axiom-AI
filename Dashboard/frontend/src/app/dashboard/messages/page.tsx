@@ -21,6 +21,7 @@ import { useTenant } from "@/context/TenantContext";
 import { cn } from "@/lib/utils";
 import { usePolling } from "@/hooks/usePolling";
 import {
+  ApiError,
   ChatConversation,
   ChatThread,
   getChatConversations,
@@ -182,7 +183,21 @@ function MessagesContent() {
       );
     } catch (requestError) {
       console.error(requestError);
-      showToast("Could not send the message.", "error");
+      const detail =
+        requestError instanceof ApiError
+          ? typeof requestError.details === "object" &&
+            requestError.details &&
+            "detail" in requestError.details
+            ? String(
+                (requestError.details as { detail?: unknown }).detail ?? "",
+              )
+            : requestError.message
+          : null;
+      showToast(
+        detail?.trim() ||
+          "Could not send the message. Ask the student to share their phone on Telegram once.",
+        "error",
+      );
     } finally {
       setSending(false);
     }

@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
         />
         <ChartCard
           title="Requires Attention by Category"
-          type="bar"
+          type="donut"
           labels={
             categoryLabels.length > 0 ? categoryLabels : ["No categories"]
           }

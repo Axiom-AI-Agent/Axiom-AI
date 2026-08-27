@@ -394,34 +394,20 @@ def build_dashboard_analytics(
 
     total_conversations = len(session_ids)
 
-    # Prefer conversations that actually got an AI assistant reply and
-    # were not tied to an in-period escalation. Counting *all* sessions for
-    # escalated students made longer windows report *less* time saved.
-    escalated_student_ids = {
-        escalation.student_id
-        for escalation in escalations
-        if escalation.student_id
-    }
-
+    # Time saved = AI-answered conversations in the window.
+    # Do NOT subtract escalations here — longer periods must never report
+    # less time saved than shorter nested periods (today ⊆ 48h ⊆ 7d).
     grouped_turns: dict[str, list[STTurn]] = defaultdict(list)
 
     for turn in turns:
         if turn.session_id:
             grouped_turns[turn.session_id].append(turn)
 
-    deflected_conversations = 0
-    for session_turns in grouped_turns.values():
-        has_assistant = any(
-            turn.role == MessageRole.ASSISTANT for turn in session_turns
-        )
-        if not has_assistant:
-            continue
-        session_students = {
-            turn.user_id for turn in session_turns if turn.user_id
-        }
-        if session_students & escalated_student_ids:
-            continue
-        deflected_conversations += 1
+    deflected_conversations = sum(
+        1
+        for session_turns in grouped_turns.values()
+        if any(turn.role == MessageRole.ASSISTANT for turn in session_turns)
+    )
 
     if total_conversations > 0:
         deflection_rate = round(
@@ -835,29 +821,14 @@ def build_class_analytics(
             == EscalationStatus.RESOLVED
         )
 
-        escalated_student_ids = {
-            escalation.student_id
-            for escalation
-            in class_escalations
-            if escalation.student_id
-        }
-
-        deflected_conversations = 0
-        for session_turns in grouped_turns.values():
-            has_assistant = any(
+        deflected_conversations = sum(
+            1
+            for session_turns in grouped_turns.values()
+            if any(
                 turn.role == MessageRole.ASSISTANT
                 for turn in session_turns
             )
-            if not has_assistant:
-                continue
-            session_students = {
-                turn.user_id
-                for turn in session_turns
-                if turn.user_id
-            }
-            if session_students & escalated_student_ids:
-                continue
-            deflected_conversations += 1
+        )
 
         deflection_rate = (
             round(

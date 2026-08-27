@@ -29,6 +29,7 @@ import {
   useEscalationSocket,
 } from "@/hooks/useEscalationSocket";
 import {
+  ApiError,
   Escalation,
   EscalationStatus,
   getEscalations,
@@ -281,8 +282,20 @@ function InboxContent() {
         requestError,
       );
 
+      const detail =
+        requestError instanceof ApiError
+          ? typeof requestError.details === "object" &&
+            requestError.details &&
+            "detail" in requestError.details
+            ? String(
+                (requestError.details as { detail?: unknown }).detail ?? "",
+              )
+            : requestError.message
+          : null;
+
       showToast(
-        "Could not send the Telegram reply.",
+        detail?.trim() ||
+          "Could not send the Telegram reply. Ask the student to share their phone on Telegram once.",
         "error",
       );
     } finally {
