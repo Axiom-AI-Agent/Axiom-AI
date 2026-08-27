@@ -34,14 +34,14 @@ import ToggleSwitch from "@/components/ui/ToggleSwitch";
 
 function senderBubbleClass(sender: string) {
   if (sender === "student") {
-    return "bg-slate-100 text-heading bg-surface  self-start";
+    return "self-start border border-border bg-bg text-fg";
   }
 
   if (sender === "staff") {
-    return "bg-blue text-paper self-end";
+    return "self-end bg-blue text-paper";
   }
 
-  return "bg-indigo-soft/60 text-paper self-start";
+  return "self-start bg-indigo-soft/70 text-paper";
 }
 
 function MessagesContent() {
@@ -85,15 +85,18 @@ function MessagesContent() {
   }, [needsAttention, tenantId]);
 
   const loadThread = useCallback(
-    async (phone: string) => {
+    async (phone: string, options?: { silent?: boolean }) => {
       if (!phone) {
         setThread(null);
         setThreadStudent(null);
         return;
       }
 
-      setLoadingThread(true);
-      setError(null);
+      const silent = options?.silent === true;
+      if (!silent) {
+        setLoadingThread(true);
+        setError(null);
+      }
 
       try {
         const [nextThread, profile] = await Promise.all([
@@ -104,11 +107,15 @@ function MessagesContent() {
         setThreadStudent(profile?.student ?? null);
       } catch (requestError) {
         console.error(requestError);
-        setThread(null);
-        setThreadStudent(null);
-        setError("Could not load this conversation.");
+        if (!silent) {
+          setThread(null);
+          setThreadStudent(null);
+          setError("Could not load this conversation.");
+        }
       } finally {
-        setLoadingThread(false);
+        if (!silent) {
+          setLoadingThread(false);
+        }
       }
     },
     [tenantId],
@@ -129,11 +136,12 @@ function MessagesContent() {
 
   usePolling({
     enabled: true,
-    intervalMs: 5000,
+    intervalMs: 8000,
     onPoll: async () => {
       await loadConversations();
       if (selectedPhone) {
-        await loadThread(selectedPhone);
+        // Silent refresh — keep the open thread readable (no spinner flash).
+        await loadThread(selectedPhone, { silent: true });
       }
     },
   });
@@ -168,9 +176,9 @@ function MessagesContent() {
 
       showToast(
         result.delivered
-          ? "Message sent to student."
-          : "Message saved (dry-run delivery).",
-        "success",
+          ? "Message sent to student on Telegram."
+          : "Message could not be delivered.",
+        result.delivered ? "success" : "error",
       );
     } catch (requestError) {
       console.error(requestError);
@@ -216,7 +224,7 @@ function MessagesContent() {
         <div>
           <h1 className="text-2xl font-semibold text-heading">Messages</h1>
           <p className="mt-1 text-sm text-muted">
-            Staff chat with students — same threads as WhatsApp.
+            Staff chat with students — same threads as Telegram.
           </p>
         </div>
 

@@ -6,6 +6,7 @@ import json
 from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Query
+from loguru import logger
 from pydantic import BaseModel
 
 from agents.tools.crm_tool import CrmTool
@@ -16,6 +17,7 @@ from infrastructure.db.supabase_client import get_supabase_client
 from services.admissions.onboarding_flow import OnboardingFlow
 from services.identity.resolver import IdentityResolver
 from services.messaging.persistence import MessagePersistence
+from services.messaging.telegram_client import send_telegram_message
 from services.messaging.twilio_client import TwilioMessagingClient
 
 router = APIRouter(
@@ -33,6 +35,33 @@ class EscalationActionResponse(BaseModel):
     student_notified: bool = False
     notification_message: Optional[str] = None
 
+
+def _telegram_chat_id_for_student(*, tenant_id: str, student_id: str | None) -> int | None:
+    if not student_id:
+        return None
+    client = get_supabase_client()
+    channel_rows = (
+        client.table("student_channels")
+        .select("channel_address")
+        .eq("tenant_id", tenant_id)
+        .eq("student_id", student_id)
+        .eq("channel", ChatChannel.TELEGRAM.value)
+        .limit(1)
+        .execute()
+        .data
+        or []
+    )
+    if not channel_rows:
+        return None
+    address = channel_rows[0].get("channel_address")
+    if address is None:
+        return None
+    try:
+        return int(str(address).strip())
+    except (TypeError, ValueError):
+        return None
+
+
 async def notify_student(
     *,
     tenant_id: str,
@@ -40,38 +69,51 @@ async def notify_student(
     message: str,
     intent: str = "staff_notification",
 ) -> bool:
+    """Deliver a staff message via Telegram (preferred) or WhatsApp fallback."""
     resolver = IdentityResolver()
-    persistence = (
-        MessagePersistence()
-    )
-    messaging = (
-        TwilioMessagingClient()
-    )
+    persistence = MessagePersistence()
 
     try:
-        ctx = (
-            resolver.resolve_direct(
-                tenant_id=tenant_id,
-                phone=phone,
-            )
+        ctx = resolver.resolve_direct(
+            tenant_id=tenant_id,
+            phone=phone,
         )
     except Exception:
         return False
 
-    result = (
-        messaging.send_whatsapp(
+    delivered = False
+    delivery_channel = ChatChannel.HTTP_DEV
+
+    chat_id = _telegram_chat_id_for_student(
+        tenant_id=tenant_id,
+        student_id=getattr(ctx, "student_id", None),
+    )
+    if chat_id is not None:
+        try:
+            await send_telegram_message(tenant_id, chat_id, message)
+            delivered = True
+            delivery_channel = ChatChannel.TELEGRAM
+        except Exception as exc:
+            logger.warning(
+                "Telegram staff notify failed tenant={} phone={}: {}",
+                tenant_id,
+                phone,
+                exc,
+            )
+
+    if not delivered:
+        messaging = TwilioMessagingClient()
+        result = messaging.send_whatsapp(
             to_number=phone,
             body=message,
         )
-    )
-
-    delivered = (
-        result.status
-        in {
-            "sent",
-            "dry_run",
-        }
-    )
+        delivered = result.status in {"sent", "dry_run"}
+        if delivered:
+            delivery_channel = (
+                ChatChannel.HTTP_DEV
+                if result.status == "dry_run"
+                else ChatChannel.TWILIO_WHATSAPP
+            )
 
     if not delivered:
         return False
@@ -80,22 +122,19 @@ async def notify_student(
         persistence.log_staff_reply(
             ctx,
             body=message,
-            channel=(
-                ChatChannel.HTTP_DEV
-            ),
+            channel=delivery_channel,
         )
     else:
         persistence.log_outbound(
             ctx,
             body=message,
             intent=intent,
-            channel=(
-                ChatChannel.HTTP_DEV
-            ),
+            channel=delivery_channel,
         )
 
     return True
-    
+
+
 def _enrich_escalations(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     if not rows:
         return []
@@ -125,14 +164,13 @@ def _enrich_escalations(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return enriched
 
 
-
 @router.get("")
 async def list_escalations(
     tenant: DashboardTenant,
     status: Optional[str] = Query(None, description="open | assigned | resolved"),
     reason_code: Optional[str] = Query(None, description="payment_receipt | talk_to_tutor"),
 ) -> dict[str, Any]:
-    """List escalations for dashboard inbox."""
+    """List escalations for dashboard inbox (oldest first)."""
     tenant_id = tenant.tenant_id
     client = get_supabase_client()
     query = (
@@ -148,7 +186,7 @@ async def list_escalations(
         query = query.eq("status", status)
     if reason_code:
         query = query.eq("reason_code", reason_code)
-    response = query.order("created_at", desc=True).execute()
+    response = query.order("created_at", desc=False).execute()
     rows = _enrich_escalations(response.data or [])
     return {"tenant_id": tenant_id, "escalations": rows}
 
@@ -157,7 +195,7 @@ async def list_escalations(
 async def resolve_escalation(
     escalation_id: str,
     tenant: DashboardTenant,
-    notify: bool = Query(True, description="Send WhatsApp message to student when applicable"),
+    notify: bool = Query(True, description="Send message to student when applicable"),
     reviewed_by: Optional[str] = Query(None, description="Staff user id or email for audit"),
 ) -> EscalationActionResponse:
     """Approve payment (activates enrollment) or close talk-to-tutor ticket."""

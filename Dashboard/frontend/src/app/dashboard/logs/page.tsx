@@ -14,12 +14,24 @@ import {
   useState,
 } from "react";
 
+import { useTenant } from "@/context/TenantContext";
 import {
   getMessageLogs,
   MessageLog,
 } from "@/lib/api";
+import {
+  btnQuiet,
+  emptyState,
+  errorBanner,
+  inputClass,
+  pageHeader,
+  pageSubtitle,
+  pageTitle,
+  surfaceCard,
+} from "@/lib/ui";
 
 export default function LogsPage() {
+  const { tenantId } = useTenant();
   const [logs, setLogs] = useState<MessageLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,19 +42,16 @@ export default function LogsPage() {
     setError(null);
 
     try {
-      const data = await getMessageLogs();
-
-      setLogs(data);
+      setLogs(await getMessageLogs(tenantId));
     } catch (requestError) {
       console.error(requestError);
-
       setError(
         "Could not load message logs. Confirm the backend is available.",
       );
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tenantId]);
 
   useEffect(() => {
     void loadLogs();
@@ -75,17 +84,13 @@ export default function LogsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+      <div className={pageHeader}>
+        <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <ScrollText className="h-6 w-6 text-blue-500" />
-
-            <h1 className="text-2xl font-semibold text-slate-900 ">
-              Message Logs
-            </h1>
+            <ScrollText className="h-6 w-6 text-blue" />
+            <h1 className={pageTitle}>Message Logs</h1>
           </div>
-
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className={pageSubtitle}>
             View historical student and AI message activity.
           </p>
         </div>
@@ -94,107 +99,66 @@ export default function LogsPage() {
           type="button"
           onClick={() => void loadLogs()}
           disabled={loading}
-          className="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-hover disabled:opacity-50 dark:border-slate-700 dark:text-muted dark:hover:bg-slate-800"
+          className={btnQuiet}
         >
-          <RefreshCw
-            className={`h-4 w-4 ${
-              loading ? "animate-spin" : ""
-            }`}
-          />
-
+          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </button>
       </div>
 
-      <div>
-        <input
-          type="search"
-          value={search}
-          onChange={(event) =>
-            setSearch(event.target.value)
-          }
-          placeholder="Search by student, channel, intent..."
-          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 "
-        />
-      </div>
+      <input
+        type="search"
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        placeholder="Search by student, channel, intent..."
+        className={inputClass}
+      />
 
-      {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-600 dark:text-red-300">
-          <AlertTriangle className="h-5 w-5" />
-
+      {error ? (
+        <div className={errorBanner}>
+          <AlertTriangle className="h-5 w-5 shrink-0 text-blue" />
           {error}
         </div>
-      )}
+      ) : null}
 
       {loading ? (
         <div className="flex min-h-48 items-center justify-center">
-          <Loader2 className="h-7 w-7 animate-spin text-slate-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-muted" />
         </div>
       ) : filteredLogs.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-          No message logs found.
-        </div>
+        <div className={emptyState}>No message logs found.</div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className={`${surfaceCard} overflow-x-auto`}>
           <table className="min-w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-left text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-muted">
+            <thead className="border-b border-border bg-bg/60 text-left text-muted">
               <tr>
-                <th className="px-4 py-3">
-                  Time
-                </th>
-
-                <th className="px-4 py-3">
-                  Student
-                </th>
-
-                <th className="px-4 py-3">
-                  Student ID
-                </th>
-
-                <th className="px-4 py-3">
-                  Channel
-                </th>
-
-                <th className="px-4 py-3">
-                  Intent
-                </th>
+                <th className="px-4 py-3 font-medium">Time</th>
+                <th className="px-4 py-3 font-medium">Student</th>
+                <th className="px-4 py-3 font-medium">Student ID</th>
+                <th className="px-4 py-3 font-medium">Channel</th>
+                <th className="px-4 py-3 font-medium">Intent</th>
               </tr>
             </thead>
-
             <tbody>
               {filteredLogs.map((log) => (
                 <tr
                   key={log.id}
-                  className="border-b border-slate-100 last:border-0 dark:border-slate-800"
+                  className="border-b border-border last:border-0"
                 >
-                  <td className="whitespace-nowrap px-4 py-3 text-slate-500 dark:text-slate-400">
+                  <td className="whitespace-nowrap px-4 py-3 text-muted">
                     {log.timestamp
-                      ? new Date(
-                          log.timestamp,
-                        ).toLocaleString()
+                      ? new Date(log.timestamp).toLocaleString()
                       : "—"}
                   </td>
-
-                  <td className="px-4 py-3 font-medium text-slate-900 ">
-                    {log.student_name ??
-                      "Unknown student"}
+                  <td className="px-4 py-3 font-medium text-heading">
+                    {log.student_name ?? "Unknown student"}
                   </td>
-
-                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
-                    {log.student_id}
-                  </td>
-
-                  <td className="px-4 py-3 capitalize text-slate-700 dark:text-muted">
+                  <td className="px-4 py-3 text-muted">{log.student_id}</td>
+                  <td className="px-4 py-3 capitalize text-fg">
                     {log.channel || "—"}
                   </td>
-
-                  <td className="px-4 py-3 text-slate-700 dark:text-muted">
-                    {log.intent
-                      ? log.intent.replaceAll(
-                          "_",
-                          " ",
-                        )
-                      : "—"}
+                  <td className="px-4 py-3 text-fg">
+                    {log.intent ? log.intent.replaceAll("_", " ") : "—"}
                   </td>
                 </tr>
               ))}

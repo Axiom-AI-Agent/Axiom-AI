@@ -206,15 +206,21 @@ async def run_chat_turn(
         ):
             verdict = "proceed"
         elif media_url and verdict == "proceed":
-            patch["route_decisions"] = [
-                {
-                    "route": "payment_check",
-                    "action": "check",
-                    "params": {},
-                    "confidence": 1.0,
-                    "reasoning": "payment receipt image attached",
-                }
-            ]
+            # Only force payment routing for image-like receipts — not voice notes.
+            lower = media_url.lower().split("?", 1)[0]
+            is_audio = lower.endswith(
+                (".ogg", ".oga", ".opus", ".mp3", ".m4a", ".wav", ".aac", ".webm")
+            )
+            if not is_audio:
+                patch["route_decisions"] = [
+                    {
+                        "route": "payment_check",
+                        "action": "check",
+                        "params": {},
+                        "confidence": 1.0,
+                        "reasoning": "payment receipt image attached",
+                    }
+                ]
 
         if (
             pending_escalation_message

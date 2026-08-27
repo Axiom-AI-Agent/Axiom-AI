@@ -266,7 +266,7 @@ function InboxContent() {
       );
 
       showToast(
-        "Reply sent to the student on WhatsApp.",
+        "Reply sent to the student on Telegram.",
         "success",
       );
     } catch (requestError) {
@@ -275,7 +275,7 @@ function InboxContent() {
       );
 
       showToast(
-        "Could not send the WhatsApp reply.",
+        "Could not send the Telegram reply.",
         "error",
       );
     } finally {
@@ -417,15 +417,31 @@ function InboxContent() {
                 {escalation.media_url && (
                   <div className="mt-4 rounded-xl border border-border bg-bg/60 p-4">
                     <p className="text-xs uppercase tracking-wide text-muted">
-                      Payment slip
+                      {/\.(ogg|oga|opus|mp3|m4a|wav|aac|webm)(\?|$)/i.test(
+                        escalation.media_url,
+                      )
+                        ? "Attached media"
+                        : "Payment slip"}
                     </p>
                     <div className="mt-3 flex flex-wrap items-start gap-4">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={escalation.media_url}
-                        alt="Payment receipt"
-                        className="max-h-48 rounded-lg border border-border object-contain"
-                      />
+                      {/\.(ogg|oga|opus|mp3|m4a|wav|aac|webm)(\?|$)/i.test(
+                        escalation.media_url,
+                      ) ? (
+                        <audio
+                          controls
+                          src={escalation.media_url}
+                          className="max-w-full"
+                        >
+                          Your browser does not support audio.
+                        </audio>
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={escalation.media_url}
+                          alt="Payment receipt"
+                          className="max-h-48 rounded-lg border border-border object-contain"
+                        />
+                      )}
                       <a
                         href={escalation.media_url}
                         target="_blank"
@@ -485,7 +501,7 @@ function InboxContent() {
               void handleReply(escalation);
             }
           }}
-          placeholder="Type a reply to send via WhatsApp..."
+          placeholder="Type a reply to send via Telegram..."
           className={`${inputClass} flex-1`}
         />
 
@@ -509,7 +525,7 @@ function InboxContent() {
       </div>
 
       <p className="mt-2 text-xs text-muted">
-        Sends directly to {escalation.student_phone} through WhatsApp.
+        Sends directly to {escalation.student_phone} through Telegram.
       </p>
     </div>
   )}

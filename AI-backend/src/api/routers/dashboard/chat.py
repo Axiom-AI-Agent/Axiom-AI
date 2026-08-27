@@ -239,7 +239,7 @@ async def send_staff_message(
     tenant: DashboardTenant,
 ) -> DashboardChatSendResponse:
     """
-    Staff reply to a student via WhatsApp.
+    Staff reply to a student via Telegram (preferred) or WhatsApp fallback.
 
     Persists the message as role=system (sender=staff) before delivery so the
     dashboard thread stays in sync with what the student receives.
@@ -261,9 +261,8 @@ async def send_staff_message(
         raise HTTPException(
             status_code=502,
             detail=(
-                "WhatsApp delivery failed. "
-                "The message was not marked "
-                "as sent."
+                "Message delivery failed. "
+                "Link the student on Telegram or configure WhatsApp."
             ),
         )
 

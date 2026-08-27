@@ -2,7 +2,6 @@
 
 import {
   ReactNode,
-  useCallback,
   useEffect,
   useId,
   useRef,
@@ -35,32 +34,36 @@ export default function Modal({
 }: ModalProps) {
   const reduced = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
   const titleId = useId();
   const descriptionId = useId();
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-      }
-    },
-    [onClose],
-  );
+  onCloseRef.current = onClose;
 
+  // Only focus / lock scroll when the dialog opens — never on parent re-renders
+  // (unstable onClose used to re-run this and steal input focus every keystroke).
   useEffect(() => {
     if (!open) {
       return;
     }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onCloseRef.current();
+      }
+    };
+
     document.addEventListener("keydown", handleKeyDown);
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     panelRef.current?.focus({ preventScroll: true });
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [open, handleKeyDown]);
+  }, [open]);
 
   const duration = reduced ? 0 : 0.2;
 

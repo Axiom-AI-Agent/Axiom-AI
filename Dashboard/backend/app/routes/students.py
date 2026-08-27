@@ -380,8 +380,18 @@ def delete_student(
     if student is None:
         raise HTTPException(status_code=404, detail="Student not found")
 
-    db.delete(student)
-    db.commit()
+    try:
+        db.delete(student)
+        db.commit()
+    except IntegrityError as error:
+        db.rollback()
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Student has related records that could not be removed. "
+                "Remove enrollments or related data first."
+            ),
+        ) from error
 
 
 @router.post(

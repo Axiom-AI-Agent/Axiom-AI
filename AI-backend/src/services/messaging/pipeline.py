@@ -127,6 +127,9 @@ class ChatPipeline:
                 )
                 if transcript:
                     inbound.body = transcript
+                    # Clear media so voice notes are not treated as payment receipts.
+                    inbound.media_url = None
+                    inbound.num_media = 0
                 else:
                     lang = resolve_reply_language(
                         message=inbound.body or "",
@@ -138,12 +141,7 @@ class ChatPipeline:
                     "Payment submissions are currently disabled for this "
                     "institute. Please contact the tutor for assistance."
                 )
-            else:
-                lang = resolve_reply_language(
-                    message=inbound.body or "",
-                    language_pref=ctx.language_pref,
-                )
-                return t("unsupported_audio", lang)
+            # Image / other media: fall through to agent (payment check)
 
         try:
             reply = await self._run_agent_turn(ctx, inbound)

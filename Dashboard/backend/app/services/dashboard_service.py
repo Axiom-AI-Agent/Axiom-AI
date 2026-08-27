@@ -85,7 +85,7 @@ def list_escalations(
         db.query(Escalation)
         .options(joinedload(Escalation.student))
         .filter(Escalation.tenant_id == tenant_id)
-        .order_by(Escalation.created_at.desc())
+        .order_by(Escalation.created_at.asc())
     )
 
     if status is not None:

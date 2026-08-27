@@ -52,10 +52,7 @@ export default function StudentDetailsModal({
           </Link>
           <button
             type="button"
-            onClick={() => {
-              onEnroll(student);
-              onClose();
-            }}
+            onClick={() => onEnroll(student)}
             className={btnQuiet}
           >
             <UserPlus className="h-4 w-4" />
@@ -63,10 +60,7 @@ export default function StudentDetailsModal({
           </button>
           <button
             type="button"
-            onClick={() => {
-              onEdit(student);
-              onClose();
-            }}
+            onClick={() => onEdit(student)}
             className={btnQuiet}
           >
             <Pencil className="h-4 w-4" />
@@ -74,10 +68,7 @@ export default function StudentDetailsModal({
           </button>
           <button
             type="button"
-            onClick={() => {
-              onDelete(student.id);
-              onClose();
-            }}
+            onClick={() => onDelete(student.id)}
             className={cn(btnDanger, "col-span-2 sm:col-span-1")}
           >
             <Trash2 className="h-4 w-4" />

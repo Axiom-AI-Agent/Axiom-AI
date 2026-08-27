@@ -1,8 +1,14 @@
 "use client";
 
+import {
+  Pencil,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
+
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import { OnboardingFieldDefinition, Student } from "@/lib/api";
-import { surfaceCard } from "@/lib/ui";
+import { btnDanger, btnQuiet, surfaceCard } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 import { formatStudentFieldValue } from "./extraFields";
 
@@ -19,6 +25,9 @@ interface StudentTableProps {
 export default function StudentTable({
   students,
   fields,
+  onEdit,
+  onEnroll,
+  onDelete,
   onToggleHumanMode,
   onRowClick,
 }: StudentTableProps) {
@@ -34,11 +43,11 @@ export default function StudentTable({
               </th>
             ))}
             <th className="px-5 py-4 font-medium">Language</th>
-            <th className="min-w-[220px] px-5 py-4 font-medium">
+            <th className="min-w-[200px] px-5 py-4 font-medium">
               Registered classes
             </th>
-            <th className="min-w-[160px] px-5 py-4 font-medium">AI mode</th>
-            <th className="px-5 py-4 font-medium">Joined</th>
+            <th className="min-w-[150px] px-5 py-4 font-medium">AI mode</th>
+            <th className="px-5 py-4 font-medium">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
@@ -56,7 +65,7 @@ export default function StudentTable({
                     {student.name?.trim() || "Unnamed"}
                   </p>
                   <p className="mt-1 font-mono text-xs tabular text-muted">
-                    {student.id}
+                    {student.phone}
                   </p>
                 </td>
                 {fields.map((field) => (
@@ -106,10 +115,36 @@ export default function StudentTable({
                     className="min-w-[8.5rem]"
                   />
                 </td>
-                <td className="px-5 py-4 align-middle text-sm tabular text-muted">
-                  {student.created_at
-                    ? new Date(student.created_at).toLocaleDateString()
-                    : "—"}
+                <td
+                  className="px-5 py-4 align-middle"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(student)}
+                      className={cn(btnQuiet, "px-2.5 py-1.5 text-xs")}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onEnroll(student)}
+                      className={cn(btnQuiet, "px-2.5 py-1.5 text-xs")}
+                    >
+                      <UserPlus className="h-3.5 w-3.5" />
+                      Enroll
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(student.id)}
+                      className={cn(btnDanger, "px-2.5 py-1.5 text-xs")}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             );

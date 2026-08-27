@@ -190,6 +190,8 @@ export default function StudentsPage() {
   }
 
   function openEditModal(student: Student) {
+    setSelectedStudent(null);
+    setEnrollingStudent(null);
     setEditingStudent(student);
     setForm({
       name: student.name ?? "",
@@ -202,6 +204,8 @@ export default function StudentsPage() {
   }
 
   function openEnrollModal(student: Student) {
+    setSelectedStudent(null);
+    setEditingStudent(null);
     setEnrollingStudent(student);
     setEnrollClassId("");
     setModalMode("enroll");
@@ -309,6 +313,7 @@ export default function StudentsPage() {
 
     try {
       await deleteStudent(studentId, tenantId);
+      closeModal();
       showToast("Student deleted.", "success");
       await loadData();
     } catch (requestError) {

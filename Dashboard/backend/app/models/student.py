@@ -116,27 +116,43 @@ class Student(Base):
     enrollments = relationship(
         "Enrollment",
         back_populates="student",
+        passive_deletes=True,
     )
 
     invoices = relationship(
         "Invoice",
         back_populates="student",
+        passive_deletes=True,
     )
 
     message_logs = relationship(
         "MessageLog",
         back_populates="student",
+        passive_deletes=True,
     )
 
     escalations = relationship(
         "Escalation",
         back_populates="student",
+        passive_deletes=True,
     )
 
     # Memory relationships
-    mem_facts = relationship("MemFact", back_populates="student")
-    mem_episodes = relationship("MemEpisode", back_populates="student")
-    st_turns = relationship("STTurn", back_populates="student")
+    mem_facts = relationship(
+        "MemFact",
+        back_populates="student",
+        passive_deletes=True,
+    )
+    mem_episodes = relationship(
+        "MemEpisode",
+        back_populates="student",
+        passive_deletes=True,
+    )
+    st_turns = relationship(
+        "STTurn",
+        back_populates="student",
+        passive_deletes=True,
+    )
 
     def __repr__(self):
         return (
