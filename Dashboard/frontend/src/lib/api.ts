@@ -1237,4 +1237,163 @@ export function uploadClassDocument(
   return uploadDocument({ classId, file, title, lesson }, tenantId);
 }
 
+/* ---------- Schedules (AI backend — /dashboard/schedules) ---------- */
+
+export interface Schedule {
+  id: string;
+  tenant_id: string;
+  class_id: string;
+  teacher_id?: string | null;
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+  room?: string | null;
+  status: string;
+  effective_from: string;
+  effective_until?: string | null;
+  created_at: string;
+  updated_at: string;
+  class_name?: string | null;
+  subject?: string | null;
+  teacher_name?: string | null;
+}
+
+export interface CreateSchedulePayload {
+  class_id: string;
+  teacher_id?: string;
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+  room?: string;
+  effective_from?: string;
+  effective_until?: string;
+}
+
+export interface UpdateSchedulePayload {
+  teacher_id?: string;
+  day_of_week?: string;
+  start_time?: string;
+  end_time?: string;
+  room?: string;
+  effective_from?: string;
+  effective_until?: string;
+  status?: string;
+}
+
+export interface ScheduleException {
+  id: string;
+  tenant_id: string;
+  schedule_id: string;
+  exception_date: string;
+  status: string;
+  new_start_time?: string | null;
+  new_end_time?: string | null;
+  new_room?: string | null;
+  new_date?: string | null;
+  notes?: string | null;
+  created_at: string;
+}
+
+export function getSchedules(
+  tenantId?: string,
+  params?: { class_id?: string; teacher_id?: string; day_of_week?: string },
+): Promise<Schedule[]> {
+  const query = new URLSearchParams();
+  if (params?.class_id) query.set("class_id", params.class_id);
+  if (params?.teacher_id) query.set("teacher_id", params.teacher_id);
+  if (params?.day_of_week) query.set("day_of_week", params.day_of_week);
+  const qs = query.toString();
+  return aiRequest<Schedule[]>(
+    `/dashboard/schedules${qs ? `?${qs}` : ""}`,
+    {},
+    tenantId,
+  );
+}
+
+export function getSchedule(
+  scheduleId: string,
+  tenantId?: string,
+): Promise<Schedule> {
+  return aiRequest<Schedule>(
+    `/dashboard/schedules/${scheduleId}`,
+    {},
+    tenantId,
+  );
+}
+
+export function createSchedule(
+  payload: CreateSchedulePayload,
+  tenantId?: string,
+): Promise<Schedule> {
+  return aiRequest<Schedule>(
+    "/dashboard/schedules",
+    { method: "POST", body: JSON.stringify(payload) },
+    tenantId,
+  );
+}
+
+export function updateSchedule(
+  scheduleId: string,
+  payload: UpdateSchedulePayload,
+  tenantId?: string,
+): Promise<Schedule> {
+  return aiRequest<Schedule>(
+    `/dashboard/schedules/${scheduleId}`,
+    { method: "PATCH", body: JSON.stringify(payload) },
+    tenantId,
+  );
+}
+
+export function deleteSchedule(
+  scheduleId: string,
+  tenantId?: string,
+): Promise<void> {
+  return aiRequest<void>(
+    `/dashboard/schedules/${scheduleId}`,
+    { method: "DELETE" },
+    tenantId,
+  );
+}
+
+export function getScheduleExceptions(
+  scheduleId: string,
+  tenantId?: string,
+): Promise<ScheduleException[]> {
+  return aiRequest<ScheduleException[]>(
+    `/dashboard/schedules/${scheduleId}/exceptions`,
+    {},
+    tenantId,
+  );
+}
+
+export function createScheduleException(
+  scheduleId: string,
+  payload: {
+    exception_date: string;
+    status?: string;
+    new_start_time?: string;
+    new_end_time?: string;
+    notes?: string;
+  },
+  tenantId?: string,
+): Promise<ScheduleException> {
+  return aiRequest<ScheduleException>(
+    `/dashboard/schedules/${scheduleId}/exceptions`,
+    { method: "POST", body: JSON.stringify(payload) },
+    tenantId,
+  );
+}
+
+export function deleteScheduleException(
+  scheduleId: string,
+  exceptionId: string,
+  tenantId?: string,
+): Promise<void> {
+  return aiRequest<void>(
+    `/dashboard/schedules/${scheduleId}/exceptions/${exceptionId}`,
+    { method: "DELETE" },
+    tenantId,
+  );
+}
+
 
