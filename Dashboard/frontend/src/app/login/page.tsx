@@ -28,7 +28,7 @@ export default function LoginPage() {
       );
     }
 
-    if requestError instanceof AuthApiError) {
+    if (requestError instanceof AuthApiError) {
       if (requestError.status === 0) {
         return (
           "Cannot reach the Dashboard API. Confirm NEXT_PUBLIC_API_URL points at " +
