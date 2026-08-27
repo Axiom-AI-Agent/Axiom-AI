@@ -176,6 +176,7 @@ export interface SubjectClass {
   grade?: string | null;
   fee_amount?: string | number;
   fee_cycle?: string;
+  payments_enabled?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -187,6 +188,7 @@ export interface CreateClassPayload {
   fee_cycle: string;
   name?: string;
   grade?: string;
+  payments_enabled?: boolean;
 }
 
 export interface UpdateClassPayload {
@@ -195,6 +197,7 @@ export interface UpdateClassPayload {
   fee_cycle?: string;
   name?: string;
   grade?: string;
+  payments_enabled?: boolean;
 }
 
 export function getClasses(tenantId?: string): Promise<SubjectClass[]> {
@@ -1094,6 +1097,23 @@ export function updateClassHumanMode(
   );
 }
 
+export function updateClassPaymentsEnabled(
+  classId: string,
+  paymentsEnabled: boolean,
+  tenantId?: string,
+): Promise<SubjectClass> {
+  return dashboardRequest<SubjectClass>(
+    `/classes/${classId}/payments-enabled`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        payments_enabled: paymentsEnabled,
+      }),
+    },
+    tenantId,
+  );
+}
+
 export interface StudentImportResult {
   created: number;
   skipped: number;
@@ -1197,17 +1217,19 @@ export interface FaqCluster {
 
 export interface FaqAnalysisResult {
   tenant_id: string;
+  class_id?: string | null;
   analyzed_messages: number;
   clusters: FaqCluster[];
 }
 
 export function analyzeFaqs(
+  classId: string,
   tenantId?: string,
   limit = 200,
   minimumFrequency = 2,
 ): Promise<FaqAnalysisResult> {
   return aiRequest<FaqAnalysisResult>(
-    `/dashboard/faqs/analyze?limit=${limit}&minimum_frequency=${minimumFrequency}`,
+    `/dashboard/faqs/analyze?class_id=${encodeURIComponent(classId)}&limit=${limit}&minimum_frequency=${minimumFrequency}`,
     { method: "POST" },
     tenantId,
   );
