@@ -33,6 +33,7 @@ from api.routers.dashboard.chat_logs import router as dashboard_chat_logs_router
 from api.routers.dashboard.escalations import router as dashboard_escalations_router
 from api.routers.dashboard.faqs import router as dashboard_faqs_router
 from api.routers.dashboard.overview import router as dashboard_overview_router
+from api.routers.dashboard.schedules import router as dashboard_schedules_router
 from api.routers.escalations import router as escalations_router
 from api.routers.health import router as health_router
 from api.routers.students import router as students_router
@@ -126,6 +127,7 @@ app.include_router(dashboard_chat_logs_router, prefix="/dashboard")
 app.include_router(dashboard_overview_router, prefix="/dashboard")
 app.include_router(dashboard_broadcast_router, prefix="/dashboard")
 app.include_router(dashboard_faqs_router, prefix="/dashboard")
+app.include_router(dashboard_schedules_router, prefix="/dashboard")
 app.include_router(rag_tools_router)
 app.include_router(drive_tools_router)
 app.include_router(ingest_tools_router)

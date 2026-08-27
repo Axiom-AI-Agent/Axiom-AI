@@ -61,3 +61,24 @@ class FeeCycle(str, Enum):
     TERMLY = "termly"
     ONE_TIME = "one_time"
     ANNUAL = "annual"
+
+
+class DayOfWeek(str, Enum):
+    MONDAY = "monday"
+    TUESDAY = "tuesday"
+    WEDNESDAY = "wednesday"
+    THURSDAY = "thursday"
+    FRIDAY = "friday"
+    SATURDAY = "saturday"
+    SUNDAY = "sunday"
+
+
+class ScheduleStatus(str, Enum):
+    ACTIVE = "active"
+    CANCELLED = "cancelled"
+
+
+class OccurrenceStatus(str, Enum):
+    SCHEDULED = "scheduled"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
