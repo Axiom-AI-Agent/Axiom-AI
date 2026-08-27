@@ -138,7 +138,10 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         query = (
             client.table("subject_classes")
-            .select("id, tenant_id, name, subject, grade, fee_amount, fee_cycle")
+            .select(
+                "id, tenant_id, name, subject, grade, fee_amount, "
+                "fee_cycle, payments_enabled"
+            )
             .eq("tenant_id", tenant_id)
         )
         if subject:
@@ -152,7 +155,10 @@ class AdmissionsDbClient:
         client = get_supabase_client()
         response = (
             client.table("subject_classes")
-            .select("id, tenant_id, name, subject, grade, fee_amount, fee_cycle")
+            .select(
+                "id, tenant_id, name, subject, grade, fee_amount, "
+                "fee_cycle, payments_enabled"
+            )
             .eq("tenant_id", tenant_id)
             .eq("id", class_id)
             .limit(1)
