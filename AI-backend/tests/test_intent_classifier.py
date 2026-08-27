@@ -192,6 +192,7 @@ def test_b5_bare_link_is_recognised():
         ("when is my next class", StudentIntent.SCHEDULE),
         ("hi", StudentIntent.GREETING),
         ("Yes", StudentIntent.AFFIRM),
+        ("Yup", StudentIntent.AFFIRM),
         ("No", StudentIntent.DENY),
     ],
 )

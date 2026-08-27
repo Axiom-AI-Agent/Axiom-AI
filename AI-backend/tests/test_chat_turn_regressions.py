@@ -12,9 +12,20 @@ from agents.escalation_confirmation import (
     classify_confirmation,
     get_pending_low_confidence_question,
 )
+from agents.escalation_pending import remember_pending_question, reset_pending_questions
 from agents.router import MultiRouteDecision, RouteDecision
+from agents.tools.memory_tool import MemoryTool
+from memory.st_store import ShortTermMemoryStore
 from services.identity.context import IdentityContext
 from services.language import t
+from services.nlu import StudentIntent, classify
+
+
+@pytest.fixture(autouse=True)
+def _reset_escalation_pending():
+    reset_pending_questions()
+    yield
+    reset_pending_questions()
 
 
 @pytest.fixture
@@ -83,7 +94,7 @@ def test_b4_the_agents_own_question_is_recognised_as_the_escalation_prompt():
     assert pending == "What is terminal velocity"
 
 
-@pytest.mark.parametrize("reply", ["Yes", "yes please", "sure", "go ahead", "ඔව්"])
+@pytest.mark.parametrize("reply", ["Yes", "yes please", "sure", "go ahead", "Yup", "yup", "ඔව්"])
 def test_b4_affirmative_replies_are_recognised(reply: str):
     assert classify_confirmation(reply) == "yes"
 
@@ -114,6 +125,125 @@ async def test_b4_yes_routes_to_escalation_not_the_enrollment_flow(ctx: Identity
     assert orchestrator.patch is not None
     assert orchestrator.patch["pending_escalation_message"] == "What is terminal velocity"
     assert "payment slip" not in result.answer.lower()
+
+
+class _RecallOnlyMemory:
+    """What production MemoryTool looked like before recent_pairs existed."""
+
+    def recall_turns(self, **kwargs) -> str:
+        return ""
+
+    def recent_pairs(self, **kwargs):
+        raise AttributeError("'MemoryTool' object has no attribute 'recent_pairs'")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("reply", ["Yes", "Yup"])
+async def test_b4_yes_escalates_from_in_process_pending_even_without_st(
+    ctx: IdentityContext, reply: str
+):
+    """The live bug: RAG ask, then Yes/Yup, ST lookup throws, student is greeted."""
+    memory = _RecallOnlyMemory()
+    asked = t("rag_low_confidence_ask", "en")
+    first = _RecordingOrchestrator(answer=asked)
+    await run_chat_turn(
+        ctx=ctx,
+        message="What is terminal veloctity",
+        decision_graph=_decision_graph("resource"),
+        orchestrator=first,  # type: ignore[arg-type]
+        memory_tool=memory,  # type: ignore[arg-type]
+    )
+
+    second = _RecordingOrchestrator()
+    result = await run_chat_turn(
+        ctx=ctx,
+        message=reply,
+        decision_graph=_decision_graph("admissions"),
+        orchestrator=second,  # type: ignore[arg-type]
+        memory_tool=memory,  # type: ignore[arg-type]
+    )
+
+    assert result.routes == ["escalation"]
+    assert second.patch is not None
+    assert second.patch["pending_escalation_message"] == "What is terminal veloctity"
+    assert "welcome" not in result.answer.lower()
+
+
+def test_b4_pending_question_is_read_from_process_store_before_st():
+    remember_pending_question(
+        session_id="tenant-demo-physics:94770991234",
+        question="What is gravity",
+    )
+    memory = _RecallOnlyMemory()
+    pending = get_pending_low_confidence_question(
+        memory_tool=memory,  # type: ignore[arg-type]
+        tenant_id="tenant-demo-physics",
+        user_id="94770991234",
+        session_id="tenant-demo-physics:94770991234",
+    )
+    assert pending == "What is gravity"
+
+
+def test_memory_tool_recent_pairs_delegates_to_st_store():
+    st = MagicMock()
+    st.recent_pairs.return_value = [("What is gravity", t("rag_low_confidence_ask", "en"))]
+    tool = MemoryTool(st_store=st)
+    pairs = tool.recent_pairs(
+        tenant_id="t",
+        user_id="u",
+        session_id="s",
+        k=3,
+    )
+    assert pairs == [("What is gravity", t("rag_low_confidence_ask", "en"))]
+    st.recent_pairs.assert_called_once_with(
+        tenant_id="t", user_id="u", session_id="s", k=3
+    )
+
+
+def test_st_recent_pairs_uses_newest_turns_and_skips_trailing_unpaired_user(monkeypatch):
+    asked = t("rag_low_confidence_ask", "en")
+    # Query is newest-first; inbound "Yes" is already logged so it is first.
+    newest_first = [
+        {"role": "user", "content": "Yes", "created_at": "2026-08-28T02:15:00"},
+        {"role": "assistant", "content": asked, "created_at": "2026-08-28T02:14:00"},
+        {"role": "user", "content": "What is gravity", "created_at": "2026-08-28T02:13:00"},
+        {"role": "assistant", "content": "Welcome back!", "created_at": "2026-08-28T02:12:00"},
+        {"role": "user", "content": "hi", "created_at": "2026-08-28T02:11:00"},
+    ]
+
+    class _Query:
+        def select(self, *args, **kwargs):
+            return self
+
+        def eq(self, *args, **kwargs):
+            return self
+
+        def order(self, *args, **kwargs):
+            return self
+
+        def limit(self, *args, **kwargs):
+            return self
+
+        def execute(self):
+            return type("Response", (), {"data": newest_first})()
+
+    class _Client:
+        def table(self, _name):
+            return _Query()
+
+    monkeypatch.setattr("memory.st_store.get_supabase_client", lambda: _Client())
+    pairs = ShortTermMemoryStore().recent_pairs(
+        tenant_id="t",
+        user_id="u",
+        session_id="s",
+        k=3,
+    )
+
+    assert pairs[-1] == ("What is gravity", asked)
+
+
+def test_yup_is_an_affirmative_intent():
+    assert classify("Yup").intent is StudentIntent.AFFIRM
 
 
 # ── B5: a pasted link is answered as a link, not as a payment slip ──────────

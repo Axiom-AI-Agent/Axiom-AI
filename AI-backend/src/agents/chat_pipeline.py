@@ -19,7 +19,9 @@ from agents.drive_file_pick import try_consume_drive_pick
 from agents.escalation_confirmation import (
     classify_confirmation,
     get_pending_low_confidence_question,
+    is_confirmation_prompt,
 )
+from agents.escalation_pending import clear_pending_question, remember_pending_question
 from agents.orchestrator import AgentOrchestrator
 from agents.tools.memory_tool import MemoryTool
 from domain.escalation_reasons import (
@@ -45,6 +47,11 @@ _BLOCKED_VERDICTS = frozenset({"out_of_scope", "flagged_abusive"})
 
 async def _noop_emit(_: dict[str, Any]) -> None:
     return None
+
+
+def _remember_if_confirmation_asked(session_id: str, question: str, answer: str) -> None:
+    if is_confirmation_prompt(answer):
+        remember_pending_question(session_id=session_id, question=question)
 
 
 def _with_flow_nudge(answer: str, nudge_key: str | None, language: str) -> str:
@@ -118,19 +125,33 @@ async def run_chat_turn(
         message=message,
         language_pref=ctx.language_pref,
     )
-    pending_escalation_message = (
-        get_pending_low_confidence_question(
-            memory_tool=memory,
-            tenant_id=ctx.tenant_id,
-            user_id=(
-                ctx.student_id
-                or ctx.phone
-            ),
-            session_id=ctx.session_id,
-        )
+    pending_escalation_message = get_pending_low_confidence_question(
+        memory_tool=memory,
+        tenant_id=ctx.tenant_id,
+        user_id=ctx.memory_user_id,
+        session_id=ctx.session_id,
     )
-
     turn_intent = classify(message)
+    confirmation = (
+        classify_confirmation(message) if pending_escalation_message else "none"
+    )
+    if pending_escalation_message and confirmation == "no":
+        clear_pending_question(ctx.session_id)
+        timings["total_ms"] = int((time.perf_counter() - t_total) * 1000)
+        return ChatResult(
+            answer=t("escalation_declined", reply_language),
+            verdict="proceed",
+            route="direct",
+            routes=["direct"],
+            session_id=ctx.session_id,
+            latency_ms=timings["total_ms"],
+            timings=timings,
+            trace_id=get_current_trace_id(),
+        )
+    if pending_escalation_message and confirmation == "none":
+        # A new question — do not let a later "Yes" fire the old handoff.
+        clear_pending_question(ctx.session_id)
+        pending_escalation_message = None
 
     # Two message shapes are answerable without routing at all. Handling them
     # here keeps the router from guessing: a pasted Google Doc URL used to come
@@ -172,38 +193,6 @@ async def run_chat_turn(
             latency_ms=timings["total_ms"],
             timings=timings,
             trace_id=get_current_trace_id(),
-        )
-
-    confirmation = (
-        classify_confirmation(message)
-        if pending_escalation_message
-        else "none"
-    )
-    if (
-        pending_escalation_message
-        and confirmation == "no"
-    ):
-        timings["total_ms"] = int(
-            (
-                time.perf_counter()
-                - t_total
-            )
-            * 1000
-        )
-
-        return ChatResult(
-            answer=t("escalation_declined", reply_language),
-            verdict="proceed",
-            route="direct",
-            routes=["direct"],
-            session_id=ctx.session_id,
-            latency_ms=timings[
-                "total_ms"
-            ],
-            timings=timings,
-            trace_id=(
-                get_current_trace_id()
-            ),
         )
     tenant_name = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
 
@@ -272,40 +261,22 @@ async def run_chat_turn(
                 }
             ]
 
-        if (
-            pending_escalation_message
-            and confirmation == "yes"
-            and verdict not in _BLOCKED_VERDICTS
-        ):
-            verdict = "proceed"
-
-            patch["verdict"] = "proceed"
-
-            patch[
-                "pending_escalation_reason"
-            ] = LOW_RAG_CONFIDENCE
-
-            patch[
-                "pending_escalation_message"
-            ] = pending_escalation_message
-
-            patch["route_decisions"] = [
-                {
-                    "route": "escalation",
-                    "action":
-                        "confirmed_handoff",
-                    "params": {
-                        "reason_code":
-                            LOW_RAG_CONFIDENCE,
-                    },
-                    "confidence": 1.0,
-                    "reasoning": (
-                        "Student confirmed "
-                        "low-confidence tutor "
-                        "handoff."
-                    ),
-                }
-            ]
+        if pending_escalation_message and confirmation == "yes":
+            clear_pending_question(ctx.session_id)
+            if verdict not in _BLOCKED_VERDICTS:
+                verdict = "proceed"
+                patch["verdict"] = "proceed"
+                patch["pending_escalation_reason"] = LOW_RAG_CONFIDENCE
+                patch["pending_escalation_message"] = pending_escalation_message
+                patch["route_decisions"] = [
+                    {
+                        "route": "escalation",
+                        "action": "confirmed_handoff",
+                        "params": {"reason_code": LOW_RAG_CONFIDENCE},
+                        "confidence": 1.0,
+                        "reasoning": "Student confirmed low-confidence tutor handoff.",
+                    }
+                ]
 
         if verdict in _BLOCKED_VERDICTS:
             answer = patch.get("final_answer") or ""
@@ -330,6 +301,7 @@ async def run_chat_turn(
 
         agent = orchestrator._to_agent_response(final_state, timings["orchestrator_ms"])
         answer = _with_flow_nudge(agent.answer, patch.get("flow_nudge_key"), reply_language)
+        _remember_if_confirmation_asked(ctx.session_id, message, answer)
         update_current_trace(
             metadata={"verdict": verdict, "routes": agent.routes},
             tags=[verdict],

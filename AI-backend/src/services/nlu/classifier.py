@@ -51,7 +51,8 @@ _CACHE_MAX = 512
 _AFFIRM = frozenset(
     {"yes", "y", "yeah", "yep", "yea", "sure", "ok", "okay", "confirm", "agree",
      "proceed", "correct", "right", "please", "yesplease", "goahead", "doit",
-     "sendit", "oww", "hari", "ඔව්", "ඔව්වා", "හරි", "ஆம்", "ஆமாம்", "சரி"}
+     "sendit", "yup", "yas", "ye",
+     "oww", "hari", "ඔව්", "ඔව්වා", "හරි", "ஆம்", "ஆமாம்", "சரி"}
 )
 _DENY = frozenset(
     {"no", "n", "nope", "nah", "nothanks", "dont", "cancel", "nevermind",
