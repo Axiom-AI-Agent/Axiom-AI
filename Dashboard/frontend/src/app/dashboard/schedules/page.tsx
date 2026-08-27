@@ -68,8 +68,8 @@ export default function SchedulesPage() {
         getSchedules(tenantId),
         getClasses(tenantId),
       ]);
-      setSchedules(scheds);
-      setClasses(cls);
+      setSchedules(Array.isArray(scheds) ? scheds : []);
+      setClasses(Array.isArray(cls) ? cls : []);
     } catch (requestError) {
       console.error(requestError);
       setError("Could not load schedules.");

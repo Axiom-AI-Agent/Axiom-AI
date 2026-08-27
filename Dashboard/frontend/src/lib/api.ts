@@ -1347,6 +1347,37 @@ export interface ScheduleException {
   created_at: string;
 }
 
+interface ScheduleListResponse {
+  ok?: boolean;
+  tenant_id: string;
+  schedules: Schedule[];
+}
+
+interface ScheduleDetailResponse {
+  ok?: boolean;
+  tenant_id: string;
+  schedule: Schedule;
+}
+
+interface ExceptionListResponse {
+  ok?: boolean;
+  tenant_id: string;
+  exceptions: ScheduleException[];
+}
+
+function asScheduleList(
+  response: ScheduleListResponse | Schedule[],
+): Schedule[] {
+  return Array.isArray(response) ? response : (response.schedules ?? []);
+}
+
+function asSchedule(response: ScheduleDetailResponse | Schedule): Schedule {
+  if (response && typeof response === "object" && "schedule" in response) {
+    return response.schedule;
+  }
+  return response;
+}
+
 export function getSchedules(
   tenantId?: string,
   params?: { class_id?: string; teacher_id?: string; day_of_week?: string },
@@ -1356,33 +1387,33 @@ export function getSchedules(
   if (params?.teacher_id) query.set("teacher_id", params.teacher_id);
   if (params?.day_of_week) query.set("day_of_week", params.day_of_week);
   const qs = query.toString();
-  return aiRequest<Schedule[]>(
+  return aiRequest<ScheduleListResponse | Schedule[]>(
     `/dashboard/schedules${qs ? `?${qs}` : ""}`,
     {},
     tenantId,
-  );
+  ).then(asScheduleList);
 }
 
 export function getSchedule(
   scheduleId: string,
   tenantId?: string,
 ): Promise<Schedule> {
-  return aiRequest<Schedule>(
+  return aiRequest<ScheduleDetailResponse | Schedule>(
     `/dashboard/schedules/${scheduleId}`,
     {},
     tenantId,
-  );
+  ).then(asSchedule);
 }
 
 export function createSchedule(
   payload: CreateSchedulePayload,
   tenantId?: string,
 ): Promise<Schedule> {
-  return aiRequest<Schedule>(
+  return aiRequest<ScheduleDetailResponse | Schedule>(
     "/dashboard/schedules",
     { method: "POST", body: JSON.stringify(payload) },
     tenantId,
-  );
+  ).then(asSchedule);
 }
 
 export function updateSchedule(
@@ -1390,11 +1421,11 @@ export function updateSchedule(
   payload: UpdateSchedulePayload,
   tenantId?: string,
 ): Promise<Schedule> {
-  return aiRequest<Schedule>(
+  return aiRequest<ScheduleDetailResponse | Schedule>(
     `/dashboard/schedules/${scheduleId}`,
     { method: "PATCH", body: JSON.stringify(payload) },
     tenantId,
-  );
+  ).then(asSchedule);
 }
 
 export function deleteSchedule(
@@ -1412,10 +1443,12 @@ export function getScheduleExceptions(
   scheduleId: string,
   tenantId?: string,
 ): Promise<ScheduleException[]> {
-  return aiRequest<ScheduleException[]>(
+  return aiRequest<ExceptionListResponse | ScheduleException[]>(
     `/dashboard/schedules/${scheduleId}/exceptions`,
     {},
     tenantId,
+  ).then((response) =>
+    Array.isArray(response) ? response : (response.exceptions ?? []),
   );
 }
 

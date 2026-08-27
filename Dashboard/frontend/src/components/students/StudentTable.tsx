@@ -80,7 +80,8 @@ export default function StudentTable({
               </td>
 
               <td className="px-5 py-4 align-top">
-                {student.enrollments && student.enrollments.length > 0 ? (
+                {Array.isArray(student.enrollments) &&
+                student.enrollments.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5">
                     {student.enrollments.map((enrollment) => (
                       <span

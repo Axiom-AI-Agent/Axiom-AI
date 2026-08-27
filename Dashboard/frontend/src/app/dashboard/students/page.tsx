@@ -66,13 +66,14 @@ function matchesStudentSearch(student: Student, query: string) {
     return true;
   }
 
-  const enrollmentText =
-    student.enrollments
-      ?.map(
-        (enrollment) =>
-          `${enrollment.class_subject ?? ""} ${enrollment.class_name ?? ""} ${enrollment.class_id} ${enrollment.status}`,
-      )
-      .join(" ") ?? "";
+  const enrollmentText = Array.isArray(student.enrollments)
+    ? student.enrollments
+        .map(
+          (enrollment) =>
+            `${enrollment.class_subject ?? ""} ${enrollment.class_name ?? ""} ${enrollment.class_id} ${enrollment.status}`,
+        )
+        .join(" ")
+    : "";
 
   const extraText = Object.values(student.extra_fields ?? {})
     .filter((value) => value !== null && value !== undefined)
@@ -137,7 +138,10 @@ export default function StudentsPage() {
       if (fieldResponse === null) {
         setFieldDefs([FALLBACK_DISTRICT_FIELD]);
       } else {
-        const active = (fieldResponse.fields ?? [])
+        const fields = Array.isArray(fieldResponse.fields)
+          ? fieldResponse.fields
+          : [];
+        const active = fields
           .filter((field) => field.active !== false)
           .sort((a, b) => a.sort_order - b.sort_order);
         setFieldDefs(active);
