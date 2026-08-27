@@ -23,7 +23,6 @@ import {
 
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
-import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import {
   ApiError,
   BroadcastRecipients,
@@ -77,10 +76,6 @@ export default function ClassesPage() {
   const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [broadcastSending, setBroadcastSending] = useState(false);
   const [broadcastError, setBroadcastError] = useState<string | null>(null);
-  const [busyClassId, setBusyClassId] = useState<string | null>(null);
-  const [classAiEnabled, setClassAiEnabled] = useState<Record<string, boolean>>(
-    {},
-  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadClasses = useCallback(async () => {
@@ -243,34 +238,27 @@ export default function ClassesPage() {
 
   async function toggleClassHumanMode(
     classId: string,
-    aiEnabled: boolean,
+    humanMode: boolean,
   ) {
-    const action = aiEnabled
-      ? "Enable AI for every enrolled student in this class?"
-      : "Disable AI for every enrolled student in this class?";
+    const action = humanMode
+      ? "Disable AI for every enrolled student in this class?"
+      : "Enable AI for every enrolled student in this class?";
 
     if (!window.confirm(action)) {
       return;
     }
 
-    setBusyClassId(classId);
-
     try {
       const result = await updateClassHumanMode(
         classId,
-        !aiEnabled,
+        humanMode,
         tenantId,
       );
 
-      setClassAiEnabled((current) => ({
-        ...current,
-        [classId]: aiEnabled,
-      }));
-
       showToast(
-        aiEnabled
-          ? `AI re-enabled for ${result.students_updated} student(s).`
-          : `Human mode enabled for ${result.students_updated} student(s).`,
+        humanMode
+          ? `Human mode enabled for ${result.students_updated} student(s).`
+          : `AI re-enabled for ${result.students_updated} student(s).`,
         "success",
       );
     } catch (requestError) {
@@ -279,8 +267,6 @@ export default function ClassesPage() {
         "Could not update class AI mode.",
         "error",
       );
-    } finally {
-      setBusyClassId(null);
     }
   }
 
@@ -297,8 +283,6 @@ export default function ClassesPage() {
     if (!window.confirm(action)) {
       return;
     }
-
-    setBusyClassId(subjectClass.id);
 
     try {
       const updated = await updateClassPaymentsEnabled(
@@ -325,8 +309,6 @@ export default function ClassesPage() {
         "Could not update class payment settings.",
         "error",
       );
-    } finally {
-      setBusyClassId(null);
     }
   }
 
@@ -638,29 +620,6 @@ export default function ClassesPage() {
                 </div>
               </dl>
 
-              <div className="mt-5 space-y-3 rounded-xl border border-border bg-bg/50 p-3">
-                <ToggleSwitch
-                  label="Payment collection"
-                  description="Allow students to submit payment slips for this class."
-                  checked={subjectClass.payments_enabled !== false}
-                  disabled={busyClassId === subjectClass.id}
-                  onChange={(next) =>
-                    void toggleClassPayments(subjectClass, next)
-                  }
-                />
-                <div className="border-t border-border pt-3">
-                  <ToggleSwitch
-                    label="AI responses"
-                    description="Apply AI or human mode to every enrolled student."
-                    checked={classAiEnabled[subjectClass.id] ?? true}
-                    disabled={busyClassId === subjectClass.id}
-                    onChange={(next) =>
-                      void toggleClassHumanMode(subjectClass.id, next)
-                    }
-                  />
-                </div>
-              </div>
-
               <button
                 type="button"
                 onClick={() => void openBroadcast(subjectClass)}
@@ -671,6 +630,48 @@ export default function ClassesPage() {
               </button>
 
               <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassPayments(
+                      subjectClass,
+                      subjectClass.payments_enabled === false,
+                    )
+                  }
+                  className={
+                    subjectClass.payments_enabled === false
+                      ? "inline-flex items-center gap-1 rounded-lg border border-sage/40 px-3 py-1.5 text-sm text-sage hover:bg-sage/10 text-sage"
+                      : "inline-flex items-center gap-1 rounded-lg border border-blue/40 px-3 py-1.5 text-sm text-blue hover:bg-blue/15 text-blue"
+                  }
+                >
+                  {subjectClass.payments_enabled === false
+                    ? "Enable payments"
+                    : "Disable payments"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassHumanMode(
+                      subjectClass.id,
+                      true,
+                    )
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-blue/40 px-3 py-1.5 text-sm text-blue hover:bg-blue/15 text-blue"
+                >
+                  Disable AI for class
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    void toggleClassHumanMode(
+                      subjectClass.id,
+                      false,
+                    )
+                  }
+                  className="inline-flex items-center gap-1 rounded-lg border border-sage/40 px-3 py-1.5 text-sm text-sage hover:bg-sage/10 text-sage"
+                >
+                  Enable AI for class
+                </button>
                 <button
                   type="button"
                   onClick={() => triggerFileInput(subjectClass.id)}

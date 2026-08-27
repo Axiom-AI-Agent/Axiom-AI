@@ -335,12 +335,6 @@ export default function StudentsPage() {
         ),
       );
 
-      setSelectedStudent((current) =>
-        current && current.id === student.id
-          ? { ...current, ...updated, enrollments: current.enrollments }
-          : current,
-      );
-
       showToast(
         updated.human_mode
           ? "AI disabled for this student."
