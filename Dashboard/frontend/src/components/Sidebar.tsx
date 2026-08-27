@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 import {
   BookOpen,
+  Calendar,
   FileUp,
   HelpCircle,
   Inbox,
@@ -62,6 +63,11 @@ const mainNavItems: NavItem[] = [
     href: "/dashboard/classes",
     label: "Classes",
     icon: <BookOpen className="h-5 w-5" />,
+  },
+  {
+    href: "/dashboard/schedules",
+    label: "Schedules",
+    icon: <Calendar className="h-5 w-5" />,
   },
   {
     href: "/dashboard/students",
