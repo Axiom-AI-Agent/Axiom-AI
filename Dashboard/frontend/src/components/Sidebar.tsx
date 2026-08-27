@@ -118,14 +118,16 @@ function NavLink({
       className={cn(
         "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] transition-colors duration-150",
         active
-          ? "bg-blue/20 font-medium text-white shadow-[inset_2px_0_0_0_var(--blue)]"
-          : "text-white/70 hover:bg-white/10 hover:text-white",
+          ? "bg-blue/12 font-medium text-heading shadow-[inset_2px_0_0_0_var(--blue)] dark:bg-blue/20 dark:text-white dark:shadow-[inset_2px_0_0_0_var(--blue)]"
+          : "text-muted hover:bg-hover hover:text-heading dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white",
       )}
     >
       <span
         className={cn(
           "flex h-7 w-7 shrink-0 items-center justify-center rounded-md",
-          active ? "bg-blue/25 text-white" : "text-white/55",
+          active
+            ? "bg-blue/15 text-blue dark:bg-blue/25 dark:text-white"
+            : "text-muted dark:text-white/55",
         )}
       >
         {item.icon}
@@ -141,7 +143,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-56 flex-col border-r border-white/10 bg-[linear-gradient(180deg,#152238_0%,#1b2a4a_55%,#152033_100%)] p-2 text-white transition-transform duration-300 ease-in-out lg:relative lg:shadow-none",
+        "fixed inset-y-0 left-0 z-50 flex min-h-screen w-56 flex-col border-r border-border bg-[linear-gradient(180deg,#eef4fc_0%,#e3edf9_50%,#eaf0f8_100%)] p-2 text-heading transition-transform duration-300 ease-in-out lg:relative lg:shadow-none",
+        "dark:border-white/10 dark:bg-[linear-gradient(180deg,#152238_0%,#1b2a4a_55%,#152033_100%)] dark:text-white",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "lg:flex lg:translate-x-0",
       )}
@@ -150,7 +153,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="flex min-w-0 items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Axiom AI Logo" className="h-8 w-auto shrink-0" />
-          <h2 className="font-display truncate text-base font-semibold tracking-tight text-white">
+          <h2 className="font-display truncate text-base font-semibold tracking-tight text-heading dark:text-white">
             Axiom AI
           </h2>
         </div>
@@ -158,7 +161,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md p-1.5 text-white/65 hover:bg-white/10 hover:text-white lg:hidden"
+          className="rounded-md p-1.5 text-muted hover:bg-hover hover:text-heading dark:text-white/65 dark:hover:bg-white/10 dark:hover:text-white lg:hidden"
           aria-label="Close sidebar"
         >
           <X className="h-4 w-4" />
@@ -184,7 +187,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      <nav className="mt-auto border-t border-white/10 pt-2">
+      <nav className="mt-auto border-t border-border pt-2 dark:border-white/10">
         <NavLink
           item={settingsNavItem}
           active={
