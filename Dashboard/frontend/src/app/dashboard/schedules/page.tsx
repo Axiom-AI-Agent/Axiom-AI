@@ -159,7 +159,7 @@ export default function SchedulesPage() {
           <button
             type="button"
             onClick={() => setShowForm((current) => !current)}
-            className="flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90"
+            className="flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90"
           >
             {showForm ? (
               <X className="h-4 w-4" />
@@ -284,7 +284,7 @@ export default function SchedulesPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50  transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:opacity-50  transition-colors"
             >
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
               Create Schedule

@@ -39,7 +39,7 @@ export default function MetricCard({
               className={cn(
                 "mr-4 flex items-center justify-center rounded-md p-2.5",
                 attention
-                  ? "bg-ember/15 text-ember"
+                  ? "bg-blue/15 text-blue"
                   : healthy
                     ? "bg-sage/15 text-sage"
                     : "bg-indigo-soft/20 text-muted",

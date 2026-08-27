@@ -441,7 +441,7 @@ export default function RegisterPage() {
     <main className="min-h-screen bg-ink px-4 py-10 text-white">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-ember">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue text-paper">
             <Building2 className="h-6 w-6" />
           </div>
 
@@ -926,7 +926,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-4 py-3 font-medium hover:bg-ember/90 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue px-4 py-3 font-medium text-paper hover:bg-blue/90 disabled:opacity-50"
           >
             {loading && (
               <Loader2 className="h-5 w-5 animate-spin" />

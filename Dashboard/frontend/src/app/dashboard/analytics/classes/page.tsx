@@ -213,7 +213,7 @@ export default function ClassAnalyticsPage() {
       <div className="flex-1 space-y-6 overflow-y-auto pr-1">
         {error && (
         <div className={errorBanner}>
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ember" />
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-blue" />
 
           <div>
             <p className="font-medium">
@@ -457,7 +457,7 @@ export default function ClassAnalyticsPage() {
                           <span
                             className={cn(
                               "rounded-md border border-border px-2.5 py-1 text-xs font-medium tabular text-fg",
-                              item.open_escalations > 0 && "text-ember",
+                              item.open_escalations > 0 && "text-blue",
                             )}
                           >
                             {
@@ -531,7 +531,7 @@ function SummaryCard({
             className={cn(
               "flex h-10 w-10 items-center justify-center rounded-md",
               attention
-                ? "bg-ember/15 text-ember"
+                ? "bg-blue/15 text-blue"
                 : "bg-indigo-soft/20 text-muted",
             )}
           >

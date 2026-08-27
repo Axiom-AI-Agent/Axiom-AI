@@ -34,10 +34,10 @@ function senderBubbleClass(sender: string) {
   }
 
   if (sender === "staff") {
-    return "bg-ember text-white self-end";
+    return "bg-blue text-paper self-end";
   }
 
-  return "bg-emerald-900/60 text-emerald-100 self-start";
+  return "bg-indigo-soft/60 text-paper self-start";
 }
 
 function MessagesContent() {
@@ -243,7 +243,7 @@ function MessagesContent() {
                           {conversation.student_name ?? conversation.phone}
                         </p>
                         {conversation.has_open_escalation ? (
-                          <span className="text-[10px] font-medium uppercase tracking-wide text-ember">
+                          <span className="text-[10px] font-medium uppercase tracking-wide text-blue">
                             Attention
                           </span>
                         ) : null}
@@ -284,7 +284,7 @@ function MessagesContent() {
                         href={`/dashboard/inbox?status=open&reason_code=${encodeURIComponent(
                           escalation.reason_code,
                         )}`}
-                        className="rounded-md border border-border px-2 py-1 text-xs text-ember hover:bg-hover"
+                        className="rounded-md border border-border px-2 py-1 text-xs text-blue hover:bg-hover"
                       >
                         Open: {escalation.reason_code.replaceAll("_", " ")}
                       </Link>
@@ -326,7 +326,7 @@ function MessagesContent() {
                 <button
                   type="submit"
                   disabled={sending || !message.trim()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:opacity-50"
                 >
                   {sending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

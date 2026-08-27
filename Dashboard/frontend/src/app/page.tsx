@@ -68,7 +68,7 @@ export default function HomePage() {
 
             <Link
               href="/login"
-              className="flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink transition hover:bg-ember/90"
+              className="flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper transition hover:bg-blue/90"
             >
               Open Dashboard
               <ArrowRight className="h-4 w-4" />
@@ -79,7 +79,7 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute left-1/2 top-20 -z-0 h-96 w-96 -translate-x-1/2 rounded-full bg-ember/10 blur-3xl" />
+        <div className="absolute left-1/2 top-20 -z-0 h-96 w-96 -translate-x-1/2 rounded-full bg-blue/10 blur-3xl" />
 
         <div className="relative z-10 mx-auto max-w-7xl px-6 pb-24 pt-24 text-center sm:pt-32">
           <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-indigo-soft/20 px-4 py-2 text-sm text-muted">
@@ -105,7 +105,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/login"
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-6 py-3 font-medium text-ink transition hover:bg-ember/90 sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue px-6 py-3 font-medium text-paper transition hover:bg-blue/90 sm:w-auto"
             >
               Try the Demo
               <ArrowRight className="h-5 w-5" />
@@ -129,11 +129,11 @@ export default function HomePage() {
       {/* Dashboard Preview */}
       <section className="px-6 pb-24">
         <div className="mx-auto max-w-6xl">
-          <div className="overflow-hidden rounded-md border border-border bg-indigo  shadow-blue-950/20">
+          <div className="overflow-hidden rounded-md border border-border bg-indigo shadow-ink/20">
             <div className="flex items-center gap-2 border-b border-border px-5 py-4">
-              <div className="h-3 w-3 rounded-full bg-red-400/70" />
-              <div className="h-3 w-3 rounded-full bg-amber-400/70" />
-              <div className="h-3 w-3 rounded-full bg-emerald-400/70" />
+              <div className="h-3 w-3 rounded-full bg-indigo-soft" />
+              <div className="h-3 w-3 rounded-full bg-blue/70" />
+              <div className="h-3 w-3 rounded-full bg-sage/70" />
 
               <span className="ml-3 text-xs text-muted">
                 Axiom AI Dashboard
@@ -274,7 +274,7 @@ export default function HomePage() {
 
           <Link
             href="/login"
-            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-ember px-6 py-3 font-medium transition hover:bg-ember/90"
+            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-blue px-6 py-3 font-medium text-paper transition hover:bg-blue/90"
           >
             Launch Demo Dashboard
             <ArrowRight className="h-5 w-5" />
@@ -334,7 +334,7 @@ function ActivityRow({
 }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="mt-1.5 h-2 w-2 rounded-full bg-blue-500" />
+      <div className="mt-1.5 h-2 w-2 rounded-full bg-blue" />
 
       <div>
         <p className="text-sm text-muted">
@@ -363,7 +363,7 @@ function StatusRow({
       </span>
 
       <span className="flex items-center gap-2 text-xs text-sage">
-        <span className="h-2 w-2 rounded-full bg-emerald-400" />
+        <span className="h-2 w-2 rounded-full bg-sage" />
         {status}
       </span>
     </div>

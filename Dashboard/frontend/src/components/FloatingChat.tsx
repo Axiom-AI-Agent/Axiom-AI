@@ -131,7 +131,7 @@ export default function FloatingChat() {
                 type="submit"
                 disabled={sending || !draft.trim()}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center rounded-md bg-ember px-3 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
+                className="inline-flex items-center rounded-md bg-blue px-3 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
               </motion.button>

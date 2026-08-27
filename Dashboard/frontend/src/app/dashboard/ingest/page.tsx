@@ -190,7 +190,7 @@ function IngestContent() {
       )}
 
       {warnings.length > 0 && (
-        <div className="space-y-1 rounded-lg border border-amber-500/30 bg-ember/15 p-4 text-sm text-ember">
+        <div className="space-y-1 rounded-lg border border-blue/30 bg-blue/15 p-4 text-sm text-blue">
           <div className="flex items-center gap-2 font-medium">
             <AlertTriangle className="h-5 w-5" />
             Ingested with warnings
@@ -262,7 +262,7 @@ function IngestContent() {
         <button
           type="submit"
           disabled={uploading || !file || !classId}
-          className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:opacity-50"
         >
           {uploading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

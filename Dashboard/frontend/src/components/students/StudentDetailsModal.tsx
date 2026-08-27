@@ -57,7 +57,7 @@ export default function StudentDetailsModal({
             }}
             className={cn(
               btnQuiet,
-              student.human_mode && "border-ember/40 text-ember",
+              student.human_mode && "border-blue/40 text-blue",
             )}
           >
             {student.human_mode ? "Human mode" : "AI active"}

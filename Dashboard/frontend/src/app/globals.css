@@ -7,7 +7,7 @@
   --color-indigo: var(--indigo);
   --color-indigo-soft: var(--indigo-soft);
   --color-paper: var(--paper);
-  --color-ember: var(--ember);
+  --color-blue: var(--blue);
   --color-sage: var(--sage);
 
   --color-bg: var(--bg);
@@ -34,7 +34,7 @@
   --indigo: #1b2a4a;
   --indigo-soft: #2c3e63;
   --paper: #f7f8fb;
-  --ember: #e8985e;
+  --blue: #3b7aed;
   --sage: #6fa287;
 
   --bg: var(--paper);

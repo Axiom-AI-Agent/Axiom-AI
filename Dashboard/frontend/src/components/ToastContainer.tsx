@@ -12,7 +12,7 @@ function toastAccent(variant: Toast["variant"]) {
     return "text-sage";
   }
   if (variant === "error") {
-    return "text-ember";
+    return "text-blue";
   }
   return "text-muted";
 }

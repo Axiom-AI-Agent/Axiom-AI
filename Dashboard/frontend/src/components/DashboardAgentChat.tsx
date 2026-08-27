@@ -74,7 +74,7 @@ export default function DashboardAgentChat() {
               key={`${turn.role}-${index}`}
               className={
                 turn.role === "user"
-                  ? "ml-8 rounded-lg bg-ember px-3 py-2 text-sm text-white"
+                  ? "ml-8 rounded-lg bg-blue px-3 py-2 text-sm text-paper"
                   : "mr-8 whitespace-pre-wrap rounded-lg bg-surface px-3 py-2 text-sm text-fg bg-surface "
               }
             >
@@ -104,7 +104,7 @@ export default function DashboardAgentChat() {
         <button
           type="submit"
           disabled={sending || !draft.trim()}
-          className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:opacity-50"
         >
           <Send className="h-4 w-4" />
           Ask

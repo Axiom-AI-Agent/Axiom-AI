@@ -135,7 +135,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-ink px-4 text-paper">
       <div className="w-full max-w-md rounded-md border border-border bg-indigo p-8 ">
         <div className="mb-7 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-ember">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue text-paper">
             <Building2 className="h-6 w-6" />
           </div>
 
@@ -154,7 +154,7 @@ export default function LoginPage() {
             void handleDemoLogin()
           }
           disabled={busy}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-4 py-3 font-medium text-ink transition hover:bg-ember/90 disabled:cursor-not-allowed disabled:opacity-50"        >
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue px-4 py-3 font-medium text-paper transition hover:bg-blue/90 disabled:cursor-not-allowed disabled:opacity-50"        >
           {demoLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
@@ -231,7 +231,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={busy}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-4 py-2.5 font-medium hover:bg-ember/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue px-4 py-2.5 font-medium text-paper hover:bg-blue/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading && (
               <Loader2 className="h-4 w-4 animate-spin" />

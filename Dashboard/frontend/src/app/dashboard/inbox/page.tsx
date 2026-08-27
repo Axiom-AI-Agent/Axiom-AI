@@ -46,7 +46,7 @@ function statusClass(status: EscalationStatus) {
     return "bg-indigo-soft/20 text-muted";
   }
 
-  return "bg-ember/15 text-ember";
+  return "bg-blue/15 text-blue";
 }
 
 function isPaymentReason(reasonCode: string) {
@@ -485,7 +485,7 @@ function InboxContent() {
             !(replyDrafts[escalation.id] ?? "").trim()
           }
           onClick={() => void handleReply(escalation)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink hover:bg-ember/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper hover:bg-blue/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {sendingReplyId === escalation.id ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -529,7 +529,7 @@ function InboxContent() {
                         type="button"
                         disabled={processing}
                         onClick={() => void handleResolve(escalation)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-ember px-3 py-2 text-sm text-white hover:bg-ember/90 disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-lg bg-blue px-3 py-2 text-sm text-paper hover:bg-blue/90 disabled:opacity-50"
                       >
                         {processing ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

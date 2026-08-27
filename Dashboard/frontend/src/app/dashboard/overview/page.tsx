@@ -71,7 +71,7 @@ export default function OverviewPage() {
   if (error || !data) {
     return (
       <div className={errorBanner}>
-        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ember" />
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-blue" />
         <div>
           <p>{error ?? "Dashboard data is unavailable."}</p>
           <button

@@ -71,15 +71,15 @@ export default function ChartCard({
   }, []);
 
   const palette = useMemo(() => {
-    const ember = readToken("--ember", "#E8985E");
-    const sage = readToken("--sage", "#6FA287");
+    const blue = readToken("--blue", "#3B7AED");
+    const indigo = readToken("--indigo", "#1B2A4A");
     const indigoSoft = readToken("--indigo-soft", "#2C3E63");
     const ink = readToken("--ink", "#0B1220");
     const paper = readToken("--paper", "#F7F8FB");
     const muted = readToken("--muted", indigoSoft);
     const border = readToken("--border", indigoSoft);
     const tick = isDark ? paper : ink;
-    return { ember, sage, indigoSoft, tick, muted, border, ink, paper };
+    return { blue, indigo, indigoSoft, tick, muted, border, ink, paper };
   }, [isDark]);
 
   const chartData = {
@@ -88,14 +88,14 @@ export default function ChartCard({
       {
         label: title,
         data,
-        borderColor: type === "donut" ? "transparent" : palette.ember,
+        borderColor: type === "donut" ? "transparent" : palette.blue,
         backgroundColor:
           type === "donut"
             ? labels.map(
                 (_, index) =>
-                  [palette.ember, palette.sage, palette.indigoSoft][index % 3],
+                  [palette.blue, palette.indigoSoft, palette.indigo][index % 3],
               )
-            : `${palette.ember}1A`,
+            : `${palette.blue}1A`,
         tension: 0.35,
       },
     ],

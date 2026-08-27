@@ -38,7 +38,7 @@ function ExtraFieldInput({
   const label = (
     <span className="text-sm font-medium text-fg">
       {field.label}
-      {field.required ? <span className="text-ember"> *</span> : null}
+      {field.required ? <span className="text-blue"> *</span> : null}
     </span>
   );
 
@@ -51,7 +51,7 @@ function ExtraFieldInput({
           onChange={(event) =>
             onChange(event.target.checked ? "true" : "false")
           }
-          className="h-4 w-4 rounded-sm border-border text-ember focus:ring-indigo-soft"
+          className="h-4 w-4 rounded-sm border-border text-blue focus:ring-indigo-soft"
         />
         {label}
       </label>

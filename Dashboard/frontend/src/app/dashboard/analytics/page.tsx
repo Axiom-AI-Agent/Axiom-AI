@@ -89,7 +89,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <div className={errorBanner}>
-        <AlertTriangle className="h-5 w-5 shrink-0 text-ember" />
+        <AlertTriangle className="h-5 w-5 shrink-0 text-blue" />
         <div>
           <p>{error ?? "Analytics unavailable."}</p>
           <button
@@ -234,7 +234,7 @@ export default function AnalyticsPage() {
                         </td>
                         <td className="px-3 py-3">
                           {needsAttention ? (
-                            <span className="tabular text-ember">
+                            <span className="tabular text-blue">
                               {student.escalations}
                             </span>
                           ) : (

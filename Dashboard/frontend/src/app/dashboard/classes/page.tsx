@@ -448,7 +448,7 @@ export default function ClassesPage() {
       )}
 
       {uploadError && (
-        <div className="flex items-center gap-2 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4 text-yellow-200">
+        <div className="flex items-center gap-2 rounded-lg border border-blue/30 bg-blue/10 p-4 text-blue">
           <AlertTriangle className="h-5 w-5" />
           <span>{uploadError}</span>
         </div>
@@ -548,7 +548,7 @@ export default function ClassesPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper disabled:opacity-50"
             >
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
               {editingId ? "Save changes" : "Create class"}
@@ -609,7 +609,7 @@ export default function ClassesPage() {
                   <dd
                     className={
                       subjectClass.payments_enabled === false
-                        ? "text-ember"
+                        ? "text-blue"
                         : "text-sage"
                     }
                   >
@@ -623,7 +623,7 @@ export default function ClassesPage() {
               <button
                 type="button"
                 onClick={() => void openBroadcast(subjectClass)}
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ember px-3 py-2 text-sm font-medium text-ink hover:bg-ember/90"
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue px-3 py-2 text-sm font-medium text-paper hover:bg-blue/90"
               >
                 <Megaphone className="h-4 w-4" />
                 Broadcast to Telegram
@@ -641,7 +641,7 @@ export default function ClassesPage() {
                   className={
                     subjectClass.payments_enabled === false
                       ? "inline-flex items-center gap-1 rounded-lg border border-sage/40 px-3 py-1.5 text-sm text-sage hover:bg-sage/10 text-sage"
-                      : "inline-flex items-center gap-1 rounded-lg border border-ember/40 px-3 py-1.5 text-sm text-ember hover:bg-ember/15 text-ember"
+                      : "inline-flex items-center gap-1 rounded-lg border border-blue/40 px-3 py-1.5 text-sm text-blue hover:bg-blue/15 text-blue"
                   }
                 >
                   {subjectClass.payments_enabled === false
@@ -656,7 +656,7 @@ export default function ClassesPage() {
                       true,
                     )
                   }
-                  className="inline-flex items-center gap-1 rounded-lg border border-ember/40 px-3 py-1.5 text-sm text-ember hover:bg-ember/15 text-ember"
+                  className="inline-flex items-center gap-1 rounded-lg border border-blue/40 px-3 py-1.5 text-sm text-blue hover:bg-blue/15 text-blue"
                 >
                   Disable AI for class
                 </button>
@@ -817,7 +817,7 @@ export default function ClassesPage() {
                       !broadcastRecipients ||
                       broadcastRecipients.reachable < 1
                     }
-                    className="inline-flex items-center gap-2 rounded-lg bg-ember px-4 py-2 text-sm font-medium text-ink disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue px-4 py-2 text-sm font-medium text-paper disabled:opacity-50"
                   >
                     {broadcastSending && (
                       <Loader2 className="h-4 w-4 animate-spin" />
