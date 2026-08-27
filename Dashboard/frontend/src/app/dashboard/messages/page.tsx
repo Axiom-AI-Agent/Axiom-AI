@@ -236,8 +236,6 @@ function MessagesContent() {
                       className={cn(
                         "w-full border-b border-border px-4 py-3 text-left transition hover:bg-hover",
                         active && "bg-hover",
-                        conversation.has_open_escalation &&
-                          "attention-glow border-ember/40",
                       )}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -286,7 +284,7 @@ function MessagesContent() {
                         href={`/dashboard/inbox?status=open&reason_code=${encodeURIComponent(
                           escalation.reason_code,
                         )}`}
-                        className="attention-glow rounded-md border border-ember/40 px-2 py-1 text-xs text-ember hover:bg-hover"
+                        className="rounded-md border border-border px-2 py-1 text-xs text-ember hover:bg-hover"
                       >
                         Open: {escalation.reason_code.replaceAll("_", " ")}
                       </Link>

@@ -3,7 +3,6 @@
 import { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
-import AttentionGlow from "@/components/AttentionGlow";
 import SageCheck from "@/components/SageCheck";
 import { surfaceCard } from "@/lib/ui";
 import { cn } from "@/lib/utils";
@@ -34,14 +33,7 @@ export default function MetricCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: "easeOut" }}
     >
-      <AttentionGlow active={attention} className="h-full">
-        <div
-          className={cn(
-            surfaceCard,
-            "flex h-full items-center p-5",
-            attention && "border-ember/40",
-          )}
-        >
+      <div className={cn(surfaceCard, "flex h-full items-center p-5")}>
           {icon ? (
             <div
               className={cn(
@@ -65,8 +57,7 @@ export default function MetricCard({
               {value}
             </p>
           </div>
-        </div>
-      </AttentionGlow>
+      </div>
     </motion.div>
   );
 }

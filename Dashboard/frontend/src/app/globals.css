@@ -87,30 +87,3 @@ h3,
 * {
   box-sizing: border-box;
 }
-
-@keyframes attention-breathe {
-  0%,
-  100% {
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--ember) 40%, transparent),
-      0 0 16px 2px color-mix(in srgb, var(--ember) 28%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--ember) 55%, transparent),
-      0 0 26px 5px color-mix(in srgb, var(--ember) 18%, transparent);
-  }
-}
-
-.attention-glow {
-  animation: attention-breathe 2.4s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .attention-glow {
-    animation: none;
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--ember) 45%, transparent),
-      0 0 14px 2px color-mix(in srgb, var(--ember) 22%, transparent);
-  }
-}

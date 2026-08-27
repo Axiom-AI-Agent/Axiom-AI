@@ -21,7 +21,6 @@ import {
 
 import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
-import AttentionGlow from "@/components/AttentionGlow";
 import SageCheck from "@/components/SageCheck";
 import { cn } from "@/lib/utils";
 import { usePolling } from "@/hooks/usePolling";
@@ -362,15 +361,9 @@ function InboxContent() {
             const payment = isPaymentReason(escalation.reason_code);
 
             return (
-              <AttentionGlow
-                key={escalation.id}
-                active={escalation.status !== "resolved"}
-              >
               <article
-                className={cn(
-                  "rounded-md border border-border bg-surface p-5",
-                  escalation.status !== "resolved" && "border-ember/40",
-                )}
+                key={escalation.id}
+                className="rounded-md border border-border bg-surface p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -561,7 +554,6 @@ function InboxContent() {
                   </div>
                 </div>
               </article>
-              </AttentionGlow>
             );
           })}
         </div>

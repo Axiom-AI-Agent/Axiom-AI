@@ -1,11 +1,9 @@
 "use client";
 
-import AttentionGlow from "@/components/AttentionGlow";
 import { OnboardingFieldDefinition, Student } from "@/lib/api";
 import { surfaceCard } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 import { formatStudentFieldValue } from "./extraFields";
-import { studentNeedsAttention } from "./attention";
 
 interface StudentTableProps {
   students: Student[];
@@ -41,25 +39,19 @@ export default function StudentTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-          {students.map((student) => {
-            const attention = studentNeedsAttention(student);
-            return (
+          {students.map((student) => (
               <tr
                 key={student.id}
                 onClick={() => onRowClick(student)}
                 className="cursor-pointer transition-colors hover:bg-hover"
               >
                 <td className="px-5 py-4 align-top">
-                  <AttentionGlow active={attention} className="rounded-md">
-                    <div className="px-1">
-                      <p className="text-sm font-medium text-heading">
-                        {student.name?.trim() || "Unnamed"}
-                      </p>
-                      <p className="mt-1 font-mono text-xs tabular text-muted">
-                        {student.id}
-                      </p>
-                    </div>
-                  </AttentionGlow>
+                  <p className="text-sm font-medium text-heading">
+                    {student.name?.trim() || "Unnamed"}
+                  </p>
+                  <p className="mt-1 font-mono text-xs tabular text-muted">
+                    {student.id}
+                  </p>
                 </td>
                 {fields.map((field) => (
                   <td
@@ -76,15 +68,10 @@ export default function StudentTable({
                   {Array.isArray(student.enrollments) &&
                   student.enrollments.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5">
-                      {student.enrollments.map((enrollment) => {
-                        const pending = enrollment.status === "pending";
-                        return (
+                      {student.enrollments.map((enrollment) => (
                           <span
                             key={enrollment.id}
-                            className={cn(
-                              "inline-flex items-center rounded-md border border-border px-2.5 py-1 text-xs font-medium text-fg",
-                              pending && "attention-glow border-ember/40",
-                            )}
+                            className="inline-flex items-center rounded-md border border-border px-2.5 py-1 text-xs font-medium text-fg"
                           >
                             {enrollment.class_subject ??
                               enrollment.class_name ??
@@ -93,8 +80,7 @@ export default function StudentTable({
                               {enrollment.status}
                             </span>
                           </span>
-                        );
-                      })}
+                      ))}
                     </div>
                   ) : (
                     <span className="text-sm italic text-muted">
@@ -108,8 +94,7 @@ export default function StudentTable({
                     : "—"}
                 </td>
               </tr>
-            );
-          })}
+          ))}
         </tbody>
       </table>
     </div>

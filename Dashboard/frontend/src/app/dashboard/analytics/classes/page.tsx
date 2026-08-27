@@ -18,7 +18,6 @@ import {
 } from "react";
 
 import { useTenant } from "@/context/TenantContext";
-import AttentionGlow from "@/components/AttentionGlow";
 import SageCheck from "@/components/SageCheck";
 import {
   AnalyticsPeriod,
@@ -327,17 +326,9 @@ export default function ClassAnalyticsPage() {
             <div className="grid gap-5 xl:grid-cols-2">
               {sortedClasses.map(
                 (item) => (
-                  <AttentionGlow
-                    key={item.class_id}
-                    active={item.open_escalations > 0}
-                    className="h-full"
-                  >
                   <article
-                    className={cn(
-                      surfaceCard,
-                      "p-5",
-                      item.open_escalations > 0 && "border-ember/40",
-                    )}
+                    key={item.class_id}
+                    className={`${surfaceCard} p-5`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
@@ -448,13 +439,7 @@ export default function ClassAnalyticsPage() {
                             active
                           </span>
 
-                          <span
-                            className={cn(
-                              "rounded-md border border-border px-2.5 py-1 text-xs font-medium tabular text-fg",
-                              item.pending_students > 0 &&
-                                "attention-glow border-ember/40",
-                            )}
-                          >
+                          <span className="rounded-md border border-border px-2.5 py-1 text-xs font-medium tabular text-fg">
                             {
                               item.pending_students
                             }{" "}
@@ -472,8 +457,7 @@ export default function ClassAnalyticsPage() {
                           <span
                             className={cn(
                               "rounded-md border border-border px-2.5 py-1 text-xs font-medium tabular text-fg",
-                              item.open_escalations > 0 &&
-                                "attention-glow border-ember/40 text-ember",
+                              item.open_escalations > 0 && "text-ember",
                             )}
                           >
                             {
@@ -507,7 +491,6 @@ export default function ClassAnalyticsPage() {
                       </span>
                     </div>
                   </article>
-                  </AttentionGlow>
                 ),
               )}
             </div>
@@ -533,14 +516,7 @@ function SummaryCard({
   healthy?: boolean;
 }) {
   return (
-    <AttentionGlow active={attention}>
-      <div
-        className={cn(
-          surfaceCard,
-          "p-5",
-          attention && "border-ember/40",
-        )}
-      >
+      <div className={cn(surfaceCard, "p-5")}>
         <div className="flex items-center justify-between">
           <div>
             <p className="flex items-center gap-1.5 text-sm text-muted">
@@ -563,7 +539,6 @@ function SummaryCard({
           </div>
         </div>
       </div>
-    </AttentionGlow>
   );
 }
 

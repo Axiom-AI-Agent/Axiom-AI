@@ -8,14 +8,12 @@ import {
   UserPlus,
 } from "lucide-react";
 
-import AttentionGlow from "@/components/AttentionGlow";
 import SageCheck from "@/components/SageCheck";
 import Modal from "@/components/ui/Modal";
 import { OnboardingFieldDefinition, Student } from "@/lib/api";
 import { btnDanger, btnQuiet } from "@/lib/ui";
 import { cn } from "@/lib/utils";
 import { formatStudentFieldValue } from "./extraFields";
-import { studentNeedsAttention } from "./attention";
 
 interface StudentDetailsModalProps {
   student: Student;
@@ -36,8 +34,6 @@ export default function StudentDetailsModal({
   onDelete,
   onToggleHumanMode,
 }: StudentDetailsModalProps) {
-  const attention = studentNeedsAttention(student);
-
   return (
     <Modal
       open
@@ -105,8 +101,7 @@ export default function StudentDetailsModal({
         </div>
       }
     >
-      <AttentionGlow active={attention} className="rounded-md">
-        <div className="space-y-6">
+      <div className="space-y-6">
           <section>
             <h3 className="mb-3 text-sm font-semibold text-heading">
               Contact Information
@@ -155,15 +150,10 @@ export default function StudentDetailsModal({
             {Array.isArray(student.enrollments) &&
             student.enrollments.length > 0 ? (
               <div className="flex flex-wrap gap-2">
-                {student.enrollments.map((enrollment) => {
-                  const pending = enrollment.status === "pending";
-                  return (
+                {student.enrollments.map((enrollment) => (
                     <span
                       key={enrollment.id}
-                      className={cn(
-                        "inline-flex items-center rounded-md border border-border px-3 py-1 text-sm font-medium text-fg",
-                        pending && "attention-glow border-ember/40",
-                      )}
+                      className="inline-flex items-center rounded-md border border-border px-3 py-1 text-sm font-medium text-fg"
                     >
                       {enrollment.class_subject ??
                         enrollment.class_name ??
@@ -172,8 +162,7 @@ export default function StudentDetailsModal({
                         {enrollment.status}
                       </span>
                     </span>
-                  );
-                })}
+                ))}
               </div>
             ) : (
               <p className="text-sm italic text-muted">
@@ -182,7 +171,6 @@ export default function StudentDetailsModal({
             )}
           </section>
         </div>
-      </AttentionGlow>
     </Modal>
   );
 }

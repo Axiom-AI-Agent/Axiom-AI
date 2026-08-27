@@ -11,7 +11,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import AttentionGlow from "@/components/AttentionGlow";
 import ChartCard from "@/components/ChartCard";
 import MetricCard from "@/components/MetricCard";
 import SageCheck from "@/components/SageCheck";
@@ -220,16 +219,12 @@ export default function AnalyticsPage() {
                         className="border-b border-border last:border-0"
                       >
                         <td className="px-3 py-3">
-                          <AttentionGlow active={needsAttention}>
-                            <div className="rounded-md px-2 py-1">
-                              <div className="font-medium text-heading">
-                                {student.student_name ?? "Unknown student"}
-                              </div>
-                              <div className="text-xs text-muted">
-                                {student.student_id}
-                              </div>
-                            </div>
-                          </AttentionGlow>
+                          <div className="font-medium text-heading">
+                            {student.student_name ?? "Unknown student"}
+                          </div>
+                          <div className="text-xs text-muted">
+                            {student.student_id}
+                          </div>
                         </td>
                         <td className="px-3 py-3 tabular text-fg">
                           {student.messages}
