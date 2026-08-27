@@ -3,14 +3,17 @@
 import { FormEvent } from "react";
 import { Loader2, X } from "lucide-react";
 
-import { SubjectClass } from "@/lib/api";
+import { OnboardingFieldDefinition, SubjectClass } from "@/lib/api";
+
+const inputClassName =
+  "w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm";
 
 export interface StudentFormState {
   name: string;
   phone: string;
-  district: string;
   language_pref: string;
   class_id: string;
+  extra_fields: Record<string, string>;
 }
 
 interface StudentFormModalProps {
@@ -18,9 +21,82 @@ interface StudentFormModalProps {
   form: StudentFormState;
   saving: boolean;
   classes: SubjectClass[];
+  fields: OnboardingFieldDefinition[];
   onClose: () => void;
   onChange: (form: StudentFormState) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}
+
+function ExtraFieldInput({
+  field,
+  value,
+  onChange,
+}: {
+  field: OnboardingFieldDefinition;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const label = (
+    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+      {field.label}
+      {field.required ? <span className="text-red-500"> *</span> : null}
+    </span>
+  );
+
+  if (field.field_type === "boolean") {
+    return (
+      <label className="flex items-center gap-3 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2">
+        <input
+          type="checkbox"
+          checked={value === "true"}
+          onChange={(event) => onChange(event.target.checked ? "true" : "false")}
+          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+        />
+        {label}
+      </label>
+    );
+  }
+
+  if (field.field_type === "select") {
+    return (
+      <label className="block space-y-2">
+        {label}
+        <select
+          required={field.required}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className={inputClassName}
+        >
+          <option value="">{field.required ? "Select…" : "Not set"}</option>
+          {(field.options ?? []).map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
+
+  const inputType =
+    field.field_type === "number"
+      ? "number"
+      : field.field_type === "date"
+        ? "date"
+        : "text";
+
+  return (
+    <label className="block space-y-2">
+      {label}
+      <input
+        type={inputType}
+        required={field.required}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className={inputClassName}
+      />
+    </label>
+  );
 }
 
 export default function StudentFormModal({
@@ -28,6 +104,7 @@ export default function StudentFormModal({
   form,
   saving,
   classes,
+  fields,
   onClose,
   onChange,
   onSubmit,
@@ -45,7 +122,7 @@ export default function StudentFormModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="student-form-title"
-        className="relative z-10 w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl"
+        className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-2xl"
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
@@ -80,7 +157,7 @@ export default function StudentFormModal({
               onChange={(event) =>
                 onChange({ ...form, name: event.target.value })
               }
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className={inputClassName}
             />
           </label>
 
@@ -92,37 +169,45 @@ export default function StudentFormModal({
               onChange={(event) =>
                 onChange({ ...form, phone: event.target.value })
               }
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+              className={inputClassName}
             />
           </label>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">District</span>
-              <input
-                value={form.district}
-                onChange={(event) =>
-                  onChange({ ...form, district: event.target.value })
-                }
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
-              />
-            </label>
+          {fields.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {fields.map((field) => (
+                <ExtraFieldInput
+                  key={field.field_key}
+                  field={field}
+                  value={form.extra_fields[field.field_key] ?? ""}
+                  onChange={(value) =>
+                    onChange({
+                      ...form,
+                      extra_fields: {
+                        ...form.extra_fields,
+                        [field.field_key]: value,
+                      },
+                    })
+                  }
+                />
+              ))}
+            </div>
+          )}
 
-            <label className="block space-y-2">
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Language</span>
-              <select
-                value={form.language_pref}
-                onChange={(event) =>
-                  onChange({ ...form, language_pref: event.target.value })
-                }
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
-              >
-                <option value="en">English</option>
-                <option value="si">Sinhala</option>
-                <option value="ta">Tamil</option>
-              </select>
-            </label>
-          </div>
+          <label className="block space-y-2">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Language</span>
+            <select
+              value={form.language_pref}
+              onChange={(event) =>
+                onChange({ ...form, language_pref: event.target.value })
+              }
+              className={inputClassName}
+            >
+              <option value="en">English</option>
+              <option value="si">Sinhala</option>
+              <option value="ta">Tamil</option>
+            </select>
+          </label>
 
           {mode === "create" && (
             <label className="block space-y-2">
@@ -132,7 +217,7 @@ export default function StudentFormModal({
                 onChange={(event) =>
                   onChange({ ...form, class_id: event.target.value })
                 }
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-slate-900 dark:text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors shadow-sm"
+                className={inputClassName}
               >
                 <option value="">No enrollment yet</option>
                 {classes.map((subjectClass) => (

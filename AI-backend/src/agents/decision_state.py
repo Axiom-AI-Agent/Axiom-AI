@@ -12,8 +12,8 @@ from typing_extensions import TypedDict
 
 from agents.router import MultiRouteDecision
 
-GuardrailVerdict = Literal["in_scope", "out_of_scope"]
-DecisionVerdict = Literal["out_of_scope", "proceed"]
+GuardrailVerdict = Literal["in_scope", "out_of_scope", "flagged_abusive"]
+DecisionVerdict = Literal["out_of_scope", "flagged_abusive", "proceed"]
 
 
 class DecisionState(TypedDict, total=False):

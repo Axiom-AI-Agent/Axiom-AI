@@ -99,7 +99,11 @@ def test_identity_resolver_keeps_enrolled_student():
             "_lookup_enrollments",
             return_value=[{"class_id": "class-1", "status": "active"}],
         ),
-        patch.object(resolver, "_lookup_class_names", return_value={"class-1": "A/L Physics"}),
+        patch.object(
+            resolver,
+            "_lookup_class_meta",
+            return_value={"class-1": {"name": "A/L Physics", "payments_enabled": True}},
+        ),
     ):
         ctx = resolver._build_context(tenant, "94771234567", student)
     assert ctx.student_exists is True
@@ -122,7 +126,11 @@ def test_identity_resolver_sets_human_mode_from_student():
             "_lookup_enrollments",
             return_value=[{"class_id": "class-1", "status": "active"}],
         ),
-        patch.object(resolver, "_lookup_class_names", return_value={"class-1": "A/L Physics"}),
+        patch.object(
+            resolver,
+            "_lookup_class_meta",
+            return_value={"class-1": {"name": "A/L Physics", "payments_enabled": True}},
+        ),
     ):
         ctx = resolver._build_context(tenant, "94771234567", student)
     assert ctx.human_mode is True

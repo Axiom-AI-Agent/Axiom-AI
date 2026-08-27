@@ -44,7 +44,11 @@ def mock_db():
         "status": "pending",
     }
     db.get_tenant.return_value = {"id": "tenant-a", "payments_enabled": True}
-    db.get_class.return_value = {"id": "class-1", "subject": "Physics"}
+    db.get_class.return_value = {
+        "id": "class-1",
+        "subject": "Physics",
+        "payments_enabled": True,
+    }
     db.get_latest_invoice_for_student.return_value = {"id": "inv-1", "status": "pending"}
     db.resolve_escalation.return_value = {"id": "esc-1", "status": "resolved"}
     db.activate_enrollment.return_value = {"id": "enr-1", "status": "active"}
@@ -71,7 +75,11 @@ def test_create_payment_escalation(mock_db):
 
 
 def test_create_payment_escalation_blocked_when_payments_disabled(mock_db):
-    mock_db.get_tenant.return_value = {"id": "tenant-a", "payments_enabled": False}
+    mock_db.get_class.return_value = {
+        "id": "class-1",
+        "subject": "Physics",
+        "payments_enabled": False,
+    }
     tool = CrmTool(db=mock_db)
     raw = tool.create_escalation(
         tenant_id="tenant-a",

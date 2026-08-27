@@ -39,6 +39,12 @@ class Tenant(Base):
         default=True,
         server_default="true",
     )
+    field_config_locked = Column(
+        Boolean,
+        nullable=False,
+        default=False,
+        server_default="false",
+    )
     telegram_bot_username = Column(String, nullable=True)
 
     # Timestamps
@@ -61,6 +67,10 @@ class Tenant(Base):
 
     parent_guardians = relationship("ParentGuardian", back_populates="tenant")
     students = relationship("Student", back_populates="tenant")
+    field_definitions = relationship(
+        "TenantFieldDefinition",
+        back_populates="tenant",
+    )
 
     subject_classes = relationship("SubjectClass", back_populates="tenant")
     enrollments = relationship("Enrollment", back_populates="tenant")

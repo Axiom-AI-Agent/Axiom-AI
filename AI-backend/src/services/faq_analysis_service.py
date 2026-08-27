@@ -50,17 +50,41 @@ def load_recent_student_messages(
     *,
     tenant_id: str,
     limit: int = 200,
+    class_id: str | None = None,
 ) -> list[str]:
     client = get_supabase_client()
-    response = (
+    student_ids: list[str] | None = None
+
+    if class_id:
+        enrollments = (
+            client.table("enrollments")
+            .select("student_id")
+            .eq("tenant_id", tenant_id)
+            .eq("class_id", class_id)
+            .execute()
+        )
+        student_ids = sorted(
+            {
+                row["student_id"]
+                for row in (enrollments.data or [])
+                if row.get("student_id")
+            }
+        )
+        if not student_ids:
+            return []
+
+    query = (
         client.table("st_turns")
-        .select("content, role, created_at")
+        .select("content, role, created_at, user_id")
         .eq("tenant_id", tenant_id)
         .eq("role", "user")
         .order("created_at", desc=True)
         .limit(max(1, min(limit, 500)))
-        .execute()
     )
+    if student_ids is not None:
+        query = query.in_("user_id", student_ids)
+
+    response = query.execute()
 
     messages: list[str] = []
     for row in response.data or []:
@@ -75,11 +99,17 @@ def analyze_faqs(
     tenant_id: str,
     limit: int = 200,
     minimum_frequency: int = 2,
+    class_id: str | None = None,
 ) -> dict[str, Any]:
-    messages = load_recent_student_messages(tenant_id=tenant_id, limit=limit)
+    messages = load_recent_student_messages(
+        tenant_id=tenant_id,
+        limit=limit,
+        class_id=class_id,
+    )
     if not messages:
         return {
             "tenant_id": tenant_id,
+            "class_id": class_id,
             "analyzed_messages": 0,
             "clusters": [],
         }
@@ -151,6 +181,7 @@ def analyze_faqs(
 
     return {
         "tenant_id": tenant_id,
+        "class_id": class_id,
         "analyzed_messages": len(messages),
         "clusters": clusters,
     }

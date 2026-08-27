@@ -23,6 +23,23 @@ STRINGS: dict[str, dict[str, str]] = {
             "அந்தக் கேள்வி என் வரம்பிற்கு சற்று வெளியே. வகுப்பு அல்லது சேர்க்கை பற்றி கேளுங்கள்!"
         ),
     },
+    "flagged_abusive": {
+        "en": (
+            "I can't help with messages that use abusive or offensive language.\n\n"
+            "Please rephrase your question about classes, enrollment, or your studies — "
+            "I'm happy to help with that."
+        ),
+        "si": (
+            "අසභ්‍ය හෝ අපහාසාත්මක වචන භාවිතා කරන පණිවිඩවලට මට උදව් කළ නොහැක.\n\n"
+            "පන්ති, ලියාපදිංචිය, හෝ ඉගෙනුම් ගැන ආචාරශීලීව නැවත අහන්න — "
+            "ඒවාට උදව් කරන්න මම සූදානම්."
+        ),
+        "ta": (
+            "தகாத அல்லது அவமதிப்புச் சொற்கள் உள்ள செய்திகளுக்கு என்னால் உதவ முடியாது.\n\n"
+            "வகுப்பு, சேர்க்கை அல்லது படிப்பு பற்றி மரியாதையுடன் மீண்டும் கேளுங்கள் — "
+            "அவற்றுக்கு உதவ நான் தயாராக இருக்கிறேன்."
+        ),
+    },
     "voice_fail": {
         "en": "Sorry, I couldn't understand that voice message. Could you please try again?",
         "si": "සමාවන්න, ඒ හඬ පණිවිඩය තේරුම් ගන්න බැරි වුණා. ආයෙත් උත්සාහ කරන්න පුළුවන්ද?",
@@ -71,6 +88,21 @@ STRINGS: dict[str, dict[str, str]] = {
         "si": "හරි. ඔබේ දිස්ත්‍රික්කය කුමක්ද?",
         "ta": "சரி. நீங்கள் எந்த மாவட்டத்தைச் சேர்ந்தவர்?",
     },
+    "onboarding_ask_custom": {
+        "en": "Got it. What is your {label}?",
+        "si": "හරි. ඔබේ {label} කුමක්ද?",
+        "ta": "சரி. உங்கள் {label} என்ன?",
+    },
+    "onboarding_ask_select": {
+        "en": "Got it. What is your {label}? Reply with one of:\n{options}",
+        "si": "හරි. ඔබේ {label} කුමක්ද? මෙයින් එකක් reply කරන්න:\n{options}",
+        "ta": "சரி. உங்கள் {label} என்ன? இவற்றில் ஒன்றை அனுப்புங்கள்:\n{options}",
+    },
+    "onboarding_invalid_select": {
+        "en": "Please choose one of these for {label}:\n{options}",
+        "si": "{label} සඳහා මෙයින් එකක් තෝරන්න:\n{options}",
+        "ta": "{label}க்கு இவற்றில் ஒன்றைத் தேர்ந்தெடுக்கவும்:\n{options}",
+    },
     "class_catalog_header_named": {
         "en": "Thanks, {first}! At {tenant_name} we currently offer these classes:",
         "si": "ස්තූතියි, {first}! {tenant_name} හි දැන් තියෙන පන්ති:",
@@ -96,8 +128,7 @@ STRINGS: dict[str, dict[str, str]] = {
             "Please review your enrollment details for {tenant_name}:\n\n"
             "• **Full name:** {name}\n"
             "• **Contact number:** {contact}\n"
-            "• **School:** {school}\n"
-            "• **District:** {district}\n"
+            "{custom_lines}"
             "• **Course:** {class_label}{fee_line}\n\n"
             "By confirming, you agree to our data policy.\n"
             "Shall I confirm your enrollment? Reply **YES** to proceed."
@@ -106,8 +137,7 @@ STRINGS: dict[str, dict[str, str]] = {
             "{tenant_name} සඳහා ඔබේ ලියාපදිංචි විස්තර බලන්න:\n\n"
             "• **සම්පූර්ණ නම:** {name}\n"
             "• **දුරකථනය:** {contact}\n"
-            "• **පාසල:** {school}\n"
-            "• **දිස්ත්‍රික්කය:** {district}\n"
+            "{custom_lines}"
             "• **පාඨමාලාව:** {class_label}{fee_line}\n\n"
             "Confirm කරනකොට අපේ data policy එකට එකඟ වෙනවා.\n"
             "ලියාපදිංචිය confirm කරන්නද? **YES** / **ඔව්** කියලා reply කරන්න."
@@ -116,8 +146,7 @@ STRINGS: dict[str, dict[str, str]] = {
             "{tenant_name} சேர்க்கை விவரங்களைப் பாருங்கள்:\n\n"
             "• **முழுப் பெயர்:** {name}\n"
             "• **தொலைபேசி:** {contact}\n"
-            "• **பாடசாலை:** {school}\n"
-            "• **மாவட்டம்:** {district}\n"
+            "{custom_lines}"
             "• **பாடநெறி:** {class_label}{fee_line}\n\n"
             "உறுதிப்படுத்துவதன் மூலம் தரவுக் கொள்கையை ஏற்கிறீர்கள்.\n"
             "சேர்க்கையை உறுதிப்படுத்தவா? **YES** / **ஆம்** என பதிலளிக்கவும்."

@@ -508,7 +508,9 @@ export interface Student {
   tenant_id: string;
   name: string | null;
   phone: string;
+  school?: string | null;
   district: string | null;
+  extra_fields?: Record<string, unknown>;
   language_pref: string;
   created_at: string;
   updated_at?: string;
@@ -541,7 +543,9 @@ export interface CreateStudentPayload {
   tenant_id?: string;
   name?: string;
   phone: string;
+  school?: string;
   district?: string;
+  extra_fields?: Record<string, unknown>;
   language_pref?: string;
   class_id?: string;
 }
@@ -549,7 +553,9 @@ export interface CreateStudentPayload {
 export interface UpdateStudentPayload {
   name?: string;
   phone?: string;
+  school?: string;
   district?: string;
+  extra_fields?: Record<string, unknown>;
   language_pref?: string;
 }
 
@@ -968,6 +974,31 @@ export interface UpdateTenantPayload {
 export function listTenants(): Promise<TenantSummary[]> {
   return dashboardRequest<{ tenants: TenantSummary[] }>("/tenants").then(
     (response) => response.tenants ?? [],
+  );
+}
+
+export interface OnboardingFieldDefinition {
+  field_key: string;
+  label: string;
+  field_type: string;
+  options?: string[] | null;
+  required: boolean;
+  sort_order: number;
+  active?: boolean;
+}
+
+export interface OnboardingFieldsResponse {
+  locked: boolean;
+  fields: OnboardingFieldDefinition[];
+}
+
+export function getOnboardingFields(
+  tenantId?: string,
+): Promise<OnboardingFieldsResponse> {
+  return dashboardRequest<OnboardingFieldsResponse>(
+    "/tenant/onboarding-fields",
+    {},
+    tenantId,
   );
 }
 

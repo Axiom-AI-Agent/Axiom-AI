@@ -12,7 +12,7 @@ from typing import Any
 from langchain_core.messages import AnyMessage
 
 from agents.decision_state import DecisionState
-from agents.prompts import get_out_of_scope_reply
+from agents.prompts import get_flagged_abusive_reply, get_out_of_scope_reply
 from agents.state import AgentState
 from services.language import normalize_language_pref
 
@@ -56,6 +56,12 @@ def map_decision_to_agent_state(
 
     if patch["verdict"] == "out_of_scope":
         patch["final_answer"] = get_out_of_scope_reply(
+            language=patch["language_pref"]
+        )
+        return patch  # type: ignore[return-value]
+
+    if patch["verdict"] == "flagged_abusive":
+        patch["final_answer"] = get_flagged_abusive_reply(
             language=patch["language_pref"]
         )
         return patch  # type: ignore[return-value]
