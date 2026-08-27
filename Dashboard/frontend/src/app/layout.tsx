@@ -32,6 +32,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{var t=localStorage.getItem("theme");var d=t?t==="dark":true;document.documentElement.classList.toggle("dark",d);}catch(e){}})();',
+          }}
+        />
         <ThemeInitializer />
         {children}
       </body>

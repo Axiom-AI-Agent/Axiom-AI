@@ -9,11 +9,6 @@ import {
 } from "lucide-react";
 
 import {
-  useEffect,
-  useState,
-} from "react";
-
-import {
   useRouter,
 } from "next/navigation";
 
@@ -38,53 +33,13 @@ export default function Header({
     logout,
   } = useAuth();
 
-  const [
-    dark,
-    setDark,
-  ] = useState(false);
 
+  function toggleTheme() {
+    const next = !document.documentElement.classList.contains("dark");
 
-  useEffect(() => {
-    const isDark =
-      document
-        .documentElement
-        .classList
-        .contains(
-          "dark",
-        );
-
-    setDark(
-      isDark,
-    );
-  }, []);
-
-
-  useEffect(() => {
-    document
-      .documentElement
-      .classList
-      .toggle(
-        "dark",
-        dark,
-      );
-
-    document
-      .body
-      .classList
-      .toggle(
-        "dark",
-        dark,
-      );
-
-    localStorage.setItem(
-      "theme",
-      dark
-        ? "dark"
-        : "light",
-    );
-  }, [
-    dark,
-  ]);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }
 
 
   function handleLogout() {
@@ -113,18 +68,21 @@ export default function Header({
       )}
 
 
-      <div className="flex-1">
-
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-white">
-          Staff Dashboard
-        </h1>
-
-        {user && (
-          <p className="hidden text-xs text-slate-500 sm:block">
-            {user.institution_name}
-          </p>
+      <div className="min-w-0 flex-1">
+        {user?.institution_name ? (
+          <>
+            <h1 className="truncate text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+              {user.institution_name}
+            </h1>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+              Staff Dashboard
+            </p>
+          </>
+        ) : (
+          <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
+            Staff Dashboard
+          </h1>
         )}
-
       </div>
 
 
@@ -152,11 +110,7 @@ export default function Header({
 
 
         <button
-          onClick={() =>
-            setDark(
-              !dark,
-            )
-          }
+          onClick={toggleTheme}
           className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-slate-800"
           aria-label="Toggle dark mode"
           type="button"

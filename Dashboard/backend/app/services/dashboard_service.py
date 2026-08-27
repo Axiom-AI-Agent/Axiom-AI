@@ -23,6 +23,7 @@ from app.models.enums import (
 
 PAYMENT_REASON_CODES = {"payment_receipt", "enrollment_payment_review"}
 TUTOR_REASON_CODE = "talk_to_tutor"
+ANALYTICS_PERIODS = {"today", "48h", "7d", "30d", "90d", "month"}
 
 
 def analytics_start_date(period: str) -> datetime:
@@ -31,8 +32,17 @@ def analytics_start_date(period: str) -> datetime:
     if period == "today":
         return now.replace(hour=0, minute=0, second=0, microsecond=0)
 
+    if period == "48h":
+        return now - timedelta(hours=48)
+
     if period == "7d":
         return now - timedelta(days=7)
+
+    if period == "30d":
+        return now - timedelta(days=30)
+
+    if period == "90d":
+        return now - timedelta(days=90)
 
     if period == "month":
         return now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)

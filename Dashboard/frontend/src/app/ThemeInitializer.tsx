@@ -10,12 +10,7 @@ export default function ThemeInitializer() {
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem("theme") : null;
     const isDark = stored ? stored === "dark" : true; // default to dark if no preference
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", isDark);
   }, []);
   return null;
 }

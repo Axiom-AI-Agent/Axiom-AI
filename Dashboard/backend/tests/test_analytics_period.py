@@ -28,6 +28,27 @@ def test_analytics_start_date_month():
     assert start.year == now.year
 
 
+def test_analytics_start_date_48h():
+    start = analytics_start_date("48h")
+    now = datetime.now(timezone.utc)
+    delta = now - start
+    assert 47.9 <= delta.total_seconds() / 3600 <= 48.1
+
+
+def test_analytics_start_date_30d():
+    start = analytics_start_date("30d")
+    now = datetime.now(timezone.utc)
+    delta = now - start
+    assert 29.9 <= delta.total_seconds() / 86400 <= 30.1
+
+
+def test_analytics_start_date_90d():
+    start = analytics_start_date("90d")
+    now = datetime.now(timezone.utc)
+    delta = now - start
+    assert 89.9 <= delta.total_seconds() / 86400 <= 90.1
+
+
 def test_analytics_start_date_rejects_unknown():
     with pytest.raises(ValueError):
         analytics_start_date("year")

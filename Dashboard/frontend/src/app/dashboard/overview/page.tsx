@@ -67,7 +67,7 @@ export default function OverviewPage() {
   if (error || !data) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6">
-        <div className="flex items-center gap-3 text-red-200">
+        <div className="flex items-center gap-3 text-red-700 dark:text-red-200">
           <AlertTriangle className="h-5 w-5" />
           <p>{error ?? "Dashboard data is unavailable."}</p>
         </div>
@@ -165,7 +165,7 @@ export default function OverviewPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartCard
           title="Escalation Breakdown"
-          type="bar"
+          type="doughnut"
           labels={["Payment Receipts", "Talk to Tutor", "Other"]}
           data={[
             data.open_payment_receipts,
@@ -176,8 +176,9 @@ export default function OverviewPage() {
 
         <ChartCard
           title="Enrollment Status"
-          type="bar"
+          type="doughnut"
           labels={["Active", "Pending"]}
+          colors={["#10B981", "#F59E0B"]}
           data={[
             data.students - data.pending_enrollments,
             data.pending_enrollments,

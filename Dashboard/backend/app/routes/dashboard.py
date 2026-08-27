@@ -16,6 +16,7 @@ from app.schemas.schemas import (
     MessageLogResponse,
 )
 from app.services.dashboard_service import (
+    ANALYTICS_PERIODS,
     PAYMENT_REASON_CODES,
     TUTOR_REASON_CODE,
     build_class_analytics,
@@ -125,10 +126,10 @@ def get_dashboard_analytics(
     tenant_id: str = Depends(get_tenant_id),
     db: Session = Depends(get_db),
 ):
-    if period not in {"today", "7d", "month"}:
+    if period not in ANALYTICS_PERIODS:
         raise HTTPException(
             status_code=422,
-            detail="period must be today, 7d, or month",
+            detail="period must be today, 48h, 7d, 30d, 90d, or month",
         )
 
     return build_dashboard_analytics(
@@ -269,17 +270,10 @@ def get_class_analytics(
         get_db
     ),
 ):
-    if period not in {
-        "today",
-        "7d",
-        "month",
-    }:
+    if period not in ANALYTICS_PERIODS:
         raise HTTPException(
             status_code=422,
-            detail=(
-                "period must be "
-                "today, 7d, or month"
-            ),
+            detail="period must be today, 48h, 7d, 30d, 90d, or month",
         )
 
     return build_class_analytics(

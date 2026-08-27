@@ -84,7 +84,7 @@ function ProtectedDashboard({
     || !user
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     );

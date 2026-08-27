@@ -130,7 +130,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-6">
-        <div className="flex items-center gap-3 text-red-300">
+        <div className="flex items-center gap-3 text-red-700 dark:text-red-300">
           <AlertTriangle className="h-5 w-5" />
           <span>
             {error ??
@@ -153,7 +153,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
+    <div className="flex flex-col gap-6 lg:h-[calc(100vh-7.5rem)]">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -192,8 +192,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           title="AI Deflection Rate"
           value={`${data.deflection_rate}%`}
@@ -230,7 +229,7 @@ export default function AnalyticsPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartCard
           title="Open vs Resolved Escalations"
-          type="bar"
+          type="doughnut"
           labels={[
             "Open",
             "Resolved",
@@ -239,17 +238,19 @@ export default function AnalyticsPage() {
             data.open_escalations,
             data.resolved_escalations,
           ]}
+          colors={["#EF4444", "#10B981"]}
         />
 
         <ChartCard
           title="Escalations by Category"
           type="bar"
+          horizontal
           labels={categoryLabels}
           data={categoryValues}
         />
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex min-h-0 flex-1 flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
@@ -269,7 +270,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="mt-5 overflow-x-auto">
+        <div className="mt-5 min-h-0 flex-1 overflow-auto">
           <table className="min-w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200 text-left text-slate-500 dark:border-slate-700 dark:text-slate-400">
@@ -332,7 +333,6 @@ export default function AnalyticsPage() {
             </tbody>
           </table>
         </div>
-      </div>
       </div>
     </div>
   );

@@ -158,7 +158,7 @@ export default function ClassAnalyticsPage() {
   }, [data]);
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col overflow-hidden">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -199,7 +199,7 @@ export default function ClassAnalyticsPage() {
         </div>
       </div>
 
-      <div className="flex-1 space-y-6 overflow-y-auto pr-1">
+      <div className="space-y-6">
         {error && (
         <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-700 dark:text-red-300">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
