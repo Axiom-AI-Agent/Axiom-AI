@@ -664,10 +664,17 @@ def _drive_folder_label(folder: str | None, *, language: str = "en") -> str:
 
 
 def _numbered_drive_names(files: list[dict]) -> str:
+    class_names = {str(item.get("class_name") or "").strip() for item in files}
+    class_names.discard("")
+    show_class = len(class_names) > 1
     lines = []
     for index, item in enumerate(files, start=1):
         name = str(item.get("name") or "file").strip() or "file"
-        lines.append(f"{index}. {name}")
+        class_name = str(item.get("class_name") or "").strip()
+        if show_class and class_name:
+            lines.append(f"{index}. {name} ({class_name})")
+        else:
+            lines.append(f"{index}. {name}")
     return "\n".join(lines)
 
 

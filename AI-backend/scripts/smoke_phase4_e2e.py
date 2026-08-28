@@ -36,7 +36,14 @@ from services.drive_service.drive_client import MockDriveBackend
 def _mock_drive_backend() -> MockDriveBackend:
     return MockDriveBackend(
         {
-            "drive-folder-physics-demo": [{"id": "pf", "name": "papers", "link": ""}],
+            "drive-folder-physics-demo": [
+                {
+                    "id": "folder-physics",
+                    "name": "A/L Physics 2026",
+                    "mimeType": "application/vnd.google-apps.folder",
+                }
+            ],
+            "folder-physics": [{"id": "pf", "name": "papers", "link": ""}],
             "pf": [
                 {
                     "id": "f1",
@@ -55,8 +62,17 @@ async def smoke_drive_paper_link() -> None:
 
     import agents.tools.drive_tool as dt
 
-    original = dt.DriveTool._get_drive_root
+    original_root = dt.DriveTool._get_drive_root
+    original_classes = dt.DriveTool._load_classes
     dt.DriveTool._get_drive_root = lambda self, tid: "drive-folder-physics-demo"  # type: ignore[method-assign]
+    dt.DriveTool._load_classes = lambda self, tid, ids: [  # type: ignore[method-assign]
+        {
+            "id": "class-physics-al-2026",
+            "name": "A/L Physics 2026",
+            "subject": "Physics",
+            "grade": "A/L",
+        }
+    ]
     try:
 
         class _AsyncDrive:
@@ -83,7 +99,8 @@ async def smoke_drive_paper_link() -> None:
             }
         )
     finally:
-        dt.DriveTool._get_drive_root = original  # type: ignore[method-assign]
+        dt.DriveTool._get_drive_root = original_root  # type: ignore[method-assign]
+        dt.DriveTool._load_classes = original_classes  # type: ignore[method-assign]
 
     assert result.sub_path == "drive", f"expected drive path, got {result.sub_path}"
     assert "2024-model-paper" in result.answer, result.answer

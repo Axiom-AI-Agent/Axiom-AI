@@ -255,6 +255,20 @@
   "253": "get_api_key",
   "254": "schedule/__init__.py",
   "255": "delete_chunks_by_document_id",
+  "256": "test_drive_mcp_server.py",
+  "257": "classify_media",
   "258": "smoke_mcp_memory.py",
-  "263": "main"
+  "259": "test_media_kind.py",
+  "260": "telegram_webhook",
+  "261": "validate_twilio_signature",
+  "262": "arithmetic.py",
+  "263": "main",
+  "264": "ClassReference",
+  "265": "Per-institute onboarding",
+  "266": "smoke_resource.py",
+  "267": "rag.py",
+  "268": "debug_google_auth.py",
+  "269": "bench_nlu.py",
+  "270": "examples.py",
+  "271": "nlu/__init__.py"
 }
