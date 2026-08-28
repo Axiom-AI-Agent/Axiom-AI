@@ -136,7 +136,7 @@ async def test_resource_agent_drive_lists_tutes_without_filename_guess():
         }
     )
     assert result.sub_path == "drive"
-    assert drive.list_calls[0]["folder"] == "papers"
+    assert drive.list_calls[0]["folder"] == "tutes"
     assert drive.list_calls[0]["class_ids"] == ["class-physics-al-2026"]
     assert drive.list_calls[0]["hint"] == "any tutes?"
     assert drive.list_calls[0]["student_id"] == "stu-1"
@@ -232,6 +232,7 @@ async def test_resource_agent_singlish_file_request_localizes_list():
         }
     )
     assert result.sub_path == "drive"
+    assert drive.list_calls[0]["folder"] == "tutes"
     assert "tute-03-mechanics.pdf" in result.answer
     assert "Here are the available" not in result.answer
     assert "reply karanna" in result.answer.lower()

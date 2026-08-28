@@ -2,7 +2,7 @@
 
 How to connect a tuition institute's Google Drive to Axiom AI, and how to test the `axiom-drive` MCP server locally.
 
-**Drive** = send file links (past papers, textbooks, syllabus).  
+**Drive** = send file links (past papers, tutes, textbooks, syllabus).  
 **RAG (Qdrant)** = answer questions from tutor notes — see [ingest script](../scripts/ingest_tenant_notes.py), not Drive.
 
 ---
@@ -23,7 +23,7 @@ DriveTool  (src/agents/tools/drive_tool.py)
         │
         ├── Supabase  tenants.drive_folder_id  (institute root)
         └── Google Drive API  (service account, read-only)
-                └── {root}/{Exact class name}/papers | textbooks | syllabus
+                └── {root}/{Exact class name}/papers | tutes | textbooks | syllabus
 ```
 
 | Component | Path |
@@ -35,7 +35,7 @@ DriveTool  (src/agents/tools/drive_tool.py)
 | Debug REST | `POST /tools/drive/search`, `POST /tools/drive/list` |
 
 **MCP tools:** `drive_search`, `drive_list` — both require `class_ids` (enrolled classes).  
-**Allowed material folders only:** `papers`, `textbooks`, `syllabus` (enforced in `DriveTool`). Chat “tutes” maps to `papers/`. There is no `tute` folder.
+**Allowed material folders only:** `papers`, `tutes`, `textbooks`, `syllabus` (enforced in `DriveTool`). Chat “tutes” / “tute eka” lists the class `tutes/` folder. Singular `tute` is accepted as an alias for `tutes`.
 
 Drive never lists the institute root `papers/` folder. Files live under a **class folder whose name matches the dashboard class name**.
 
@@ -81,11 +81,13 @@ Ask the institute to create one folder per **Classes page name** (exact spelling
 ```text
 {Institute Root}/                    ← tenants.drive_folder_id (share this folder)
 ├── A/L Physics 2026/
-│   ├── papers/                      ← past papers, model papers, tutes
+│   ├── papers/                      ← past papers, model papers
+│   ├── tutes/                       ← weekly tutes
 │   ├── textbooks/
 │   └── syllabus/
 └── A/L Chemistry 2026/
     ├── papers/
+    ├── tutes/
     ├── textbooks/
     └── syllabus/
 ```
@@ -146,7 +148,7 @@ PYTHONPATH=src python scripts/ingest_tenant_notes.py --tenant-id tenant-acme-phy
 |---|------|--------|
 | 1 | Service account + Drive API enabled | Platform |
 | 2 | `GOOGLE_SERVICE_ACCOUNT_JSON` + `DRIVE_MOCK=false` in `.env` | Platform |
-| 3 | Institute creates `{Class name}/papers|textbooks|syllabus` under the root | Institute |
+| 3 | Institute creates `{Class name}/papers|tutes|textbooks|syllabus` under the root | Institute |
 | 4 | Share root folder with service account (Viewer) | Institute |
 | 5 | Set `tenants.drive_folder_id` in Supabase | Platform |
 | 6 | Upload PDFs to subfolders | Institute |
@@ -241,7 +243,7 @@ AGENT_USE_MCP=true
 DRIVE_MOCK=false   # when using real Drive
 ```
 
-Restart server, then send a **Drive-routed** message (papers / textbook / syllabus — not “explain from notes”):
+Restart server, then send a **Drive-routed** message (papers / tutes / textbook / syllabus — not “explain from notes”):
 
 ```bash
 curl -s -X POST http://localhost:8000/chat \
@@ -259,8 +261,9 @@ Server logs should include `axiom-drive` when MCP is active.
 
 | Student message | Path | Tool |
 |-----------------|------|------|
-| "Can I get last week's physics paper?" | Drive | `drive_search` |
-| "Send me the textbook for chapter 3" | Drive | `drive_search` |
+| "Can I get last week's physics paper?" | Drive | `drive_list` (`papers`) |
+| "any tutes?" / "tute eka ewanna" | Drive | `drive_list` (`tutes`) |
+| "Send me the textbook for chapter 3" | Drive | `drive_list` (`textbooks`) |
 | "Explain velocity from lesson 5" | RAG | `kb_search` |
 | "What did sir say about Newton's laws?" | RAG | `kb_search` |
 
@@ -284,7 +287,7 @@ Server logs should include `axiom-drive` when MCP is active.
 | `"class_ids is required"` | REST/MCP called without enrolled classes | Pass `class_ids` from the student's enrollments |
 | `Unknown tenant or missing drive_folder_id` | No row or null `drive_folder_id` | Run seed / `UPDATE tenants SET drive_folder_id=...` |
 | Still mock behaviour | `DRIVE_MOCK=true` | Set `DRIVE_MOCK=false`, restart |
-| Chat uses RAG not Drive | Message sounds like explanation | Use "past paper", "textbook", "syllabus" |
+| Chat uses RAG not Drive | Message sounds like explanation | Use "past paper", "tutes", "textbook", "syllabus" |
 | MCP import error | Python 3.9 or missing packages | Python 3.11 venv, `pip install -r requirements.txt` |
 | Permission / 403 from Google | Folder not shared with SA | Share root as Viewer |
 | Links don't open for students | Drive link sharing policy | Institute adjusts file/folder sharing |

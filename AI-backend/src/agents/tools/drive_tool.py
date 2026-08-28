@@ -1,4 +1,4 @@
-"""Drive tool — class-scoped paper/textbook/syllabus search under a tenant root."""
+"""Drive tool — class-scoped papers/tutes/textbook/syllabus search under a tenant root."""
 
 from __future__ import annotations
 
@@ -168,6 +168,8 @@ class DriveTool:
 
     def _assert_allowed_folder(self, folder: str | None) -> str:
         normalized = (folder or "papers").strip().lower().strip("/")
+        if normalized == "tute":
+            normalized = "tutes"
         if normalized not in DRIVE_ALLOWED_FOLDERS:
             raise ValueError(
                 f"Folder '{folder}' not allowed. Use one of: {', '.join(sorted(DRIVE_ALLOWED_FOLDERS))}"
@@ -284,7 +286,7 @@ class DriveTool:
             payload["message"] = (
                 f"No files in {folder}/ for this class. "
                 f"Create a Drive folder named like '{expected}' under the institute root, "
-                f"with papers/, textbooks/, and syllabus/ inside."
+                f"with papers/, tutes/, textbooks/, and syllabus/ inside."
             )
         elif not files:
             payload["message"] = f"No files matching '{query}' in {folder}/" if query else f"No files in {folder}/"

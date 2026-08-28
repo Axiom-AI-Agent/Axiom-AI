@@ -39,4 +39,6 @@ def test_infer_drive_folder():
     assert _infer_drive_folder("I need the syllabus PDF") == "syllabus"
     assert _infer_drive_folder("past paper 2024") == "papers"
     assert _infer_drive_folder("send me the past papers") == "papers"
-    assert _infer_drive_folder("any tutes?") == "papers"
+    assert _infer_drive_folder("any tutes?") == "tutes"
+    assert _infer_drive_folder("tute eka ewanna") == "tutes"
+    assert _infer_drive_folder("send me the tutes") == "tutes"

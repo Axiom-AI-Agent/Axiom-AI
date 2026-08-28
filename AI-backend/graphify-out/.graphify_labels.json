@@ -238,5 +238,7 @@
   "236": ".list_recent_sessions",
   "237": "examples.py",
   "238": "nlu/__init__.py",
-  "239": "schedule/__init__.py"
+  "239": "schedule/__init__.py",
+  "240": "get_chat_logs",
+  "241": "test_merge_response.py"
 }

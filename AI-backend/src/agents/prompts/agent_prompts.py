@@ -85,7 +85,7 @@ IN-SCOPE (choose in_scope):
   • Enrollment & admissions — joining a class, registering, onboarding, new student
   • Short confirmations during enrollment — YES, yes, confirm, ok, I agree, looks good
   • Class information — schedules, fees, subjects, A/L, O/L, grade levels
-  • Study resources — past papers, model papers, textbooks, syllabus, lesson notes
+  • Study resources — past papers, tutes, model papers, textbooks, syllabus, lesson notes
   • Lesson help — explaining topics from tutor notes, homework related to enrolled subjects
   • Payments — bank slips, receipts, fee status, "I paid", payment verification
   • Human help — speak to tutor, teacher, staff; complaints; urgent academic issues
@@ -221,7 +221,7 @@ ACTION MAP (per route)
 
 PARAM SCHEMAS (null if unknown — never guess)
   admissions params:  student_name, school, district, class_name, class_id, grade (A/L|O/L)
-  resource params:    query, subject, grade, folder (papers|textbooks|syllabus)
+  resource params:    query, subject, grade, folder (papers|tutes|textbooks|syllabus)
   payment_check params: amount, reference, month
   escalation params:  reason, urgency
   direct params:      {{}} (usually empty)
@@ -266,7 +266,10 @@ ROUTING EXAMPLES:
   "Do you have 2023 Physics past papers?"
     → resource {{action: "search", params: {{query: "2023 Physics past papers", subject: "Physics", folder: "papers"}}}}
 
-  "any tutes?" / "send me the papers"
+  "any tutes?" / "tute eka ewanna" / "send me the tutes"
+    → resource {{action: "search", params: {{folder: "tutes"}}}}
+
+  "send me the papers" / "past papers"
     → resource {{action: "search", params: {{folder: "papers"}}}}
 
   "what textbooks do you have" / "send me the text books"
@@ -657,6 +660,7 @@ def _drive_folder_label(folder: str | None, *, language: str = "en") -> str:
     lang = normalize_canned_language(language)
     folder_keys = {
         "papers": "drive_folder_papers",
+        "tutes": "drive_folder_tutes",
         "textbooks": "drive_folder_textbooks",
         "syllabus": "drive_folder_syllabus",
     }

@@ -46,6 +46,7 @@ def _nested_backend() -> MockDriveBackend:
             ],
             "folder-physics": [
                 {"id": "phys-papers", "name": "papers"},
+                {"id": "phys-tutes", "name": "tutes"},
                 {"id": "phys-textbooks", "name": "textbooks"},
                 {"id": "phys-syllabus", "name": "syllabus"},
             ],
@@ -57,6 +58,13 @@ def _nested_backend() -> MockDriveBackend:
                     "id": "file-p1",
                     "name": "2024-model-paper-physics.pdf",
                     "link": "https://drive.google.com/file/d/abc/view",
+                }
+            ],
+            "phys-tutes": [
+                {
+                    "id": "file-t1",
+                    "name": "tute-03-mechanics.pdf",
+                    "link": "https://drive.google.com/file/d/tute/view",
                 }
             ],
             "chem-papers": [
@@ -174,6 +182,21 @@ def test_drive_list_scoped_to_folder(mock_backend):
     assert payload["ok"] is True
     assert payload["files"][0]["folder"] == "papers"
     assert payload["files"][0]["name"] == "2024-model-paper-physics.pdf"
+
+
+def test_drive_list_tutes_folder(mock_backend):
+    tool = DriveTool(backend=mock_backend)
+    with patch.object(tool, "_get_drive_root", return_value="drive-root"):
+        with patch.object(tool, "_load_classes", side_effect=_load_physics):
+            raw = tool.drive_list(
+                tenant_id="tenant-demo-physics",
+                folder="tute",
+                class_ids=["class-physics-al-2026"],
+            )
+    payload = json.loads(raw)
+    assert payload["ok"] is True
+    assert payload["files"][0]["folder"] == "tutes"
+    assert payload["files"][0]["name"] == "tute-03-mechanics.pdf"
 
 
 def test_physics_enrollment_does_not_see_chemistry_or_root_papers(mock_backend):

@@ -1,4 +1,4 @@
-"""Drive MCP Server — papers, textbooks, syllabus only."""
+"""Drive MCP Server — papers, tutes, textbooks, syllabus only."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def drive_search(
     hint: str | None = None,
     student_id: str | None = None,
 ) -> str:
-    """Search class-scoped Drive folders (papers, textbooks, syllabus). Requires enrolled class_ids."""
+    """Search class-scoped Drive folders (papers, tutes, textbooks, syllabus). Requires enrolled class_ids."""
     return _init().drive_search(
         tenant_id=tenant_id,
         query=query,
@@ -58,7 +58,7 @@ def drive_list(
     hint: str | None = None,
     student_id: str | None = None,
 ) -> str:
-    """List files in an allowed class Drive subfolder (papers, textbooks, syllabus)."""
+    """List files in an allowed class Drive subfolder (papers, tutes, textbooks, syllabus)."""
     return _init().drive_list(
         tenant_id=tenant_id,
         folder=folder,

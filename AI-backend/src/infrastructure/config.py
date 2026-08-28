@@ -160,7 +160,7 @@ GOOGLE_SERVICE_ACCOUNT_JSON = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "")
 DRIVE_MOCK = os.getenv("DRIVE_MOCK", "false").lower() in ("1", "true", "yes", "on")
 # When false, resource tools require MCP clients (no DirectDriveClient/DirectRagClient fallback).
 ALLOW_INPROCESS_TOOLS = _env_bool("ALLOW_INPROCESS_TOOLS", default=True)
-DRIVE_ALLOWED_FOLDERS = frozenset({"papers", "textbooks", "syllabus"})
+DRIVE_ALLOWED_FOLDERS = frozenset({"papers", "tutes", "textbooks", "syllabus"})
 
 DATA_DIR = PROJECT_ROOT / _get_str(_PARAMS, "paths", "data_dir", default="data")
 KB_DIR = PROJECT_ROOT / _get_str(_PARAMS, "paths", "kb_dir", default="data/knowledge_base")

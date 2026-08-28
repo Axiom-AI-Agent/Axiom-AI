@@ -67,9 +67,12 @@ _TEXTBOOK_FOLDER_RE = re.compile(
     r"\btext\s*books?\b|\bbooks\b|\bchapter\b|පෙළපොත්|பாடநூல்",
     re.IGNORECASE,
 )
+_TUTES_FOLDER_RE = re.compile(
+    r"\btutes?\b|tute eka|ටියුට්",
+    re.IGNORECASE,
+)
 _PAPERS_FOLDER_RE = re.compile(
-    r"\bpapers?\b|\btutes?\b|past paper|model paper|paper eka|tute eka|"
-    r"පේපර්|ටියුට්|பாடத்தாள",
+    r"\bpapers?\b|past paper|model paper|paper eka|පේපර්|பாடத்தாள",
     re.IGNORECASE,
 )
 _EXPLAIN_RAG_RE = re.compile(
@@ -179,13 +182,14 @@ def classify_resource_subpath(message: str) -> ResourceSubPath:
     file_folder_intent = bool(
         _SYLLABUS_FOLDER_RE.search(text)
         or _TEXTBOOK_FOLDER_RE.search(text)
+        or _TUTES_FOLDER_RE.search(text)
         or _PAPERS_FOLDER_RE.search(text)
     )
 
     # Schedule takes priority — time-related queries are unambiguous
     if schedule_score > 0:
         return "schedule"
-    # Papers / textbooks / syllabus listing beats generic "what are" RAG.
+    # Papers / tutes / textbooks / syllabus listing beats generic "what are" RAG.
     if file_folder_intent and not _EXPLAIN_RAG_RE.search(text):
         return "drive"
     if drive_score > rag_score:
@@ -198,11 +202,13 @@ def classify_resource_subpath(message: str) -> ResourceSubPath:
 
 
 def _infer_drive_folder(message: str) -> str:
-    """Map a file request to papers, textbooks, or syllabus."""
+    """Map a file request to papers, tutes, textbooks, or syllabus."""
     if _SYLLABUS_FOLDER_RE.search(message):
         return "syllabus"
     if _TEXTBOOK_FOLDER_RE.search(message):
         return "textbooks"
+    if _TUTES_FOLDER_RE.search(message):
+        return "tutes"
     return "papers"
 
 
@@ -609,7 +615,7 @@ class ResourceAgent:
         """Handle Drive file requests."""
         folder = _infer_drive_folder(user_message)
         routed = _folder_from_route_params(state)
-        if folder == "papers" and routed in {"textbooks", "syllabus"}:
+        if folder == "papers" and routed in {"textbooks", "syllabus", "tutes"}:
             folder = routed
         enrolled_class_ids = list(state.get("enrolled_class_ids") or [])
         student_id = str(state.get("student_id") or state.get("user_id") or "").strip() or None
