@@ -512,11 +512,18 @@ STRINGS: dict[str, dict[str, str]] = {
         "ta_latn": "Nambikaiya pathil solla notes podhum illa. Ithai teacher kitta anuppitten.",
     },
     "drive_folder_papers": {
-        "en": "papers and tutes",
-        "si": "පේපර් සහ tutes",
-        "si_latn": "papers saha tutes",
-        "ta": "பாடத் தாள்களும் tutes-உம்",
-        "ta_latn": "papers and tutes",
+        "en": "past papers",
+        "si": "පේපර්",
+        "si_latn": "past papers",
+        "ta": "பாடத் தாள்கள்",
+        "ta_latn": "past papers",
+    },
+    "drive_folder_tutes": {
+        "en": "tutes",
+        "si": "tutes",
+        "si_latn": "tutes",
+        "ta": "tutes",
+        "ta_latn": "tutes",
     },
     "drive_folder_textbooks": {
         "en": "textbooks",

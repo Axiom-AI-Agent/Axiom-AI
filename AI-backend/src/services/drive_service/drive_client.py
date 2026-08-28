@@ -41,6 +41,7 @@ class DriveBackend(Protocol):
         folder_id: str,
         query: str | None = None,
         page_size: int = 10,
+        folders_only: bool = False,
     ) -> list[dict[str, Any]]: ...
 
 
@@ -56,8 +57,18 @@ class MockDriveBackend:
         folder_id: str,
         query: str | None = None,
         page_size: int = 10,
+        folders_only: bool = False,
     ) -> list[dict[str, Any]]:
-        files = self.files_by_folder.get(folder_id, [])
+        files = list(self.files_by_folder.get(folder_id, []))
+        if folders_only:
+            files = [
+                item
+                for item in files
+                if (item.get("mimeType") or "") == "application/vnd.google-apps.folder"
+                or not (item.get("name") or "").lower().endswith(
+                    (".pdf", ".doc", ".docx", ".txt", ".ppt", ".pptx")
+                )
+            ]
         if not query:
             return files[:page_size]
         tokens = [t for t in query.lower().split() if len(t) > 2]
@@ -93,8 +104,11 @@ class GoogleDriveBackend:
         folder_id: str,
         query: str | None = None,
         page_size: int = 10,
+        folders_only: bool = False,
     ) -> list[dict[str, Any]]:
         q_parts = [f"'{folder_id}' in parents", "trashed = false"]
+        if folders_only:
+            q_parts.append("mimeType = 'application/vnd.google-apps.folder'")
         if query:
             tokens = [t.replace("'", "\\'") for t in query.split() if len(t) > 2]
             search_term = max(tokens, key=len) if tokens else query.replace("'", "\\'")
@@ -145,10 +159,44 @@ def build_drive_backend(*, mock_files: dict[str, list[dict[str, Any]]] | None = 
 
 
 def resolve_subfolder_id(backend: DriveBackend, *, root_folder_id: str, subfolder: str) -> str | None:
-    """Find subfolder ID (papers/textbooks/syllabus) under tenant root."""
-    folders = backend.list_files(folder_id=root_folder_id, query=subfolder, page_size=20)
-    for item in folders:
-        name = (item.get("name") or "").lower()
-        if name == subfolder.lower():
-            return item.get("id")
+    """Find a direct child folder by exact name (case-insensitive)."""
+    return find_child_folder(backend, parent_id=root_folder_id, names=[subfolder])
+
+
+def find_child_folder(
+    backend: DriveBackend,
+    *,
+    parent_id: str,
+    names: list[str],
+) -> str | None:
+    """Return the first child folder whose name matches any candidate."""
+    candidates = [n.strip() for n in names if n and str(n).strip()]
+    if not candidates:
+        return None
+    folders = backend.list_files(
+        folder_id=parent_id,
+        query=None,
+        page_size=100,
+        folders_only=True,
+    )
+    by_tokens = {normalize_folder_key(item.get("name") or ""): item.get("id") for item in folders}
+    by_compact = {
+        normalize_folder_compact(item.get("name") or ""): item.get("id") for item in folders
+    }
+    for name in candidates:
+        folder_id = by_tokens.get(normalize_folder_key(name)) or by_compact.get(
+            normalize_folder_compact(name)
+        )
+        if folder_id:
+            return str(folder_id)
     return None
+
+
+def normalize_folder_key(value: str) -> str:
+    """Lowercase label with punctuation stripped (A/L Physics 2026 → al physics 2026)."""
+    cleaned = (value or "").lower().replace("/", "").replace("-", "")
+    return " ".join("".join(ch if ch.isalnum() else " " for ch in cleaned).split())
+
+
+def normalize_folder_compact(value: str) -> str:
+    return "".join(ch for ch in (value or "").lower() if ch.isalnum())

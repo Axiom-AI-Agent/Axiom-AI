@@ -39,7 +39,14 @@ def smoke_ingest_load() -> None:
 def smoke_drive_mock() -> None:
     backend = MockDriveBackend(
         {
-            "drive-folder-physics-demo": [{"id": "pf", "name": "papers", "link": ""}],
+            "drive-folder-physics-demo": [
+                {
+                    "id": "folder-physics",
+                    "name": "A/L Physics 2026",
+                    "mimeType": "application/vnd.google-apps.folder",
+                }
+            ],
+            "folder-physics": [{"id": "pf", "name": "papers", "link": ""}],
             "pf": [
                 {
                     "id": "f1",
@@ -52,19 +59,30 @@ def smoke_drive_mock() -> None:
     tool = DriveTool(backend=backend)
     import agents.tools.drive_tool as dt
 
-    original = dt.DriveTool._get_drive_root
+    original_root = dt.DriveTool._get_drive_root
+    original_classes = dt.DriveTool._load_classes
     dt.DriveTool._get_drive_root = lambda self, tid: "drive-folder-physics-demo"  # type: ignore[method-assign]
+    dt.DriveTool._load_classes = lambda self, tid, ids: [  # type: ignore[method-assign]
+        {
+            "id": "class-physics-al-2026",
+            "name": "A/L Physics 2026",
+            "subject": "Physics",
+            "grade": "A/L",
+        }
+    ]
     try:
         raw = tool.drive_search(
             tenant_id="tenant-demo-physics",
             query="physics paper",
             folder="papers",
+            class_ids=["class-physics-al-2026"],
         )
         payload = json.loads(raw)
         assert payload.get("ok"), payload
         print(f"[OK] Drive search: {payload['files'][0]['name']}")
     finally:
-        dt.DriveTool._get_drive_root = original  # type: ignore[method-assign]
+        dt.DriveTool._get_drive_root = original_root  # type: ignore[method-assign]
+        dt.DriveTool._load_classes = original_classes  # type: ignore[method-assign]
 
 
 async def smoke_resource_agent() -> None:

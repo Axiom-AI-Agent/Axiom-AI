@@ -158,10 +158,25 @@ class ChatPipeline:
             if handled is not None:
                 return handled
 
+        original_exc = None
+        for attempt in range(2):
+            try:
+                reply = await self._run_agent_turn(ctx, inbound)
+                return strip_markdown_markers(reply)
+            except Exception as exc:
+                original_exc = exc
+                if attempt == 0:
+                    logger.warning("Agent pipeline failed (attempt 1/2), retrying in 2s: {}", exc)
+                    await asyncio.sleep(2)
+                else:
+                    logger.error("Agent pipeline failed on retry: {}", exc)
+
+        # Both attempts failed, run fallback
         try:
-            reply = await self._run_agent_turn(ctx, inbound)
-        except Exception as exc:
-            logger.error("Agent pipeline failed: {}", exc)
+            reply = await self._run_fallback_turn(ctx, inbound, original_exc)
+        except Exception as fallback_exc:
+            logger.error("Fallback pipeline also failed: {}", fallback_exc)
+            # Last resort
             tenant_label = ctx.tenant_name or ctx.tenant_slug or "your tuition centre"
             lang = resolve_reply_language(
                 message=inbound.body or "",
@@ -170,6 +185,58 @@ class ChatPipeline:
             reply = t("technical_issue", lang, tenant_name=tenant_label)
 
         return strip_markdown_markers(reply)
+
+    async def _run_fallback_turn(
+        self, ctx: IdentityContext, inbound: InboundMessage, original_exc: Exception | None
+    ) -> str:
+        """Run the ultra-fast fallback model to triage the message."""
+        logger.warning("Entering degraded mode fallback for session {}", ctx.session_id)
+        from langchain_core.messages import HumanMessage, SystemMessage
+
+        from domain.escalation_reasons import DEGRADED_SYSTEM_FALLBACK
+        from infrastructure.llm.llm_provider import get_fallback_llm
+        from infrastructure.observability import langfuse_turn_attributes, update_current_trace
+        from services.admissions.admissions_db_client import AdmissionsDbClient
+
+        fallback_llm = get_fallback_llm()
+        system_prompt = (
+            "You are a fallback triage agent for a tuition centre. "
+            "Your ONLY job is to check if the user's message is a simple greeting (hi, hello) or a social pleasantry (thanks, okay). "
+            "If it IS a simple greeting or pleasantry, reply with a short, warm, polite greeting back. "
+            "If it is ANYTHING else (a question, a request, irrelevant chat, or ambiguous), you MUST reply exactly with '<SUBSTANTIVE>' and nothing else."
+        )
+
+        async with langfuse_turn_attributes(
+            user_id=ctx.student_id or ctx.phone,
+            session_id=ctx.session_id,
+            metadata={"degraded_mode": True, "original_error": str(original_exc)},
+            tags=[f"tenant:{ctx.tenant_slug}", f"channel:{inbound.channel.value}", "fallback_activated"] if ctx.tenant_slug else [f"channel:{inbound.channel.value}", "fallback_activated"],
+        ):
+            response = await fallback_llm.ainvoke(
+                [
+                    SystemMessage(content=system_prompt),
+                    HumanMessage(content=inbound.body or ""),
+                ]
+            )
+            content = str(response.content).strip()
+
+            if "<SUBSTANTIVE>" in content:
+                update_current_trace(tags=["fallback_substantive"])
+                if ctx.student_id:
+                    db = AdmissionsDbClient()
+                    db.create_escalation(
+                        tenant_id=ctx.tenant_id,
+                        student_id=ctx.student_id,
+                        reason_code=DEGRADED_SYSTEM_FALLBACK,
+                        student_message=inbound.body,
+                    )
+                return (
+                    "We're experiencing a slight delay at the moment. "
+                    "Your message has been noted, and we'll follow up with you shortly!"
+                )
+
+            update_current_trace(tags=["fallback_greeting"])
+            return content
 
     async def _handle_media(
         self, ctx: IdentityContext, inbound: InboundMessage

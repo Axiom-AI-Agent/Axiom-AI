@@ -11,8 +11,13 @@
   },
   "Dashboard/backend/app/main.py": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787834830.8782632,
     "ast_hash": "a092e9060acc73852f52c13b153ca1bf",
+=======
+    "mtime": 1787837853.559692,
+    "ast_hash": "46c72e5aa9034dc8723f03156abd3eb5",
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787837853.559692,
     "ast_hash": "46c72e5aa9034dc8723f03156abd3eb5",
@@ -96,8 +101,13 @@
   },
   "Dashboard/backend/app/routes/dashboard.py": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787829355.428885,
     "ast_hash": "db0aa8b977ccfa4b0016a4294094a03b",
+=======
+    "mtime": 1787837853.56018,
+    "ast_hash": "ef168fafaa5fa4a9abcc7f572274dbcd",
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787837853.56018,
     "ast_hash": "ef168fafaa5fa4a9abcc7f572274dbcd",
@@ -1181,8 +1191,13 @@
   },
   "Dashboard/backend/app/routes/auth.py": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787834811.2209058,
     "ast_hash": "48a2964ef5122ef41fd596dc489a8b70",
+=======
+    "mtime": 1787837846.778875,
+    "ast_hash": "327165e31af9512a7952dbc078740abd",
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787837846.778875,
     "ast_hash": "327165e31af9512a7952dbc078740abd",
@@ -1206,8 +1221,13 @@
   },
   "Dashboard/backend/app/services/dashboard_service.py": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787829365.813529,
     "ast_hash": "906cc3e9e6fa30fa81285c6adf4a3af4",
+=======
+    "mtime": 1787837853.5612917,
+    "ast_hash": "8f3b8f19e5105167c953700d96cd74c1",
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787837853.5612917,
     "ast_hash": "8f3b8f19e5105167c953700d96cd74c1",
@@ -1240,12 +1260,18 @@
     "semantic_hash": ""
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> AI-backend-dev
   "Dashboard/frontend/src/app/ThemeInitializer.tsx": {
     "mtime": 1787837846.7849662,
     "ast_hash": "d5ce5136151b6d592efef15fdf7d24df",
     "semantic_hash": ""
   },
+<<<<<<< HEAD
+>>>>>>> AI-backend-dev
+=======
 >>>>>>> AI-backend-dev
   "Dashboard/frontend/src/app/dashboard/chats/page.tsx": {
     "mtime": 1786118664.9480438,
@@ -1258,6 +1284,7 @@
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/app/dashboard/classes/page.tsx": {
+<<<<<<< HEAD
 <<<<<<< HEAD
     "mtime": 1787833011.4992645,
     "ast_hash": "4f53b9c45336a8bfc3d40a8ee145df3a",
@@ -1287,6 +1314,8 @@
     "mtime": 1787832940.2374196,
     "ast_hash": "ddcac87400e6a48c536c3949ee1004a2",
 =======
+=======
+>>>>>>> AI-backend-dev
     "mtime": 1787839338.5532057,
     "ast_hash": "0ad851bc8240075df84a21ff13986849",
     "semantic_hash": ""
@@ -1314,6 +1343,9 @@
   "Dashboard/frontend/src/app/dashboard/overview/page.tsx": {
     "mtime": 1787839323.1703,
     "ast_hash": "27d07425a8a5d0cb1df1874c29da7bc3",
+<<<<<<< HEAD
+>>>>>>> AI-backend-dev
+=======
 >>>>>>> AI-backend-dev
     "semantic_hash": ""
   },
@@ -1323,6 +1355,7 @@
     "semantic_hash": ""
   },
   "Dashboard/frontend/src/app/dashboard/settings/page.tsx": {
+<<<<<<< HEAD
 <<<<<<< HEAD
     "mtime": 1787833050.212811,
     "ast_hash": "d238fafa58d78fc20a6cc99055fa1cc8",
@@ -1397,6 +1430,8 @@
     "mtime": 1787832424.3711076,
     "ast_hash": "cddefecfb32d2c458dadf0782d433f47",
 =======
+=======
+>>>>>>> AI-backend-dev
     "mtime": 1787839322.2896771,
     "ast_hash": "4dd933bb18b2c91b3505d6bb7efe8b64",
     "semantic_hash": ""
@@ -1469,6 +1504,9 @@
   "Dashboard/frontend/src/components/students/StudentTable.tsx": {
     "mtime": 1787839316.920052,
     "ast_hash": "dd93dd81d6eb69b6cd83e686882f998a",
+<<<<<<< HEAD
+>>>>>>> AI-backend-dev
+=======
 >>>>>>> AI-backend-dev
     "semantic_hash": ""
   },
@@ -1499,7 +1537,11 @@
   },
   "Dashboard/frontend/src/lib/api.ts": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787828824.7562618,
+=======
+    "mtime": 1787837853.5666623,
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787837853.5666623,
 >>>>>>> AI-backend-dev
@@ -1678,8 +1720,13 @@
   },
   "AI-backend/docs/SETUP.md": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787829653.6690316,
     "ast_hash": "acf1caddf7993b3b5cd24b4391011f81",
+=======
+    "mtime": 1787837846.7744632,
+    "ast_hash": "3ff1102e2377e9698cc97fc0cbc89c2b",
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787837846.7744632,
     "ast_hash": "3ff1102e2377e9698cc97fc0cbc89c2b",
@@ -1988,6 +2035,7 @@
   },
   "Dashboard/frontend/src/app/dashboard/analytics/classes/page.tsx": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787832940.6343637,
     "ast_hash": "2891fe8625d6fa0995926a3fbbce4ee8",
     "semantic_hash": ""
@@ -1996,6 +2044,8 @@
     "mtime": 1787832940.2387238,
     "ast_hash": "e1ec709bf3d98f8be4666dc066ebf70b",
 =======
+=======
+>>>>>>> AI-backend-dev
     "mtime": 1787839317.6258943,
     "ast_hash": "acf0f9ac11a1ce4e4cc9946dc493b7e0",
     "semantic_hash": ""
@@ -2003,6 +2053,9 @@
   "Dashboard/frontend/src/app/dashboard/analytics/page.tsx": {
     "mtime": 1787837853.562532,
     "ast_hash": "bc70c09975773cfc8e14327d5c9ef966",
+<<<<<<< HEAD
+>>>>>>> AI-backend-dev
+=======
 >>>>>>> AI-backend-dev
     "semantic_hash": ""
   },
@@ -2118,8 +2171,13 @@
   },
   "Dashboard/frontend/src/components/DashboardAgentChat.tsx": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787833050.5529912,
     "ast_hash": "f43e94b0b400aa93d4b17c40ee704e41",
+=======
+    "mtime": 1787839325.2212472,
+    "ast_hash": "4e84f0eb5cc9304c8115bb159ec88182",
+>>>>>>> AI-backend-dev
 =======
     "mtime": 1787839325.2212472,
     "ast_hash": "4e84f0eb5cc9304c8115bb159ec88182",
@@ -2233,6 +2291,7 @@
   },
   "Dashboard/frontend/src/app/dashboard/faqs/page.tsx": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mtime": 1787832990.235225,
     "ast_hash": "fce1b70714fab1c29d1a2d0a8b259107",
     "semantic_hash": ""
@@ -2291,6 +2350,8 @@
     "mtime": 1787834830.879886,
     "ast_hash": "abc500aad52eed859ab60df3f1db193d",
 =======
+=======
+>>>>>>> AI-backend-dev
     "mtime": 1787837853.5630934,
     "ast_hash": "cc262fdf9e44f823214630013bba5bd6",
     "semantic_hash": ""
@@ -2303,6 +2364,9 @@
   "Dashboard/frontend/src/app/dashboard/staff/page.tsx": {
     "mtime": 1787837853.5648685,
     "ast_hash": "69b2e5c10a69906503a2024038aa2728",
+<<<<<<< HEAD
+>>>>>>> AI-backend-dev
+=======
 >>>>>>> AI-backend-dev
     "semantic_hash": ""
   },

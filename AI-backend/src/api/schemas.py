@@ -194,11 +194,17 @@ class DriveSearchRequest(BaseModel):
     tenant_id: str
     query: str = Field(min_length=1)
     folder: Optional[str] = "papers"
+    class_ids: list[str] = Field(min_length=1)
+    hint: Optional[str] = None
+    student_id: Optional[str] = None
 
 
 class DriveListRequest(BaseModel):
     tenant_id: str
     folder: str = "papers"
+    class_ids: list[str] = Field(min_length=1)
+    hint: Optional[str] = None
+    student_id: Optional[str] = None
 
 
 class DriveResponse(BaseModel):

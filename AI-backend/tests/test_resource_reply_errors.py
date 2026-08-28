@@ -49,6 +49,18 @@ def test_build_resource_drive_list_reply_omits_links():
     assert "number" in reply.lower()
 
 
+def test_build_resource_drive_list_reply_tags_union_classes():
+    reply = build_resource_drive_list_reply(
+        files=[
+            {"name": "phys.pdf", "class_name": "A/L Physics 2026"},
+            {"name": "chem.pdf", "class_name": "A/L Chemistry 2026"},
+        ],
+        folder="papers",
+    )
+    assert "1. phys.pdf (A/L Physics 2026)" in reply
+    assert "2. chem.pdf (A/L Chemistry 2026)" in reply
+
+
 def test_kb_search_returns_generic_error_code():
     tool = RagTool(embedder=MagicMock(), llm=MagicMock())
     with patch("agents.tools.rag_tool.count_points", return_value=3):

@@ -19,10 +19,27 @@ class FakeMemoryTool:
 
 
 class FakeDrive:
-    async def drive_search(self, *, tenant_id: str, query: str, folder: str | None = "papers"):
+    async def drive_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        folder: str | None = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
+    ):
         return {"ok": True, "files": [{"name": "paper.pdf", "link": "https://example.com"}]}
 
-    async def drive_list(self, *, tenant_id: str, folder: str = "papers"):
+    async def drive_list(
+        self,
+        *,
+        tenant_id: str,
+        folder: str = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
+    ):
         return {"ok": True, "files": [{"name": "paper.pdf", "link": "https://example.com", "folder": folder}]}
 
 

@@ -24,6 +24,11 @@ sys.path.insert(0, str(ROOT / "src"))
 
 TENANT_ID = os.getenv("DEBUG_DRIVE_TENANT_ID", "tenant-demo-physics")
 SEARCH_QUERY = os.getenv("DEBUG_DRIVE_QUERY", "physics paper")
+CLASS_IDS = [
+    cid.strip()
+    for cid in os.getenv("DEBUG_DRIVE_CLASS_IDS", "class-physics-al-2026").split(",")
+    if cid.strip()
+]
 PLACEHOLDER_FOLDER_IDS = {
     "drive-folder-physics-demo",
     "drive-folder-chemistry-demo",
@@ -285,7 +290,12 @@ def step5_and_10_drive_tool() -> dict:
 
     tool = DriveTool()
     t0 = time.perf_counter()
-    raw = tool.drive_search(tenant_id=TENANT_ID, query=SEARCH_QUERY, folder="papers")
+    raw = tool.drive_search(
+        tenant_id=TENANT_ID,
+        query=SEARCH_QUERY,
+        folder="papers",
+        class_ids=CLASS_IDS,
+    )
     total_ms = (time.perf_counter() - t0) * 1000
     print(f"DriveTool total wall time: {total_ms:.1f} ms")
     print(f"DriveTool result: {raw[:500]}")
@@ -322,7 +332,12 @@ async def step10b_mcp() -> dict:
         search = next(t for t in tools if t.name == "drive_search")
         t_call = time.perf_counter()
         raw = await search.ainvoke(
-            {"tenant_id": TENANT_ID, "query": SEARCH_QUERY, "folder": "papers"}
+            {
+                "tenant_id": TENANT_ID,
+                "query": SEARCH_QUERY,
+                "folder": "papers",
+                "class_ids": CLASS_IDS,
+            }
         )
         call_ms = (time.perf_counter() - t_call) * 1000
         print(f"MCP drive_search call: {call_ms:.1f} ms")

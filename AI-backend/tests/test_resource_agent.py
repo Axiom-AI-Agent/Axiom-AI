@@ -16,12 +16,46 @@ class FakeDrive:
         self.list_calls: list[dict[str, Any]] = []
         self.search_calls: list[dict[str, Any]] = []
 
-    async def drive_search(self, *, tenant_id: str, query: str, folder: str | None = "papers") -> dict[str, Any]:
-        self.search_calls.append({"tenant_id": tenant_id, "query": query, "folder": folder})
+    async def drive_search(
+        self,
+        *,
+        tenant_id: str,
+        query: str,
+        folder: str | None = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
+    ) -> dict[str, Any]:
+        self.search_calls.append(
+            {
+                "tenant_id": tenant_id,
+                "query": query,
+                "folder": folder,
+                "class_ids": class_ids,
+                "hint": hint,
+                "student_id": student_id,
+            }
+        )
         return {"ok": True, "files": []}
 
-    async def drive_list(self, *, tenant_id: str, folder: str = "papers") -> dict[str, Any]:
-        self.list_calls.append({"tenant_id": tenant_id, "folder": folder})
+    async def drive_list(
+        self,
+        *,
+        tenant_id: str,
+        folder: str = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
+    ) -> dict[str, Any]:
+        self.list_calls.append(
+            {
+                "tenant_id": tenant_id,
+                "folder": folder,
+                "class_ids": class_ids,
+                "hint": hint,
+                "student_id": student_id,
+            }
+        )
         return {
             "ok": True,
             "files": [
@@ -102,7 +136,10 @@ async def test_resource_agent_drive_lists_tutes_without_filename_guess():
         }
     )
     assert result.sub_path == "drive"
-    assert drive.list_calls[0]["folder"] == "papers"
+    assert drive.list_calls[0]["folder"] == "tutes"
+    assert drive.list_calls[0]["class_ids"] == ["class-physics-al-2026"]
+    assert drive.list_calls[0]["hint"] == "any tutes?"
+    assert drive.list_calls[0]["student_id"] == "stu-1"
     assert not drive.search_calls
     assert "tute-03-mechanics.pdf" in result.answer
 
@@ -195,6 +232,7 @@ async def test_resource_agent_singlish_file_request_localizes_list():
         }
     )
     assert result.sub_path == "drive"
+    assert drive.list_calls[0]["folder"] == "tutes"
     assert "tute-03-mechanics.pdf" in result.answer
     assert "Here are the available" not in result.answer
     assert "reply karanna" in result.answer.lower()

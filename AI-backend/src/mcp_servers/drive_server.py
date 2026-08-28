@@ -1,4 +1,4 @@
-"""Drive MCP Server — papers, textbooks, syllabus only."""
+"""Drive MCP Server — papers, tutes, textbooks, syllabus only."""
 
 from __future__ import annotations
 
@@ -31,15 +31,41 @@ def _init() -> DriveTool:
 
 
 @mcp.tool()
-def drive_search(tenant_id: str, query: str, folder: str | None = "papers") -> str:
-    """Search tenant Drive for papers, textbooks, or syllabus files. Returns shareable links."""
-    return _init().drive_search(tenant_id=tenant_id, query=query, folder=folder)
+def drive_search(
+    tenant_id: str,
+    query: str,
+    class_ids: list[str],
+    folder: str | None = "papers",
+    hint: str | None = None,
+    student_id: str | None = None,
+) -> str:
+    """Search class-scoped Drive folders (papers, tutes, textbooks, syllabus). Requires enrolled class_ids."""
+    return _init().drive_search(
+        tenant_id=tenant_id,
+        query=query,
+        folder=folder,
+        class_ids=class_ids,
+        hint=hint,
+        student_id=student_id,
+    )
 
 
 @mcp.tool()
-def drive_list(tenant_id: str, folder: str = "papers") -> str:
-    """List files in an allowed Drive subfolder (papers, textbooks, syllabus)."""
-    return _init().drive_list(tenant_id=tenant_id, folder=folder)
+def drive_list(
+    tenant_id: str,
+    class_ids: list[str],
+    folder: str = "papers",
+    hint: str | None = None,
+    student_id: str | None = None,
+) -> str:
+    """List files in an allowed class Drive subfolder (papers, tutes, textbooks, syllabus)."""
+    return _init().drive_list(
+        tenant_id=tenant_id,
+        folder=folder,
+        class_ids=class_ids,
+        hint=hint,
+        student_id=student_id,
+    )
 
 
 if __name__ == "__main__":

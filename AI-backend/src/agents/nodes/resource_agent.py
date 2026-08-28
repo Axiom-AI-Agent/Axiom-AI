@@ -67,9 +67,12 @@ _TEXTBOOK_FOLDER_RE = re.compile(
     r"\btext\s*books?\b|\bbooks\b|\bchapter\b|පෙළපොත්|பாடநூல்",
     re.IGNORECASE,
 )
+_TUTES_FOLDER_RE = re.compile(
+    r"\btutes?\b|tute eka|ටියුට්",
+    re.IGNORECASE,
+)
 _PAPERS_FOLDER_RE = re.compile(
-    r"\bpapers?\b|\btutes?\b|past paper|model paper|paper eka|tute eka|"
-    r"පේපර්|ටියුට්|பாடத்தாள",
+    r"\bpapers?\b|past paper|model paper|paper eka|පේපර්|பாடத்தாள",
     re.IGNORECASE,
 )
 _EXPLAIN_RAG_RE = re.compile(
@@ -136,6 +139,9 @@ class DriveClient(Protocol):
         tenant_id: str,
         query: str,
         folder: str | None = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
     ) -> dict[str, Any]: ...
 
     async def drive_list(
@@ -143,6 +149,9 @@ class DriveClient(Protocol):
         *,
         tenant_id: str,
         folder: str = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
     ) -> dict[str, Any]: ...
 
 
@@ -173,13 +182,14 @@ def classify_resource_subpath(message: str) -> ResourceSubPath:
     file_folder_intent = bool(
         _SYLLABUS_FOLDER_RE.search(text)
         or _TEXTBOOK_FOLDER_RE.search(text)
+        or _TUTES_FOLDER_RE.search(text)
         or _PAPERS_FOLDER_RE.search(text)
     )
 
     # Schedule takes priority — time-related queries are unambiguous
     if schedule_score > 0:
         return "schedule"
-    # Papers / textbooks / syllabus listing beats generic "what are" RAG.
+    # Papers / tutes / textbooks / syllabus listing beats generic "what are" RAG.
     if file_folder_intent and not _EXPLAIN_RAG_RE.search(text):
         return "drive"
     if drive_score > rag_score:
@@ -192,11 +202,13 @@ def classify_resource_subpath(message: str) -> ResourceSubPath:
 
 
 def _infer_drive_folder(message: str) -> str:
-    """Map a file request to papers, textbooks, or syllabus."""
+    """Map a file request to papers, tutes, textbooks, or syllabus."""
     if _SYLLABUS_FOLDER_RE.search(message):
         return "syllabus"
     if _TEXTBOOK_FOLDER_RE.search(message):
         return "textbooks"
+    if _TUTES_FOLDER_RE.search(message):
+        return "tutes"
     return "papers"
 
 
@@ -225,8 +237,18 @@ class DirectDriveClient:
         tenant_id: str,
         query: str,
         folder: str | None = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
     ) -> dict[str, Any]:
-        raw = self._tool.drive_search(tenant_id=tenant_id, query=query, folder=folder)
+        raw = self._tool.drive_search(
+            tenant_id=tenant_id,
+            query=query,
+            folder=folder,
+            class_ids=class_ids,
+            hint=hint,
+            student_id=student_id,
+        )
         return json.loads(raw)
 
     async def drive_list(
@@ -234,8 +256,17 @@ class DirectDriveClient:
         *,
         tenant_id: str,
         folder: str = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
     ) -> dict[str, Any]:
-        raw = self._tool.drive_list(tenant_id=tenant_id, folder=folder)
+        raw = self._tool.drive_list(
+            tenant_id=tenant_id,
+            folder=folder,
+            class_ids=class_ids,
+            hint=hint,
+            student_id=student_id,
+        )
         return json.loads(raw)
 
 
@@ -351,11 +382,24 @@ class McpDriveClient:
         tenant_id: str,
         query: str,
         folder: str | None = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
     ) -> dict[str, Any]:
         tool = self._tools.get("drive_search")
         if tool is None:
             return {"ok": False, "error": "MCP tool unavailable: drive_search"}
-        raw = await tool.ainvoke({"tenant_id": tenant_id, "query": query, "folder": folder})
+        payload: dict[str, Any] = {
+            "tenant_id": tenant_id,
+            "query": query,
+            "folder": folder,
+            "class_ids": list(class_ids or []),
+        }
+        if hint:
+            payload["hint"] = hint
+        if student_id:
+            payload["student_id"] = student_id
+        raw = await tool.ainvoke(payload)
         text = _mcp_text(raw)
         return json.loads(text)
 
@@ -364,11 +408,23 @@ class McpDriveClient:
         *,
         tenant_id: str,
         folder: str = "papers",
+        class_ids: list[str] | None = None,
+        hint: str | None = None,
+        student_id: str | None = None,
     ) -> dict[str, Any]:
         tool = self._tools.get("drive_list")
         if tool is None:
             return {"ok": False, "error": "MCP tool unavailable: drive_list"}
-        raw = await tool.ainvoke({"tenant_id": tenant_id, "folder": folder})
+        payload: dict[str, Any] = {
+            "tenant_id": tenant_id,
+            "folder": folder,
+            "class_ids": list(class_ids or []),
+        }
+        if hint:
+            payload["hint"] = hint
+        if student_id:
+            payload["student_id"] = student_id
+        raw = await tool.ainvoke(payload)
         text = _mcp_text(raw)
         return json.loads(text)
 
@@ -559,9 +615,17 @@ class ResourceAgent:
         """Handle Drive file requests."""
         folder = _infer_drive_folder(user_message)
         routed = _folder_from_route_params(state)
-        if folder == "papers" and routed in {"textbooks", "syllabus"}:
+        if folder == "papers" and routed in {"textbooks", "syllabus", "tutes"}:
             folder = routed
-        result = await self.drive.drive_list(tenant_id=tenant_id, folder=folder)
+        enrolled_class_ids = list(state.get("enrolled_class_ids") or [])
+        student_id = str(state.get("student_id") or state.get("user_id") or "").strip() or None
+        result = await self.drive.drive_list(
+            tenant_id=tenant_id,
+            folder=folder,
+            class_ids=enrolled_class_ids,
+            hint=user_message,
+            student_id=student_id,
+        )
         tool_log.append(f"drive_list({folder}): ok={result.get('ok')}")
         files = result.get("files") or []
         picks = files_from_drive_payload(files)
@@ -575,6 +639,7 @@ class ResourceAgent:
         answer = build_resource_drive_list_reply(
             files=files, folder=folder, tenant_name=tenant_name,
             error=result.get("error"), language=language,
+            empty_message=result.get("message") if not files else None,
         )
         return ResourceAgentResult(answer=answer, tool_output="\n".join(tool_log), sub_path="drive")
 

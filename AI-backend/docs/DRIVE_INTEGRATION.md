@@ -2,7 +2,7 @@
 
 How to connect a tuition institute's Google Drive to Axiom AI, and how to test the `axiom-drive` MCP server locally.
 
-**Drive** = send file links (past papers, textbooks, syllabus).  
+**Drive** = send file links (past papers, tutes, textbooks, syllabus).  
 **RAG (Qdrant)** = answer questions from tutor notes — see [ingest script](../scripts/ingest_tenant_notes.py), not Drive.
 
 ---
@@ -21,9 +21,9 @@ axiom-drive MCP  (src/mcp_servers/drive_server.py)
         ▼
 DriveTool  (src/agents/tools/drive_tool.py)
         │
-        ├── Supabase  tenants.drive_folder_id  (per institute)
+        ├── Supabase  tenants.drive_folder_id  (institute root)
         └── Google Drive API  (service account, read-only)
-                └── {root}/papers/ | textbooks/ | syllabus/
+                └── {root}/{Exact class name}/papers | tutes | textbooks | syllabus
 ```
 
 | Component | Path |
@@ -34,8 +34,10 @@ DriveTool  (src/agents/tools/drive_tool.py)
 | Google client | `src/services/drive_service/drive_client.py` |
 | Debug REST | `POST /tools/drive/search`, `POST /tools/drive/list` |
 
-**MCP tools:** `drive_search`, `drive_list`  
-**Allowed folders only:** `papers`, `textbooks`, `syllabus` (enforced in `DriveTool`).
+**MCP tools:** `drive_search`, `drive_list` — both require `class_ids` (enrolled classes).  
+**Allowed material folders only:** `papers`, `tutes`, `textbooks`, `syllabus` (enforced in `DriveTool`). Chat “tutes” / “tute eka” lists the class `tutes/` folder. Singular `tute` is accepted as an alias for `tutes`.
+
+Drive never lists the institute root `papers/` folder. Files live under a **class folder whose name matches the dashboard class name**.
 
 Agents call Drive **via MCP** when `AGENT_USE_MCP=true`; otherwise they use the same `DriveTool` in-process (`src/agents/runtime.py` fallback).
 
@@ -74,14 +76,23 @@ Default mock backend is **empty** — searches return `"files": []` but prove wi
 
 ### Folder layout
 
-Ask the institute to create:
+Ask the institute to create one folder per **Classes page name** (exact spelling):
 
 ```text
-{Institute Root}/          ← one root folder per tenant
-├── papers/                ← past papers, model papers, tutes
-├── textbooks/             ← textbook PDFs
-└── syllabus/              ← syllabus, intro packs
+{Institute Root}/                    ← tenants.drive_folder_id (share this folder)
+├── A/L Physics 2026/
+│   ├── papers/                      ← past papers, model papers
+│   ├── tutes/                       ← weekly tutes
+│   ├── textbooks/
+│   └── syllabus/
+└── A/L Chemistry 2026/
+    ├── papers/
+    ├── tutes/
+    ├── textbooks/
+    └── syllabus/
 ```
+
+Root-level `papers/` is **not** used. Students enrolled in Physics must not see Chemistry files.
 
 Do **not** rely on Drive for tutor lesson Q&A — ingest notes to Qdrant instead.
 
@@ -137,7 +148,7 @@ PYTHONPATH=src python scripts/ingest_tenant_notes.py --tenant-id tenant-acme-phy
 |---|------|--------|
 | 1 | Service account + Drive API enabled | Platform |
 | 2 | `GOOGLE_SERVICE_ACCOUNT_JSON` + `DRIVE_MOCK=false` in `.env` | Platform |
-| 3 | Institute creates `papers/`, `textbooks/`, `syllabus/` | Institute |
+| 3 | Institute creates `{Class name}/papers|tutes|textbooks|syllabus` under the root | Institute |
 | 4 | Share root folder with service account (Viewer) | Institute |
 | 5 | Set `tenants.drive_folder_id` in Supabase | Platform |
 | 6 | Upload PDFs to subfolders | Institute |
@@ -190,6 +201,7 @@ async def main():
         "tenant_id": "tenant-demo-physics",
         "query": "physics paper",
         "folder": "papers",
+        "class_ids": ["class-physics-al-2026"],
     })
     print("drive_search:", raw)
 
@@ -207,14 +219,16 @@ curl -s -X POST http://localhost:8000/tools/drive/search \
   -d '{
     "tenant_id": "tenant-demo-physics",
     "query": "physics paper",
-    "folder": "papers"
+    "folder": "papers",
+    "class_ids": ["class-physics-al-2026"]
   }' | python3 -m json.tool
 
 curl -s -X POST http://localhost:8000/tools/drive/list \
   -H "Content-Type: application/json" \
   -d '{
     "tenant_id": "tenant-demo-physics",
-    "folder": "papers"
+    "folder": "papers",
+    "class_ids": ["class-physics-al-2026"]
   }' | python3 -m json.tool
 ```
 
@@ -229,7 +243,7 @@ AGENT_USE_MCP=true
 DRIVE_MOCK=false   # when using real Drive
 ```
 
-Restart server, then send a **Drive-routed** message (papers / textbook / syllabus — not “explain from notes”):
+Restart server, then send a **Drive-routed** message (papers / tutes / textbook / syllabus — not “explain from notes”):
 
 ```bash
 curl -s -X POST http://localhost:8000/chat \
@@ -247,8 +261,9 @@ Server logs should include `axiom-drive` when MCP is active.
 
 | Student message | Path | Tool |
 |-----------------|------|------|
-| "Can I get last week's physics paper?" | Drive | `drive_search` |
-| "Send me the textbook for chapter 3" | Drive | `drive_search` |
+| "Can I get last week's physics paper?" | Drive | `drive_list` (`papers`) |
+| "any tutes?" / "tute eka ewanna" | Drive | `drive_list` (`tutes`) |
+| "Send me the textbook for chapter 3" | Drive | `drive_list` (`textbooks`) |
 | "Explain velocity from lesson 5" | RAG | `kb_search` |
 | "What did sir say about Newton's laws?" | RAG | `kb_search` |
 
@@ -256,8 +271,10 @@ Server logs should include `axiom-drive` when MCP is active.
 
 ## Multi-tenant isolation
 
-- Each tenant has its own `drive_folder_id` → separate Drive tree  
-- Tool calls always include `tenant_id`; Tenant A cannot access Tenant B files  
+- Each tenant has its own `drive_folder_id` → institute root  
+- Tool calls include `tenant_id` **and** `class_ids` from the student's enrollments; a Physics student cannot list Chemistry's class folder  
+- When `student_id` is present, requested `class_ids` are intersected with the `enrollments` table (active/pending only)  
+- Missing class folder returns empty results — never falls back to root `papers/`  
 - Qdrant collections are also tenant-scoped: `axiom_kb_{tenant_id}`
 
 ---
@@ -266,10 +283,11 @@ Server logs should include `axiom-drive` when MCP is active.
 
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
-| `"files": []` | Mock empty, SA not shared, wrong folder ID, files in wrong subfolder | Share folder; verify ID; check `papers/` layout |
+| `"files": []` | Mock empty, SA not shared, wrong folder ID, files in wrong subfolder | Share folder; verify ID; class folder name must match Classes page |
+| `"class_ids is required"` | REST/MCP called without enrolled classes | Pass `class_ids` from the student's enrollments |
 | `Unknown tenant or missing drive_folder_id` | No row or null `drive_folder_id` | Run seed / `UPDATE tenants SET drive_folder_id=...` |
 | Still mock behaviour | `DRIVE_MOCK=true` | Set `DRIVE_MOCK=false`, restart |
-| Chat uses RAG not Drive | Message sounds like explanation | Use "past paper", "textbook", "syllabus" |
+| Chat uses RAG not Drive | Message sounds like explanation | Use "past paper", "tutes", "textbook", "syllabus" |
 | MCP import error | Python 3.9 or missing packages | Python 3.11 venv, `pip install -r requirements.txt` |
 | Permission / 403 from Google | Folder not shared with SA | Share root as Viewer |
 | Links don't open for students | Drive link sharing policy | Institute adjusts file/folder sharing |

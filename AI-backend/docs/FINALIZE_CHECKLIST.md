@@ -130,7 +130,7 @@ make smoke-phase4-live     # needs Qdrant + ingest
 
 ### Per-tenant onboarding
 
-- [ ] Institute creates Drive folder layout: `{root}/papers/`, `textbooks/`, `syllabus/`
+- [ ] Institute creates Drive layout: `{root}/{Exact class name}/papers|tutes|textbooks|syllabus`
 - [ ] `tenants.drive_folder_id` set in Supabase for each tenant (seed + production)
 - [ ] Upload demo PDFs for `tenant-demo-physics` past-paper smoke
 
