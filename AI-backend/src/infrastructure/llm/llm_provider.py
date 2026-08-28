@@ -126,3 +126,8 @@ def get_chat_llm(**kwargs: Any) -> BaseChatModel:
 def get_merge_llm(**kwargs: Any) -> BaseChatModel:
     """Merge / synthesis model — Google Gemini."""
     return _build_llm(MERGE_MODEL, MERGE_PROVIDER, temperature=0.2, **kwargs)
+
+
+def get_fallback_llm(**kwargs: Any) -> BaseChatModel:
+    """Ultra-fast fallback model for degraded mode handling."""
+    return _build_llm("llama-3.1-8b-instant", "groq", temperature=0, **kwargs)

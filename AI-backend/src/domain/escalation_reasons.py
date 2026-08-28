@@ -11,6 +11,8 @@ LOW_RAG_CONFIDENCE = (
     "low_rag_confidence"
 )
 
+DEGRADED_SYSTEM_FALLBACK = "degraded_system_fallback"
+
 # Legacy Phase 3 alias.
 ENROLLMENT_PAYMENT_REASON = (
     "enrollment_payment_review"
