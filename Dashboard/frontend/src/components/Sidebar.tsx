@@ -50,6 +50,11 @@ const mainNavItems: NavItem[] = [
     icon: <School className="h-4 w-4" />,
   },
   {
+    href: "/dashboard/faqs",
+    label: "FAQ Intelligence",
+    icon: <HelpCircle className="h-4 w-4" />,
+  },
+  {
     href: "/dashboard/inbox",
     label: "Escalation Inbox",
     icon: <Inbox className="h-4 w-4" />,
@@ -78,11 +83,6 @@ const mainNavItems: NavItem[] = [
     href: "/dashboard/staff",
     label: "Staff",
     icon: <UserCog className="h-4 w-4" />,
-  },
-  {
-    href: "/dashboard/faqs",
-    label: "FAQ Intelligence",
-    icon: <HelpCircle className="h-4 w-4" />,
   },
   {
     href: "/dashboard/logs",
