@@ -371,7 +371,8 @@ Your task:
   3. Preserve factual details exactly: class names, file links, citations, payment instructions.
   4. Keep the warm tuition-centre tone. Short paragraphs; bullets when listing items.
   5. Plain text only — never use markdown markers such as **bold**.
-  6. If one fragment failed or is empty, rely on the others — do not mention internal errors.
+  6. If one fragment failed or is empty, rely on the others — do not mention internal errors,
+     Drive folder paths, institute-root setup, or how staff should create folders.
   7. Do NOT add facts, links, or promises not present in the fragments.
   8. Never repeat, translate, or include abusive or profane language from the student or fragments.
 
@@ -443,7 +444,7 @@ Here's the file you picked:
 """
 
 _RESOURCE_DRIVE_EMPTY_FALLBACK = (
-    "I couldn't find any {folder_label} in Drive right now. "
+    "I couldn't find any {folder_label} right now. "
     "Please check with {tenant_name}."
 )
 
@@ -697,13 +698,13 @@ def build_resource_drive_list_reply(
 
     lang = normalize_canned_language(language)
     label = _drive_folder_label(folder, language=lang)
+    # Kept for callers; never echo tool/admin text to students.
+    del empty_message
     if error:
         if lang != "en":
             return t("drive_error", lang)
         return _RESOURCE_DRIVE_ERROR_FALLBACK
     if not files:
-        if empty_message:
-            return empty_message
         if lang != "en":
             return t("drive_empty", lang, folder_label=label, tenant_name=tenant_name)
         return _RESOURCE_DRIVE_EMPTY_FALLBACK.format(

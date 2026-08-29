@@ -282,16 +282,27 @@ class DriveTool:
 
         payload: dict[str, Any] = {"ok": True, "files": files}
         if missing and not files:
-            expected = missing[0] if missing else "class"
             payload["message"] = (
-                f"No files in {folder}/ for this class. "
-                f"Create a Drive folder named like '{expected}' under the institute root, "
-                f"with papers/, tutes/, textbooks/, and syllabus/ inside."
+                f"I couldn't find any {folder} for this class right now. "
+                "Please check with your tuition centre."
             )
+            payload["admin_hint"] = (
+                "Missing Drive folders: "
+                + ", ".join(missing)
+                + ". Create a class folder under the institute root "
+                "with papers/, tutes/, textbooks/, and syllabus/ inside."
+            )
+            logger.info("drive empty (missing folders): {}", payload["admin_hint"])
         elif not files:
-            payload["message"] = f"No files matching '{query}' in {folder}/" if query else f"No files in {folder}/"
+            payload["message"] = (
+                f"I couldn't find any files matching '{query}' right now. "
+                "Please check with your tuition centre."
+                if query
+                else f"I couldn't find any {folder} right now. Please check with your tuition centre."
+            )
         elif missing:
-            payload["message"] = "Skipped classes with no Drive folder: " + ", ".join(missing)
+            payload["admin_hint"] = "Skipped classes with no Drive folder: " + ", ".join(missing)
+            logger.info("drive skipped classes: {}", payload["admin_hint"])
         return payload
 
     @observe(name="drive_search")

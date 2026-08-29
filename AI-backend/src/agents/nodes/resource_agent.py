@@ -628,6 +628,8 @@ class ResourceAgent:
         )
         tool_log.append(f"drive_list({folder}): ok={result.get('ok')}")
         files = result.get("files") or []
+        if result.get("admin_hint"):
+            logger.info("drive_list admin_hint: {}", result["admin_hint"])
         picks = files_from_drive_payload(files)
         session_id = str(state.get("session_id") or "")
         user_id = str(state.get("user_id") or state.get("student_id") or state.get("phone") or "")
@@ -639,7 +641,6 @@ class ResourceAgent:
         answer = build_resource_drive_list_reply(
             files=files, folder=folder, tenant_name=tenant_name,
             error=result.get("error"), language=language,
-            empty_message=result.get("message") if not files else None,
         )
         return ResourceAgentResult(answer=answer, tool_output="\n".join(tool_log), sub_path="drive")
 

@@ -232,8 +232,11 @@ def test_missing_class_folder_does_not_fall_back_to_root(mock_backend):
     payload = json.loads(raw)
     assert payload["ok"] is True
     assert payload["files"] == []
-    assert "A/L Biology 2026" in payload.get("message", "")
+    assert "Create a Drive folder" not in payload.get("message", "")
+    assert "institute root" not in payload.get("message", "")
+    assert "A/L Biology 2026" in payload.get("admin_hint", "")
     assert "SHOULD-NOT-SEE" not in payload.get("message", "")
+    assert "SHOULD-NOT-SEE" not in payload.get("admin_hint", "")
 
 
 def test_message_hint_selects_one_of_two_enrollments(mock_backend):

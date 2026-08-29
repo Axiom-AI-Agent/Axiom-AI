@@ -79,12 +79,48 @@ def test_kb_search_returns_generic_error_code():
     assert "400" not in payload["error"]
 
 
+_ADMIN_DRIVE_SETUP_MESSAGE = (
+    "No files in papers/ for this class. "
+    "Create a Drive folder named like 'CN/papers' under the institute root, "
+    "with papers/, tutes/, textbooks/, and syllabus/ inside."
+)
+
+
+def test_build_resource_drive_list_reply_hides_admin_setup_message():
+    reply = build_resource_drive_list_reply(
+        files=[],
+        folder="papers",
+        tenant_name="Demo Physics",
+        empty_message=_ADMIN_DRIVE_SETUP_MESSAGE,
+    )
+    assert "Create a Drive folder" not in reply
+    assert "institute root" not in reply
+    assert "papers/" not in reply
+    assert "tutes/" not in reply
+    assert "syllabus/" not in reply
+    assert "couldn't find" in reply.lower()
+    assert "Demo Physics" in reply
+
+
 class FakeDrive:
     async def drive_search(self, **kwargs):
         return {"ok": True, "files": []}
 
     async def drive_list(self, **kwargs):
         return {"ok": True, "files": []}
+
+
+class AdminSetupDrive:
+    async def drive_search(self, **kwargs):
+        return {"ok": True, "files": [], "message": _ADMIN_DRIVE_SETUP_MESSAGE}
+
+    async def drive_list(self, **kwargs):
+        return {
+            "ok": True,
+            "files": [],
+            "message": _ADMIN_DRIVE_SETUP_MESSAGE,
+            "admin_hint": "Missing Drive folders: CN/papers",
+        }
 
 
 class ErrorRag:
@@ -105,3 +141,24 @@ async def test_resource_agent_rag_path_hides_search_failure():
     assert "search_unavailable" not in result.answer
     assert "400" not in result.answer
     assert "tutor" in result.answer.lower()
+
+
+@pytest.mark.asyncio
+async def test_resource_agent_drive_path_hides_admin_setup_message():
+    agent = ResourceAgent(drive=AdminSetupDrive(), rag=ErrorRag())
+    state = {
+        "tenant_id": "tenant-demo-physics",
+        "tenant_name": "Demo Physics",
+        "is_enrolled": True,
+        "enrolled_class_ids": ["class-physics-al-2026"],
+        "messages": [HumanMessage(content="I need a past paper")],
+    }
+    result = await agent.run(state)
+    assert "Create a Drive folder" not in result.answer
+    assert "institute root" not in result.answer
+    assert "papers/" not in result.answer
+    assert "tutes/" not in result.answer
+    assert "syllabus/" not in result.answer
+    assert "admin_hint" not in result.answer
+    assert "couldn't find" in result.answer.lower()
+    assert "Demo Physics" in result.answer

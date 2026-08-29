@@ -595,13 +595,13 @@ STRINGS: dict[str, dict[str, str]] = {
     },
     "drive_empty": {
         "en": (
-            "I couldn't find any {folder_label} in Drive right now. "
+            "I couldn't find any {folder_label} right now. "
             "Please check with {tenant_name}."
         ),
-        "si": "දැන් Drive එකේ {folder_label} හම්බුණේ නෑ. {tenant_name} එක්ක බලන්න.",
-        "si_latn": "Dhan Drive eke {folder_label} hambune na. {tenant_name} ekka check karanna.",
-        "ta": "இப்போது Drive-இல் {folder_label} இல்லை. {tenant_name}ஐப் பாருங்கள்.",
-        "ta_latn": "Ippo Drive la {folder_label} illa. {tenant_name} kitta check pannunga.",
+        "si": "දැන් {folder_label} හම්බුණේ නෑ. {tenant_name} එක්ක බලන්න.",
+        "si_latn": "Dhan {folder_label} hambune na. {tenant_name} ekka check karanna.",
+        "ta": "இப்போது {folder_label} இல்லை. {tenant_name}ஐப் பாருங்கள்.",
+        "ta_latn": "Ippo {folder_label} illa. {tenant_name} kitta check pannunga.",
     },
     "drive_error": {
         "en": (
