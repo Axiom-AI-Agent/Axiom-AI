@@ -38,7 +38,7 @@ export default function DashboardAgentChat() {
       ]);
     } catch (requestError) {
       console.error(requestError);
-      setError("Could not reach the dashboard agent. Confirm the AI backend is running.");
+      setError("Could not reach the assistant. Please try again.");
     } finally {
       setSending(false);
     }

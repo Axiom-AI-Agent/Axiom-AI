@@ -28,6 +28,7 @@ import {
   SubjectClass,
   uploadDocument,
 } from "@/lib/api";
+import { userMessage } from "@/lib/errors";
 
 function IngestContent() {
   const router = useRouter();
@@ -142,10 +143,7 @@ function IngestContent() {
       router.refresh();
     } catch (requestError) {
       console.error(requestError);
-      const message =
-        requestError instanceof Error
-          ? requestError.message
-          : "Document upload failed.";
+      const message = userMessage(requestError, "Document upload failed.");
       showToast(message, "error");
       setError(message);
     } finally {

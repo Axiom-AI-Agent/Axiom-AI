@@ -22,42 +22,24 @@ export default function LoginPage() {
     fallback: string,
   ): string {
     if (requestError instanceof TypeError) {
-      return (
-        "Cannot reach the Dashboard API. Confirm NEXT_PUBLIC_API_URL points at " +
-        "your running backend (Render), not localhost."
-      );
+      return "Cannot reach the server. Check your connection and try again.";
     }
 
     if (requestError instanceof AuthApiError) {
       if (requestError.status === 0) {
-        return (
-          "Cannot reach the Dashboard API. Confirm NEXT_PUBLIC_API_URL points at " +
-          "your running backend (Render), not localhost."
-        );
-      }
-
-      if (
-        typeof requestError.details === "object" &&
-        requestError.details !== null &&
-        "detail" in requestError.details
-      ) {
-        const detail = (
-          requestError.details as {
-            detail?: unknown;
-          }
-        ).detail;
-
-        if (typeof detail === "string") {
-          return detail;
-        }
-      }
-
-      if (requestError.status >= 500) {
-        return fallback;
+        return "Cannot reach the server. Check your connection and try again.";
       }
 
       if (requestError.status === 401) {
         return "Invalid email or password.";
+      }
+
+      if (requestError.status === 403) {
+        return "This account is not active. Contact your administrator.";
+      }
+
+      if (requestError.status === 429) {
+        return "Too many attempts. Please wait a moment and try again.";
       }
     }
 

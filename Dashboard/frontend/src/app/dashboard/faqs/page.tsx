@@ -71,7 +71,7 @@ export default function FaqsPage() {
     } catch (requestError) {
       console.error(requestError);
       setError(
-        "Could not analyze recent questions. Confirm the AI backend is running.",
+        "Could not analyze recent questions. Please try again.",
       );
     } finally {
       setLoading(false);

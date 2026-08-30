@@ -22,6 +22,8 @@ import {
   saveAuthSession,
 } from "@/lib/auth";
 
+import { safeDetail } from "@/lib/errors";
+
 import type {
   OnboardingFieldType,
   StaffRegistration,
@@ -402,29 +404,9 @@ export default function RegisterPage() {
         requestError instanceof
         AuthApiError
       ) {
-        let message =
+        const message =
+          safeDetail(requestError.details) ??
           "Organization registration failed.";
-
-        if (
-          typeof requestError.details ===
-            "object" &&
-          requestError.details !== null &&
-          "detail" in
-            requestError.details
-        ) {
-          const detail = (
-            requestError.details as {
-              detail?: unknown;
-            }
-          ).detail;
-
-          if (
-            typeof detail ===
-            "string"
-          ) {
-            message = detail;
-          }
-        }
 
         setError(message);
       } else {

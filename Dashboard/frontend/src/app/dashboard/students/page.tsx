@@ -163,7 +163,7 @@ export default function StudentsPage() {
       console.error(requestError);
       setStudents([]);
       setError(
-        "Could not load students. Restart Dashboard/backend on port 8001 if needed.",
+        "Could not load students. Please try again.",
       );
     } finally {
       setLoading(false);

@@ -100,7 +100,7 @@ export default function ClassAnalyticsPage() {
         console.error(requestError);
 
         setError(
-          "Could not load per-class analytics. Confirm the dashboard backend is running and the analytics endpoint is available.",
+          "Could not load per-class analytics. Please try again.",
         );
       } finally {
         if (showSpinner) {

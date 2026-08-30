@@ -29,7 +29,6 @@ import {
   useEscalationSocket,
 } from "@/hooks/useEscalationSocket";
 import {
-  ApiError,
   Escalation,
   EscalationStatus,
   getEscalations,
@@ -37,6 +36,7 @@ import {
   resolveEscalation,
   sendStaffMessage,
 } from "@/lib/api";
+import { userMessage } from "@/lib/errors";
 import {
   btnPrimary,
   btnQuiet,
@@ -126,7 +126,7 @@ function InboxContent() {
       } catch (requestError) {
         console.error(requestError);
         setError(
-          "Could not load the escalation inbox. Confirm Dashboard/backend is running on port 8001.",
+          "Could not load the escalation inbox. Please try again.",
         );
       } finally {
         setLoading(false);
@@ -282,20 +282,11 @@ function InboxContent() {
         requestError,
       );
 
-      const detail =
-        requestError instanceof ApiError
-          ? typeof requestError.details === "object" &&
-            requestError.details &&
-            "detail" in requestError.details
-            ? String(
-                (requestError.details as { detail?: unknown }).detail ?? "",
-              )
-            : requestError.message
-          : null;
-
       showToast(
-        detail?.trim() ||
+        userMessage(
+          requestError,
           "Could not send the Telegram reply. Ask the student to share their phone on Telegram once.",
+        ),
         "error",
       );
     } finally {

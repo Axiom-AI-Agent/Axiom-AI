@@ -25,7 +25,6 @@ import { useToast } from "@/context/ToastContext";
 import { useTenant } from "@/context/TenantContext";
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 import {
-  ApiError,
   BroadcastRecipients,
   createClass,
   deleteClass,
@@ -40,6 +39,7 @@ import {
   uploadClassDocument,
   updateClass,
 } from "@/lib/api";
+import { userMessage } from "@/lib/errors";
 import { btnPrimary, btnQuiet } from "@/lib/ui";
 
 interface ClassFormState {
@@ -345,9 +345,10 @@ export default function ClassesPage() {
     } catch (requestError) {
       console.error(requestError);
       setBroadcastError(
-        requestError instanceof ApiError
-          ? requestError.message
-          : "Could not load Telegram recipients for this class.",
+        userMessage(
+          requestError,
+          "Could not load Telegram recipients for this class.",
+        ),
       );
     } finally {
       setBroadcastLoading(false);
@@ -410,9 +411,7 @@ export default function ClassesPage() {
     } catch (requestError) {
       console.error(requestError);
       setBroadcastError(
-        requestError instanceof ApiError
-          ? requestError.message
-          : "Could not send the class broadcast.",
+        userMessage(requestError, "Could not send the class broadcast."),
       );
     } finally {
       setBroadcastSending(false);

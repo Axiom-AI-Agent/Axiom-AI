@@ -42,7 +42,7 @@ export default function OverviewPage() {
     } catch (requestError) {
       console.error(requestError);
       setError(
-        "Could not load dashboard data. Confirm Dashboard/backend is running on port 8001.",
+        "Could not load dashboard data. Please try again.",
       );
     } finally {
       setLoading(false);

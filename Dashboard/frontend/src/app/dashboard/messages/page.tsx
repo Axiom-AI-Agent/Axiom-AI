@@ -21,7 +21,6 @@ import { useTenant } from "@/context/TenantContext";
 import { cn } from "@/lib/utils";
 import { usePolling } from "@/hooks/usePolling";
 import {
-  ApiError,
   ChatConversation,
   ChatThread,
   getChatConversations,
@@ -31,6 +30,7 @@ import {
   Student,
   updateStudentHumanMode,
 } from "@/lib/api";
+import { userMessage } from "@/lib/errors";
 import ToggleSwitch from "@/components/ui/ToggleSwitch";
 
 function senderBubbleClass(sender: string) {
@@ -183,19 +183,11 @@ function MessagesContent() {
       );
     } catch (requestError) {
       console.error(requestError);
-      const detail =
-        requestError instanceof ApiError
-          ? typeof requestError.details === "object" &&
-            requestError.details &&
-            "detail" in requestError.details
-            ? String(
-                (requestError.details as { detail?: unknown }).detail ?? "",
-              )
-            : requestError.message
-          : null;
       showToast(
-        detail?.trim() ||
+        userMessage(
+          requestError,
           "Could not send the message. Ask the student to share their phone on Telegram once.",
+        ),
         "error",
       );
     } finally {
